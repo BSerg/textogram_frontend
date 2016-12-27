@@ -1,0 +1,17 @@
+@import "contstants";
+
+.title {
+  $font-size: 32px;
+  font-size: $font-size;
+  &.empty:after {
+    font-size: $font-size;
+  }
+}
+
+.add_content_help {
+  color: $color3;
+  letter-spacing: 1px;
+  text-align: center;
+  padding: $padding;
+  margin-top: $margin;
+}

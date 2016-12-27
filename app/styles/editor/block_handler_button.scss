@@ -1,0 +1,36 @@
+@import "../contstants";
+@import "../mixins";
+
+$size: 64px;
+$small-size: 45px;
+
+.block_handler_button {
+  @include border_radius($size);
+  width: $size;
+  height: $size;
+  background-color: $color;
+
+  svg {
+    width: $size;
+    height: $size;
+  }
+
+  &:not(.small) {
+    border: 1px solid white;
+  }
+
+  &.small {
+    @include border_radius($small-size);
+    width: $small-size;
+    height: $small-size;
+
+    svg {
+      width: $small-size;
+      height: $small-size;
+    }
+
+    &:not(:last-child) {
+      margin-right: $margin;
+    }
+  }
+}

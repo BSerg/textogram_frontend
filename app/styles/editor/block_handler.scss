@@ -1,0 +1,27 @@
+@import "../contstants";
+@import "../mixins";
+
+
+.block_handler {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 50px;
+  margin-top: -25px;
+  margin-bottom: -25px;
+  z-index: 1;
+
+  &:after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: $padding;
+    display: block;
+    height: 1px;
+    width: calc(100% - #{$padding} * 2);
+    background-color: $color3;
+    z-index: -1;
+
+  }
+}

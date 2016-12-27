@@ -1,0 +1,28 @@
+@import "../contstants";
+@import "../mixins";
+
+$menu_button_size: 50px;
+
+.menu_button {
+  @include transition();
+  @include border_radius($menu_button_size);
+  position: fixed;
+  top: $margin;
+  left: $margin;
+  width: $menu_button_size;
+  height: $menu_button_size;
+  background-color: $color1;
+  text-align: center;
+  line-height: $menu_button_size;
+  color: white;
+  font-size: 20px;
+
+  &:after {
+    content: 'T';
+  }
+  
+  &.hidden {
+    opacity: 0;
+    //top: -$menu_button_size;
+  }
+}

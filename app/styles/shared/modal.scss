@@ -1,0 +1,46 @@
+@import "../contstants";
+@import "../mixins";
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  //background-color: rgba(0, 0, 0, 0.6);
+  background-color: $color;
+  z-index: 10;
+
+  &:not(.opened) {
+    display: none;
+  }
+}
+
+.modal__wrapper {
+  width: 100%;
+  height: 100%;
+  margin-top: 75px;
+}
+
+.modal__close {
+  $size: 25px;
+  position: absolute;
+  top: 25px;
+  left: calc(50% - #{$size} / 2);
+  width: $size;
+  height: $size;
+  fill: white;
+}
+
+@media (min-width: 600px) {
+  .modal {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal__wrapper {
+    width: 600px;
+    min-height: 50%;
+  }
+}

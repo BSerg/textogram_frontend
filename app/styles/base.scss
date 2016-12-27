@@ -1,0 +1,19 @@
+@import "contstants";
+@import "reset";
+
+html, body {
+  height: 100%;
+}
+
+html {
+	color: $color;
+	font-size: $font-size;
+	line-height: $line-height;
+}
+
+@media (min-width: 600px) {
+  .content {
+    width: 600px;
+    margin: 0 auto;
+  }
+}

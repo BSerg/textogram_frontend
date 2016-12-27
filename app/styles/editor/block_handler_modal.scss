@@ -1,0 +1,34 @@
+@import "../contstants";
+@import "../mixins";
+
+.block_handler_modal {
+  background-color: $color;
+  width: 100%;
+  height: 100%;
+  padding: $padding;
+
+  ._block_handler_button {
+    float: left;
+    margin: calc(((100% - #{$padding} * 2)/3 - 64px - 2px) / 2);
+  }
+}
+
+.block_handler_modal__item {
+  float: left;
+  $size: calc((100% - #{$padding} * 2) / 3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  width: $size;
+  margin-bottom: $margin * 2;
+}
+
+.block_handler_modal__caption {
+  color: white;
+  text-transform: uppercase;
+  text-align: center;
+  font-size: 10px;
+  letter-spacing: 1px;
+  margin-top: $margin;
+}
