@@ -1,6 +1,8 @@
 import * as React from 'react';
 import {BlockContentTypes} from '../../constants';
 import {BlockHandlerAction, OPEN_BLOCK_HANDLER_MODAL} from '../../actions/editor/BlockHandlerAction';
+import {ContentAction, CREATE_CONTENT, SWAP_CONTENT, IContentData} from '../../actions/editor/ContentAction';
+import {api} from '../../api';
 import '../../styles/editor/block_handler_button.scss';
 
 const AddIcon = require('babel!svg-react!../../assets/images/redactor_icon_add.svg?name=AddIcon');
@@ -24,7 +26,7 @@ type Size = "small" | "normal";
 interface IContentButtonProps {
     type: BlockContentTypes
     size?: Size
-    articleSlug: string
+    articleId: number
     blockPosition: number
     onClick?: () => any
 }
@@ -40,16 +42,21 @@ export default class BlockHandlerButton extends React.Component<IContentButtonPr
         size: "normal"
     };
 
+    private createContent(type: BlockContentTypes) {
+        api.post('/articles/content/', {
+            articleId: this.props.articleId
+        })
+    }
+
     private getButtonProps(): {icon: any, onClick: () => any} {
         switch (this.props.type) {
             case BlockContentTypes.ADD:
                 return {
                     icon: <AddIcon/>,
                     onClick: () => {
-                        console.log('OPEN CONTENT MODAL')
                         BlockHandlerAction.do(
                             OPEN_BLOCK_HANDLER_MODAL,
-                            {articleSlug: this.props.articleSlug, blockPosition: this.props.blockPosition}
+                            {articleId: this.props.articleId, blockPosition: this.props.blockPosition}
                         )
                     }
                 };
@@ -57,14 +64,25 @@ export default class BlockHandlerButton extends React.Component<IContentButtonPr
                 return {
                     icon: <SwapIcon/>,
                     onClick: () => {
-                        console.log('SWAP BLOCKS')
+                        console.log('SWAP BLOCKS');
+                        ContentAction.do(
+                            SWAP_CONTENT,
+                            {articleId: this.props.articleId, position: this.props.blockPosition}
+                        );
                     }
                 };
             case BlockContentTypes.TEXT:
                 return {
                     icon: <TextIcon/>,
                     onClick: () => {
-                        console.log('ADD TEXT')
+                        console.log('ADD TEXT');
+                        let data: IContentData = {
+                            type: BlockContentTypes.TEXT,
+                            article: this.props.articleId,
+                            position: this.props.blockPosition,
+                            text: ''
+                        };
+                        ContentAction.do(CREATE_CONTENT, data);
                     }
                 };
             case BlockContentTypes.HEADER:

@@ -6,7 +6,7 @@ import '../../styles/editor/block_handler_modal.scss';
 
 
 interface IBlockHandlerModal {
-    articleSlug: string
+    articleId: number
     blockPosition: number
 }
 
@@ -41,7 +41,7 @@ export class BlockHandlerModal extends React.Component<IBlockHandlerModal, any> 
                     return (
                         <div className="block_handler_modal__item">
                             <BlockHandlerButton type={item.type}
-                                                articleSlug={this.props.articleSlug}
+                                                articleId={this.props.articleId}
                                                 blockPosition={this.props.blockPosition}
                                                 onClick={this.handleClick.bind(this)}/>
                             <div className="block_handler_modal__caption">{item.caption}</div>

@@ -1,0 +1,12 @@
+@import "../contstants";
+@import "../mixins";
+
+
+.base_content_block {
+  padding: $padding;
+  background-color: white;
+
+  &.active {
+    background-color: $color4;
+  }
+}

@@ -12,6 +12,10 @@
   margin-bottom: -25px;
   z-index: 1;
 
+  &:not(.last) {
+    opacity: 0;
+  }
+
   &:after {
     content: '';
     position: absolute;
@@ -22,6 +26,18 @@
     width: calc(100% - #{$padding} * 2);
     background-color: $color3;
     z-index: -1;
+  }
 
+  &:not(.last) .block_handler_button {
+    display: none;
+  }
+
+  &:hover {
+    display: flex;
+    opacity: 1;
+
+    .block_handler_button {
+      display: block;
+    }
   }
 }

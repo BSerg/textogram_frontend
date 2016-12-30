@@ -52,7 +52,7 @@ module.exports = {
         new DefinePlugin({
             "process.env": {
                 NODE_ENV: JSON.stringify("dev"),
-                API_URL: "http://localhost:8000/api/v1"
+                API_URL: JSON.stringify("http://localhost:8000/api/v1")
             }
         }),
         HTMLWebpackPluginConfig

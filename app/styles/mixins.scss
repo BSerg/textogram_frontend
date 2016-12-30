@@ -10,3 +10,11 @@
   -o-transition: $duration $type;
   transition: $duration $type;
 }
+
+@mixin scale($x, $y) {
+  -webkit-transform: scale($x, $y);
+  -moz-transform: scale($x, $y);
+  -ms-transform: scale($x, $y);
+  -o-transform: scale($x, $y);
+  transform: scale($x, $y);
+}

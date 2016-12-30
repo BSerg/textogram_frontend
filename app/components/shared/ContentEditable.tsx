@@ -6,7 +6,7 @@ type ElementType = 'inline' | 'p' | 'div' | 'ul' | 'ol';
 type AlignContent = 'left' | 'center' | 'right';
 
 interface ContentEditableProps {
-    content?: any,
+    content?: string,
     className?: string,
     editable?: boolean,
     disabled?: boolean,
@@ -17,6 +17,8 @@ interface ContentEditableProps {
     elementType?: ElementType,
     alignContent?: AlignContent,
     focusOnMount?: boolean,
+    onFocus?: () => any,
+    onBlur?: () => any,
 }
 
 interface ContentEditableState {
@@ -75,6 +77,7 @@ export default class ContentEditable extends React.Component<ContentEditableProp
         }
     }
     handleInput (e?: Event) {
+        console.log('HEY, INPUT')
         clearTimeout(this.handleChangeDelayProcess);
         this.setState(this.extractContent(), () => {
             if (!this.state.contentText.trim()) {
@@ -87,6 +90,12 @@ export default class ContentEditable extends React.Component<ContentEditableProp
             }
         });
     }
+    handleFocus() {
+        this.props.onFocus && this.props.onFocus();
+    }
+    handleBlur() {
+        this.props.onBlur && this.props.onBlur();
+    }
     handlePaste(e: any) {
         let content;
         e.preventDefault();
@@ -96,7 +105,7 @@ export default class ContentEditable extends React.Component<ContentEditableProp
         }
     }
     componentDidMount() {
-        this.handleInput();
+        this.setState(this.extractContent());
         if (this.props.focusOnMount) {
             setTimeout(() => {
                 this.refs.editableElement.focus();
@@ -122,6 +131,8 @@ export default class ContentEditable extends React.Component<ContentEditableProp
                  contentEditable={this.props.editable}
                  onInput={this.handleInput.bind(this)}
                  onPaste={this.handlePaste.bind(this)}
+                 onFocus={this.handleFocus.bind(this)}
+                 onBlur={this.handleBlur.bind(this)}
                  dangerouslySetInnerHTML={{__html: this.props.content || this.getElementEmptyContentByType()}}>
             </div>
         )

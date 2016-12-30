@@ -1,0 +1,22 @@
+@import "../contstants";
+@import "../mixins";
+
+.content_block_text {
+
+  p {
+    &:not(:last-child) {
+      margin-bottom: $margin;
+    }
+  }
+
+  a, a:visited {
+    font-weight: $font-weight-bold;
+    text-decoration: underline;
+  }
+
+  &.active {
+    .content_editable.empty:empty:after, .content_editable.empty:last-child:after {
+      font-weight: $font-weight-bold;
+    }
+  }
+}

@@ -4,9 +4,9 @@ import {BlockContentTypes} from '../../constants';
 import '../../styles/editor/block_handler.scss';
 
 interface IBlockHandlerProps {
-    articleSlug: string
-    blockPosition: number,
-    items?: Array<BlockContentTypes>,
+    articleId: number
+    blockPosition: number
+    items?: Array<BlockContentTypes>
     isLast?: boolean
 }
 
@@ -25,15 +25,20 @@ export default class BlockHandler extends React.Component<IBlockHandlerProps, IB
 
     static defaultProps = {
         items: [BlockContentTypes.ADD]
-    }
+    };
 
     render() {
+        let className = 'block_handler';
+        if (this.props.isLast) {
+            className += ' last';
+        }
+
         return (
-            <div className="block_handler">
+            <div className={className}>
                 {this.state.items.map((type) => {
                     return <BlockHandlerButton type={type}
                                                size="small"
-                                               articleSlug={this.props.articleSlug}
+                                               articleId={this.props.articleId}
                                                blockPosition={this.props.blockPosition}/>
                 })}
 

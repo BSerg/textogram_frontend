@@ -9,6 +9,8 @@ import Profile from './components/Profile';
 import Editor from './components/Editor';
 import Error from './components/Error';
 
+import 'core-js/shim';
+
 class App extends React.Component<any, any> {
     render() {
         return (

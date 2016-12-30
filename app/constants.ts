@@ -4,6 +4,9 @@ export namespace Captions {
         remove_cover_ru: 'Удалить обложку',
         enter_title_ru: 'Введите заголовок',
         add_content_help: 'Выберите тип контента, нажав на "плюс"',
+        enter_text: 'Введите текст',
+        enter_header: 'Введите заголовок',
+        enter_lead: 'Введите лид',
         content_text: 'Текст',
         content_header: 'Заголовок',
         content_lead: 'Лид',
@@ -16,6 +19,7 @@ export namespace Captions {
         content_list: 'Список',
         content_dialog: 'Диалог',
         content_post: 'Пост',
+
     }
 }
 
@@ -24,18 +28,18 @@ export namespace Constants {
 }
 
 export enum BlockContentTypes {
-    ADD = 1,
-    SWAP_BLOCKS = 2,
-    TEXT = 3,
-    HEADER = 4,
-    LEAD = 5,
-    VIDEO = 6,
-    PHOTO = 7,
-    AUDIO = 8,
-    QUOTE = 9,
-    COLUMNS = 10,
-    PHRASE = 11,
-    LIST = 12,
-    DIALOG = 13,
-    POST = 14,
+    ADD = 101,
+    SWAP_BLOCKS = 102,
+    TEXT = 1,
+    HEADER = 2,
+    LEAD = 3,
+    VIDEO = 4,
+    PHOTO = 5,
+    AUDIO = 6,
+    QUOTE = 7,
+    COLUMNS = 8,
+    PHRASE = 9,
+    LIST = 10,
+    DIALOG = 11,
+    POST = 12,
 }

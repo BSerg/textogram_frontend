@@ -1,13 +1,14 @@
 import * as React from 'react';
 import TitleBlock from './editor/TitleBlock'
 import BlockHandler from './editor/BlockHandler';
+import BaseContentBlock from './editor/BaseContentBlock';
+import TextContentBlock from './editor/TextContentBlock';
+import {ContentAction, CREATE_CONTENT, DELETE_CONTENT, SWAP_CONTENT} from '../actions/editor/ContentAction';
 import {Captions, BlockContentTypes} from '../constants'
-
 import Error from './Error';
 import {api} from '../api';
 
 import '../styles/editor.scss';
-import AxiosXHR = Axios.AxiosXHR;
 
 
 interface IEditorState {
@@ -21,8 +22,37 @@ export default class Editor extends React.Component<any, IEditorState> {
         super(props);
     }
 
-    handleChange(content: string, contentText: string) {
-        console.log(content, contentText);
+    processContentBlock(contentBlock: any) {
+        return contentBlock;
+    }
+
+    processContent(content: any[]) {
+        return content.map((contentBlock: any) => {
+            return this.processContentBlock(contentBlock);
+        });
+    }
+
+    handleCreateContent() {
+        let store: any = ContentAction.getStore();
+        let item = store.actionMap[CREATE_CONTENT];
+        console.log(item);
+        this.state.article.content = this.state.article.content.map((_item: any, index: number) => {
+            if (index >= item.position) {
+                _item.position++;
+            }
+            return _item;
+        });
+        this.state.article.content.splice(item.position, 0, item);
+        console.log(this.state.article);
+        this.setState({article: this.state.article});
+    }
+
+    handleDeleteContent() {
+        let store = ContentAction.getStore();
+    }
+
+    handleSwapContent() {
+        let store = ContentAction.getStore();
     }
 
     componentDidMount() {
@@ -40,7 +70,17 @@ export default class Editor extends React.Component<any, IEditorState> {
                         break;
                 }
             }
-        })
+        });
+
+        ContentAction.onChange(CREATE_CONTENT, this.handleCreateContent.bind(this));
+        ContentAction.onChange(DELETE_CONTENT, this.handleCreateContent.bind(this));
+        ContentAction.onChange(SWAP_CONTENT, this.handleSwapContent.bind(this));
+    }
+
+    componentWillUnmount() {
+        ContentAction.unbind(CREATE_CONTENT, this.handleCreateContent.bind(this));
+        ContentAction.unbind(DELETE_CONTENT, this.handleCreateContent.bind(this));
+        ContentAction.unbind(SWAP_CONTENT, this.handleSwapContent.bind(this));
     }
 
     render() {
@@ -52,13 +92,36 @@ export default class Editor extends React.Component<any, IEditorState> {
                             <TitleBlock key="titleBlock" articleSlug={this.props.params.articleSlug}
                                 title={this.state.article.title}
                                 cover={this.state.article.cover}/>,
-                            <BlockHandler articleSlug={this.props.params.articleSlug}
-                                          blockPosition={0}
+
+                            this.state.article.content.map((contentBlock: any, index: number) => {
+                                let blockHandlerButtons, block;
+                                if (index == 0) {
+                                    blockHandlerButtons = [BlockContentTypes.ADD]
+                                }
+
+                                switch (contentBlock.type) {
+                                    case BlockContentTypes.TEXT:
+                                        block = <TextContentBlock key={"content" + contentBlock.id} content={contentBlock}/>
+                                }
+
+                                return [
+                                    <BlockHandler key={"handler" + contentBlock.position}
+                                                  articleId={this.state.article.id}
+                                                  blockPosition={contentBlock.position}
+                                                  items={blockHandlerButtons}/>,
+                                    block
+                                ]
+                            }),
+                            <BlockHandler key={"handler" + this.state.article.content.length}
+                                          articleId={this.state.article.id}
+                                          blockPosition={this.state.article.content.length}
+                                          isLast={true}
                                           items={[
-                                              BlockContentTypes.SWAP_BLOCKS,
-                                              BlockContentTypes.ADD
+                                              BlockContentTypes.TEXT,
+                                              BlockContentTypes.ADD,
+                                              BlockContentTypes.PHOTO
                                           ]}/>,
-                            <div className="add_content_help">{Captions.editor.add_content_help}</div>
+                            <div key="add_content_help" className="add_content_help">{Captions.editor.add_content_help}</div>
                         ] : null
                     }
                     {this.state && this.state.error ? this.state.error : null}
