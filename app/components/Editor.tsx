@@ -3,6 +3,7 @@ import TitleBlock from './editor/TitleBlock'
 import BlockHandler from './editor/BlockHandler';
 import BaseContentBlock from './editor/BaseContentBlock';
 import TextContentBlock from './editor/TextContentBlock';
+import HeaderContentBlock from './editor/HeaderContentBlock';
 import {ContentAction, CREATE_CONTENT, DELETE_CONTENT, SWAP_CONTENT} from '../actions/editor/ContentAction';
 import {Captions, BlockContentTypes} from '../constants'
 import Error from './Error';
@@ -48,11 +49,31 @@ export default class Editor extends React.Component<any, IEditorState> {
     }
 
     handleDeleteContent() {
-        let store = ContentAction.getStore();
+        let store: any = ContentAction.getStore();
+        let item = store.actionMap[DELETE_CONTENT];
+        console.log(item);
+        let content: any[] = [];
+        this.state.article.content.forEach((_item: any, index: number) => {
+            if (_item.id != item.id) {
+                _item.position = content.length;
+                content.push(_item);
+
+            }
+        });
+        this.state.article.content = content;
+        this.setState({article: this.state.article});
     }
 
     handleSwapContent() {
         let store = ContentAction.getStore();
+        let swappedItem = store.actionMap[SWAP_CONTENT];
+        let item = this.state.article.content.splice(swappedItem.position, 1)[0];
+        this.state.article.content.splice(swappedItem.position - 1, 0, item);
+        this.state.article.content = this.state.article.content.map((_item: any, index: number) => {
+            _item.position = index;
+            return _item;
+        });
+        this.setState({article: this.state.article});
     }
 
     componentDidMount() {
@@ -73,13 +94,13 @@ export default class Editor extends React.Component<any, IEditorState> {
         });
 
         ContentAction.onChange(CREATE_CONTENT, this.handleCreateContent.bind(this));
-        ContentAction.onChange(DELETE_CONTENT, this.handleCreateContent.bind(this));
+        ContentAction.onChange(DELETE_CONTENT, this.handleDeleteContent.bind(this));
         ContentAction.onChange(SWAP_CONTENT, this.handleSwapContent.bind(this));
     }
 
     componentWillUnmount() {
         ContentAction.unbind(CREATE_CONTENT, this.handleCreateContent.bind(this));
-        ContentAction.unbind(DELETE_CONTENT, this.handleCreateContent.bind(this));
+        ContentAction.unbind(DELETE_CONTENT, this.handleDeleteContent.bind(this));
         ContentAction.unbind(SWAP_CONTENT, this.handleSwapContent.bind(this));
     }
 
@@ -95,13 +116,21 @@ export default class Editor extends React.Component<any, IEditorState> {
 
                             this.state.article.content.map((contentBlock: any, index: number) => {
                                 let blockHandlerButtons, block;
+
                                 if (index == 0) {
                                     blockHandlerButtons = [BlockContentTypes.ADD]
+                                } else {
+                                    blockHandlerButtons = [BlockContentTypes.SWAP_BLOCKS, BlockContentTypes.ADD]
                                 }
 
                                 switch (contentBlock.type) {
                                     case BlockContentTypes.TEXT:
-                                        block = <TextContentBlock key={"content" + contentBlock.id} content={contentBlock}/>
+                                        block = <TextContentBlock key={"content" + contentBlock.id}
+                                                                  content={contentBlock}/>
+                                        break;
+                                    case BlockContentTypes.HEADER:
+                                        block = <HeaderContentBlock key={"content" + contentBlock.id}
+                                                                    content={contentBlock}/>
                                 }
 
                                 return [

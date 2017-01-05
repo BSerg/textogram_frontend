@@ -20,7 +20,7 @@ export default class Action extends events.EventEmitter {
         return action + '__start';
     }
 
-    getStore() {
+    getStore(): any {
         return this.store;
     }
 

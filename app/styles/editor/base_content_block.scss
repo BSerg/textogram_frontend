@@ -6,7 +6,15 @@
   padding: $padding;
   background-color: white;
 
+  &:last-child {
+    border: 1px solid red;
+  }
+
   &.active {
     background-color: $color4;
+  }
+
+  &.last {
+    padding-bottom: 25px + $padding;
   }
 }

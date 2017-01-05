@@ -1,6 +1,7 @@
 import * as React from 'react';
 import MenuButton from './shared/MenuButton';
 import Modal from './shared/Modal';
+import PopupPanel from './shared/PopupPanel';
 
 import '../styles/base.scss';
 
@@ -16,6 +17,7 @@ export default class Base extends React.Component<any, any> {
                 </div>
                 <MenuButton/>
                 <Modal/>
+                <PopupPanel/>
             </div>
         )
     }

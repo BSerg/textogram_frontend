@@ -89,7 +89,14 @@ export default class BlockHandlerButton extends React.Component<IContentButtonPr
                 return {
                     icon: <HeaderIcon/>,
                     onClick: () => {
-                        console.log('ADD HEADER')
+                        console.log('ADD HEADER');
+                        let data: IContentData = {
+                            type: BlockContentTypes.HEADER,
+                            article: this.props.articleId,
+                            position: this.props.blockPosition,
+                            text: ''
+                        };
+                        ContentAction.do(CREATE_CONTENT, data);
                     }
                 };
             case BlockContentTypes.LEAD:

@@ -46,9 +46,9 @@ ContentAction.setMaxListeners(500);
 ContentAction.registerAsync(SWAP_CONTENT, (store, data: {articleId: number, position: number}) => {
     console.log(data);
     return new Promise((resolve, reject) => {
-        api.patch(`/articles/editor/${data.articleId}/swap/`, data).then((response: any) => {
+        api.patch(`/articles/editor/${data.articleId}/swap/`, {position: data.position}).then((response: any) => {
             console.log(response);
-            store.actionMap[SWAP_CONTENT] = response.data;
+            store.actionMap[SWAP_CONTENT] = data;
             console.log(store);
             resolve(response.data);
         }).catch((err: any) => {

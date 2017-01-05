@@ -1,0 +1,8 @@
+@import "../contstants";
+@import "../mixins";
+
+.content_block_header {
+  font-size: $font_size2;
+  font-weight: $font-weight-bold;
+  line-height: $line-height2;
+}

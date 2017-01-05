@@ -29,7 +29,9 @@
   }
 
   &:not(.last) .block_handler_button {
-    display: none;
+    @include transition();
+    //display: none;
+    @include scale(0, 0);
   }
 
   &:hover {
@@ -37,7 +39,9 @@
     opacity: 1;
 
     .block_handler_button {
-      display: block;
+      @include transition();
+      //display: block;
+      @include scale(1, 1);
     }
   }
 }

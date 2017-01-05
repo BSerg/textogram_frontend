@@ -14,4 +14,9 @@
   text-align: center;
   padding: $padding;
   margin-top: $margin;
+  margin-bottom: 50px;
+}
+
+.editor__wrapper .base_content_block:last-child {
+  padding-bottom: 25px + $padding!important;
 }

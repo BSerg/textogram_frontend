@@ -1,12 +1,15 @@
 import * as React from 'react';
 import {Captions, Constants} from '../../constants';
 import ContentEditable from '../shared/ContentEditable';
-import {ActivateContentBlockAction, ACTIVATE_CONTENT_BLOCK} from '../../actions/editor/ActivateContentBlockAction';
+import {ContentBlockAction, ACTIVATE_CONTENT_BLOCK, DELETE_CONTENT_BLOCK} from '../../actions/editor/ContentBlockAction';
+import {ContentAction, DELETE_CONTENT} from '../../actions/editor/ContentAction';
+import {PopupPanelAction, OPEN_POPUP, CLOSE_POPUP} from '../../actions/shared/PopupPanelAction';
+import ContentBlockPopup from './ContentBlockPopup'
 import '../../styles/editor/base_content_block.scss';
 
 interface IBaseContnentBlockProps {
     className?: string
-    id?: number|string
+    id: number|string
     onActive?: () => any
     onBlur?: () => any
     onClick?: () => any
@@ -25,18 +28,17 @@ export default class BaseContentBlock extends React.Component<IBaseContnentBlock
         }
     }
 
-    static defaultProps = {
-        id: Math.random().toString().substr(2, 7)
-    };
-
     handleActivate() {
-        let store: any = ActivateContentBlockAction.getStore();
+        let store: any = ContentBlockAction.getStore();
         if ((store.id == this.props.id) !== this.state.isActive) {
             this.setState({isActive: store.id == this.props.id}, () => {
                 if (this.state.isActive && this.props.onActive) {
                     this.props.onActive();
                 } else if (!this.state.isActive && this.props.onBlur) {
                     this.props.onBlur();
+                }
+                if (this.state.isActive) {
+                    PopupPanelAction.do(OPEN_POPUP, {content: <ContentBlockPopup onDelete={this.handleDelete.bind(this)}/>});
                 }
             });
         }
@@ -46,12 +48,16 @@ export default class BaseContentBlock extends React.Component<IBaseContnentBlock
         this.props.onClick && this.props.onClick();
     }
 
+    handleDelete() {
+        ContentAction.do(DELETE_CONTENT, {id: this.props.id})
+    }
+
     componentDidMount() {
-        ActivateContentBlockAction.onChange(ACTIVATE_CONTENT_BLOCK, this.handleActivate.bind(this));
+        ContentBlockAction.onChange(ACTIVATE_CONTENT_BLOCK, this.handleActivate.bind(this));
     }
 
     componentWillUnmount() {
-        ActivateContentBlockAction.unbind(ACTIVATE_CONTENT_BLOCK, this.handleActivate.bind(this));
+        ContentBlockAction.unbind(ACTIVATE_CONTENT_BLOCK, this.handleActivate.bind(this));
     }
 
     render() {

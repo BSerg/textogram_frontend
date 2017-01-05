@@ -1,0 +1,22 @@
+@import "../contstants";
+@import "../mixins";
+
+$size: 50px;
+
+.popup_panel {
+  display: flex;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: $size;
+  align-items: center;
+  justify-content: flex-start;
+  color: white;
+  background-color: $color;
+  z-index: 20;
+
+  &:not(.opened) {
+    display: none;
+  }
+}
