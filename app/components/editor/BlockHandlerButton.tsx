@@ -103,7 +103,14 @@ export default class BlockHandlerButton extends React.Component<IContentButtonPr
                 return {
                     icon: <LeadIcon/>,
                     onClick: () => {
-                        console.log('ADD LEAD')
+                        console.log('ADD LEAD');
+                        let data: IContentData = {
+                            type: BlockContentTypes.LEAD,
+                            article: this.props.articleId,
+                            position: this.props.blockPosition,
+                            text: ''
+                        };
+                        ContentAction.do(CREATE_CONTENT, data);
                     }
                 };
             case BlockContentTypes.VIDEO:
@@ -145,7 +152,14 @@ export default class BlockHandlerButton extends React.Component<IContentButtonPr
                 return {
                     icon: <PhraseIcon/>,
                     onClick: () => {
-                        console.log('ADD PHRASE')
+                        console.log('ADD PHRASE');
+                        let data: IContentData = {
+                            type: BlockContentTypes.PHRASE,
+                            article: this.props.articleId,
+                            position: this.props.blockPosition,
+                            text: ''
+                        };
+                        ContentAction.do(CREATE_CONTENT, data);
                     }
                 };
             case BlockContentTypes.LIST:

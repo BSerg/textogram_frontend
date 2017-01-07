@@ -1,10 +1,11 @@
 @import "../contstants";
 @import "../mixins";
 
-.content_block_text {
-  font-size: $font-size;
-  font-weight: $font-weight;
-  line-height: $line-height;
+.content_block_lead {
+
+  font-size: $font-size3;
+  font-weight: $font-weight-bold;
+  line-height: $line-height3;
 
   p {
     &:not(:last-child) {

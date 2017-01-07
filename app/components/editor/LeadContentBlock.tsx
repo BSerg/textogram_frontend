@@ -1,30 +1,30 @@
-import * as React from 'react';
-import {Captions, Constants} from '../../constants';
-import ContentEditable from '../shared/ContentEditable';
-import BaseContentBlock from './BaseContentBlock';
-import {ContentBlockAction, ACTIVATE_CONTENT_BLOCK} from '../../actions/editor/ContentBlockAction';
-import {ContentAction, UPDATE_CONTENT} from '../../actions/editor/ContentAction';
+import * as React from "react";
+import {Captions} from "../../constants";
+import ContentEditable from "../shared/ContentEditable";
+import BaseContentBlock from "./BaseContentBlock";
+import {ContentBlockAction, ACTIVATE_CONTENT_BLOCK} from "../../actions/editor/ContentBlockAction";
+import {ContentAction, UPDATE_CONTENT} from "../../actions/editor/ContentAction";
 import * as toMarkdown from 'to-markdown';
-import '../../styles/editor/text_content_block.scss';
 import * as marked from 'marked';
+import "../../styles/editor/lead_content_block.scss";
 
-interface ITextContent {
+interface ILeadContent {
     id: number
     article: number
     position: number
     text: string
 }
 
-interface ITextContentBlockProps {
-    content: ITextContent
+interface ILeadContentBlockProps {
+    content: ILeadContent
     className?: string
 }
 
-interface ITextContentBlockState {
-    content: ITextContent
+interface ILeadContentBlockState {
+    content: ILeadContent
 }
 
-export default class TextContentBlock extends React.Component<ITextContentBlockProps, ITextContentBlockState> {
+export default class LeadContentBlock extends React.Component<ILeadContentBlockProps, ILeadContentBlockState> {
     constructor(props: any) {
         super(props);
         this.state = {
@@ -54,7 +54,7 @@ export default class TextContentBlock extends React.Component<ITextContentBlockP
     }
 
     render() {
-        let className = 'content_block_text';
+        let className = 'content_block_lead';
         if (this.props.className) {
             className += ' ' + this.props.className;
         }
@@ -65,7 +65,7 @@ export default class TextContentBlock extends React.Component<ITextContentBlockP
                                  onChange={this.handleChange.bind(this)}
                                  onChangeDelay={1000}
                                  content={marked(this.state.content.text)}
-                                 placeholder={Captions.editor.enter_text}/>
+                                 placeholder={Captions.editor.enter_lead}/>
             </BaseContentBlock>
         )
     }

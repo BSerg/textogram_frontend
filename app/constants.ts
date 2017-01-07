@@ -7,6 +7,7 @@ export namespace Captions {
         enter_text: 'Введите текст',
         enter_header: 'Введите заголовок',
         enter_lead: 'Введите лид',
+        enter_phrase: 'Введите фразу',
         content_text: 'Текст',
         content_header: 'Заголовок',
         content_lead: 'Лид',

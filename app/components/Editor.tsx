@@ -4,6 +4,8 @@ import BlockHandler from './editor/BlockHandler';
 import BaseContentBlock from './editor/BaseContentBlock';
 import TextContentBlock from './editor/TextContentBlock';
 import HeaderContentBlock from './editor/HeaderContentBlock';
+import LeadContentBlock from './editor/LeadContentBlock';
+import PhraseContentBlock from './editor/PhraseContentBlock';
 import {ContentAction, CREATE_CONTENT, DELETE_CONTENT, SWAP_CONTENT} from '../actions/editor/ContentAction';
 import {Captions, BlockContentTypes} from '../constants'
 import Error from './Error';
@@ -126,11 +128,21 @@ export default class Editor extends React.Component<any, IEditorState> {
                                 switch (contentBlock.type) {
                                     case BlockContentTypes.TEXT:
                                         block = <TextContentBlock key={"content" + contentBlock.id}
-                                                                  content={contentBlock}/>
+                                                                  content={contentBlock}/>;
                                         break;
                                     case BlockContentTypes.HEADER:
                                         block = <HeaderContentBlock key={"content" + contentBlock.id}
-                                                                    content={contentBlock}/>
+                                                                    content={contentBlock}/>;
+                                        break;
+                                    case BlockContentTypes.LEAD:
+                                        block = <LeadContentBlock key={"content" + contentBlock.id}
+                                                                  content={contentBlock}/>;
+                                        break;
+                                    case BlockContentTypes.PHRASE:
+                                        block = <PhraseContentBlock key={"content" + contentBlock.id}
+                                                                    content={contentBlock}/>;
+                                        break;
+
                                 }
 
                                 return [
