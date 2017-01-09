@@ -1,5 +1,7 @@
 import * as React from 'react';
 
+import {Link} from 'react-router';
+
 import '../styles/profile.scss';
 
 import {api} from '../api';
@@ -11,13 +13,12 @@ const VKIcon = require('babel!svg-react!../assets/images/profile_social_icon_vk.
 const FBIcon = require('babel!svg-react!../assets/images/profile_social_icon_fb.svg?name=FBIcon');
 
 
-interface ISocialLinksProps {
-    social_links: any[];
+interface ISocialLinkProps {
+    social_link: any;
     is_self?: boolean;
-
 }
 
-class SocialLinks extends React.Component<ISocialLinksProps, any> {
+class SocialLink extends React.Component<ISocialLinkProps, any> {
 
     ICONS: any = {
         'vk': VKIcon,
@@ -25,27 +26,21 @@ class SocialLinks extends React.Component<ISocialLinksProps, any> {
         'facebook': FBIcon
     };
 
-    componentDidMount() {}
-
     getIcon(social: string) {
-        console.log('iconzez');
-        console.log(this.ICONS[social]);
-        return <div>{social}</div>;
+        let Icon = this.ICONS[social];
+        return Icon ? <Icon /> : null;
+    }
+
+    handleClick() {
+        console.log(this.props.social_link.url);
     }
 
     render() {
+        let Icon = this.ICONS[this.props.social_link.social];
         return (
-            <div className="profile_social_links">
-                { this.props.social_links.map((social_link: any, index: number) => {
-                    return (<div key={ index }>{this.getIcon.bind(social_link.social)}</div>)
-                }) }
-            </div>);
-    }
-}
-
-class ProfileAvatar extends React.Component<any, any> {
-    render() {
-        return (<div></div>);
+            <div className={ Icon ? "profile__social_icon" : "" }>
+                { Icon ? <Link to={this.props.social_link.url} target="_blank" ><Icon /></Link> : null }
+            </div>)
     }
 }
 
@@ -92,16 +87,20 @@ export default class Profile extends React.Component<any, IProfileState> {
                  <div id="profile_content">
                     {
                         this.state && this.state.user ? [
-                            <div  className="profile_header" key="header"></div>,
-                            <div className="profile_avatar" key="avatar">
+                            <div  className="profile__header" key="header"></div>,
+                            <div className="profile__avatar" key="avatar">
                                 <img src={this.state.user.avatar}/>
                             </div>,
 
-                            <div key="username" className="profile_username">
+                            <div key="username" className="profile__username">
                                 <span>{this.state.user.first_name}</span> <span> {this.state.user.last_name}</span>
                             </div>,
 
-
+                            <div className="profile__social_links" key="social_links">
+                                { this.state.user.social_links.map((social_link: any, index: number) => {
+                                    return <SocialLink social_link={ social_link } key={ index }/>
+                                }) }
+                            </div>
 
                         ] : null
                     }
