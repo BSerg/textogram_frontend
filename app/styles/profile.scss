@@ -1,0 +1,65 @@
+@import "contstants";
+@import "mixins";
+
+$header-height: 70px;
+
+
+#profile_content {
+  $avatar-side-size: 78px;
+
+  //margin-top: $header-height + $avatar-side-size/2 + $margin;
+
+  .profile_header {
+    background-color: $color;
+    height: $header-height;
+    min-width: 100%;
+
+  }
+
+
+  .profile_avatar, .profile_username {
+    min-width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+
+  }
+
+  .profile_avatar {
+
+
+
+    position: relative;
+    //left: 0;
+
+    height: $avatar-side-size / 2;
+    margin-bottom: $margin;
+
+    img {
+      position: absolute;
+      top: -$avatar-side-size/2;
+      width: $avatar-side-size;
+      height: $avatar-side-size;
+
+      @include border_radius($avatar-side-size);
+
+    }
+  }
+
+  .profile_username {
+    text-transform: uppercase;
+
+    span {
+      font-size: $font-size;
+    }
+
+    span:first-child {
+      font-weight: $font-weight-bold;
+      margin-right: 10px;
+    }
+  }
+
+}
+
+
