@@ -6,6 +6,8 @@ import TextContentBlock from './editor/TextContentBlock';
 import HeaderContentBlock from './editor/HeaderContentBlock';
 import LeadContentBlock from './editor/LeadContentBlock';
 import PhraseContentBlock from './editor/PhraseContentBlock';
+import PhotoContentBlock from './editor/PhotoContentBlock';
+import ListContentBlock from './editor/ListContentBlock';
 import {ContentAction, CREATE_CONTENT, DELETE_CONTENT, SWAP_CONTENT} from '../actions/editor/ContentAction';
 import {Captions, BlockContentTypes} from '../constants'
 import Error from './Error';
@@ -142,7 +144,14 @@ export default class Editor extends React.Component<any, IEditorState> {
                                         block = <PhraseContentBlock key={"content" + contentBlock.id}
                                                                     content={contentBlock}/>;
                                         break;
-
+                                    case BlockContentTypes.LIST:
+                                        block = <ListContentBlock key={"content" + contentBlock.id}
+                                                                  content={contentBlock}/>;
+                                        break;
+                                    case BlockContentTypes.PHOTO:
+                                        block = <PhotoContentBlock key={"content" + contentBlock.id}
+                                                                   content={contentBlock}/>;
+                                        break;
                                 }
 
                                 return [

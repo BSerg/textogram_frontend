@@ -8,6 +8,7 @@ const DeleteButton = require('babel!svg-react!../../assets/images/redactor_icon_
 const ConfirmButton = require('babel!svg-react!../../assets/images/redactor_icon_confirm.svg?name=ConfirmButton');
 
 interface IContentBlockPopupProps {
+    extraContent?: JSX.Element|JSX.Element[]
     onConfirm?: () => any
     onDelete?: () => any
 }
@@ -39,6 +40,7 @@ export default class ContentBlockPopup extends React.Component<IContentBlockPopu
         return (
             <div className="content_block_popup">
                 <DeleteButton onClick={this.handleDelete.bind(this)}/>
+                {this.props.extraContent ? this.props.extraContent : null}
                 <ConfirmButton onClick={this.handleConfirm.bind(this)}/>
             </div>
         )

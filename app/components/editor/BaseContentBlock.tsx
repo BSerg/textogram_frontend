@@ -13,6 +13,8 @@ interface IBaseContnentBlockProps {
     onActive?: () => any
     onBlur?: () => any
     onClick?: () => any
+    onActivate?: () => any
+    popupContent?: JSX.Element
 }
 
 interface IBaseContnentBlockState {
@@ -38,7 +40,13 @@ export default class BaseContentBlock extends React.Component<IBaseContnentBlock
                     this.props.onBlur();
                 }
                 if (this.state.isActive) {
-                    PopupPanelAction.do(OPEN_POPUP, {content: <ContentBlockPopup onDelete={this.handleDelete.bind(this)}/>});
+                    this.props.onActivate && this.props.onActivate();
+                    PopupPanelAction.do(
+                        OPEN_POPUP,
+                        {
+                            content: this.props.popupContent || <ContentBlockPopup onDelete={this.handleDelete.bind(this)}/>
+                        }
+                    );
                 }
             });
         }

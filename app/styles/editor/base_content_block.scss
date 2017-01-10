@@ -3,7 +3,7 @@
 
 
 .base_content_block {
-  padding: $padding;
+  padding: $padding/2 $padding;
   background-color: white;
 
   &:last-child {

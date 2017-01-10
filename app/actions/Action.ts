@@ -2,6 +2,20 @@ import {Dispatcher} from 'flux';
 import * as events from 'events';
 
 
+interface IChainData {
+    action: string
+    data: any
+    id?: string
+}
+
+interface IChain {
+    (...data: IChainData[]): void
+}
+
+interface IAction {
+    chain: (data: IChainData[]) => void
+}
+
 export default class Action extends events.EventEmitter {
     private dispatcher: any;
     private store: {};
@@ -10,6 +24,11 @@ export default class Action extends events.EventEmitter {
         super();
         this.dispatcher = new Dispatcher();
         this.store = initStore;
+        this.setMaxListeners(0);
+    }
+
+    private generateUID() {
+        return 'uid' + Math.random().toString().substr(2, 7);
     }
 
     private getUpdateEventName(action: string): string {
@@ -18,6 +37,10 @@ export default class Action extends events.EventEmitter {
 
     private getStartEventName(action: string): string {
         return action + '__start';
+    }
+
+    private getUpdateUIDEventName(action: string, uid: string): string {
+        return this.getUpdateEventName(action) + '#' + uid;
     }
 
     getStore(): any {
@@ -33,21 +56,26 @@ export default class Action extends events.EventEmitter {
                     break
             }
         })
-
     }
 
     registerAsync(action: string, callback: (store: any, data: any) => any) {
-        this.dispatcher.register((payload: {action: string, data: any}) => {
+        this.dispatcher.register((payload: {action: string, data: any, uid?: string}) => {
             switch (payload.action) {
                 case action:
                     this.emit(this.getStartEventName(action));
                     callback(this.store, payload.data).then(() => {
                         this.emit(this.getUpdateEventName(action));
+                        if (payload.uid) {
+                            this.emit(this.getUpdateUIDEventName(action, payload.uid));
+                        }
                     });
                     break
             }
         })
+    }
 
+    onStart(action: string, callback: () => any) {
+        this.on(this.getStartEventName(action), callback);
     }
 
     onChange(action: string, callback: () => any) {
@@ -60,5 +88,14 @@ export default class Action extends events.EventEmitter {
 
     do(action: string, data: any) {
         this.dispatcher.dispatch({action: action, data: data});
+    }
+
+    doAsync(action: string, data: any): Promise<any> {
+        this.dispatcher.dispatch({action: action, data: data, uid: this.generateUID()});
+        return new Promise((resolve, reject) => {
+            this.on(this.getUpdateUIDEventName(action, data.uid), () => {
+                resolve('DONE');
+            })
+        });
     }
 }

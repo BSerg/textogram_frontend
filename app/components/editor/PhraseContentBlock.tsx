@@ -65,7 +65,7 @@ export default class PhraseContentBlock extends React.Component<IPhraseContentBl
                                  onChange={this.handleChange.bind(this)}
                                  onChangeDelay={1000}
                                  content={this.state.content.text}
-                                 placeholder={Captions.editor.content_phrase}/>
+                                 placeholder={Captions.editor.enter_phrase}/>
             </BaseContentBlock>
         )
     }
