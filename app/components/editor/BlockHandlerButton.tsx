@@ -1,9 +1,10 @@
 import * as React from 'react';
-import {BlockContentTypes} from '../../constants';
+import {BlockContentTypes, ListBlockContentTypes} from '../../constants';
 import {BlockHandlerAction, OPEN_BLOCK_HANDLER_MODAL} from '../../actions/editor/BlockHandlerAction';
 import {ContentAction, CREATE_CONTENT, SWAP_CONTENT, IContentData} from '../../actions/editor/ContentAction';
 import {api} from '../../api';
 import '../../styles/editor/block_handler_button.scss';
+import {PhotoContentBlockAction, ADD_IMAGE, IPhoto} from "../../actions/editor/PhotoContentBlockAction";
 
 const AddIcon = require('babel!svg-react!../../assets/images/redactor_icon_add.svg?name=AddIcon');
 const SwapIcon = require('babel!svg-react!../../assets/images/redactor_icon_swing.svg?name=SwapIcon');
@@ -33,6 +34,10 @@ interface IContentButtonProps {
 
 
 export default class BlockHandlerButton extends React.Component<IContentButtonProps, any> {
+    refs: {
+        inputUpload: HTMLInputElement
+    };
+
     constructor(props: any) {
         super(props);
         this.state = this.getButtonProps();
@@ -48,7 +53,7 @@ export default class BlockHandlerButton extends React.Component<IContentButtonPr
         })
     }
 
-    private getButtonProps(): {icon: any, onClick: () => any} {
+    private getButtonProps(): {icon: any, extraContent?: any, onClick: () => any} {
         switch (this.props.type) {
             case BlockContentTypes.ADD:
                 return {
@@ -117,14 +122,35 @@ export default class BlockHandlerButton extends React.Component<IContentButtonPr
                 return {
                     icon: <VideoIcon/>,
                     onClick: () => {
-                        console.log('ADD VIDEO')
+                        console.log('ADD VIDEO');
                     }
                 };
             case BlockContentTypes.PHOTO:
                 return {
                     icon: <PhotoIcon/>,
+                    extraContent: <input ref="inputUpload"
+                                         type="file"
+                                         style={{display: "none"}}
+                                         onChange={() => {
+                                            console.log('CHANGED')
+                                            let file = this.refs.inputUpload.files[0];
+                                            let data: IContentData = {
+                                                type: BlockContentTypes.PHOTO,
+                                                article: this.props.articleId,
+                                                position: this.props.blockPosition,
+                                                image: file
+                                            };
+                                            ContentAction.do(CREATE_CONTENT, data);
+                                        }}/>,
                     onClick: () => {
-                        console.log('ADD PHOTO')
+                        console.log('ADD PHOTO');
+                        // this.refs.inputUpload.click();
+                        let data: IContentData = {
+                            type: BlockContentTypes.PHOTO,
+                            article: this.props.articleId,
+                            position: this.props.blockPosition,
+                        };
+                        ContentAction.do(CREATE_CONTENT, data);
                     }
                 };
             case BlockContentTypes.AUDIO:
@@ -166,7 +192,15 @@ export default class BlockHandlerButton extends React.Component<IContentButtonPr
                 return {
                     icon: <ListIcon/>,
                     onClick: () => {
-                        console.log('ADD TEXT')
+                        console.log('ADD LIST');
+                        let data: IContentData = {
+                            type: BlockContentTypes.LIST,
+                            article: this.props.articleId,
+                            subtype: ListBlockContentTypes.UNORDERED,
+                            position: this.props.blockPosition,
+                            text: ''
+                        };
+                        ContentAction.do(CREATE_CONTENT, data);
                     }
                 };
             case BlockContentTypes.DIALOG:
@@ -199,6 +233,7 @@ export default class BlockHandlerButton extends React.Component<IContentButtonPr
         return (
             <div onClick={this.handleClick.bind(this)} className={className}>
                 {this.state.icon}
+                {this.state.extraContent ? this.state.extraContent : null}
             </div>
         )
     }

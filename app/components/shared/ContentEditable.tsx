@@ -6,23 +6,24 @@ type ElementType = 'inline' | 'p' | 'div' | 'ul' | 'ol';
 type AlignContent = 'left' | 'center' | 'right';
 
 interface ContentEditableProps {
-    content?: string,
-    className?: string,
-    editable?: boolean,
-    disabled?: boolean,
-    onChange?: (content: string, contentText: string) => any,
-    onChangeDelay?: number,
-    placeholder?: string,
-    allowLineBreak?: boolean,
-    elementType?: ElementType,
-    alignContent?: AlignContent,
-    focusOnMount?: boolean,
-    onFocus?: () => any,
-    onBlur?: () => any,
+    id?: number|string
+    content?: string
+    className?: string
+    editable?: boolean
+    disabled?: boolean
+    onChange?: (content: string, contentText: string) => any
+    onChangeDelay?: number
+    placeholder?: string
+    allowLineBreak?: boolean
+    elementType?: ElementType
+    alignContent?: AlignContent
+    focusOnMount?: boolean
+    onFocus?: () => any
+    onBlur?: () => any
 }
 
 interface ContentEditableState {
-    content: string,
+    content: string
     contentText: string
 }
 
@@ -38,6 +39,7 @@ export default class ContentEditable extends React.Component<ContentEditableProp
         this.state = {content: '', contentText: ''};
     }
     static defaultProps = {
+        id: 'contentEditable' + Math.random().toString().substr(2, 7),
         editable: true,
         disabled: false,
         onChangeDelay: 100,
@@ -48,6 +50,20 @@ export default class ContentEditable extends React.Component<ContentEditableProp
         focusOnMount: false
     };
     private getElementEmptyContentByType () {
+        switch (this.props.elementType) {
+            case 'p':
+                return `<p class="empty_tag" data-placeholder="${this.props.placeholder}"><br/></p>`;
+            case 'div':
+                return `<div class="empty_tag" data-placeholder="${this.props.placeholder}"><br/></div>`;
+            case 'ul':
+                return `<ul><li class="empty_tag" data-placeholder="${this.props.placeholder}"><br/></li></ul>`;
+            case 'ol':
+                return `<ol><li class="empty_tag" data-placeholder="${this.props.placeholder}"><br/></li></ol>`;
+            default:
+                return '';
+        }
+    }
+    private getNodeEmptyContentByType () {
         switch (this.props.elementType) {
             case 'p':
                 return `<p class="empty_tag" data-placeholder="${this.props.placeholder}"><br/></p>`;
@@ -76,12 +92,36 @@ export default class ContentEditable extends React.Component<ContentEditableProp
             contentText: contentText
         }
     }
+    setCursorTo(element: Node|HTMLElement, offset: number = 0) {
+        let range = document.createRange();
+        range.selectNodeContents(element);
+        range.collapse(false);
+        let sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+    }
+    cleanElement() {
+        if (this.props.elementType != 'inline') {
+            let elementsForExcluding = this.refs.editableElement.parentElement.querySelectorAll(
+                `.content_editable > :not(${this.props.elementType})`
+            );
+            if (elementsForExcluding.length) {
+                for (let i = 0; i < elementsForExcluding.length; i++) {
+                    console.log(elementsForExcluding[i]);
+                    this.refs.editableElement.removeChild(elementsForExcluding[i]);
+                }
+                this.setCursorTo(this.refs.editableElement.lastChild);
+            }
+        }
+    }
     handleInput (e?: Event) {
-        console.log('HEY, INPUT')
         clearTimeout(this.handleChangeDelayProcess);
         this.setState(this.extractContent(), () => {
             if (!this.state.contentText.trim()) {
                 this.refs.editableElement.innerHTML = this.getElementEmptyContentByType();
+                this.setCursorTo(this.refs.editableElement.childNodes[0]);
+            } else {
+                this.cleanElement();
             }
             if (this.props.onChange) {
                 this.handleChangeDelayProcess = window.setTimeout(() => {
@@ -126,6 +166,7 @@ export default class ContentEditable extends React.Component<ContentEditableProp
         className += (this.props.alignContent == 'left' ? '' : (' ' + this.props.alignContent));
         return (
             <div ref="editableElement"
+                 id={this.props.id.toString()}
                  className={className}
                  data-placeholder={this.props.placeholder}
                  contentEditable={this.props.editable}

@@ -13,7 +13,13 @@
   }
 
   svg {
-    fill: white
+    fill: white;
+    width: 35px;
+    height: 35px;
+  }
+
+  svg.disabled {
+    fill: $color3;
   }
 
 }

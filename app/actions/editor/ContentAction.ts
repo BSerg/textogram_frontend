@@ -41,8 +41,6 @@ class ContentActionClass extends Action {
 
 export const ContentAction = new ContentActionClass();
 
-ContentAction.setMaxListeners(500);
-
 ContentAction.registerAsync(SWAP_CONTENT, (store, data: {articleId: number, position: number}) => {
     console.log(data);
     return new Promise((resolve, reject) => {

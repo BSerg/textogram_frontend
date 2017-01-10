@@ -1,0 +1,27 @@
+@import "../contstants";
+@import "../mixins";
+
+.content_block_list {
+  font-size: $font-size;
+  font-weight: $font-weight;
+  line-height: $line-height;
+
+  ul {
+    list-style: disc outside;
+  }
+
+  ol {
+    list-style: decimal outside;
+  }
+
+  ol li, ul li, .content_editable:after {
+    margin-left: $margin;
+    padding-left: 5px;
+  }
+
+  &.active {
+    .content_editable.empty:empty:after, .content_editable.empty:last-child:after {
+      font-weight: $font-weight-bold;
+    }
+  }
+}
