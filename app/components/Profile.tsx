@@ -7,7 +7,7 @@ import '../styles/profile.scss';
 import {api} from '../api';
 
 import Error from './Error';
-import {UserAction} from "../actions/user/UserAction";
+import {UserAction, GET_ME, LOGIN, LOGOUT} from "../actions/user/UserAction";
 
 const VKIcon = require('babel!svg-react!../assets/images/profile_social_icon_vk.svg?name=VKIcon');
 const FBIcon = require('babel!svg-react!../assets/images/profile_social_icon_fb.svg?name=FBIcon');
@@ -15,7 +15,6 @@ const FBIcon = require('babel!svg-react!../assets/images/profile_social_icon_fb.
 
 interface ISocialLinkProps {
     social_link: any;
-    is_self?: boolean;
 }
 
 class SocialLink extends React.Component<ISocialLinkProps, any> {
@@ -58,15 +57,40 @@ export default class Profile extends React.Component<any, IProfileState> {
         super(props);
     }
 
+    checkIsSelf() {
+        let isSelf: boolean =  Boolean(this.state && UserAction.getStore().user && UserAction.getStore().user.id == this.state.user.id);
+        this.setState({ isSelf: isSelf });
+    }
+
     getUserData(userId: string) {
         api.get('/users/' + userId + '/').then((response: any) => {
-            let isSelf =  UserAction.getStore().user && UserAction.getStore().user.id == response.data.id;
-            this.setState({user: response.data, isSelf: isSelf}, () => {
-                console.log(this.state.user);
+
+            this.setState({user: response.data}, () => {
+                this.checkIsSelf();
             });
         }).catch((error) => {
             this.setState({error: <Error code={404} msg="page not found" /> });
         })
+    }
+
+    subscribe() {
+        api.post('/users/' + this.state.user.id + '/subscribe/').then((response) => {
+            this.setIsSubscribed(true);
+        }).catch((error) => {});
+    }
+
+    unSubscribe() {
+        api.post('/users/' + this.state.user.id + '/un_subscribe/').then((response) => {
+            this.setIsSubscribed(false);
+        }).catch((error) => {})
+    }
+
+    setIsSubscribed(is_subscribed: boolean) {
+        let user = this.state.user;
+        user.is_subscribed = is_subscribed;
+        user.subscribers += is_subscribed ? 1: -1;
+        if (user.subscribers < 0) user.subscribers = 0;
+        this.setState({user: user});
     }
 
     componentWillReceiveProps(nextProps: any) {
@@ -75,12 +99,22 @@ export default class Profile extends React.Component<any, IProfileState> {
 
     componentDidMount() {
         this.getUserData(this.props.params.userId);
+        UserAction.onChange(GET_ME, this.checkIsSelf.bind(this));
+        UserAction.onChange(LOGIN, this.checkIsSelf.bind(this));
+        UserAction.onChange(LOGOUT, this.checkIsSelf.bind(this));
+    }
+
+    componentWillUnmount() {
+        UserAction.unbind(GET_ME, this.checkIsSelf.bind(this));
+        UserAction.unbind(LOGIN, this.checkIsSelf.bind(this));
+        UserAction.unbind(LOGOUT, this.checkIsSelf.bind(this));
     }
 
     render() {
         if (this.state && this.state.error) {
             return (this.state.error);
         }
+
         return (
             <div className="profile">
 
@@ -94,6 +128,19 @@ export default class Profile extends React.Component<any, IProfileState> {
 
                             <div key="username" className="profile__username">
                                 <span>{this.state.user.first_name}</span> <span> {this.state.user.last_name}</span>
+                            </div>,
+
+                            <div key="subscription" className="profile__subscription">
+                                <div>{ this.state.user.subscribers }</div>
+
+                                {
+                                    (!this.state.isSelf) ?
+                                        <div>
+                                            { this.state.user.is_subscribed ?
+                                                <div onClick={this.unSubscribe.bind(this)}>unsubscribe</div> :
+                                                <div onClick={this.subscribe.bind(this)}>subscribe</div> }
+                                        </div> : null
+                                }
                             </div>,
 
                             <div className="profile__social_links" key="social_links">
