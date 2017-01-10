@@ -30,7 +30,7 @@
 
   &:not(.active) .content_block_photo__photo {
     width: calc(100% - #{$space});
-    height: 125px;
+    height: 100px;
 
     &.photo0 {
       height: 200px;
@@ -41,7 +41,7 @@
     }
 
     &.photo1 {
-      height: 250px + $space;
+      height: 200px + $space;
     }
 
     .content_block_photo__delete {

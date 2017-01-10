@@ -13,8 +13,8 @@ interface IBaseContnentBlockProps {
     onActive?: () => any
     onBlur?: () => any
     onClick?: () => any
-    onActivate?: () => any
     popupContent?: JSX.Element
+    disableDefaultPopup?: boolean
 }
 
 interface IBaseContnentBlockState {
@@ -30,6 +30,10 @@ export default class BaseContentBlock extends React.Component<IBaseContnentBlock
         }
     }
 
+    static defaultProps = {
+        disablePopup: false
+    };
+
     handleActivate() {
         let store: any = ContentBlockAction.getStore();
         if ((store.id == this.props.id) !== this.state.isActive) {
@@ -39,8 +43,7 @@ export default class BaseContentBlock extends React.Component<IBaseContnentBlock
                 } else if (!this.state.isActive && this.props.onBlur) {
                     this.props.onBlur();
                 }
-                if (this.state.isActive) {
-                    this.props.onActivate && this.props.onActivate();
+                if (this.state.isActive && !this.props.disableDefaultPopup) {
                     PopupPanelAction.do(
                         OPEN_POPUP,
                         {
