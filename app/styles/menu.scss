@@ -62,7 +62,7 @@
     }
   }
 
-  .menu__user_avatar, .menu__user_username, .menu__link {
+  .menu__user_avatar, .menu__user_username, .menu__link, .menu__notifications {
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -71,6 +71,7 @@
     width: 100%;
     color: #FFFFFF;
     text-transform: uppercase;
+    box-sizing: border-box;
   }
 
   .menu__links {
@@ -80,6 +81,63 @@
       font-size: $font-size-small;
       letter-spacing: 1px;
       padding: $padding * 2/3 0;
+    }
+  }
+
+  .menu__notifications {
+
+    flex-wrap: nowrap;
+    background-color: $color5;
+    padding: $padding - 5px $padding;
+    border-top: 3px solid $color;
+    justify-content: flex-start;
+
+    .menu__notifications_icon {
+      position: relative;
+      margin-right: $margin;
+
+
+      svg {
+        width: 40px;
+        height: 40px;
+        fill: #FFFFFF;
+      }
+
+      .menu__notifications_count {
+        $count-size: 20px;
+        position: absolute;
+        top: 0;
+        right: 0;
+        font-size: $font-size-small;
+        width: $count-size;
+        height: $count-size;
+        line-height: $count-size;
+        text-align: center;
+        @include border_radius($count-size);
+        color: #FFFFFF;
+        font-weight: $font-weight-bold;
+        background-color: $color-accent;
+
+      }
+
+    }
+
+    .menu__notifications_text {
+      display: block;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+
+      font-size: $font-size-small;
+      text-transform: none;
+      letter-spacing: 1px;
+      line-height: 12px;
+      max-height: 24px;
+      overflow: hidden;
+
+      width: 100%;
+      box-sizing: border-box;
+
     }
   }
 

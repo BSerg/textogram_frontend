@@ -11,6 +11,7 @@ import '../styles/menu.scss';
 
 const ExitIcon = require('babel!svg-react!../assets/images/exit-icon.svg?name=ExitIcon');
 const InfoIcon = require('babel!svg-react!../assets/images/info-icon.svg?name=InfoIcon');
+const NotificationIcon = require('babel!svg-react!../assets/images/notification_icon.svg?name=NotificationIcon');
 
 class DefaultMenu extends React.Component<any, any> {
     render() {
@@ -42,9 +43,12 @@ class NotificationBlock extends React.Component<any, any> {
     render() {
         if (!this.state.count || ! this.state.last) return null;
         return (
-            <div>
-                <div>{ this.state.count }</div>
-                <div>{ (this.state.last && this.state.last.text) ? this.state.last.text : Captions.main_menu.notification_defaul_text }</div>
+            <div className="menu__notifications">
+                <div className="menu__notifications_icon">
+                    <NotificationIcon />
+                    <div className="menu__notifications_count">{ this.state.count < 10 ? this.state.count : '9+'}</div>
+                </div>
+                <div className="menu__notifications_text">{ (this.state.last && this.state.last.text) ? this.state.last.text : Captions.main_menu.notification_defaul_text }</div>
             </div>)
     }
 }
