@@ -28,7 +28,7 @@ export default class MenuButton extends React.Component<MenuButtonPropsInterface
     };
 
     handleClick() {
-        MenuAction.do(TOGGLE, null);
+        MenuAction.do(TOGGLE, true);
     }
 
     checkScroll() {

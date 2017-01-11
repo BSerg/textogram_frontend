@@ -36,7 +36,7 @@
   .menu__user {
     background-color: $color5;
 
-    padding: $padding 0 $padding 0;
+    padding: $padding 0 $padding/2 0;
 
     $avatar-size: 78px;
 
@@ -79,7 +79,7 @@
     .menu__link {
       font-size: $font-size-small;
       letter-spacing: 1px;
-      padding: $padding/2 0;
+      padding: $padding * 2/3 0;
     }
   }
 

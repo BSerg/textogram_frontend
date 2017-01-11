@@ -12,6 +12,6 @@ class MenuActionClass extends Action{
 
 export const MenuAction = new MenuActionClass();
 
-MenuAction.register(TOGGLE, (store) => {
-    store.open = !Boolean(store.open);
+MenuAction.register(TOGGLE, (store, open: boolean = false) => {
+    store.open = open;
 });

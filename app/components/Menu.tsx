@@ -37,7 +37,7 @@ class UserMenu extends React.Component<IUserMenuProps, any> {
     handleUrlClick(url: string, e: any) {
         e.stopPropagation();
         this.props.router.push(url);
-        MenuAction.do(TOGGLE, null);
+        MenuAction.do(TOGGLE, false);
     }
 
     render() {
@@ -77,6 +77,8 @@ export default class Menu extends React.Component<any, IMenuStateInterface> {
     constructor() {
         super();
         this.state = {open: true, user: UserAction.getStore().user}
+        this.setUser = this.setUser.bind(this);
+        this.setOpen = this.setOpen.bind(this);
     }
 
     setUser() {
@@ -84,21 +86,30 @@ export default class Menu extends React.Component<any, IMenuStateInterface> {
     }
 
     toggleMenu() {
-        MenuAction.do(TOGGLE, null);
+        MenuAction.do(TOGGLE, false);
+    }
+
+    setOpen() {
+        this.setState({open: Boolean(MenuAction.getStore().open)});
     }
 
     componentDidMount() {
-        MenuAction.onChange(TOGGLE, () => {
-            this.setState({open: Boolean(MenuAction.getStore().open)});
-        });
+        console.log('mounid5');
+        MenuAction.onChange(TOGGLE, this.setOpen);
+        UserAction.onChange(GET_ME, this.setUser);
+        UserAction.onChange(LOGIN, this.setUser);
+        UserAction.onChange(LOGOUT, this.setUser);
+    }
 
-        UserAction.onChange(GET_ME, this.setUser.bind(this));
-        UserAction.onChange(LOGIN, this.setUser.bind(this));
-        UserAction.onChange(LOGOUT, this.setUser.bind(this));
-
+    componentWillUnmount() {
+        MenuAction.unbind(TOGGLE, this.setOpen);
+        UserAction.unbind(GET_ME, this.setUser);
+        UserAction.unbind(LOGIN, this.setUser);
+        UserAction.unbind(LOGOUT, this.setUser);
     }
 
     render() {
+
         if (!this.state.open) return null;
         return (
             <div id="main_menu" onClick={this.toggleMenu}>

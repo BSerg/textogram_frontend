@@ -55,6 +55,7 @@ export default class Profile extends React.Component<any, IProfileState> {
 
     constructor(props: any) {
         super(props);
+        this.checkIsSelf = this.checkIsSelf.bind(this);
     }
 
     checkIsSelf() {
@@ -99,15 +100,15 @@ export default class Profile extends React.Component<any, IProfileState> {
 
     componentDidMount() {
         this.getUserData(this.props.params.userId);
-        UserAction.onChange(GET_ME, this.checkIsSelf.bind(this));
-        UserAction.onChange(LOGIN, this.checkIsSelf.bind(this));
-        UserAction.onChange(LOGOUT, this.checkIsSelf.bind(this));
+        UserAction.onChange(GET_ME, this.checkIsSelf);
+        UserAction.onChange(LOGIN, this.checkIsSelf);
+        UserAction.onChange(LOGOUT, this.checkIsSelf);
     }
 
     componentWillUnmount() {
-        UserAction.unbind(GET_ME, this.checkIsSelf.bind(this));
-        UserAction.unbind(LOGIN, this.checkIsSelf.bind(this));
-        UserAction.unbind(LOGOUT, this.checkIsSelf.bind(this));
+        UserAction.unbind(GET_ME, this.checkIsSelf);
+        UserAction.unbind(LOGIN, this.checkIsSelf);
+        UserAction.unbind(LOGOUT, this.checkIsSelf);
     }
 
     render() {
@@ -147,7 +148,8 @@ export default class Profile extends React.Component<any, IProfileState> {
                                 { this.state.user.social_links.map((social_link: any, index: number) => {
                                     return <SocialLink social_link={ social_link } key={ index }/>
                                 }) }
-                            </div>
+                            </div>,
+                            <div key="isself">{ this.state.isSelf ? "self" : "not self" }</div>
 
                         ] : null
                     }
