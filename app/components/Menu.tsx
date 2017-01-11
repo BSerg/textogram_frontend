@@ -3,6 +3,7 @@ import {withRouter} from 'react-router';
 
 import {MenuAction, TOGGLE} from '../actions/MenuAction';
 import {UserAction, GET_ME, LOGIN, LOGOUT} from '../actions/user/UserAction';
+import {NotificationAction, CHECK} from '../actions/NotificationAction'
 
 import {Captions} from '../constants';
 
@@ -16,6 +17,38 @@ class DefaultMenu extends React.Component<any, any> {
         return (<div>NAT USIR</div>);
     }
 }
+
+
+class NotificationBlock extends React.Component<any, any> {
+
+    constructor() {
+        super();
+        this.state = {count: 0, last: null};
+        this.checkNotifications = this.checkNotifications.bind(this);
+    }
+
+    checkNotifications() {
+        this.setState({ count: NotificationAction.getStore().count, last: NotificationAction.getStore().last });
+    }
+
+    componentDidMount() {
+        NotificationAction.onChange(CHECK, this.checkNotifications);
+    }
+
+    componentWillUnmount() {
+        NotificationAction.unbind(CHECK, this.checkNotifications);
+    }
+
+    render() {
+        if (!this.state.count || ! this.state.last) return null;
+        return (
+            <div>
+                <div>{ this.state.count }</div>
+                <div>{ (this.state.last && this.state.last.text) ? this.state.last.text : Captions.main_menu.notification_defaul_text }</div>
+            </div>)
+    }
+}
+
 
 interface IUserMenuProps {
     user: any;
@@ -53,13 +86,12 @@ class UserMenu extends React.Component<IUserMenuProps, any> {
                     </div>
                     <div className="menu__user_username"><span>{this.props.user.first_name}</span> <span>{this.props.user.last_name}</span></div>
                 </div>
+                <NotificationBlock/>
                 <div className="menu__links">
-                    <div className="menu__link" onClick={this.handleUrlClick.bind(this, '/profile/edit/')}>{ Captions.main_menu.manage_profile }</div>
+                    <div className="menu__link" onClick={this.handleUrlClick.bind(this, '/profile/90/')}>{ Captions.main_menu.manage_profile }</div>
                     <div className="menu__link" onClick={this.handleUrlClick.bind(this, '/articles/new/')}>{ Captions.main_menu.create_article }</div>
                     <div className="menu__link" onClick={this.handleUrlClick.bind(this, '/drafts/')}>{ Captions.main_menu.drafts }</div>
                 </div>
-
-
             </div>)
     }
 }

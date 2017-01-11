@@ -30,10 +30,6 @@ class SocialLink extends React.Component<ISocialLinkProps, any> {
         return Icon ? <Icon /> : null;
     }
 
-    handleClick() {
-        console.log(this.props.social_link.url);
-    }
-
     render() {
         let Icon = this.ICONS[this.props.social_link.social];
         return (
@@ -55,23 +51,26 @@ export default class Profile extends React.Component<any, IProfileState> {
 
     constructor(props: any) {
         super(props);
+        this.state = {user: null, error: null, isSelf: false};
         this.checkIsSelf = this.checkIsSelf.bind(this);
     }
 
     checkIsSelf() {
-        let isSelf: boolean =  Boolean(this.state && UserAction.getStore().user && UserAction.getStore().user.id == this.state.user.id);
+        let isSelf: boolean =  Boolean(this.state.user && UserAction.getStore().user && UserAction.getStore().user.id == this.state.user.id);
         this.setState({ isSelf: isSelf });
     }
 
     getUserData(userId: string) {
-        api.get('/users/' + userId + '/').then((response: any) => {
+        this.setState({error: null}, () => {
+            api.get('/users/' + userId + '/').then((response: any) => {
+                this.setState({user: response.data}, () => {
+                    this.checkIsSelf();
 
-            this.setState({user: response.data}, () => {
-                this.checkIsSelf();
+                });
+            }).catch((error) => {
+                this.setState({error: <Error code={404} msg="page not found" /> });
             });
-        }).catch((error) => {
-            this.setState({error: <Error code={404} msg="page not found" /> });
-        })
+        });
     }
 
     subscribe() {

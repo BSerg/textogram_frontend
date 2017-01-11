@@ -29,12 +29,14 @@ export namespace Captions {
     export const main_menu = {
         manage_profile: 'управление профилем',
         create_article: 'создать публикацию',
-        drafts: 'черновики'
+        drafts: 'черновики',
+        notification_defaul_text: 'Новые уведомления'
     };
 }
 
 export namespace Constants {
     export const maxImageSize = 5 * 1024 * 1024;
+    export const notificationIntervalTime = 2000;
 }
 
 export enum BlockContentTypes {
