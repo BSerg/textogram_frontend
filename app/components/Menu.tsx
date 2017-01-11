@@ -15,7 +15,15 @@ const NotificationIcon = require('babel!svg-react!../assets/images/notification_
 
 class DefaultMenu extends React.Component<any, any> {
     render() {
-        return (<div>NAT USIR</div>);
+        return (
+            <div>
+                <div className="menu__login_title"></div>
+                <div className="menu__login"></div>
+                <div className="menu__about">
+                    <div>о проекте</div>
+                    <InfoIcon />
+                </div>
+            </div>);
     }
 }
 
@@ -33,6 +41,7 @@ class NotificationBlock extends React.Component<any, any> {
     }
 
     componentDidMount() {
+        this.checkNotifications();
         NotificationAction.onChange(CHECK, this.checkNotifications);
     }
 
@@ -53,6 +62,7 @@ class NotificationBlock extends React.Component<any, any> {
     }
 }
 
+let NotificationBlockWithRouter = withRouter(NotificationBlock);
 
 interface IUserMenuProps {
     user: any;
@@ -63,6 +73,12 @@ class UserMenu extends React.Component<IUserMenuProps, any> {
 
     constructor(props: any) {
         super(props)
+    }
+
+    goToProfile(e: any) {
+        e.stopPropagation();
+        this.props.router.push('/profile/' + this.props.user.id);
+        MenuAction.do(TOGGLE, false);
     }
 
     logout(e: any) {
@@ -84,15 +100,15 @@ class UserMenu extends React.Component<IUserMenuProps, any> {
                     <div onClick={this.handleUrlClick.bind(this, '/info/')} ><InfoIcon /></div>
                     <div onClick={this.logout.bind(this)}><ExitIcon /></div>
                 </div>
-                <div className="menu__user">
+                <div className="menu__user" onClick={this.goToProfile.bind(this)}>
                     <div className="menu__user_avatar">
                         <img src={ this.props.user.avatar } />
                     </div>
                     <div className="menu__user_username"><span>{this.props.user.first_name}</span> <span>{this.props.user.last_name}</span></div>
                 </div>
-                <NotificationBlock/>
+                <NotificationBlockWithRouter />
                 <div className="menu__links">
-                    <div className="menu__link" onClick={this.handleUrlClick.bind(this, '/profile/90/')}>{ Captions.main_menu.manage_profile }</div>
+                    <div className="menu__link" onClick={this.handleUrlClick.bind(this, '/manage/')}>{ Captions.main_menu.manage_profile }</div>
                     <div className="menu__link" onClick={this.handleUrlClick.bind(this, '/articles/new/')}>{ Captions.main_menu.create_article }</div>
                     <div className="menu__link" onClick={this.handleUrlClick.bind(this, '/drafts/')}>{ Captions.main_menu.drafts }</div>
                 </div>
@@ -130,7 +146,6 @@ export default class Menu extends React.Component<any, IMenuStateInterface> {
     }
 
     componentDidMount() {
-        console.log('mounid5');
         MenuAction.onChange(TOGGLE, this.setOpen);
         UserAction.onChange(GET_ME, this.setUser);
         UserAction.onChange(LOGIN, this.setUser);
