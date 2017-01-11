@@ -1,0 +1,87 @@
+@import "contstants";
+@import "mixins";
+
+
+#main_menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10000;
+  background-color: rgba(0, 0, 0, 0.5);
+
+  .menu__controls {
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: flex;
+    flex-direction: row;
+    padding: $padding - 10px $padding/2;
+
+    $svg-size: 35px;
+
+    div {
+      margin-left: 5px;
+    }
+
+    svg {
+      width: $svg-size;
+      height: $svg-size;
+      fill: #FFFFFF;
+    }
+
+  }
+
+  .menu__user {
+    background-color: $color5;
+
+    padding: $padding 0 $padding 0;
+
+    $avatar-size: 78px;
+
+    .menu__user_avatar img {
+      width: $avatar-size;
+      height: $avatar-size;
+
+      @include border_radius($avatar-size);
+    }
+
+    .menu__user_username {
+      padding: $padding 0 $padding/2 0;
+      font-size: $font-size;
+
+      span {
+        padding: 0 5px;
+        font-weight: $font-weight;
+      }
+
+      span:first-child {
+        font-weight: $font-weight-bold;
+      }
+    }
+  }
+
+  .menu__user_avatar, .menu__user_username, .menu__link {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    width: 100%;
+    color: #FFFFFF;
+    text-transform: uppercase;
+  }
+
+  .menu__links {
+    background-color: $color;
+    padding: $padding 0;
+    .menu__link {
+      font-size: $font-size-small;
+      letter-spacing: 1px;
+      padding: $padding/2 0;
+    }
+  }
+
+
+}

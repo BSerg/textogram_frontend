@@ -24,7 +24,13 @@ export namespace Captions {
         content_dialog: 'Диалог',
         content_post: 'Пост',
 
-    }
+    };
+
+    export const main_menu = {
+        manage_profile: 'управление профилем',
+        create_article: 'создать публикацию',
+        drafts: 'черновики'
+    };
 }
 
 export namespace Constants {

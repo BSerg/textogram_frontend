@@ -1,5 +1,6 @@
 import * as React from 'react';
 import '../../styles/shared/menu_button.scss';
+import {MenuAction, TOGGLE} from '../../actions/MenuAction';
 
 interface MenuButtonPropsInterface {
     disabled?: boolean,
@@ -27,7 +28,7 @@ export default class MenuButton extends React.Component<MenuButtonPropsInterface
     };
 
     handleClick() {
-        console.log('MENU BUTTON CLICKED');
+        MenuAction.do(TOGGLE, null);
     }
 
     checkScroll() {

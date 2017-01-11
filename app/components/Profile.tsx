@@ -134,7 +134,7 @@ export default class Profile extends React.Component<any, IProfileState> {
                                 <div>{ this.state.user.subscribers }</div>
 
                                 {
-                                    (!this.state.isSelf) ?
+                                    (!this.state.isSelf && UserAction.getStore().user) ?
                                         <div>
                                             { this.state.user.is_subscribed ?
                                                 <div onClick={this.unSubscribe.bind(this)}>unsubscribe</div> :
