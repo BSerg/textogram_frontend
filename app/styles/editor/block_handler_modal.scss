@@ -3,9 +3,12 @@
 
 .block_handler_modal {
   background-color: $color;
-  width: 100%;
-  height: 100%;
-  padding: $padding;
+  width: calc(100% - 60px);
+  height: calc(100% - 75px);
+  padding: 0 $padding;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
 
   ._block_handler_button {
     float: left;

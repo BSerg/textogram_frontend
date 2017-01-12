@@ -36,7 +36,7 @@ export default class BlockHandler extends React.Component<IBlockHandlerProps, IB
         return (
             <div className={className}>
                 {this.state.items.map((type) => {
-                    return <BlockHandlerButton type={type}
+                    return <BlockHandlerButton key={"button_" + type} type={type}
                                                size="small"
                                                articleId={this.props.articleId}
                                                blockPosition={this.props.blockPosition}/>

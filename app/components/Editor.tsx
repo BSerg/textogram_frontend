@@ -21,7 +21,8 @@ import '../styles/editor.scss';
 
 interface IEditorState {
     article?: any,
-    error?: any
+    error?: any,
+    autoSave?: boolean
 }
 
 
@@ -30,7 +31,8 @@ export default class Editor extends React.Component<any, IEditorState> {
         super(props);
         this.state = {
             article: null,
-            error: null
+            error: null,
+            autoSave: true
         };
         this.handleUpdateContent = this.handleUpdateContent.bind(this);
     }
@@ -49,7 +51,12 @@ export default class Editor extends React.Component<any, IEditorState> {
     handleUpdateContent() {
         let store: any = ContentAction.getStore();
         this.state.article.content = store.content;
-        this.setState({article: this.state.article});
+        this.setState({article: this.state.article}, () => {
+            ContentAction.do(
+                RESET_CONTENT,
+                {articleId: this.state.article.id, autoSave: this.state.autoSave, content: this.state.article.content}
+            )
+        });
     }
 
     componentDidMount() {
@@ -95,9 +102,42 @@ export default class Editor extends React.Component<any, IEditorState> {
                             <TitleBlock key="titleBlock" articleSlug={this.props.params.articleId}
                                 title={this.state.article.content.title}
                                 cover={this.state.article.content.cover}/>,
-                            this.state.article.content.blocks.map((block: IContentData) => {
-                                return <div>{block.id}</div>;
-                            })
+                            this.state.article.content.blocks.map((contentBlock: IContentData, index: number) => {
+                                let blockHandlerButtons, block;
+
+                                if (index == 0) {
+                                    blockHandlerButtons = [BlockContentTypes.ADD]
+                                } else {
+                                    blockHandlerButtons = [BlockContentTypes.SWAP_BLOCKS, BlockContentTypes.ADD]
+                                }
+
+                                switch (contentBlock.type) {
+                                    case BlockContentTypes.TEXT:
+                                        block = <TextContentBlock key={"content" + contentBlock.id}
+                                                                  content={contentBlock}/>;
+                                        break;
+
+                                }
+
+                                return [
+                                    <BlockHandler key={"handler" + index}
+                                                  articleId={this.state.article.id}
+                                                  blockPosition={index}
+                                                  items={blockHandlerButtons}/>,
+                                    block
+                                ]
+                            }),
+                            <BlockHandler key="handlerLast"
+                                          articleId={this.state.article.id}
+                                          blockPosition={this.state.article.content.blocks.length}
+                                          isLast={true}
+                                          items={[
+                                              BlockContentTypes.TEXT,
+                                              BlockContentTypes.ADD,
+                                              BlockContentTypes.PHOTO
+                                          ]}/>,
+                            <div key="add_content_help" className="add_content_help">{Captions.editor.add_content_help}</div>,
+
                         ]
                         : null
                     }

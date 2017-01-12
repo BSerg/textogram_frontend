@@ -59,52 +59,46 @@ ContentAction.registerAsync(RESET_CONTENT, (store, data: {articleId: number, aut
     return ContentAction.saveContent(store, {articleId: data.articleId, autoSave: data.autoSave});
 });
 
-ContentAction.registerAsync(CREATE_CONTENT, (store, data: {articleId: number, autoSave?: boolean, contentBlock: IContentData, position: number}) => {
+ContentAction.register(CREATE_CONTENT, (store, data: {contentBlock: IContentData, position: number}) => {
     console.log(data);
     data.contentBlock.id = uuid4();
     store.content.blocks.splice(data.position, 0, data.contentBlock);
     store.content.blocks.forEach((item: IContentData) => {
         store.contentBlockMap[item.id] = item;
     });
-    return ContentAction.saveContent(store, {articleId: data.articleId, autoSave: data.autoSave});
 });
 
-ContentAction.registerAsync(UPDATE_CONTENT, (store, data: {articleId: number, autoSave?: boolean, contentBlock: IContentData}) => {
+ContentAction.register(UPDATE_CONTENT, (store, data: {contentBlock: IContentData}) => {
     console.log(data);
     if (store.contentBlockMap[data.contentBlock.id]) {
         Object.assign(store.contentBlockMap[data.contentBlock.id], data.contentBlock);
     }
-    return ContentAction.saveContent(store, {articleId: data.articleId, autoSave: data.autoSave});
 });
 
-ContentAction.registerAsync(DELETE_CONTENT, (store, data: {articleId: number, autoSave?: boolean, contentBlock: IContentData}) => {
+ContentAction.register(DELETE_CONTENT, (store, data: {id: string}) => {
     console.log(data);
-    let deletingItem = store.contentBlockMap[data.contentBlock.id];
+    let deletingItem = store.contentBlockMap[data.id];
     if (deletingItem) {
-        store.content.blocks.splice(store.content.indexOf(deletingItem), 1);
-        delete store.contentBlockMap[data.contentBlock.id];
+        store.content.blocks.splice(store.content.blocks.indexOf(deletingItem), 1);
+        delete store.contentBlockMap[data.id];
     }
-    return ContentAction.saveContent(store, {articleId: data.articleId, autoSave: data.autoSave});
 });
 
-ContentAction.registerAsync(UPDATE_TITLE_CONTENT, (store, data: {articleId: number, autoSave?: boolean, title: string}) => {
+ContentAction.register(UPDATE_TITLE_CONTENT, (store, data: {articleId: number, title: string}) => {
     console.log(data);
     store.content.title = data.title;
-    return ContentAction.saveContent(store, {articleId: data.articleId, autoSave: data.autoSave});
 });
 
-ContentAction.registerAsync(
+ContentAction.register(
     UPDATE_COVER_CONTENT,
     (
         store,
         data: {
             articleId: number,
-            autoSave?: boolean,
             cover: {id: number, image: string} | null
         }
     ) => {
     console.log(data);
     store.content.cover = data.cover;
-    return ContentAction.saveContent(store, {articleId: data.articleId, autoSave: data.autoSave});
 });
 

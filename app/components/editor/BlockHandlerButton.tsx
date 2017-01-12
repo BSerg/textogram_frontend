@@ -1,10 +1,9 @@
-import * as React from 'react';
-import {BlockContentTypes, ListBlockContentTypes} from '../../constants';
-import {BlockHandlerAction, OPEN_BLOCK_HANDLER_MODAL} from '../../actions/editor/BlockHandlerAction';
-import {ContentAction, CREATE_CONTENT, SWAP_CONTENT, IContentData} from '../../actions/editor/ContentAction';
-import {api} from '../../api';
-import '../../styles/editor/block_handler_button.scss';
-import {PhotoContentBlockAction, ADD_IMAGE, IPhoto} from "../../actions/editor/PhotoContentBlockAction";
+import * as React from "react";
+import {BlockContentTypes} from "../../constants";
+import {BlockHandlerAction, OPEN_BLOCK_HANDLER_MODAL} from "../../actions/editor/BlockHandlerAction";
+import {api} from "../../api";
+import "../../styles/editor/block_handler_button.scss";
+import {ContentAction, CREATE_CONTENT, IContentData} from "../../actions/editor/ContentAction";
 
 const AddIcon = require('babel!svg-react!../../assets/images/redactor_icon_add.svg?name=AddIcon');
 const SwapIcon = require('babel!svg-react!../../assets/images/redactor_icon_swing.svg?name=SwapIcon');
@@ -47,12 +46,6 @@ export default class BlockHandlerButton extends React.Component<IContentButtonPr
         size: "normal"
     };
 
-    private createContent(type: BlockContentTypes) {
-        api.post('/articles/content/', {
-            articleId: this.props.articleId
-        })
-    }
-
     private getButtonProps(): {icon: any, extraContent?: any, onClick: () => any} {
         switch (this.props.type) {
             case BlockContentTypes.ADD:
@@ -70,10 +63,10 @@ export default class BlockHandlerButton extends React.Component<IContentButtonPr
                     icon: <SwapIcon/>,
                     onClick: () => {
                         console.log('SWAP BLOCKS');
-                        ContentAction.do(
-                            SWAP_CONTENT,
-                            {articleId: this.props.articleId, position: this.props.blockPosition}
-                        );
+                        // ContentAction.do(
+                        //     SWAP_CONTENT,
+                        //     {articleId: this.props.articleId, position: this.props.blockPosition}
+                        // );
                     }
                 };
             case BlockContentTypes.TEXT:
@@ -81,140 +74,144 @@ export default class BlockHandlerButton extends React.Component<IContentButtonPr
                     icon: <TextIcon/>,
                     onClick: () => {
                         console.log('ADD TEXT');
-                        let data: IContentData = {
-                            type: BlockContentTypes.TEXT,
-                            value: ''
+                        let data= {
+                            contentBlock: {
+                                type: BlockContentTypes.TEXT,
+                                value: ''
+                            },
+                            position: this.props.blockPosition
+
                         };
                         ContentAction.do(CREATE_CONTENT, data);
                     }
                 };
-            // case BlockContentTypes.HEADER:
-            //     return {
-            //         icon: <HeaderIcon/>,
-            //         onClick: () => {
-            //             console.log('ADD HEADER');
-            //             let data: IContentData = {
-            //                 type: BlockContentTypes.HEADER,
-            //                 article: this.props.articleId,
-            //                 position: this.props.blockPosition,
-            //                 text: ''
-            //             };
-            //             ContentAction.do(CREATE_CONTENT, data);
-            //         }
-            //     };
-            // case BlockContentTypes.LEAD:
-            //     return {
-            //         icon: <LeadIcon/>,
-            //         onClick: () => {
-            //             console.log('ADD LEAD');
-            //             let data: IContentData = {
-            //                 type: BlockContentTypes.LEAD,
-            //                 article: this.props.articleId,
-            //                 position: this.props.blockPosition,
-            //                 text: ''
-            //             };
-            //             ContentAction.do(CREATE_CONTENT, data);
-            //         }
-            //     };
-            // case BlockContentTypes.VIDEO:
-            //     return {
-            //         icon: <VideoIcon/>,
-            //         onClick: () => {
-            //             console.log('ADD VIDEO');
-            //         }
-            //     };
-            // case BlockContentTypes.PHOTO:
-            //     return {
-            //         icon: <PhotoIcon/>,
-            //         extraContent: <input ref="inputUpload"
-            //                              type="file"
-            //                              style={{display: "none"}}
-            //                              onChange={() => {
-            //                                 console.log('CHANGED')
-            //                                 let file = this.refs.inputUpload.files[0];
-            //                                 let data: IContentData = {
-            //                                     type: BlockContentTypes.PHOTO,
-            //                                     article: this.props.articleId,
-            //                                     position: this.props.blockPosition,
-            //                                     image: file
-            //                                 };
-            //                                 ContentAction.do(CREATE_CONTENT, data);
-            //                             }}/>,
-            //         onClick: () => {
-            //             console.log('ADD PHOTO');
-            //             // this.refs.inputUpload.click();
-            //             let data: IContentData = {
-            //                 type: BlockContentTypes.PHOTO,
-            //                 article: this.props.articleId,
-            //                 position: this.props.blockPosition,
-            //             };
-            //             ContentAction.do(CREATE_CONTENT, data);
-            //         }
-            //     };
-            // case BlockContentTypes.AUDIO:
-            //     return {
-            //         icon: <AudioIcon/>,
-            //         onClick: () => {
-            //             console.log('ADD AUDIO')
-            //         }
-            //     };
-            // case BlockContentTypes.QUOTE:
-            //     return {
-            //         icon: <QuoteIcon/>,
-            //         onClick: () => {
-            //             console.log('ADD QUOTE')
-            //         }
-            //     };
-            // case BlockContentTypes.COLUMNS:
-            //     return {
-            //         icon: <ColumnsIcon/>,
-            //         onClick: () => {
-            //             console.log('ADD COLUMNS')
-            //         }
-            //     };
-            // case BlockContentTypes.PHRASE:
-            //     return {
-            //         icon: <PhraseIcon/>,
-            //         onClick: () => {
-            //             console.log('ADD PHRASE');
-            //             let data: IContentData = {
-            //                 type: BlockContentTypes.PHRASE,
-            //                 article: this.props.articleId,
-            //                 position: this.props.blockPosition,
-            //                 text: ''
-            //             };
-            //             ContentAction.do(CREATE_CONTENT, data);
-            //         }
-            //     };
-            // case BlockContentTypes.LIST:
-            //     return {
-            //         icon: <ListIcon/>,
-            //         onClick: () => {
-            //             console.log('ADD LIST');
-            //             let data: IContentData = {
-            //                 type: BlockContentTypes.LIST,
-            //                 article: this.props.articleId,
-            //                 subtype: ListBlockContentTypes.UNORDERED,
-            //                 position: this.props.blockPosition,
-            //                 text: ''
-            //             };
-            //             ContentAction.do(CREATE_CONTENT, data);
-            //         }
-            //     };
-            // case BlockContentTypes.DIALOG:
-            //     return {
-            //         icon: <DialogIcon/>,
-            //         onClick: () => {
-            //             console.log('ADD DIALOG')
-            //         }
-            //     };
-            // case BlockContentTypes.POST:
-            //     return {
-            //         icon: <PostIcon/>,
-            //         onClick: () => {
-            //             console.log('ADD POST')
-            //         }
-            //     };
+            case BlockContentTypes.HEADER:
+                return {
+                    icon: <HeaderIcon/>,
+                    onClick: () => {
+                        console.log('ADD HEADER');
+                        // let data: IContentData = {
+                        //     type: BlockContentTypes.HEADER,
+                        //     article: this.props.articleId,
+                        //     position: this.props.blockPosition,
+                        //     text: ''
+                        // };
+                        // ContentAction.do(CREATE_CONTENT, data);
+                    }
+                };
+            case BlockContentTypes.LEAD:
+                return {
+                    icon: <LeadIcon/>,
+                    onClick: () => {
+                        console.log('ADD LEAD');
+                        // let data: IContentData = {
+                        //     type: BlockContentTypes.LEAD,
+                        //     article: this.props.articleId,
+                        //     position: this.props.blockPosition,
+                        //     text: ''
+                        // };
+                        // ContentAction.do(CREATE_CONTENT, data);
+                    }
+                };
+            case BlockContentTypes.VIDEO:
+                return {
+                    icon: <VideoIcon/>,
+                    onClick: () => {
+                        console.log('ADD VIDEO');
+                    }
+                };
+            case BlockContentTypes.PHOTO:
+                return {
+                    icon: <PhotoIcon/>,
+                    // extraContent: <input ref="inputUpload"
+                    //                      type="file"
+                    //                      style={{display: "none"}}
+                    //                      onChange={() => {
+                    //                         console.log('CHANGED')
+                    //                         let file = this.refs.inputUpload.files[0];
+                    //                         let data: IContentData = {
+                    //                             type: BlockContentTypes.PHOTO,
+                    //                             article: this.props.articleId,
+                    //                             position: this.props.blockPosition,
+                    //                             image: file
+                    //                         };
+                    //                         ContentAction.do(CREATE_CONTENT, data);
+                    //                     }}/>,
+                    onClick: () => {
+                        console.log('ADD PHOTO');
+                        // this.refs.inputUpload.click();
+                        // let data: IContentData = {
+                        //     type: BlockContentTypes.PHOTO,
+                        //     article: this.props.articleId,
+                        //     position: this.props.blockPosition,
+                        // };
+                        // ContentAction.do(CREATE_CONTENT, data);
+                    }
+                };
+            case BlockContentTypes.AUDIO:
+                return {
+                    icon: <AudioIcon/>,
+                    onClick: () => {
+                        console.log('ADD AUDIO')
+                    }
+                };
+            case BlockContentTypes.QUOTE:
+                return {
+                    icon: <QuoteIcon/>,
+                    onClick: () => {
+                        console.log('ADD QUOTE')
+                    }
+                };
+            case BlockContentTypes.COLUMNS:
+                return {
+                    icon: <ColumnsIcon/>,
+                    onClick: () => {
+                        console.log('ADD COLUMNS')
+                    }
+                };
+            case BlockContentTypes.PHRASE:
+                return {
+                    icon: <PhraseIcon/>,
+                    onClick: () => {
+                        // console.log('ADD PHRASE');
+                        // let data: IContentData = {
+                        //     type: BlockContentTypes.PHRASE,
+                        //     article: this.props.articleId,
+                        //     position: this.props.blockPosition,
+                        //     text: ''
+                        // };
+                        // ContentAction.do(CREATE_CONTENT, data);
+                    }
+                };
+            case BlockContentTypes.LIST:
+                return {
+                    icon: <ListIcon/>,
+                    onClick: () => {
+                        console.log('ADD LIST');
+                        // let data: IContentData = {
+                        //     type: BlockContentTypes.LIST,
+                        //     article: this.props.articleId,
+                        //     subtype: ListBlockContentTypes.UNORDERED,
+                        //     position: this.props.blockPosition,
+                        //     text: ''
+                        // };
+                        // ContentAction.do(CREATE_CONTENT, data);
+                    }
+                };
+            case BlockContentTypes.DIALOG:
+                return {
+                    icon: <DialogIcon/>,
+                    onClick: () => {
+                        console.log('ADD DIALOG')
+                    }
+                };
+            case BlockContentTypes.POST:
+                return {
+                    icon: <PostIcon/>,
+                    onClick: () => {
+                        console.log('ADD POST')
+                    }
+                };
         }
     }
 

@@ -3,20 +3,21 @@ import {Captions, Constants, BlockContentTypes} from '../../constants';
 import ContentEditable from '../shared/ContentEditable';
 import BaseContentBlock from './BaseContentBlock';
 import {ContentBlockAction, ACTIVATE_CONTENT_BLOCK} from '../../actions/editor/ContentBlockAction';
-import {ContentAction, UPDATE_CONTENT} from '../../actions/editor/ContentAction';
+import {ContentAction, UPDATE_CONTENT, IContentData} from '../../actions/editor/ContentAction';
 import * as toMarkdown from 'to-markdown';
 import '../../styles/editor/text_content_block.scss';
 import * as marked from 'marked';
 
 interface ITextContent {
-    id: number
+    id: string
     type: BlockContentTypes
     value: string
 }
 
 interface ITextContentBlockProps {
-    content: ITextContent
+    content: IContentData
     className?: string
+    autoSave?: boolean
 }
 
 interface ITextContentBlockState {
@@ -27,9 +28,13 @@ export default class TextContentBlock extends React.Component<ITextContentBlockP
     constructor(props: any) {
         super(props);
         this.state = {
-            content: this.props.content
+            content: this.props.content as ITextContent
         }
     }
+
+    static defaultProps = {
+        autoSave: true
+    };
 
     handleFocus() {
         ContentBlockAction.do(ACTIVATE_CONTENT_BLOCK, {id: this.props.content.id});
@@ -43,7 +48,7 @@ export default class TextContentBlock extends React.Component<ITextContentBlockP
         console.log(content, contentText);
         this.state.content.value = toMarkdown(content);
         this.setState({content: this.state.content}, () => {
-            ContentAction.do(UPDATE_CONTENT, this.state.content);
+            ContentAction.do(UPDATE_CONTENT, {contentBlock: this.state.content});
         });
     }
 
