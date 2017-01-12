@@ -57,7 +57,7 @@ class NotificationBlock extends React.Component<any, any> {
                     <NotificationIcon />
                     <div className="menu__notifications_count">{ this.state.count < 10 ? this.state.count : '9+'}</div>
                 </div>
-                <div className="menu__notifications_text">{ (this.state.last && this.state.last.text) ? this.state.last.text : Captions.main_menu.notification_defaul_text }</div>
+                <div className="menu__notifications_text">{ (this.state.last && this.state.last.text) ? this.state.last.text : Captions.main_menu.notification_default_text }</div>
             </div>)
     }
 }
@@ -128,7 +128,7 @@ export default class Menu extends React.Component<any, IMenuStateInterface> {
 
     constructor() {
         super();
-        this.state = {open: true, user: UserAction.getStore().user}
+        this.state = {open: false, user: UserAction.getStore().user}
         this.setUser = this.setUser.bind(this);
         this.setOpen = this.setOpen.bind(this);
     }

@@ -1,8 +1,6 @@
 @import "contstants";
 @import "mixins";
 
-$header-height: 70px;
-
 
 #profile_content {
   $avatar-side-size: 78px;
@@ -28,36 +26,19 @@ $header-height: 70px;
 
   .profile__avatar {
 
-
-
     position: relative;
-    //left: 0;
-
-    height: $avatar-side-size / 2;
-    margin-bottom: $margin;
+    height: $profile-avatar-side-size / 2;
 
     img {
       position: absolute;
       top: -$avatar-side-size/2;
-      width: $avatar-side-size;
-      height: $avatar-side-size;
-
-      @include border_radius($avatar-side-size);
-
     }
   }
 
   .profile__username {
-    text-transform: uppercase;
-    margin-bottom: $margin * 2;
 
     span {
-      font-size: $font-size;
-      padding: 5px;
-    }
-
-    span:first-child {
-      font-weight: $font-weight-bold;
+      display: inline-block;
     }
   }
 

@@ -30,13 +30,19 @@ export namespace Captions {
         manage_profile: 'управление профилем',
         create_article: 'создать публикацию',
         drafts: 'черновики',
-        notification_defaul_text: 'Новые уведомления'
+        notification_default_text: 'Новые уведомления'
+    };
+
+    export const management = {
+        title: "Управление профилем",
+        usernamePlaceholder: "Введите имя",
+
     };
 }
 
 export namespace Constants {
     export const maxImageSize = 5 * 1024 * 1024;
-    export const notificationIntervalTime = 2000;
+    export const notificationIntervalTime = 20000;
 }
 
 export enum BlockContentTypes {

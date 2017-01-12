@@ -1,0 +1,36 @@
+@import "contstants";
+@import "mixins";
+
+
+#profile_management {
+  div {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+  }
+
+  .profile__avatar {
+    margin-top: $margin * 2;
+  }
+
+  .profile__username {
+    width: 100%;
+    padding: $padding/2 ;
+    div {
+      width: 100%;
+      word-break: break-all;
+    }
+
+    span {
+      padding: 0;
+    }
+
+    .editable {
+      display: inline;
+    }
+
+
+  }
+}

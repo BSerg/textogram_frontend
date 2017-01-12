@@ -19,7 +19,6 @@ export default class Base extends React.Component<any, any> {
     }
 
     startNotifications() {
-        console.log('start');
         if (!UserAction.getStore().user || this.intervalId != null) return;
         NotificationAction.do(CHECK, null);
         this.intervalId = window.setInterval(() => {
@@ -28,7 +27,6 @@ export default class Base extends React.Component<any, any> {
     }
 
     stopNotifications() {
-        console.log('stop');
         window.clearInterval(this.intervalId);
         this.intervalId = null;
     }

@@ -5,6 +5,7 @@ import {api} from '../../api';
 export const GET_ME = 'get_me';
 export const LOGIN = 'login';
 export const LOGOUT = 'logout';
+export const UPDATE = 'update';
 
 class UserActionClass extends Action {
     constructor() {
@@ -36,4 +37,13 @@ UserAction.registerAsync(LOGOUT, (store, data: any) => {
             resolve(response.data)
         }).catch((error) => {})
     });
+});
+
+UserAction.registerAsync(UPDATE, (store, data: any) => {
+    return new Promise((resolve, reject) => {
+        api.patch('/users/me/', data).then((response: any) => {
+            store.user = response.data;
+            resolve(response.data);
+        }).catch((error) => {})
+    })
 });

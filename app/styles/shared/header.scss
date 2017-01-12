@@ -1,0 +1,23 @@
+@import "../contstants";
+@import "../mixins";
+
+$header-padding: 10px;
+
+.header {
+  background-color: $color;
+  box-sizing: border-box;
+  height: $header-height;
+  padding: $header-padding 0 0 $header-padding * 2;
+  min-width: 100%;
+  text-align: center;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  line-height: $header-height - $header-padding;
+  text-transform: uppercase;
+  font-size: $font-size-small1;
+  color: #FFFFFF;
+  letter-spacing: 2px;
+}

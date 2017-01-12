@@ -24,8 +24,6 @@ NotificationAction.registerAsync(CHECK, (store, data) => {
 
                 store.count = response.data.count;
                 store.last = response.data.last;
-
-                console.log(store);
                 resolve(response.data);
             }
         }).catch((error: any) => {});

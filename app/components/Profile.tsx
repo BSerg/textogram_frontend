@@ -2,10 +2,12 @@ import * as React from 'react';
 
 import {Link} from 'react-router';
 
+import '../styles/common.scss';
 import '../styles/profile.scss';
 
 import {api} from '../api';
 
+import Header from './shared/Header';
 import Error from './Error';
 import {UserAction, GET_ME, LOGIN, LOGOUT} from "../actions/user/UserAction";
 
@@ -121,13 +123,15 @@ export default class Profile extends React.Component<any, IProfileState> {
                  <div id="profile_content">
                     {
                         this.state && this.state.user ? [
-                            <div  className="profile__header" key="header"></div>,
+                            <Header key="header"/>,
                             <div className="profile__avatar" key="avatar">
                                 <img src={this.state.user.avatar}/>
                             </div>,
 
                             <div key="username" className="profile__username">
-                                <span>{this.state.user.first_name}</span> <span> {this.state.user.last_name}</span>
+                                <div>
+                                    <span>{this.state.user.first_name}</span> <span> {this.state.user.last_name}</span>
+                                </div>
                             </div>,
 
                             <div key="subscription" className="profile__subscription">
