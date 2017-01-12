@@ -9,21 +9,119 @@ import ContentEditable from './shared/ContentEditable';
 import '../styles/common.scss';
 import '../styles/profile_management.scss';
 
+const ConnectionIcon = require('babel!svg-react!../assets/images/profile_connection_icon.svg?name=ConnectionIcon');
+const LoginIcon = require('babel!svg-react!../assets/images/profile_login_icon.svg?name=LoginIcon');
+const NotificationIcon = require('babel!svg-react!../assets/images/profile_notification_icon.svg?name=NotificationIcon');
+const SubscriptionIcon = require('babel!svg-react!../assets/images/profile_subscription_icon.svg?name=SubscriptionIcon');
+
+
+interface ISectionPropsInterface {
+    user: any
+}
+
+interface ISectionLinksStateInterface {
+    links: any[];
+    authLink?: any;
+}
+
+
+class SocialLinks extends React.Component<ISectionPropsInterface, ISectionLinksStateInterface> {
+    constructor(props: any) {
+        super(props);
+        this.state = {links: [], authLink: null};
+    }
+
+    setLinks(props: any) {
+        let links: any[] = (props.user && props.user.social_links) ? props.user.social_links : [];
+        let authLink;
+        if (links[0] && links[0].is_auth) {
+            authLink = links[0];
+            links.splice(0, 1);
+        }
+        else {
+            authLink = null;
+        }
+
+        this.setState({links: links, authLink: authLink});
+    }
+
+    componentWillReceiveProps(nextProps: any) {
+        this.setLinks(nextProps);
+    }
+
+    componentDidMount() {
+        this.setLinks(this.props);
+    }
+
+    render() {
+        return (
+            <div className="profile__section">
+                {
+                    this.state.authLink ? (
+                        <div className="profile__auth_link">
+                            <div className="auth_link_text">acc auth</div>
+                            <div className="profile__link">
+                                <div>{ this.state.authLink.social }</div>
+                                <div className="url">{ this.state.authLink.url }</div>
+                                <div>eye</div>
+                            </div>
+                        </div>
+                    ) : null
+                }
+                {
+                    (this.state.authLink && this.state.links.length) ? (<div>additional</div>) : null
+                }
+                {
+                    this.state.links.map((link, index) => {
+                        return (<div className="profile__link" key={index}>{link.social} {link.id}</div>)
+                    })
+                }
+                {
+                    (!this.state.authLink && !this.state.links.length) ? (<div>add links</div>) : null
+                }
+
+            </div>);
+    }
+}
+
+
+
 interface IProfileManagementState {
     user?: any,
     error?: any,
     userName?: null | string,
     userNameContent?: null | string,
+    currentSection?: number,
 }
 
 export default class ProfileManagement extends React.Component<any, IProfileManagementState> {
 
+    SECTION_LINKS:string = 'links';
+    SECTION_LOGIN:string = 'login';
+    SECTION_NOTIFICATIONS:string = 'notifications';
+    SECTION_SUBSCRIPTIONS:string = 'subscriptions';
+
+    SECTIONS: { name: string, caption: string, icon: any, section: any }[] = [
+
+        { name: this.SECTION_LINKS, caption: Captions.management.sectionLinks, icon: ConnectionIcon, section: SocialLinks },
+        { name: this.SECTION_LOGIN, caption: Captions.management.sectionLogin, icon: LoginIcon, section: null },
+        { name: this.SECTION_NOTIFICATIONS, caption: Captions.management.sectionNotifications, icon: NotificationIcon, section: null },
+        { name: this.SECTION_SUBSCRIPTIONS, caption: Captions.management.sectionSubscriptions, icon: SubscriptionIcon, section: null },
+
+    ];
+
+
     constructor() {
         super();
         this.state = this.getStateData();
+        this.state.currentSection = 0;
         this.checkUser = this.checkUser.bind(this);
         this.userNameChange = this.userNameChange.bind(this);
         this.saveUserName = this.saveUserName.bind(this);
+    }
+
+    setSection(index: number) {
+        if (this.SECTIONS[index] && index != this.state.currentSection) this.setState({currentSection: index});
     }
 
     getStateData(): IProfileManagementState {
@@ -50,8 +148,6 @@ export default class ProfileManagement extends React.Component<any, IProfileMana
             first = arr.splice(0, 1).join("");
             rest = arr.join(" ");
         }
-        console.log(first);
-        console.log(rest);
         return "<div class='editable'>" + "<span>" + first + " </span>" + "<span>" + rest + "</span>" + "</div>";
     }
 
@@ -80,6 +176,9 @@ export default class ProfileManagement extends React.Component<any, IProfileMana
     }
 
     render() {
+
+        let CurrentSection = this.SECTIONS[this.state.currentSection] ? (this.SECTIONS[this.state.currentSection].section): null;
+
         if (this.state.error) return (this.state.error);
         return (
             <div id="profile_management">
@@ -96,6 +195,18 @@ export default class ProfileManagement extends React.Component<any, IProfileMana
                         content={ this.state.userNameContent } />
                 </div>
 
+                <div className="profile__menu">
+                    { this.SECTIONS.map((section, index) => {
+                        return (
+                            <div className={"profile__menu_section" + (index == this.state.currentSection ? ' active' : '')}
+                                 key={"section" + index.toString() }
+                                 onClick={this.setSection.bind(this, index)}>
+                                {section.icon ? (<section.icon />) : null}
+                                <span>{ section.caption }</span>
+                            </div>)
+                    }) }
+                </div>
+                { CurrentSection ? <CurrentSection user={ this.state.user } /> : null}
             </div>);
     }
 }

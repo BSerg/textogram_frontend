@@ -37,6 +37,11 @@ export namespace Captions {
         title: "Управление профилем",
         usernamePlaceholder: "Введите имя",
 
+        sectionLinks: 'Связи',
+        sectionLogin: 'Вход',
+        sectionNotifications: 'Уведомления',
+        sectionSubscriptions: 'Подписки',
+
     };
 }
 

@@ -30,7 +30,65 @@
     .editable {
       display: inline;
     }
+  }
+
+  .profile__menu {
+
+    justify-content: flex-start;
+
+    .profile__menu_section {
+      justify-content: flex-start;
+      padding: $padding/2;
+      border-bottom: 2px solid $color3;
+      svg {
+        width: 25px;
+        height: 25px;
+        fill: $color;
+      }
+
+      span {
+        padding-left: $padding;
+        display: none;
+        text-transform: uppercase;
+        font-size: $font-size-small;
+      }
+
+      &.active {
+        border-bottom: 3px solid $color;
+        flex-grow: 1;
+        span {
+          display: block;
+        }
+      }
+    }
+  }
+
+  .profile__section {
+    display: block;
+
+    div {
+      display: block;
+    }
+
+    .profile__auth_link {
+      .auth_link_text {
+        display: flex;
+        flex-direction: row;
+      }
+    }
 
 
+    .profile__link {
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-start;
+      align-items: center;
+
+      padding: $padding/2 $padding;
+
+      .url {
+        flex-grow: 1;
+      }
+    }
   }
 }
