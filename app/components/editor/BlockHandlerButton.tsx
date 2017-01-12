@@ -1,9 +1,10 @@
 import * as React from "react";
-import {BlockContentTypes} from "../../constants";
+import {BlockContentTypes, ListBlockContentTypes} from "../../constants";
 import {BlockHandlerAction, OPEN_BLOCK_HANDLER_MODAL} from "../../actions/editor/BlockHandlerAction";
 import {api} from "../../api";
 import "../../styles/editor/block_handler_button.scss";
-import {ContentAction, CREATE_CONTENT, IContentData} from "../../actions/editor/ContentAction";
+import {ContentAction, CREATE_CONTENT, SWAP_CONTENT, IContentData} from "../../actions/editor/ContentAction";
+import ListContentBlock from "./ListContentBlock";
 
 const AddIcon = require('babel!svg-react!../../assets/images/redactor_icon_add.svg?name=AddIcon');
 const SwapIcon = require('babel!svg-react!../../assets/images/redactor_icon_swing.svg?name=SwapIcon');
@@ -63,10 +64,10 @@ export default class BlockHandlerButton extends React.Component<IContentButtonPr
                     icon: <SwapIcon/>,
                     onClick: () => {
                         console.log('SWAP BLOCKS');
-                        // ContentAction.do(
-                        //     SWAP_CONTENT,
-                        //     {articleId: this.props.articleId, position: this.props.blockPosition}
-                        // );
+                        ContentAction.do(
+                            SWAP_CONTENT,
+                            {position: this.props.blockPosition}
+                        );
                     }
                 };
             case BlockContentTypes.TEXT:
@@ -90,13 +91,16 @@ export default class BlockHandlerButton extends React.Component<IContentButtonPr
                     icon: <HeaderIcon/>,
                     onClick: () => {
                         console.log('ADD HEADER');
-                        // let data: IContentData = {
-                        //     type: BlockContentTypes.HEADER,
-                        //     article: this.props.articleId,
-                        //     position: this.props.blockPosition,
-                        //     text: ''
-                        // };
-                        // ContentAction.do(CREATE_CONTENT, data);
+                        let data= {
+                            contentBlock: {
+                                type: BlockContentTypes.HEADER,
+                                value: ''
+                            },
+                            position: this.props.blockPosition
+
+                        };
+                        ContentAction.do(CREATE_CONTENT, data);
+
                     }
                 };
             case BlockContentTypes.LEAD:
@@ -104,13 +108,15 @@ export default class BlockHandlerButton extends React.Component<IContentButtonPr
                     icon: <LeadIcon/>,
                     onClick: () => {
                         console.log('ADD LEAD');
-                        // let data: IContentData = {
-                        //     type: BlockContentTypes.LEAD,
-                        //     article: this.props.articleId,
-                        //     position: this.props.blockPosition,
-                        //     text: ''
-                        // };
-                        // ContentAction.do(CREATE_CONTENT, data);
+                        let data= {
+                            contentBlock: {
+                                type: BlockContentTypes.LEAD,
+                                value: ''
+                            },
+                            position: this.props.blockPosition
+
+                        };
+                        ContentAction.do(CREATE_CONTENT, data);
                     }
                 };
             case BlockContentTypes.VIDEO:
@@ -173,14 +179,15 @@ export default class BlockHandlerButton extends React.Component<IContentButtonPr
                 return {
                     icon: <PhraseIcon/>,
                     onClick: () => {
-                        // console.log('ADD PHRASE');
-                        // let data: IContentData = {
-                        //     type: BlockContentTypes.PHRASE,
-                        //     article: this.props.articleId,
-                        //     position: this.props.blockPosition,
-                        //     text: ''
-                        // };
-                        // ContentAction.do(CREATE_CONTENT, data);
+                        let data= {
+                            contentBlock: {
+                                type: BlockContentTypes.PHRASE,
+                                value: ''
+                            },
+                            position: this.props.blockPosition
+
+                        };
+                        ContentAction.do(CREATE_CONTENT, data);
                     }
                 };
             case BlockContentTypes.LIST:
@@ -188,14 +195,16 @@ export default class BlockHandlerButton extends React.Component<IContentButtonPr
                     icon: <ListIcon/>,
                     onClick: () => {
                         console.log('ADD LIST');
-                        // let data: IContentData = {
-                        //     type: BlockContentTypes.LIST,
-                        //     article: this.props.articleId,
-                        //     subtype: ListBlockContentTypes.UNORDERED,
-                        //     position: this.props.blockPosition,
-                        //     text: ''
-                        // };
-                        // ContentAction.do(CREATE_CONTENT, data);
+                        let data= {
+                            contentBlock: {
+                                type: BlockContentTypes.LIST,
+                                subtype: ListBlockContentTypes.UNORDERED,
+                                value: ''
+                            },
+                            position: this.props.blockPosition
+
+                        };
+                        ContentAction.do(CREATE_CONTENT, data);
                     }
                 };
             case BlockContentTypes.DIALOG:

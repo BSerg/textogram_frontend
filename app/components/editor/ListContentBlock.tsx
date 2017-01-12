@@ -1,23 +1,22 @@
 import * as React from 'react';
-import {Captions, Constants, ListBlockContentTypes} from '../../constants';
+import {Captions, Constants, ListBlockContentTypes, BlockContentTypes} from '../../constants';
 import ContentEditable from '../shared/ContentEditable';
 import BaseContentBlock from './BaseContentBlock';
 import {ContentBlockAction, ACTIVATE_CONTENT_BLOCK} from '../../actions/editor/ContentBlockAction';
-import {ContentAction, UPDATE_CONTENT} from '../../actions/editor/ContentAction';
+import {ContentAction, UPDATE_CONTENT, IContentData} from '../../actions/editor/ContentAction';
 import * as toMarkdown from 'to-markdown';
 import '../../styles/editor/list_content_block.scss';
 import * as marked from 'marked';
 
 interface IListContent {
-    id: number
-    article: number
-    type: ListBlockContentTypes
-    position: number
-    text: string
+    id: string
+    type: BlockContentTypes
+    subtype: ListBlockContentTypes
+    value: string
 }
 
 interface IListContentBlockProps {
-    content: IListContent
+    content: IContentData
     className?: string
 }
 
@@ -29,7 +28,7 @@ export default class ListContentBlock extends React.Component<IListContentBlockP
     constructor(props: any) {
         super(props);
         this.state = {
-            content: this.props.content
+            content: this.props.content as IListContent
         }
     }
 
@@ -37,13 +36,9 @@ export default class ListContentBlock extends React.Component<IListContentBlockP
         ContentBlockAction.do(ACTIVATE_CONTENT_BLOCK, {id: this.props.content.id});
     }
 
-    handleBlur() {
-        // ContentBlockAction.do(ACTIVATE_CONTENT_BLOCK, {id: -1});
-    }
-
     handleChange(content: string, contentText: string) {
         console.log(content, contentText);
-        this.state.content.text = toMarkdown(content);
+        this.state.content.value = toMarkdown(content);
         this.setState({content: this.state.content}, () => {
             ContentAction.do(UPDATE_CONTENT, this.state.content);
         });
@@ -59,7 +54,7 @@ export default class ListContentBlock extends React.Component<IListContentBlockP
             className += ' ' + this.props.className;
         }
         let type;
-        switch (this.state.content.type) {
+        switch (this.state.content.subtype) {
             case ListBlockContentTypes.UNORDERED:
                 type = 'ul';
                 break;
@@ -71,10 +66,9 @@ export default class ListContentBlock extends React.Component<IListContentBlockP
             <BaseContentBlock id={this.props.content.id} className={className}>
                 <ContentEditable elementType='ul'
                                  onFocus={this.handleFocus.bind(this)}
-                                 onBlur={this.handleBlur.bind(this)}
                                  onChange={this.handleChange.bind(this)}
                                  onChangeDelay={1000}
-                                 content={marked(this.state.content.text)}
+                                 content={marked(this.state.content.value)}
                                  placeholder={Captions.editor.enter_list}/>
             </BaseContentBlock>
         )

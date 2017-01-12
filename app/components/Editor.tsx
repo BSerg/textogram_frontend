@@ -10,7 +10,7 @@ import PhotoContentBlock from './editor/PhotoContentBlock';
 import ListContentBlock from './editor/ListContentBlock';
 import {
     ContentAction, RESET_CONTENT, UPDATE_CONTENT, DELETE_CONTENT, CREATE_CONTENT, IContentData, UPDATE_COVER_CONTENT,
-    UPDATE_TITLE_CONTENT
+    UPDATE_TITLE_CONTENT, SWAP_CONTENT
 } from '../actions/editor/ContentAction';
 import {Captions, BlockContentTypes} from '../constants'
 import Error from './Error';
@@ -81,14 +81,14 @@ export default class Editor extends React.Component<any, IEditorState> {
         });
 
         ContentAction.onChange(
-            [CREATE_CONTENT, UPDATE_CONTENT, DELETE_CONTENT, UPDATE_COVER_CONTENT, UPDATE_TITLE_CONTENT],
+            [CREATE_CONTENT, UPDATE_CONTENT, DELETE_CONTENT, UPDATE_COVER_CONTENT, UPDATE_TITLE_CONTENT, SWAP_CONTENT],
             this.handleUpdateContent
         );
     }
 
     componentWillUnmount() {
         ContentAction.unbind(
-            [CREATE_CONTENT, UPDATE_CONTENT, DELETE_CONTENT, UPDATE_COVER_CONTENT, UPDATE_TITLE_CONTENT],
+            [CREATE_CONTENT, UPDATE_CONTENT, DELETE_CONTENT, UPDATE_COVER_CONTENT, UPDATE_TITLE_CONTENT, SWAP_CONTENT],
             this.handleUpdateContent
         );
     }
@@ -116,7 +116,22 @@ export default class Editor extends React.Component<any, IEditorState> {
                                         block = <TextContentBlock key={"content" + contentBlock.id}
                                                                   content={contentBlock}/>;
                                         break;
-
+                                    case BlockContentTypes.LEAD:
+                                        block = <LeadContentBlock key={"content" + contentBlock.id}
+                                                                  content={contentBlock}/>;
+                                        break;
+                                    case BlockContentTypes.HEADER:
+                                        block = <HeaderContentBlock key={"content" + contentBlock.id}
+                                                                    content={contentBlock}/>;
+                                        break;
+                                    case BlockContentTypes.PHRASE:
+                                        block = <PhraseContentBlock key={"content" + contentBlock.id}
+                                                                    content={contentBlock}/>;
+                                        break;
+                                    case BlockContentTypes.LIST:
+                                        block = <ListContentBlock key={"content" + contentBlock.id}
+                                                                  content={contentBlock}/>;
+                                        break;
                                 }
 
                                 return [

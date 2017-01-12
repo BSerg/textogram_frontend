@@ -28,6 +28,7 @@ export default class BaseContentBlock extends React.Component<IBaseContnentBlock
         this.state = {
             isActive: false
         }
+        this.handleActivate = this.handleActivate.bind(this)
     }
 
     static defaultProps = {
@@ -64,11 +65,11 @@ export default class BaseContentBlock extends React.Component<IBaseContnentBlock
     }
 
     componentDidMount() {
-        ContentBlockAction.onChange(ACTIVATE_CONTENT_BLOCK, this.handleActivate.bind(this));
+        ContentBlockAction.onChange(ACTIVATE_CONTENT_BLOCK, this.handleActivate);
     }
 
     componentWillUnmount() {
-        ContentBlockAction.unbind(ACTIVATE_CONTENT_BLOCK, this.handleActivate.bind(this));
+        ContentBlockAction.unbind(ACTIVATE_CONTENT_BLOCK, this.handleActivate);
     }
 
     render() {

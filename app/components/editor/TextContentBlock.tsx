@@ -17,7 +17,6 @@ interface ITextContent {
 interface ITextContentBlockProps {
     content: IContentData
     className?: string
-    autoSave?: boolean
 }
 
 interface ITextContentBlockState {
@@ -32,16 +31,8 @@ export default class TextContentBlock extends React.Component<ITextContentBlockP
         }
     }
 
-    static defaultProps = {
-        autoSave: true
-    };
-
     handleFocus() {
         ContentBlockAction.do(ACTIVATE_CONTENT_BLOCK, {id: this.props.content.id});
-    }
-
-    handleBlur() {
-        // ContentBlockAction.do(ACTIVATE_CONTENT_BLOCK, {id: -1});
     }
 
     handleChange(content: string, contentText: string) {
@@ -65,7 +56,6 @@ export default class TextContentBlock extends React.Component<ITextContentBlockP
         return (
             <BaseContentBlock id={this.props.content.id} className={className}>
                 <ContentEditable onFocus={this.handleFocus.bind(this)}
-                                 onBlur={this.handleBlur.bind(this)}
                                  onChange={this.handleChange.bind(this)}
                                  onChangeDelay={1000}
                                  content={marked(this.state.content.value)}

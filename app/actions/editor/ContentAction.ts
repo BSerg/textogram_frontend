@@ -102,3 +102,10 @@ ContentAction.register(
     store.content.cover = data.cover;
 });
 
+ContentAction.register(SWAP_CONTENT, (store, data: {position: number}) => {
+    console.log(data);
+    if (data.position >= 1 && data.position < store.content.blocks.length) {
+        let swappedBlock = store.content.blocks.splice(data.position, 1)[0];
+        store.content.blocks.splice(data.position - 1, 0, swappedBlock);
+    }
+});
