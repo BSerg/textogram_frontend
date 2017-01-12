@@ -12,7 +12,7 @@ import {
     ContentAction, RESET_CONTENT, UPDATE_CONTENT, DELETE_CONTENT, CREATE_CONTENT, IContentData, UPDATE_COVER_CONTENT,
     UPDATE_TITLE_CONTENT, SWAP_CONTENT
 } from '../actions/editor/ContentAction';
-import {Captions, BlockContentTypes} from '../constants'
+import {Captions, BlockContentTypes, ArticleStatuses} from '../constants'
 import Error from './Error';
 import {api} from '../api';
 
@@ -61,7 +61,7 @@ export default class Editor extends React.Component<any, IEditorState> {
 
     componentDidMount() {
         api.get(`/articles/editor/${this.props.params.articleId}/`).then((response: any) => {
-            this.setState({article: response.data}, () => {
+            this.setState({article: response.data, autoSave: response.data.status == ArticleStatuses.DRAFT}, () => {
                 ContentAction.do(
                     RESET_CONTENT,
                     {articleId: this.state.article.id, autoSave: false, content: this.state.article.content}
@@ -132,6 +132,12 @@ export default class Editor extends React.Component<any, IEditorState> {
                                         block = <ListContentBlock key={"content" + contentBlock.id}
                                                                   content={contentBlock}/>;
                                         break;
+                                    case BlockContentTypes.PHOTO:
+                                        block = <PhotoContentBlock key={"content" + contentBlock.id}
+                                                                   articleId={this.state.article.id}
+                                                                   content={contentBlock}/>;
+                                        break;
+
                                 }
 
                                 return [

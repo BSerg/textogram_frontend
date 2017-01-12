@@ -5,6 +5,7 @@ import {api} from "../../api";
 import "../../styles/editor/block_handler_button.scss";
 import {ContentAction, CREATE_CONTENT, SWAP_CONTENT, IContentData} from "../../actions/editor/ContentAction";
 import ListContentBlock from "./ListContentBlock";
+import {UploadImageAction, UPLOAD_IMAGE} from "../../actions/editor/UploadImageAction";
 
 const AddIcon = require('babel!svg-react!../../assets/images/redactor_icon_add.svg?name=AddIcon');
 const SwapIcon = require('babel!svg-react!../../assets/images/redactor_icon_swing.svg?name=SwapIcon');
@@ -127,31 +128,31 @@ export default class BlockHandlerButton extends React.Component<IContentButtonPr
                     }
                 };
             case BlockContentTypes.PHOTO:
+
+                let extraContent =
+                    <input ref="inputUpload"
+                           type="file"
+                           style={{display: "none"}}
+                           onChange={() => {
+                              let file = this.refs.inputUpload.files[0];
+                              UploadImageAction.doAsync(
+                                  UPLOAD_IMAGE,
+                                  {articleId: this.props.articleId, image: file}
+                              ).then(() => {
+                                  let store = UploadImageAction.getStore();
+                                  let data: IContentData = {
+                                     type: BlockContentTypes.PHOTO,
+                                     photos: [store.image]
+                                  };
+                                  ContentAction.do(CREATE_CONTENT, {contentBlock: data, position: this.props.blockPosition});
+                              });
+                           }}/>;
                 return {
                     icon: <PhotoIcon/>,
-                    // extraContent: <input ref="inputUpload"
-                    //                      type="file"
-                    //                      style={{display: "none"}}
-                    //                      onChange={() => {
-                    //                         console.log('CHANGED')
-                    //                         let file = this.refs.inputUpload.files[0];
-                    //                         let data: IContentData = {
-                    //                             type: BlockContentTypes.PHOTO,
-                    //                             article: this.props.articleId,
-                    //                             position: this.props.blockPosition,
-                    //                             image: file
-                    //                         };
-                    //                         ContentAction.do(CREATE_CONTENT, data);
-                    //                     }}/>,
+                    extraContent: extraContent,
                     onClick: () => {
                         console.log('ADD PHOTO');
-                        // this.refs.inputUpload.click();
-                        // let data: IContentData = {
-                        //     type: BlockContentTypes.PHOTO,
-                        //     article: this.props.articleId,
-                        //     position: this.props.blockPosition,
-                        // };
-                        // ContentAction.do(CREATE_CONTENT, data);
+                        this.refs.inputUpload.click();
                     }
                 };
             case BlockContentTypes.AUDIO:

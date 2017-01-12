@@ -1,3 +1,9 @@
+export enum ArticleStatuses {
+    DRAFT = 1,
+    PUBLISHED = 2,
+    DELETED = 3
+}
+
 export namespace Captions {
     export const editor = {
         add_cover_ru: 'Добавить обложку',
