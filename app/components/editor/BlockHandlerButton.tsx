@@ -83,140 +83,138 @@ export default class BlockHandlerButton extends React.Component<IContentButtonPr
                         console.log('ADD TEXT');
                         let data: IContentData = {
                             type: BlockContentTypes.TEXT,
-                            article: this.props.articleId,
-                            position: this.props.blockPosition,
-                            text: ''
+                            value: ''
                         };
                         ContentAction.do(CREATE_CONTENT, data);
                     }
                 };
-            case BlockContentTypes.HEADER:
-                return {
-                    icon: <HeaderIcon/>,
-                    onClick: () => {
-                        console.log('ADD HEADER');
-                        let data: IContentData = {
-                            type: BlockContentTypes.HEADER,
-                            article: this.props.articleId,
-                            position: this.props.blockPosition,
-                            text: ''
-                        };
-                        ContentAction.do(CREATE_CONTENT, data);
-                    }
-                };
-            case BlockContentTypes.LEAD:
-                return {
-                    icon: <LeadIcon/>,
-                    onClick: () => {
-                        console.log('ADD LEAD');
-                        let data: IContentData = {
-                            type: BlockContentTypes.LEAD,
-                            article: this.props.articleId,
-                            position: this.props.blockPosition,
-                            text: ''
-                        };
-                        ContentAction.do(CREATE_CONTENT, data);
-                    }
-                };
-            case BlockContentTypes.VIDEO:
-                return {
-                    icon: <VideoIcon/>,
-                    onClick: () => {
-                        console.log('ADD VIDEO');
-                    }
-                };
-            case BlockContentTypes.PHOTO:
-                return {
-                    icon: <PhotoIcon/>,
-                    extraContent: <input ref="inputUpload"
-                                         type="file"
-                                         style={{display: "none"}}
-                                         onChange={() => {
-                                            console.log('CHANGED')
-                                            let file = this.refs.inputUpload.files[0];
-                                            let data: IContentData = {
-                                                type: BlockContentTypes.PHOTO,
-                                                article: this.props.articleId,
-                                                position: this.props.blockPosition,
-                                                image: file
-                                            };
-                                            ContentAction.do(CREATE_CONTENT, data);
-                                        }}/>,
-                    onClick: () => {
-                        console.log('ADD PHOTO');
-                        // this.refs.inputUpload.click();
-                        let data: IContentData = {
-                            type: BlockContentTypes.PHOTO,
-                            article: this.props.articleId,
-                            position: this.props.blockPosition,
-                        };
-                        ContentAction.do(CREATE_CONTENT, data);
-                    }
-                };
-            case BlockContentTypes.AUDIO:
-                return {
-                    icon: <AudioIcon/>,
-                    onClick: () => {
-                        console.log('ADD AUDIO')
-                    }
-                };
-            case BlockContentTypes.QUOTE:
-                return {
-                    icon: <QuoteIcon/>,
-                    onClick: () => {
-                        console.log('ADD QUOTE')
-                    }
-                };
-            case BlockContentTypes.COLUMNS:
-                return {
-                    icon: <ColumnsIcon/>,
-                    onClick: () => {
-                        console.log('ADD COLUMNS')
-                    }
-                };
-            case BlockContentTypes.PHRASE:
-                return {
-                    icon: <PhraseIcon/>,
-                    onClick: () => {
-                        console.log('ADD PHRASE');
-                        let data: IContentData = {
-                            type: BlockContentTypes.PHRASE,
-                            article: this.props.articleId,
-                            position: this.props.blockPosition,
-                            text: ''
-                        };
-                        ContentAction.do(CREATE_CONTENT, data);
-                    }
-                };
-            case BlockContentTypes.LIST:
-                return {
-                    icon: <ListIcon/>,
-                    onClick: () => {
-                        console.log('ADD LIST');
-                        let data: IContentData = {
-                            type: BlockContentTypes.LIST,
-                            article: this.props.articleId,
-                            subtype: ListBlockContentTypes.UNORDERED,
-                            position: this.props.blockPosition,
-                            text: ''
-                        };
-                        ContentAction.do(CREATE_CONTENT, data);
-                    }
-                };
-            case BlockContentTypes.DIALOG:
-                return {
-                    icon: <DialogIcon/>,
-                    onClick: () => {
-                        console.log('ADD DIALOG')
-                    }
-                };
-            case BlockContentTypes.POST:
-                return {
-                    icon: <PostIcon/>,
-                    onClick: () => {
-                        console.log('ADD POST')
-                    }
-                };
+            // case BlockContentTypes.HEADER:
+            //     return {
+            //         icon: <HeaderIcon/>,
+            //         onClick: () => {
+            //             console.log('ADD HEADER');
+            //             let data: IContentData = {
+            //                 type: BlockContentTypes.HEADER,
+            //                 article: this.props.articleId,
+            //                 position: this.props.blockPosition,
+            //                 text: ''
+            //             };
+            //             ContentAction.do(CREATE_CONTENT, data);
+            //         }
+            //     };
+            // case BlockContentTypes.LEAD:
+            //     return {
+            //         icon: <LeadIcon/>,
+            //         onClick: () => {
+            //             console.log('ADD LEAD');
+            //             let data: IContentData = {
+            //                 type: BlockContentTypes.LEAD,
+            //                 article: this.props.articleId,
+            //                 position: this.props.blockPosition,
+            //                 text: ''
+            //             };
+            //             ContentAction.do(CREATE_CONTENT, data);
+            //         }
+            //     };
+            // case BlockContentTypes.VIDEO:
+            //     return {
+            //         icon: <VideoIcon/>,
+            //         onClick: () => {
+            //             console.log('ADD VIDEO');
+            //         }
+            //     };
+            // case BlockContentTypes.PHOTO:
+            //     return {
+            //         icon: <PhotoIcon/>,
+            //         extraContent: <input ref="inputUpload"
+            //                              type="file"
+            //                              style={{display: "none"}}
+            //                              onChange={() => {
+            //                                 console.log('CHANGED')
+            //                                 let file = this.refs.inputUpload.files[0];
+            //                                 let data: IContentData = {
+            //                                     type: BlockContentTypes.PHOTO,
+            //                                     article: this.props.articleId,
+            //                                     position: this.props.blockPosition,
+            //                                     image: file
+            //                                 };
+            //                                 ContentAction.do(CREATE_CONTENT, data);
+            //                             }}/>,
+            //         onClick: () => {
+            //             console.log('ADD PHOTO');
+            //             // this.refs.inputUpload.click();
+            //             let data: IContentData = {
+            //                 type: BlockContentTypes.PHOTO,
+            //                 article: this.props.articleId,
+            //                 position: this.props.blockPosition,
+            //             };
+            //             ContentAction.do(CREATE_CONTENT, data);
+            //         }
+            //     };
+            // case BlockContentTypes.AUDIO:
+            //     return {
+            //         icon: <AudioIcon/>,
+            //         onClick: () => {
+            //             console.log('ADD AUDIO')
+            //         }
+            //     };
+            // case BlockContentTypes.QUOTE:
+            //     return {
+            //         icon: <QuoteIcon/>,
+            //         onClick: () => {
+            //             console.log('ADD QUOTE')
+            //         }
+            //     };
+            // case BlockContentTypes.COLUMNS:
+            //     return {
+            //         icon: <ColumnsIcon/>,
+            //         onClick: () => {
+            //             console.log('ADD COLUMNS')
+            //         }
+            //     };
+            // case BlockContentTypes.PHRASE:
+            //     return {
+            //         icon: <PhraseIcon/>,
+            //         onClick: () => {
+            //             console.log('ADD PHRASE');
+            //             let data: IContentData = {
+            //                 type: BlockContentTypes.PHRASE,
+            //                 article: this.props.articleId,
+            //                 position: this.props.blockPosition,
+            //                 text: ''
+            //             };
+            //             ContentAction.do(CREATE_CONTENT, data);
+            //         }
+            //     };
+            // case BlockContentTypes.LIST:
+            //     return {
+            //         icon: <ListIcon/>,
+            //         onClick: () => {
+            //             console.log('ADD LIST');
+            //             let data: IContentData = {
+            //                 type: BlockContentTypes.LIST,
+            //                 article: this.props.articleId,
+            //                 subtype: ListBlockContentTypes.UNORDERED,
+            //                 position: this.props.blockPosition,
+            //                 text: ''
+            //             };
+            //             ContentAction.do(CREATE_CONTENT, data);
+            //         }
+            //     };
+            // case BlockContentTypes.DIALOG:
+            //     return {
+            //         icon: <DialogIcon/>,
+            //         onClick: () => {
+            //             console.log('ADD DIALOG')
+            //         }
+            //     };
+            // case BlockContentTypes.POST:
+            //     return {
+            //         icon: <PostIcon/>,
+            //         onClick: () => {
+            //             console.log('ADD POST')
+            //         }
+            //     };
         }
     }
 

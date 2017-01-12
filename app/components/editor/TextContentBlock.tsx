@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Captions, Constants} from '../../constants';
+import {Captions, Constants, BlockContentTypes} from '../../constants';
 import ContentEditable from '../shared/ContentEditable';
 import BaseContentBlock from './BaseContentBlock';
 import {ContentBlockAction, ACTIVATE_CONTENT_BLOCK} from '../../actions/editor/ContentBlockAction';
@@ -10,9 +10,8 @@ import * as marked from 'marked';
 
 interface ITextContent {
     id: number
-    article: number
-    position: number
-    text: string
+    type: BlockContentTypes
+    value: string
 }
 
 interface ITextContentBlockProps {
@@ -42,7 +41,7 @@ export default class TextContentBlock extends React.Component<ITextContentBlockP
 
     handleChange(content: string, contentText: string) {
         console.log(content, contentText);
-        this.state.content.text = toMarkdown(content);
+        this.state.content.value = toMarkdown(content);
         this.setState({content: this.state.content}, () => {
             ContentAction.do(UPDATE_CONTENT, this.state.content);
         });
@@ -64,7 +63,7 @@ export default class TextContentBlock extends React.Component<ITextContentBlockP
                                  onBlur={this.handleBlur.bind(this)}
                                  onChange={this.handleChange.bind(this)}
                                  onChangeDelay={1000}
-                                 content={marked(this.state.content.text)}
+                                 content={marked(this.state.content.value)}
                                  placeholder={Captions.editor.enter_text}/>
             </BaseContentBlock>
         )

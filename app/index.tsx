@@ -18,7 +18,7 @@ class App extends React.Component<any, any> {
                 <Route path="/" component={Base}>
                     <IndexRoute component={Index}/>
                     <Route path="profile/:userId" component={Profile}/>
-                    <Route path="articles/:articleSlug/edit" component={Editor}/>
+                    <Route path="articles/:articleId/edit" component={Editor}/>
                     <Route path="articles/:articleSlug" component={Article}/>
                 </Route>
                 <Route path="*" component={() => {return <Error code={404} msg="Page not found"/>}}/>
