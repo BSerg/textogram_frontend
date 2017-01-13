@@ -12,6 +12,10 @@
   margin-bottom: -$padding/2;
   z-index: 1;
 
+  &.last {
+    margin-top: $margin*2;
+  }
+
   &:not(.last) {
     opacity: 0;
   }
