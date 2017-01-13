@@ -1,22 +1,21 @@
 import * as React from 'react';
-import {Captions, Constants} from '../../constants';
+import {Captions, Constants, BlockContentTypes} from '../../constants';
 import ContentEditable from '../shared/ContentEditable';
 import BaseContentBlock from './BaseContentBlock';
 import {ContentBlockAction, ACTIVATE_CONTENT_BLOCK} from '../../actions/editor/ContentBlockAction';
-import {ContentAction, UPDATE_CONTENT} from '../../actions/editor/ContentAction';
+import {ContentAction, UPDATE_CONTENT, IContentData} from '../../actions/editor/ContentAction';
 import * as toMarkdown from 'to-markdown';
 import '../../styles/editor/text_content_block.scss';
 import * as marked from 'marked';
 
 interface ITextContent {
-    id: number
-    article: number
-    position: number
-    text: string
+    id: string
+    type: BlockContentTypes
+    value: string
 }
 
 interface ITextContentBlockProps {
-    content: ITextContent
+    content: IContentData
     className?: string
 }
 
@@ -28,7 +27,7 @@ export default class TextContentBlock extends React.Component<ITextContentBlockP
     constructor(props: any) {
         super(props);
         this.state = {
-            content: this.props.content
+            content: this.props.content as ITextContent
         }
     }
 
@@ -36,15 +35,11 @@ export default class TextContentBlock extends React.Component<ITextContentBlockP
         ContentBlockAction.do(ACTIVATE_CONTENT_BLOCK, {id: this.props.content.id});
     }
 
-    handleBlur() {
-        // ContentBlockAction.do(ACTIVATE_CONTENT_BLOCK, {id: -1});
-    }
-
     handleChange(content: string, contentText: string) {
         console.log(content, contentText);
-        this.state.content.text = toMarkdown(content);
+        this.state.content.value = toMarkdown(content);
         this.setState({content: this.state.content}, () => {
-            ContentAction.do(UPDATE_CONTENT, this.state.content);
+            ContentAction.do(UPDATE_CONTENT, {contentBlock: this.state.content});
         });
     }
 
@@ -61,10 +56,9 @@ export default class TextContentBlock extends React.Component<ITextContentBlockP
         return (
             <BaseContentBlock id={this.props.content.id} className={className}>
                 <ContentEditable onFocus={this.handleFocus.bind(this)}
-                                 onBlur={this.handleBlur.bind(this)}
                                  onChange={this.handleChange.bind(this)}
                                  onChangeDelay={1000}
-                                 content={marked(this.state.content.text)}
+                                 content={marked(this.state.content.value)}
                                  placeholder={Captions.editor.enter_text}/>
             </BaseContentBlock>
         )

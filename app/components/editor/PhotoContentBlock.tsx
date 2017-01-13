@@ -1,22 +1,23 @@
 import * as React from "react";
-import {PhotoBlockContentTypes, Captions} from "../../constants";
+import {PhotoBlockContentTypes, Captions, BlockContentTypes} from "../../constants";
 import ContentEditable from "../shared/ContentEditable";
 import BaseContentBlock from "./BaseContentBlock";
 import {ContentBlockAction, ACTIVATE_CONTENT_BLOCK} from "../../actions/editor/ContentBlockAction";
 import {ModalAction, OPEN_MODAL} from "../../actions/shared/ModalAction";
-import {DELETE_CONTENT, ContentAction} from "../../actions/editor/ContentAction";
+import {DELETE_CONTENT, ContentAction, IContentData, UPDATE_CONTENT} from "../../actions/editor/ContentAction";
 import {PhotoContentBlockAction, ADD_IMAGE, DELETE_IMAGE} from "../../actions/editor/PhotoContentBlockAction";
 import ContentBlockPopup from "./ContentBlockPopup";
 import "../../styles/editor/photo_content_block.scss";
+import {PopupPanelAction, OPEN_POPUP} from "../../actions/shared/PopupPanelAction";
+import {UploadImageAction, UPLOAD_IMAGE} from "../../actions/editor/UploadImageAction";
 
 const AddButton = require('babel!svg-react!../../assets/images/redactor_icon_popup_add.svg?name=AddButton');
 const DeleteButton = require('babel!svg-react!../../assets/images/close.svg?name=DeleteButton');
 
 interface IPhoto {
     id: number,
-    position: number
     image: string
-    caption: string
+    caption?: string
 }
 
 interface IPhotoProps {
@@ -26,24 +27,23 @@ interface IPhotoProps {
     onOpenModal?: (id: number) => any
 }
 
-interface IPhotoContent {
-    id: number
-    article: number
-    position: number
-    subtype: PhotoBlockContentTypes,
+export interface IPhotoContent {
+    id: string
+    type: BlockContentTypes
     photos: Array<IPhoto>
 }
 
 interface IPhotoContentBlockProps {
-    className?: string
-    content: IPhotoContent
+    articleId: number
+    content: IContentData
     maxPhotoCount?: number
+    className?: string
 }
 
 interface IPhotoContentBlockState {
-    content: IPhotoContent
+    isActive?: boolean
+    content?: IPhotoContent
 }
-
 
 export class Photo extends React.Component<IPhotoProps, any> {
     constructor(props: any) {
@@ -72,8 +72,7 @@ export class Photo extends React.Component<IPhotoProps, any> {
             backgroundSize: 'cover'
         };
         return (
-            <div className={className} style={style}>
-                {/*<div onClick={this.handleOpenModal.bind(this)} className="content_block_photo__image" />*/}
+            <div className={className} style={style} onClick={this.handleOpenModal.bind(this)}>
                 <DeleteButton onClick={this.handleDelete.bind(this)} className="content_block_photo__delete"/>
             </div>
         )
@@ -111,7 +110,8 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
     constructor(props: any) {
         super(props);
         this.state = {
-            content: this.props.content
+            content: this.props.content as IPhotoContent,
+            isActive: false
         }
     }
 
@@ -123,59 +123,56 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
         ContentBlockAction.do(ACTIVATE_CONTENT_BLOCK, {id: this.props.content.id});
     }
 
-    handleBlur() {
-        // ContentBlockAction.do(ACTIVATE_CONTENT_BLOCK, {id: -1});
+    handleDelete() {
+        ContentAction.do(DELETE_CONTENT, {id: this.state.content.id});
     }
 
-    handleDelete() {
-        ContentAction.do(DELETE_CONTENT, {id: this.props.content.id});
+    handleBlockActive() {
+        let store = ContentBlockAction.getStore();
+        this.setState({isActive: store.id == this.state.content.id}, () => {
+            if (this.state.isActive) {
+                PopupPanelAction.do(OPEN_POPUP, {content: this.getPopupContent()});
+            }
+        });
     }
 
     openModal(id: number) {
-        console.log('OPEN MODAL ON PHOTO #' + id);
-        ModalAction.do(OPEN_MODAL, {content: <PhotoModalContent/>})
+        if (this.state.isActive) {
+            console.log('OPEN MODAL ON PHOTO #' + id);
+            ModalAction.do(OPEN_MODAL, {content: <PhotoModalContent/>})
+        } else {
+            this.handleFocus();
+        }
     }
 
     addPhoto() {
         let file = this.refs.inputUpload.files[0];
-        PhotoContentBlockAction.do(ADD_IMAGE, {
-            content_item: this.props.content.id,
-            position: this.state.content.photos.length,
-            image: file,
-        })
+        UploadImageAction.doAsync(UPLOAD_IMAGE, {articleId: this.props.articleId, image: file}).then(() => {
+            let store = UploadImageAction.getStore();
+            this.state.content.photos.push(store.image);
+            this.setState({content: this.state.content}, () => {
+                PopupPanelAction.do(OPEN_POPUP, {content: this.getPopupContent()});
+                ContentAction.do(UPDATE_CONTENT, {contentBlock: this.state.content});
+            });
+        });
     }
 
     deletePhoto(id: number) {
         console.log('DELETE PHOTO #' + id);
-        PhotoContentBlockAction.do(DELETE_IMAGE, {id: id});
-    }
-
-    handleAddPhoto() {
-        let store = PhotoContentBlockAction.getStore();
-        this.state.content.photos.push(store.image);
-        this.state.content.photos.sort((a, b) => {
-            return a.position - b.position;
-        });
-        this.setState({content: this.state.content});
-    }
-
-    handleDeletePhoto() {
-        let store = PhotoContentBlockAction.getStore();
         let photos: IPhoto[] = [];
         this.state.content.photos.forEach((photo) => {
-            if (photo.id != store.image.id) {
+            if (photo.id != id) {
                 photos.push(photo);
             }
         });
-        photos.forEach((photo, index) => {
-            photo.position = index;
-        });
         this.state.content.photos = photos;
-        this.setState({content: this.state.content});
+        this.setState({content: this.state.content}, () => {
+            PopupPanelAction.do(OPEN_POPUP, {content: this.getPopupContent()});
+            ContentAction.do(UPDATE_CONTENT, {contentBlock: this.state.content});
+        });
     }
 
     private openFileDialog() {
-        console.log('OPEN DIALOG');
         this.refs.inputUpload.click();
     }
 
@@ -191,8 +188,11 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
     }
 
     componentDidMount() {
-        PhotoContentBlockAction.onChange(ADD_IMAGE, this.handleAddPhoto.bind(this));
-        PhotoContentBlockAction.onChange(DELETE_IMAGE, this.handleDeletePhoto.bind(this));
+        ContentBlockAction.onChange(ACTIVATE_CONTENT_BLOCK, this.handleBlockActive.bind(this));
+    }
+
+    componentWillUnmount() {
+        ContentBlockAction.unbind(ACTIVATE_CONTENT_BLOCK, this.handleBlockActive.bind(this));
     }
 
     render() {
@@ -204,11 +204,11 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
             <BaseContentBlock id={this.props.content.id}
                               className={className}
                               onClick={this.handleFocus.bind(this)}
-                              popupContent={this.getPopupContent()}>
+                              disableDefaultPopup={true}>
                 {this.state.content.photos.length ?
                     this.state.content.photos.map((photo: IPhoto, index: number) => {
                         return <Photo key={'photo' + photo.id}
-                                      className={'photo' + photo.position}
+                                      className={'photo' + index}
                                       content={photo}
                                       onDelete={this.deletePhoto.bind(this)}
                                       onOpenModal={this.openModal.bind(this)}/>

@@ -32,7 +32,7 @@ class App extends React.Component<any, any> {
 
                     <Route path="home/:id" component={IndexPage} />
                     <Route path="profile/:userId" component={Profile}/>
-                    <Route path="articles/:articleSlug/edit" component={Editor}/>
+                    <Route path="articles/:articleId/edit" component={Editor}/>
                     <Route path="articles/:articleSlug" component={Article}/>
                     <Route path="manage" component={ProfileManagement}/>
                 </Route>

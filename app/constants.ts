@@ -1,3 +1,9 @@
+export enum ArticleStatuses {
+    DRAFT = 1,
+    PUBLISHED = 2,
+    DELETED = 3
+}
+
 export namespace Captions {
     export const editor = {
         add_cover_ru: 'Добавить обложку',
@@ -10,6 +16,9 @@ export namespace Captions {
         enter_lead: 'Введите лид',
         enter_phrase: 'Введите фразу',
         enter_list: 'Введите текст элемента списка',
+        enter_quote: 'Цитата',
+        enter_quote_replace: 'Заменить',
+        enter_quote_delete: 'Удалить',
         enter_caption: 'Описание',
         content_text: 'Текст',
         content_header: 'Заголовок',

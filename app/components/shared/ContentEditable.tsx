@@ -43,7 +43,7 @@ export default class ContentEditable extends React.Component<ContentEditableProp
         editable: true,
         disabled: false,
         onChangeDelay: 100,
-        placeholder: 'Enter text...',
+        placeholder: 'Enter value...',
         allowLineBreak: true,
         elementType: 'p',
         alignContent: 'left',
@@ -119,7 +119,10 @@ export default class ContentEditable extends React.Component<ContentEditableProp
         this.setState(this.extractContent(), () => {
             if (!this.state.contentText.trim()) {
                 this.refs.editableElement.innerHTML = this.getElementEmptyContentByType();
-                this.setCursorTo(this.refs.editableElement.childNodes[0]);
+                let el = this.refs.editableElement.childNodes[0];
+                if (el instanceof Node) {
+                    this.setCursorTo(el);
+                }
             } else {
                 this.cleanElement();
             }
@@ -140,7 +143,7 @@ export default class ContentEditable extends React.Component<ContentEditableProp
         let content;
         e.preventDefault();
         if(e.clipboardData || e.originalEvent.clipboardData ){
-            content = (e.originalEvent || e).clipboardData.getData('text/plain');
+            content = (e.originalEvent || e).clipboardData.getData('text');
             document.execCommand('insertText', false, content);
         }
     }

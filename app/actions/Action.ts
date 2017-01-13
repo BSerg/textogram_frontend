@@ -78,12 +78,25 @@ export default class Action extends events.EventEmitter {
         this.on(this.getStartEventName(action), callback);
     }
 
-    onChange(action: string, callback: () => any) {
-        this.on(this.getUpdateEventName(action), callback);
+    onChange(action: string | string[], callback: () => any) {
+        if (typeof action == 'string') {
+            this.on(this.getUpdateEventName(action), callback);
+        } else if (typeof action == 'object') {
+            action.forEach((a) => {
+                this.on(this.getUpdateEventName(a), callback);
+            });
+        }
+
     }
 
-    unbind(action: string, callback: () => any) {
-        this.removeListener(this.getUpdateEventName(action), callback);
+    unbind(action: string | string[], callback: () => any) {
+        if (typeof action == 'string') {
+            this.removeListener(this.getUpdateEventName(action), callback);
+        } else if (typeof action == 'object') {
+            action.forEach((a) => {
+                this.removeListener(this.getUpdateEventName(a), callback);
+            });
+        }
     }
 
     do(action: string, data: any) {
@@ -91,11 +104,13 @@ export default class Action extends events.EventEmitter {
     }
 
     doAsync(action: string, data: any): Promise<any> {
-        this.dispatcher.dispatch({action: action, data: data, uid: this.generateUID()});
-        return new Promise((resolve, reject) => {
-            this.on(this.getUpdateUIDEventName(action, data.uid), () => {
+        const uid = this.generateUID();
+        let promise = new Promise((resolve, reject) => {
+            this.on(this.getUpdateUIDEventName(action, uid), () => {
                 resolve('DONE');
             })
         });
+        this.dispatcher.dispatch({action: action, data: data, uid: uid});
+        return promise;
     }
 }

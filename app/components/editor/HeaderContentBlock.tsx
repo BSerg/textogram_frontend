@@ -1,20 +1,19 @@
 import * as React from "react";
-import {Captions} from "../../constants";
+import {Captions, BlockContentTypes} from "../../constants";
 import ContentEditable from "../shared/ContentEditable";
 import BaseContentBlock from "./BaseContentBlock";
 import {ContentBlockAction, ACTIVATE_CONTENT_BLOCK} from "../../actions/editor/ContentBlockAction";
-import {ContentAction, UPDATE_CONTENT} from "../../actions/editor/ContentAction";
+import {ContentAction, UPDATE_CONTENT, IContentData} from "../../actions/editor/ContentAction";
 import "../../styles/editor/header_content_block.scss";
 
 interface IHeaderContent {
-    id: number
-    article: number
-    position: number
-    text: string
+    id: string
+    type: BlockContentTypes
+    value: string
 }
 
 interface IHeaderContentBlockProps {
-    content: IHeaderContent
+    content: IContentData
     className?: string
 }
 
@@ -26,7 +25,7 @@ export default class HeaderContentBlock extends React.Component<IHeaderContentBl
     constructor(props: any) {
         super(props);
         this.state = {
-            content: this.props.content
+            content: this.props.content as IHeaderContent
         }
     }
 
@@ -34,15 +33,11 @@ export default class HeaderContentBlock extends React.Component<IHeaderContentBl
         ContentBlockAction.do(ACTIVATE_CONTENT_BLOCK, {id: this.props.content.id});
     }
 
-    handleBlur() {
-        // ContentBlockAction.do(ACTIVATE_CONTENT_BLOCK, {id: -1});
-    }
-
     handleChange(content: string, contentText: string) {
         console.log(content, contentText);
-        this.state.content.text = contentText;
+        this.state.content.value = contentText;
         this.setState({content: this.state.content}, () => {
-            ContentAction.do(UPDATE_CONTENT, this.state.content);
+            ContentAction.do(UPDATE_CONTENT, {contentBlock: this.state.content});
         });
     }
 
@@ -61,10 +56,8 @@ export default class HeaderContentBlock extends React.Component<IHeaderContentBl
                 <ContentEditable elementType="inline"
                                  allowLineBreak={false}
                                  onFocus={this.handleFocus.bind(this)}
-                                 onBlur={this.handleBlur.bind(this)}
                                  onChange={this.handleChange.bind(this)}
-                                 onChangeDelay={1000}
-                                 content={this.state.content.text}
+                                 content={this.state.content.value}
                                  placeholder={Captions.editor.enter_header}/>
             </BaseContentBlock>
         )

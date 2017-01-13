@@ -3,7 +3,6 @@ import {ModalAction, OPEN_MODAL, CLOSE_MODAL} from '../../actions/shared/ModalAc
 
 import '../../styles/shared/modal.scss'
 
-const CloseIcon = require('babel!svg-react!../../assets/images/close.svg?name=CloseIcon');
 
 interface IModalState {
     opened: boolean
@@ -47,11 +46,8 @@ export default class Modal extends React.Component<any, IModalState> {
         }
         return (
             <div className={className}>
-                <div className="modal__wrapper">
-                    <CloseIcon className="modal__close" onClick={this.handleCloseModal.bind(this)}/>
-                    <div className="modal__content">
-                        {this.state.content}
-                    </div>
+                <div className="modal__content">
+                    {this.state.content}
                 </div>
             </div>
         )

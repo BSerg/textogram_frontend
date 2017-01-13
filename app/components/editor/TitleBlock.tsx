@@ -1,6 +1,8 @@
 import * as React from 'react';
 import {Captions, Constants} from '../../constants';
 import ContentEditable from '../shared/ContentEditable';
+import {UploadImageAction, UPLOAD_IMAGE} from '../../actions/editor/UploadImageAction';
+import {ContentAction, UPDATE_TITLE_CONTENT, UPDATE_COVER_CONTENT} from '../../actions/editor/ContentAction';
 
 import {TitleBlockAction, UPDATE_COVER_ACTION, UPDATE_TITLE_ACTION} from '../../actions/editor/TitleBlockAction';
 
@@ -12,11 +14,12 @@ interface TitleBlockPropsInterface {
     title: string|null,
     cover: string|null,
     articleSlug: string
+    autoSave?: boolean
 }
 
 interface TitleBlockStateInterface {
     title?: string|null,
-    cover?: string|null,
+    cover?: {id: number, image: string} | null,
 }
 
 export default class TitleBlock extends React.Component<TitleBlockPropsInterface, TitleBlockStateInterface> {
@@ -28,6 +31,10 @@ export default class TitleBlock extends React.Component<TitleBlockPropsInterface
         }
     }
 
+    static defaultProps = {
+        autoSave: true
+    };
+
     refs: {
         fileInput: HTMLInputElement;
         componentRootElement: HTMLElement
@@ -38,22 +45,26 @@ export default class TitleBlock extends React.Component<TitleBlockPropsInterface
     }
 
     handleTitle(content: string, contentText: string) {
-        TitleBlockAction.do(UPDATE_TITLE_ACTION, {articleSlug: this.props.articleSlug, title: contentText})
+        this.setState({title: contentText}, () => {
+            ContentAction.do(UPDATE_TITLE_CONTENT, {articleId: this.props.articleSlug, autoSave: this.props.autoSave, title: this.state.title});
+        });
     }
 
     handleCover() {
         var file = this.refs.fileInput.files[0];
-        TitleBlockAction.do(UPDATE_COVER_ACTION, {articleSlug: this.props.articleSlug, cover: file});
+        UploadImageAction.doAsync(UPLOAD_IMAGE, {articleId: this.props.articleSlug, image: file}).then(() => {
+            let store = UploadImageAction.getStore();
+            console.log(store);
+            this.setState({cover: store.image}, () => {
+                ContentAction.do(UPDATE_COVER_CONTENT, {articleId: this.props.articleSlug, autoSave: this.props.autoSave, cover: store.image});
+            });
+        });
     }
 
     deleteCover() {
-        TitleBlockAction.do(UPDATE_COVER_ACTION, {articleSlug: this.props.articleSlug, cover: null});
-    }
-
-    handleChangeCover() {
-        let store: any = TitleBlockAction.getStore();
-        console.log(store);
-        this.setState({cover: store.cover});
+        this.setState({cover: null}, () => {
+            ContentAction.do(UPDATE_COVER_CONTENT, {articleId: this.props.articleSlug, autoSave: this.props.autoSave, cover: null});
+        });
     }
 
     handleScroll() {
@@ -63,12 +74,10 @@ export default class TitleBlock extends React.Component<TitleBlockPropsInterface
 
     componentDidMount() {
         document.addEventListener('scroll', this.handleScroll.bind(this));
-        TitleBlockAction.onChange(UPDATE_COVER_ACTION, this.handleChangeCover.bind(this));
     }
 
     componentWillUnmount() {
         document.removeEventListener('scroll', this.handleScroll.bind(this));
-        TitleBlockAction.unbind(UPDATE_COVER_ACTION, this.handleChangeCover.bind(this));
     }
 
     render() {
@@ -76,7 +85,7 @@ export default class TitleBlock extends React.Component<TitleBlockPropsInterface
             style = {};
         if (this.state.cover) {
             className += ' inverse';
-            style = {background: 'url("' + this.state.cover + '") no-repeat center center', backgroundSize: 'cover'}
+            style = {background: 'url("' + this.state.cover.image + '") no-repeat center center', backgroundSize: 'cover'}
         }
 
         return (
