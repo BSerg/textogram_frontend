@@ -112,7 +112,8 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
         this.state = {
             content: this.props.content as IPhotoContent,
             isActive: false
-        }
+        };
+        this.handleBlockActive = this.handleBlockActive.bind(this);
     }
 
     static defaultProps = {
@@ -188,11 +189,11 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
     }
 
     componentDidMount() {
-        ContentBlockAction.onChange(ACTIVATE_CONTENT_BLOCK, this.handleBlockActive.bind(this));
+        ContentBlockAction.onChange(ACTIVATE_CONTENT_BLOCK, this.handleBlockActive);
     }
 
     componentWillUnmount() {
-        ContentBlockAction.unbind(ACTIVATE_CONTENT_BLOCK, this.handleBlockActive.bind(this));
+        ContentBlockAction.unbind(ACTIVATE_CONTENT_BLOCK, this.handleBlockActive);
     }
 
     render() {
