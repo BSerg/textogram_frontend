@@ -128,31 +128,15 @@ export default class BlockHandlerButton extends React.Component<IContentButtonPr
                     }
                 };
             case BlockContentTypes.PHOTO:
-
-                let extraContent =
-                    <input ref="inputUpload"
-                           type="file"
-                           style={{display: "none"}}
-                           onChange={() => {
-                              let file = this.refs.inputUpload.files[0];
-                              UploadImageAction.doAsync(
-                                  UPLOAD_IMAGE,
-                                  {articleId: this.props.articleId, image: file}
-                              ).then(() => {
-                                  let store = UploadImageAction.getStore();
-                                  let data: IContentData = {
-                                     type: BlockContentTypes.PHOTO,
-                                     photos: [store.image]
-                                  };
-                                  ContentAction.do(CREATE_CONTENT, {contentBlock: data, position: this.props.blockPosition});
-                              });
-                           }}/>;
                 return {
                     icon: <PhotoIcon/>,
-                    extraContent: extraContent,
                     onClick: () => {
                         console.log('ADD PHOTO');
-                        this.refs.inputUpload.click();
+                        let data: IContentData = {
+                            type: BlockContentTypes.PHOTO,
+                            photos: []
+                        };
+                        ContentAction.do(CREATE_CONTENT, {contentBlock: data, position: this.props.blockPosition});
                     }
                 };
             case BlockContentTypes.AUDIO:
