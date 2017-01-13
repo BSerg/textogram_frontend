@@ -47,7 +47,7 @@
       }
 
       span {
-        padding-left: $padding;
+        padding-left: $padding/3;
         display: none;
         text-transform: uppercase;
         font-size: $font-size-small;
@@ -124,5 +124,40 @@
       line-height: 14px;
       text-align: center;
     }
+  }
+
+  .profile__notification {
+    margin: 0 $margin * 2;
+    padding: $padding * 2/3 5px;
+    border-bottom: 1px solid $color3;
+
+    .time {
+      font-size: $font-size-small;
+      color: $color6;
+      line-height: 14px;
+    }
+
+    .text {
+      font-size: $font-size-small2;
+      letter-spacing: 1px;
+      line-height: 18px;
+    }
+  }
+
+  .profile__notification:first-child {
+    padding-top: $padding;
+  }
+
+  .profile__notification:last-child {
+    border-bottom: none;
+  }
+
+  .load_more {
+    padding: 10px 0;
+    text-align: center;
+    margin: $margin 0;
+    background-color: $color4;
+    cursor: pointer;
+    color: $color3;
   }
 }

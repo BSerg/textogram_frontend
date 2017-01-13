@@ -1,7 +1,10 @@
 import * as React from 'react';
+import * as moment from 'moment';
 import {Captions} from '../constants';
 
 import {UserAction, GET_ME, LOGIN, LOGOUT} from '../actions/user/UserAction';
+import {NotificationAction, CHECK} from '../actions/NotificationAction';
+
 import Error from './Error';
 import Header from './shared/Header';
 import ContentEditable from './shared/ContentEditable';
@@ -20,8 +23,84 @@ const VisibilityOffIcon = require('babel!svg-react!../assets/images/profile_visi
 const CloseIcon = require('babel!svg-react!../assets/images/profile_close_icon.svg?name=CloseIcon');
 
 
+import {api} from '../api';
+
 interface ISectionPropsInterface {
     user: any
+}
+
+interface INotificationsStateInterface {
+    notifications?: any[],
+    apiUrl?: string,
+    hasNew?: boolean,
+}
+
+class Notifications extends React.Component<ISectionPropsInterface, INotificationsStateInterface> {
+
+    INITIAL_API_URL = '/notifications/';
+
+    constructor(props: any) {
+        super(props);
+        this.state = {notifications: [], apiUrl: this.INITIAL_API_URL, hasNew: false};
+        this.checkNew = this.checkNew.bind(this);
+    }
+
+    load(initial: boolean = false) {
+        if (!initial && !this.state.apiUrl) return;
+        api.get(initial ? this.INITIAL_API_URL : this.state.apiUrl).then((response: any) => {
+            let results = response.data.results || [];
+            results = results.map((data: any) => { return this.updateData(data); });
+            let notifications = initial ? results : this.state.notifications.concat(results);
+            this.setState({notifications: notifications, apiUrl: response.data.next});
+            if (initial) {
+                api.post('/notifications/mark_read_all/').then((response) => {
+                    NotificationAction.do(CHECK, null);
+                });
+            }
+        }).catch((error: any) => {});
+    }
+
+    updateData(data: any) {
+        data.dateText = moment(data.date).format('DD.MM.YYYY, HH:mm') || '';
+        return data;
+    }
+
+    checkNew() {
+        this.setState({hasNew: Boolean(NotificationAction.getStore().count)})
+    }
+
+    componentDidMount() {
+        this.load(true);
+        NotificationAction.onChange(CHECK, this.checkNew);
+
+    }
+
+    componentWillUnmount() {
+        NotificationAction.unbind(CHECK, this.checkNew);
+    }
+
+    render() {
+        return (
+
+            <div className="profile__section">
+                {
+                    this.state.hasNew ? <div className="load_more" onClick={this.load.bind(this, true)}>+</div> : null
+                }
+                {
+                    this.state.notifications.map((notification, index) => {
+                        return (<div className="profile__notification" key={index}>
+                            <div className="time">
+                                { notification.dateText }
+                            </div>
+                            <div className="text">{ notification.text }</div>
+                        </div>)
+                    })
+                }
+                {
+                    this.state.apiUrl ? <div className="load_more" onClick={this.load.bind(this, false)}>+</div> : null
+                }
+            </div>)
+    }
 }
 
 interface ISectionLinksStateInterface {
@@ -80,14 +159,15 @@ class SocialLinks extends React.Component<ISectionPropsInterface, ISectionLinksS
                     })
                 }
                 {
-                    (!this.state.authLink && !this.state.links.length) ? (<div className="link_add_text">{Captions.management.addLinks}</div>) : null
+                    (!this.state.authLink && !this.state.links.length) ? (
+                        <div className="link_add_text">{Captions.management.addLinks}</div>
+                    ) : null
                 }
 
 
             </div>);
     }
 }
-
 
 
 interface IProfileManagementState {
@@ -109,7 +189,7 @@ export default class ProfileManagement extends React.Component<any, IProfileMana
 
         { name: this.SECTION_LINKS, caption: Captions.management.sectionLinks, icon: ConnectionIcon, section: SocialLinks },
         { name: this.SECTION_LOGIN, caption: Captions.management.sectionLogin, icon: LoginIcon, section: null },
-        { name: this.SECTION_NOTIFICATIONS, caption: Captions.management.sectionNotifications, icon: NotificationIcon, section: null },
+        { name: this.SECTION_NOTIFICATIONS, caption: Captions.management.sectionNotifications, icon: NotificationIcon, section: Notifications },
         { name: this.SECTION_SUBSCRIPTIONS, caption: Captions.management.sectionSubscriptions, icon: SubscriptionIcon, section: null },
     ];
 
@@ -117,7 +197,7 @@ export default class ProfileManagement extends React.Component<any, IProfileMana
     constructor() {
         super();
         this.state = this.getStateData();
-        this.state.currentSection = 0;
+        this.state.currentSection = 2;
         this.checkUser = this.checkUser.bind(this);
         this.userNameChange = this.userNameChange.bind(this);
         this.saveUserName = this.saveUserName.bind(this);

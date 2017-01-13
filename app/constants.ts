@@ -60,7 +60,7 @@ export namespace Captions {
 
 export namespace Constants {
     export const maxImageSize = 5 * 1024 * 1024;
-    export const notificationIntervalTime = 20000;
+    export const notificationIntervalTime = 2000;
 }
 
 export enum BlockContentTypes {

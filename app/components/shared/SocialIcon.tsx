@@ -23,7 +23,6 @@ export default class SocialIcon extends React.Component<ISocialIconProps, any> {
     }
 
     getIcon(): any {
-        console.log(this.props.social);
         let Icon = this.ICONS[this.props.social];
         return Icon ? Icon : UrlIcon;
     }
