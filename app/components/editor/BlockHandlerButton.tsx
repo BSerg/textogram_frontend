@@ -166,7 +166,17 @@ export default class BlockHandlerButton extends React.Component<IContentButtonPr
                 return {
                     icon: <QuoteIcon/>,
                     onClick: () => {
-                        console.log('ADD QUOTE')
+                        console.log('ADD QUOTE');
+                        let data: {contentBlock: IContentData, position: number} = {
+                            contentBlock: {
+                                type: BlockContentTypes.QUOTE,
+                                image: null,
+                                value: ''
+                            },
+                            position: this.props.blockPosition
+
+                        };
+                        ContentAction.do(CREATE_CONTENT, data);
                     }
                 };
             case BlockContentTypes.COLUMNS:

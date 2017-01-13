@@ -8,6 +8,7 @@ import LeadContentBlock from './editor/LeadContentBlock';
 import PhraseContentBlock from './editor/PhraseContentBlock';
 import PhotoContentBlock from './editor/PhotoContentBlock';
 import ListContentBlock from './editor/ListContentBlock';
+import QuoteContentBlock from './editor/QuoteContentBlock';
 import {
     ContentAction, RESET_CONTENT, UPDATE_CONTENT, DELETE_CONTENT, CREATE_CONTENT, IContentData, UPDATE_COVER_CONTENT,
     UPDATE_TITLE_CONTENT, SWAP_CONTENT
@@ -137,6 +138,12 @@ export default class Editor extends React.Component<any, IEditorState> {
                                                                    articleId={this.state.article.id}
                                                                    content={contentBlock}/>;
                                         break;
+                                    case BlockContentTypes.QUOTE:
+                                        block = <QuoteContentBlock key={"content" + contentBlock.id}
+                                                                   articleId={this.state.article.id}
+                                                                   content={contentBlock}/>;
+                                        break;
+
 
                                 }
 

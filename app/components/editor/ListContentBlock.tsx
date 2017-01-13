@@ -40,7 +40,7 @@ export default class ListContentBlock extends React.Component<IListContentBlockP
         console.log(content, contentText);
         this.state.content.value = toMarkdown(content);
         this.setState({content: this.state.content}, () => {
-            ContentAction.do(UPDATE_CONTENT, this.state.content);
+            ContentAction.do(UPDATE_CONTENT, {contentBlock: this.state.content});
         });
     }
 
