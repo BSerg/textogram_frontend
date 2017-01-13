@@ -177,7 +177,11 @@ export default class Editor extends React.Component<any, IEditorState> {
                                               BlockContentTypes.ADD,
                                               BlockContentTypes.PHOTO
                                           ]}/>,
-                            <div key="add_content_help" className="add_content_help">{Captions.editor.add_content_help}</div>,
+                            <div key="add_content_help" className="add_content_help">
+                                {!this.state.article.content.blocks.length ?
+                                    Captions.editor.add_content_help : null
+                                }
+                            </div>,
                             (this.state.article.status == ArticleStatuses.DRAFT ?
                                 <div className="editor__publish"
                                      onClick={this.openPublishParamsModal.bind(this)}>

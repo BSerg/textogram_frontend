@@ -141,7 +141,7 @@ export default class QuoteContentBlock extends React.Component<IQuoteContentBloc
                         (
                             this.state.menuOpened ?
                                 <div key="photoMenu" className="content_block_quote__menu">
-                                    <div onClick={this.handleClickPhoto.bind(this)} className="content_block_quote__menu_item">
+                                    <div onClick={this.openFileDialog.bind(this)} className="content_block_quote__menu_item">
                                         {Captions.editor.enter_quote_replace}
                                     </div>
                                     <div onClick={this.deleteImage.bind(this)} className="content_block_quote__menu_item">
