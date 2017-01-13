@@ -4,6 +4,8 @@ import {BlockContentTypes, Captions} from '../../constants';
 import {ModalAction, CLOSE_MODAL} from '../../actions/shared/ModalAction';
 import '../../styles/editor/block_handler_modal.scss';
 
+const CloseIcon = require('babel!svg-react!../../assets/images/close.svg?name=CloseIcon');
+
 
 interface IBlockHandlerModal {
     articleId: number
@@ -16,7 +18,7 @@ export class BlockHandlerModal extends React.Component<IBlockHandlerModal, any> 
         super(props);
     }
 
-    handleClick() {
+    closeModal() {
         ModalAction.do(CLOSE_MODAL, {content: null});
     }
 
@@ -37,13 +39,14 @@ export class BlockHandlerModal extends React.Component<IBlockHandlerModal, any> 
         ];
         return (
             <div className="block_handler_modal">
+                <CloseIcon className="block_handler_modal__close" onClick={this.closeModal.bind(this)}/>
                 {items.map((item) => {
                     return (
                         <div className="block_handler_modal__item">
                             <BlockHandlerButton type={item.type}
                                                 articleId={this.props.articleId}
                                                 blockPosition={this.props.blockPosition}
-                                                onClick={this.handleClick.bind(this)}/>
+                                                onClick={this.closeModal.bind(this)}/>
                             <div className="block_handler_modal__caption">{item.caption}</div>
                         </div>
                     )

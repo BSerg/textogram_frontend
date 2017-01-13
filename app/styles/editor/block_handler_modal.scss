@@ -2,18 +2,23 @@
 @import "../mixins";
 
 .block_handler_modal {
-  background-color: $color;
-  width: calc(100% - 60px);
-  height: calc(100% - 75px);
-  padding: 0 $padding;
+  position: relative;
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
+  background-color: $color;
+  width: calc(100% - 60px);
+  height: calc(100% - 75px);
+  padding: 75px $padding 0 $padding;
+}
 
-  ._block_handler_button {
-    float: left;
-    margin: calc(((100% - #{$padding} * 2)/3 - 64px - 2px) / 2);
-  }
+.block_handler_modal__close {
+  position: absolute;
+  top: 25px;
+  left: calc(50% - 25px/2);
+  fill: white;
+  width: 25px;
+  height: 25px;
 }
 
 .block_handler_modal__item {
