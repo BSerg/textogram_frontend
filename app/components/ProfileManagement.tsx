@@ -5,6 +5,7 @@ import {UserAction, GET_ME, LOGIN, LOGOUT} from '../actions/user/UserAction';
 import Error from './Error';
 import Header from './shared/Header';
 import ContentEditable from './shared/ContentEditable';
+import SocialIcon from './shared/SocialIcon';
 
 import '../styles/common.scss';
 import '../styles/profile_management.scss';
@@ -13,6 +14,10 @@ const ConnectionIcon = require('babel!svg-react!../assets/images/profile_connect
 const LoginIcon = require('babel!svg-react!../assets/images/profile_login_icon.svg?name=LoginIcon');
 const NotificationIcon = require('babel!svg-react!../assets/images/profile_notification_icon.svg?name=NotificationIcon');
 const SubscriptionIcon = require('babel!svg-react!../assets/images/profile_subscription_icon.svg?name=SubscriptionIcon');
+
+const VisibilityIcon = require('babel!svg-react!../assets/images/profile_visibility_off_icon.svg?name=VisibilityIcon');
+const VisibilityOffIcon = require('babel!svg-react!../assets/images/profile_visibility_off_icon.svg?name=VisibilityOffIcon');
+const CloseIcon = require('babel!svg-react!../assets/images/profile_close_icon.svg?name=CloseIcon');
 
 
 interface ISectionPropsInterface {
@@ -33,16 +38,9 @@ class SocialLinks extends React.Component<ISectionPropsInterface, ISectionLinksS
 
     setLinks(props: any) {
         let links: any[] = (props.user && props.user.social_links) ? props.user.social_links : [];
-        let authLink;
-        if (links[0] && links[0].is_auth) {
-            authLink = links[0];
-            links.splice(0, 1);
-        }
-        else {
-            authLink = null;
-        }
+        let authLink = (links[0] && links[0].is_auth) ? links[0] : null;
 
-        this.setState({links: links, authLink: authLink});
+        this.setState({links: authLink ? links.slice(1, links.length) : links, authLink: authLink});
     }
 
     componentWillReceiveProps(nextProps: any) {
@@ -59,26 +57,32 @@ class SocialLinks extends React.Component<ISectionPropsInterface, ISectionLinksS
                 {
                     this.state.authLink ? (
                         <div className="profile__auth_link">
-                            <div className="auth_link_text">acc auth</div>
+                            <div className="link_text">{Captions.management.authAccount}</div>
                             <div className="profile__link">
-                                <div>{ this.state.authLink.social }</div>
+                                <div><SocialIcon social={this.state.authLink.social} /></div>
                                 <div className="url">{ this.state.authLink.url }</div>
-                                <div>eye</div>
+                                <div>{ this.state.authLink.is_hidden ? <VisibilityOffIcon /> : <VisibilityIcon />}</div>
                             </div>
                         </div>
                     ) : null
                 }
                 {
-                    (this.state.authLink && this.state.links.length) ? (<div>additional</div>) : null
+                    (this.state.authLink && this.state.links.length) ? (<div className="link_text">{Captions.management.additionalLinks}</div>) : null
                 }
                 {
                     this.state.links.map((link, index) => {
-                        return (<div className="profile__link" key={index}>{link.social} {link.id}</div>)
+                        return (
+                            <div className="profile__link" key={index}>
+                                <div><SocialIcon social={link.social} /></div>
+                                <div className="url">{ link.url }</div>
+                                <div><CloseIcon /></div>
+                            </div>)
                     })
                 }
                 {
-                    (!this.state.authLink && !this.state.links.length) ? (<div>add links</div>) : null
+                    (!this.state.authLink && !this.state.links.length) ? (<div className="link_add_text">{Captions.management.addLinks}</div>) : null
                 }
+
 
             </div>);
     }
@@ -107,7 +111,6 @@ export default class ProfileManagement extends React.Component<any, IProfileMana
         { name: this.SECTION_LOGIN, caption: Captions.management.sectionLogin, icon: LoginIcon, section: null },
         { name: this.SECTION_NOTIFICATIONS, caption: Captions.management.sectionNotifications, icon: NotificationIcon, section: null },
         { name: this.SECTION_SUBSCRIPTIONS, caption: Captions.management.sectionSubscriptions, icon: SubscriptionIcon, section: null },
-
     ];
 
 

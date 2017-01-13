@@ -71,10 +71,13 @@
     }
 
     .profile__auth_link {
+      padding-top: $padding/2;
+      background-color: $color4;
       .auth_link_text {
         display: flex;
         flex-direction: row;
       }
+
     }
 
 
@@ -83,12 +86,43 @@
       flex-direction: row;
       justify-content: flex-start;
       align-items: center;
+      box-sizing: border-box;
+      max-width: 100%;
 
       padding: $padding/2 $padding;
 
+      div {
+        padding: 0 0 0 $padding/3;
+      }
+
       .url {
         flex-grow: 1;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        font-size: $font-size-small1;
       }
+
+      svg {
+        fill: #000000;
+        width: 18px;
+        height: 18px;
+      }
+    }
+
+    .link_text {
+      padding: $padding/2 $padding;
+      text-transform: uppercase;
+      font-size: $font-size-smaller;
+      letter-spacing: 1px;
+    }
+
+    .link_add_text {
+      padding: $padding * 3/2 $padding;
+      color: $color3;
+      font-size: 12px;
+      letter-spacing: 1px;
+      line-height: 14px;
+      text-align: center;
     }
   }
 }

@@ -42,6 +42,10 @@ export namespace Captions {
         sectionNotifications: 'Уведомления',
         sectionSubscriptions: 'Подписки',
 
+        authAccount: "Аккаунт авторизации",
+        additionalLinks: "Дополнительные связи",
+        addLinks: "Чтобы добавить ссылки на свои аккаунты в соцсетях, нажмите «плюс»",
+
     };
 }
 
