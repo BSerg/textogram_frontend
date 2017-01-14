@@ -3,6 +3,7 @@
 
 
 .block_handler {
+  @include transition();
   position: relative;
   display: flex;
   align-items: center;
@@ -26,9 +27,9 @@
     top: 50%;
     left: $padding;
     display: block;
-    height: 1px;
+    height: 0;
+    border-bottom: 1px solid $color3;
     width: calc(100% - #{$padding} * 2);
-    background-color: $color3;
     z-index: -1;
   }
 
@@ -41,10 +42,11 @@
   &:hover {
     display: flex;
     opacity: 1;
+    margin-top: 0;
+    margin-bottom: 0;
 
     .block_handler_button {
       @include transition();
-      //display: block;
       @include scale(1, 1);
     }
   }
