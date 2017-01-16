@@ -256,7 +256,9 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
     }
 
     componentDidMount() {
-        this.refs.inputUpload.click();
+        if (!this.state.content.photos.length) {
+            this.refs.inputUpload.click();
+        }
         ContentBlockAction.onChange(ACTIVATE_CONTENT_BLOCK, this.handleBlockActive);
     }
 

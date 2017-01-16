@@ -42,8 +42,11 @@
   &:hover {
     display: flex;
     opacity: 1;
-    margin-top: 0;
-    margin-bottom: 0;
+
+    &:not(.last) {
+      margin-top: 0;
+      margin-bottom: 0;
+    }
 
     .block_handler_button {
       @include transition();

@@ -94,5 +94,11 @@ $photo_size: 70px;
       border-bottom: 1px solid darken($color, 10%);
     }
   }
+
+  &:not(.active) {
+    .content_block_quote__menu {
+      display: none;
+    }
+  }
 }
 
