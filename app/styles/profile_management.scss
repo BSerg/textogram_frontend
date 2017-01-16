@@ -94,18 +94,37 @@
       div {
         padding: 0 0 0 $padding/3;
       }
+      div:first-child {
+        padding: 0;
+      }
 
       .url {
         flex-grow: 1;
         overflow: hidden;
         text-overflow: ellipsis;
         font-size: $font-size-small1;
+        height: 22px;
+        line-height: 22px;
       }
 
       svg {
         fill: #000000;
         width: 18px;
         height: 18px;
+      }
+
+      .close_icon svg {
+        width: 10px;
+        height: 10px;
+        stroke: #000000;
+      }
+    }
+
+    .profile__auth_link .profile__link {
+      padding-right: $padding - 5px;
+      .eye svg {
+        width: 24px;
+        height: 24px;
       }
     }
 
@@ -117,12 +136,43 @@
     }
 
     .link_add_text {
-      padding: $padding * 3/2 $padding;
+      padding: $padding $padding $padding/2 $padding;
       color: $color3;
       font-size: 12px;
       letter-spacing: 1px;
       line-height: 14px;
       text-align: center;
+    }
+
+    .profile__add_link {
+      position: relative;
+      text-align: center;
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+      margin: $margin $margin * 2;
+
+      .line {
+        position: absolute;
+        top: 50%;
+        background-color: $color3;
+        height: 1px;
+        width: 100%;
+        min-width: 100%;
+      }
+      .button {
+        $button-size: 35px;
+        width: $button-size;
+        height: $button-size;
+        @include border_radius($button-size);
+        color: #FFFFFF;
+        background-color: $color5;
+        line-height: 35px;
+        z-index: 2;
+        cursor: pointer;
+
+      }
     }
   }
 
@@ -160,4 +210,168 @@
     cursor: pointer;
     color: $color3;
   }
+
+  .profile__subscriptions {
+    display: block;
+    padding-top: 15px;
+
+    .filter_input {
+      $input_height: 50px;
+
+      position: fixed;
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      height: $input_height;
+      padding: 0;
+      background-color: $color;
+
+      input {
+        background-color: $color;
+        outline: none;
+        height: $input_height;
+        text-align: center;
+        padding: 0;
+        margin: 0;
+        border:none;
+        font-size: $font_size6;
+        color: #FFFFFF;
+        font-weight: 300;
+        font-family: $family_open_sans;
+
+      }
+
+    }
+  }
+  .profile__subscription {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    padding: $padding/3 $padding;
+
+    $avatar-size: 34px;
+
+    .avatar {
+      img {
+        width: $avatar-size;
+        height: $avatar-size;
+
+        @include border_radius($avatar-size);
+
+      }
+    }
+
+    .name {
+      overflow: hidden;
+      flex-grow: 1;
+      font-size: $font-size-small;
+      text-transform: uppercase;
+      word-spacing: 10px;
+      justify-content: flex-start;
+      padding: 0 $padding/2;
+      letter-spacing: 1px;
+      span:first-child {
+        font-weight: $font-weight-bold;
+        padding-right: $padding/3;
+      }
+    }
+  }
+
+  .close_icon svg {
+    width: 10px;
+    height: 10px;
+    fill: #000000;
+    stroke: #000000;
+  }
+
+}
+
+.add_link_modal {
+  //position: relative;
+  color: #FFFFFF;
+  height: 100%;
+  display: flex;
+  align-items: center;
+
+  .button.exit svg, .button.submit svg {
+    width: 45px;
+    height: 45px;
+    cursor: pointer;
+  }
+
+  .button.exit svg, .button.submit.active svg {
+    fill: #FFFFFF;
+  }
+
+  .button.submit svg {
+      fill: $color6
+  }
+
+  .button {
+    position: fixed;
+    padding: $padding/2 $padding $padding $padding;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .button.exit {
+    top: 0;
+  }
+
+  .button.submit {
+    bottom: 0;
+    text-align: center;
+  }
+
+  .link_form {
+    //position: absolute;
+    //top: 50%;
+    text-align: center;
+    width: 100%;
+
+    form, .message {
+      padding: $padding/4 $padding;
+    }
+
+    form {
+      @include placeholder($family_open_sans, $font-size6, $font-weight, #FFFFF);
+    }
+
+    form input {
+      width: 100%;
+      text-align: center;
+      border: none;
+      border-bottom: 1px solid #FFFFFF;
+      outline: none;
+      padding: 0 0 5px 0;
+      color: #FFFFFF;
+      font-size: $font_size6;
+      margin: 0;
+      background-color: transparent;
+
+      @include placeholder($family_open_sans, $font-size6, $font-weight, #FFFFF);
+
+    }
+
+    .message {
+      font-size: $font-size-small;
+      text-transform: uppercase;
+      font-family: $family-open-sans;
+    }
+
+    &.error {
+      .message {
+        color: $color-accent;
+      }
+      input {
+        border-color: $color-accent;
+      }
+
+    }
+
+  }
+
+
+
+
 }

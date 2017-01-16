@@ -6,6 +6,7 @@ export const GET_ME = 'get_me';
 export const LOGIN = 'login';
 export const LOGOUT = 'logout';
 export const UPDATE = 'update';
+export const SAVE_USER = 'save';
 
 class UserActionClass extends Action {
     constructor() {
@@ -15,6 +16,9 @@ class UserActionClass extends Action {
 
 export const UserAction = new UserActionClass();
 
+UserAction.register(SAVE_USER, (store, data: any) => {
+    store.user = data;
+});
 
 UserAction.registerAsync(GET_ME, (store, data: any) => {
 

@@ -18,3 +18,10 @@
   -o-transform: scale($x, $y);
   transform: scale($x, $y);
 }
+
+@mixin placeholder ($font, $size, $weight, $color) {
+  ::-webkit-input-placeholder {font-family: $font; color:$color!important; font-weight: $weight; font-size: $size}
+  ::-moz-placeholder          {font-family: $font; color:$color!important; font-weight: $weight; font-size: $size}
+  :-moz-placeholder           {font-family: $font; color:$color!important; font-weight: $weight; font-size: $size}
+  :-ms-input-placeholder      {font-family: $font; color:$color!important; font-weight: $weight; font-size: $size}
+}

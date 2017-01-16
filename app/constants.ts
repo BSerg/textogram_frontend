@@ -57,6 +57,12 @@ export namespace Captions {
         additionalLinks: "Дополнительные связи",
         addLinks: "Чтобы добавить ссылки на свои аккаунты в соцсетях, нажмите «плюс»",
 
+        fastSearch: 'Быстрый поиск',
+
+        linkAddPlaceholder: 'Вставьте ссылку',
+        linkAddText: 'Ссылка на профиль соцсети или сайт',
+        linkAddError: 'Некорректная ссылка',
+
     };
 }
 
