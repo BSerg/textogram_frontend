@@ -23,11 +23,6 @@ export default class Index extends React.Component<any, any> {
     logout() {
         localStorage.removeItem('authToken');
         this.setState({authenticated: false});
-
-export default class IndexPage extends React.Component<any, any> {
-
-    constructor(props: any) {
-        super(props);
     }
 
     redirectToProfile() {
