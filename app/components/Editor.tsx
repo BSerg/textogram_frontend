@@ -63,7 +63,7 @@ export default class Editor extends React.Component<any, IEditorState> {
     }
 
     openPublishParamsModal() {
-        ModalAction.do(OPEN_MODAL, {content: <PublishingParamsModal articleId={this.state.article.id}/>});
+        ModalAction.do(OPEN_MODAL, {content: <PublishingParamsModal article={this.state.article}/>});
     }
 
     publish() {

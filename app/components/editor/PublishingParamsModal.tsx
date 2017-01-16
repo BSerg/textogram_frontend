@@ -8,11 +8,12 @@ import Switch from "../shared/Switch";
 const BackButton = require('babel!svg-react!../../assets/images/back.svg?name=BackButton');
 
 interface IProps {
-    articleId: number
+    article: any
     updateMode?: boolean
 }
 
 interface IState {
+    article?: any
     adsEnabled?: boolean
     linkEnabled?: boolean
 }
@@ -21,8 +22,7 @@ export default class PublishingParamsModal extends React.Component<IProps, IStat
     constructor(props: any) {
         super(props);
         this.state = {
-            adsEnabled: true,
-            linkEnabled: false
+            article: this.props.article,
         }
     }
 
@@ -34,19 +34,41 @@ export default class PublishingParamsModal extends React.Component<IProps, IStat
         ModalAction.do(CLOSE_MODAL, null);
     }
 
-    publish() {
-        api.post(`/articles/editor/${this.props.articleId}/publish/`).then((response: any) => {
+    update() {
+        return new Promise((resolve, reject) => {
+            api.patch(`/articles/editor/${this.props.article.id}/`, this.state.article).then((response: any) => {
+                resolve(response.data);
+            });
+        });
+    }
+
+    private _publish() {
+        api.post(`/articles/editor/${this.props.article.id}/publish/`).then((response: any) => {
             console.log(response);
             alert('Поздравляем, статья опубликована');
         });
     }
 
+    publish() {
+        if (this.state.article != this.props.article) {
+            this.update().then(() => {
+                this._publish();
+            })
+        } else {
+            this._publish();
+        }
+    }
+
     handleAdsEnabledChange(isActive: boolean) {
-        this.setState({adsEnabled: isActive});
+        this.setState({article: Object.assign({}, this.state.article, {ads_enabled: isActive})}, () => {
+
+        });
     }
 
     handleLinkEnabledChange(isActive: boolean) {
-        this.setState({linkEnabled: isActive});
+        this.setState({article: Object.assign({}, this.state.article, {link_access: isActive})}, () => {
+
+        });
     }
 
     render() {
@@ -57,13 +79,15 @@ export default class PublishingParamsModal extends React.Component<IProps, IStat
                     {Captions.editor.publishingParams}
                 </div>
                 <div className="editor_modal__content">
-                    <div onClick={this.handleAdsEnabledChange.bind(this, !this.state.adsEnabled)} className={"editor_modal__param" + (this.state.adsEnabled ? ' active' : '')}>
+                    <div onClick={this.handleAdsEnabledChange.bind(this, !this.state.article.ads_enabled)}
+                         className={"editor_modal__param" + (this.state.article.ads_enabled ? ' active' : '')}>
                         {Captions.editor.publishAds}
-                        <Switch isActive={this.state.adsEnabled} onChange={this.handleAdsEnabledChange.bind(this)}/>
+                        <Switch isActive={this.state.article.ads_enabled} onChange={this.handleAdsEnabledChange.bind(this)}/>
                     </div>
-                    <div onClick={this.handleLinkEnabledChange.bind(this, !this.state.linkEnabled)} className={"editor_modal__param" + (this.state.linkEnabled ? ' active' : '')}>
+                    <div onClick={this.handleLinkEnabledChange.bind(this, !this.state.article.link_access)}
+                         className={"editor_modal__param" + (this.state.article.link_access ? ' active' : '')}>
                         {Captions.editor.publishLink}
-                        <Switch isActive={this.state.linkEnabled} onChange={this.handleLinkEnabledChange.bind(this)}/>
+                        <Switch isActive={this.state.article.link_access} onChange={this.handleLinkEnabledChange.bind(this)}/>
                     </div>
                 </div>
                 <div className="editor_modal__publish" onClick={this.publish.bind(this)}>{Captions.editor.publish}</div>
