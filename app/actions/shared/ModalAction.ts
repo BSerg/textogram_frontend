@@ -14,7 +14,7 @@ ModalAction.register(OPEN_MODAL, (store, data: {content: any}) => {
 });
 
 
-ModalAction.register(CLOSE_MODAL, (store, data: {content: any}) => {
+ModalAction.register(CLOSE_MODAL, (store, data: any) => {
     store.content = null;
 });
 

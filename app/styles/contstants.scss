@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css?family=Arimo:400,700|Noto+Serif:400,700|Open+Sans:400,700&subset=cyrillic');
+
 $margin: 15px;
 $padding: 30px;
 
@@ -11,12 +13,17 @@ $color6: #7F7F7F;
 $color-accent: #FF3333;
 
 // FONTS
+$family_arimo: 'Arimo';
+$family_noto: 'Noto Serif';
+$family_open_sans: 'Open Sans';
+
 $font-size: 18px;
 $font_size1: 25px;
 $font_size2: 26px;
 $font_size3: 16px;
 $font_size4: 20px;
 $font_size5: 12px;
+$font_size6: 14px;
 
 $font-size-small: 10px;
 $font-size-small1: 11px;

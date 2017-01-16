@@ -2,6 +2,7 @@
 @import "../mixins";
 
 .content_block_text {
+  font-family: $family-noto;
   font-size: $font-size;
   font-weight: $font-weight;
   line-height: $line-height;

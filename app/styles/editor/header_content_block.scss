@@ -2,7 +2,8 @@
 @import "../mixins";
 
 .content_block_header {
-  font-size: $font_size2;
+  font-family: $family_arimo;
+  font-size: 24px;
   font-weight: $font-weight-bold;
   line-height: $line-height2;
 }

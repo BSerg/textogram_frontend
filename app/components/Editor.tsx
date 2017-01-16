@@ -18,6 +18,8 @@ import Error from './Error';
 import {api} from '../api';
 
 import '../styles/editor.scss';
+import {ModalAction, OPEN_MODAL} from "../actions/shared/ModalAction";
+import EditorPublishParamsModal from "./editor/EditorPublishParamsModal";
 
 
 interface IEditorState {
@@ -57,6 +59,17 @@ export default class Editor extends React.Component<any, IEditorState> {
                 RESET_CONTENT,
                 {articleId: this.state.article.id, autoSave: this.state.autoSave, content: this.state.article.content}
             )
+        });
+    }
+
+    openPublishParamsModal() {
+        ModalAction.do(OPEN_MODAL, {content: <EditorPublishParamsModal articleId={this.state.article.id}/>});
+    }
+
+    publish() {
+        console.log('PUBLISH');
+        api.post(`/articles/editor/${this.state.article.id}/publish/`).then((response: any) => {
+            console.log(response);
         });
     }
 
@@ -164,63 +177,25 @@ export default class Editor extends React.Component<any, IEditorState> {
                                               BlockContentTypes.ADD,
                                               BlockContentTypes.PHOTO
                                           ]}/>,
-                            <div key="add_content_help" className="add_content_help">{Captions.editor.add_content_help}</div>,
+                            <div key="add_content_help" className="add_content_help">
+                                {!this.state.article.content.blocks.length ?
+                                    Captions.editor.add_content_help : null
+                                }
+                            </div>,
+                            (this.state.article.status == ArticleStatuses.DRAFT ?
+                                <div className="editor__publish"
+                                     onClick={this.openPublishParamsModal.bind(this)}>
+                                    Опубликовать
+                                </div> : null),
+                            (this.state.article.status == ArticleStatuses.PUBLISHED ?
+                                <div className="editor__publish"
+                                     onClick={this.handleUpdateContent.bind(this)}>
+                                    Обновить публикацию
+                                </div> : null),
 
                         ]
                         : null
                     }
-                </div>
-            </div>
-        )
-    }
-
-    _render() {
-        return (
-            <div className="editor">
-                <div className="editor__wrapper">
-                    {this.state && this.state.article && !this.state.error ?
-                        [
-                            <TitleBlock key="titleBlock" articleSlug={this.props.params.articleId}
-                                title={this.state.article.content.title}
-                                cover={this.state.article.content.cover}/>,
-                            this.state.article.content.blocks.map((contentBlock: any, index: number) => {
-                                let blockHandlerButtons, block;
-
-                                if (index == 0) {
-                                    blockHandlerButtons = [BlockContentTypes.ADD]
-                                } else {
-                                    blockHandlerButtons = [BlockContentTypes.SWAP_BLOCKS, BlockContentTypes.ADD]
-                                }
-
-                                switch (contentBlock.type) {
-                                    case BlockContentTypes.TEXT:
-                                        block = <TextContentBlock key={"content" + contentBlock.id}
-                                                                  content={contentBlock}/>;
-                                        break;
-
-                                }
-
-                                return [
-                                    <BlockHandler key={"handler" + index}
-                                                  articleId={this.state.article.id}
-                                                  blockPosition={index}
-                                                  items={blockHandlerButtons}/>,
-                                    block
-                                ]
-                            }),
-                            <BlockHandler key="handlerLast"
-                                          articleId={this.state.article.id}
-                                          blockPosition={this.state.article.content.blocks.length}
-                                          isLast={true}
-                                          items={[
-                                              BlockContentTypes.TEXT,
-                                              BlockContentTypes.ADD,
-                                              BlockContentTypes.PHOTO
-                                          ]}/>,
-                            <div key="add_content_help" className="add_content_help">{Captions.editor.add_content_help}</div>
-                        ] : null
-                    }
-                    {this.state && this.state.error ? this.state.error : null}
                 </div>
             </div>
         )

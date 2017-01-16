@@ -32,7 +32,7 @@ module.exports = {
             },
             {
                 test: /\.(png|jpe?g|gif|svg)$/,
-                loader: 'file?name=images/[name].[ext]'
+                loader: 'file-loader?name=images/[name].[ext]'
             },
             {
                 test: /\.(eot|ttf|woff|woff2)$/,
@@ -52,7 +52,7 @@ module.exports = {
         new DefinePlugin({
             "process.env": {
                 NODE_ENV: JSON.stringify("dev"),
-                API_URL: JSON.stringify("http://localhost:8000/api/v1")
+                API_URL: JSON.stringify("http://textius.tk/api/v1")
             }
         }),
         HTMLWebpackPluginConfig

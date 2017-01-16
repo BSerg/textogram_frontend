@@ -5,9 +5,6 @@
   padding: $padding;
   position: relative;
   $space: 10px;
-  //font-size: $font-size;
-  //font-weight: $font-weight;
-  //line-height: $line-height;
 
   .content_block_photo__photo {
     @include transition();
@@ -55,4 +52,51 @@
   color: $color3;
 }
 
+.photo_modal {
+  width: 100%;
+  height:100%;
+  position: relative;
+
+  .photo_modal__header {
+    height: 50px;
+    letter-spacing: 1px;
+    font-size: $font-size6;
+    font-weight: $font-weight-bold;
+    line-height: 50px;
+    text-align: center;
+    color: white;
+  }
+
+  .photo_modal__back {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 50px;
+    height: 50px;
+  }
+
+  .photo_modal__image {
+    width: 100%;
+    height: calc(100% - 100px);
+    background-size: contain!important;
+  }
+
+  .photo_modal__caption {
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: $font-size6;
+    line-height: 20px;
+
+    .content_editable {
+      min-width: 50%;
+      color: white;
+
+      &.empty {
+        border-bottom: 1px solid white;
+      }
+    }
+  }
+}
 

@@ -74,6 +74,7 @@ export default class QuoteContentBlock extends React.Component<IQuoteContentBloc
             this.state.content.image = store.image;
             this.setState({content: this.state.content}, () => {
                 ContentAction.do(UPDATE_CONTENT, {contentBlock: this.state.content});
+                this.closePhotoMenu();
             });
         })
     }
@@ -86,7 +87,7 @@ export default class QuoteContentBlock extends React.Component<IQuoteContentBloc
     }
 
     handleClickPhoto() {
-        console.log('HELLO')
+        console.log('HELLO');
         this.handleFocus();
         this.openPhotoMenu();
     }
@@ -141,7 +142,7 @@ export default class QuoteContentBlock extends React.Component<IQuoteContentBloc
                         (
                             this.state.menuOpened ?
                                 <div key="photoMenu" className="content_block_quote__menu">
-                                    <div onClick={this.handleClickPhoto.bind(this)} className="content_block_quote__menu_item">
+                                    <div onClick={this.openFileDialog.bind(this)} className="content_block_quote__menu_item">
                                         {Captions.editor.enter_quote_replace}
                                     </div>
                                     <div onClick={this.deleteImage.bind(this)} className="content_block_quote__menu_item">

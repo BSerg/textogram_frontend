@@ -8,6 +8,7 @@ $photo_size: 70px;
   position: relative;
   flex-direction: column;
   align-items: center;
+  font-family: $family_arimo;
   font-size: 17px;
   font-weight: $font-weight;
   line-height: 26px;
@@ -47,6 +48,7 @@ $photo_size: 70px;
 
   .content_block_quote__photo {
     margin-top: 0;
+    background-size: cover!important;
   }
 
   .content_block_quote__empty_photo {
@@ -71,11 +73,10 @@ $photo_size: 70px;
   .content_block_quote__menu {
     position: absolute;
     top: $photo_size/2 + $padding/2;
-    left: calc(50% - 50px);
-    width: 100px;
+    left: calc(50% - 65px);
+    width: 130px;
     background-color: $color;
     font-size: $font-size5;
-    line-height: 30px;
     letter-spacing: 1px;
     text-transform: uppercase;
     text-align: center;
@@ -83,7 +84,20 @@ $photo_size: 70px;
     z-index: 10;
 
     .content_block_quote__menu_item {
-      height: 30px;
+      display: flex;
+      height: 50px;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .content_block_quote__menu_item:not(last-child) {
+      border-bottom: 1px solid darken($color, 10%);
+    }
+  }
+
+  &:not(.active) {
+    .content_block_quote__menu {
+      display: none;
     }
   }
 }
