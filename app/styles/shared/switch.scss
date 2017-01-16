@@ -1,0 +1,41 @@
+@import "../contstants";
+@import "../mixins";
+
+$size: 20px;
+$width: 36px;
+
+.switch {
+  position: relative;
+  width: $width;
+  height: $size;
+
+  .switch__bg {
+    @include border_radius($size);
+    width: 100%;
+    height: 100%;
+    background-color: $color3;
+  }
+
+  .switch__switcher {
+    @include transition();
+    @include border_radius($size);
+    @include box_shadow(8px);
+    position: absolute;
+    top: 0;
+    left: $width - $size;
+    width: $size;
+    height: $size;
+    background-color: $color4;
+  }
+
+  &:not(.active) {
+    .switch__bg {
+      background-color: $color5;
+    }
+
+    .switch__switcher {
+      left: 0;
+      background-color: $color5;
+    }
+  }
+}

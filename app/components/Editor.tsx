@@ -19,7 +19,7 @@ import {api} from '../api';
 
 import '../styles/editor.scss';
 import {ModalAction, OPEN_MODAL} from "../actions/shared/ModalAction";
-import EditorPublishParamsModal from "./editor/EditorPublishParamsModal";
+import PublishingParamsModal from "./editor/PublishingParamsModal";
 
 
 interface IEditorState {
@@ -63,7 +63,7 @@ export default class Editor extends React.Component<any, IEditorState> {
     }
 
     openPublishParamsModal() {
-        ModalAction.do(OPEN_MODAL, {content: <EditorPublishParamsModal articleId={this.state.article.id}/>});
+        ModalAction.do(OPEN_MODAL, {content: <PublishingParamsModal articleId={this.state.article.id}/>});
     }
 
     publish() {

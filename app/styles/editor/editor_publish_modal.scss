@@ -29,6 +29,26 @@
 
   .editor_modal__content {
     flex: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: calc(100% - #{$padding}*4);
+
+    .editor_modal__param {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      text-transform: uppercase;
+      color: white;
+      margin: $margin 0;
+      font-size: 12px;
+      letter-spacing: 1px;
+
+      &:not(.active) {
+        color: $color5;
+      }
+    }
   }
 
   .editor_modal__publish {

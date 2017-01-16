@@ -33,7 +33,10 @@ export namespace Captions {
         content_dialog: 'Диалог',
         content_post: 'Пост',
         publish: 'Опубликовать',
-        publishingParams: 'Настройки публикации'
+        publishingParams: 'Настройки публикации',
+        publishAds: 'Реклама',
+        publishLink: 'Доступ по ссылке',
+
 
     }
 }

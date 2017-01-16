@@ -3,6 +3,7 @@ import {Captions} from '../../constants';
 import '../../styles/editor/editor_publish_modal.scss';
 import {ModalAction, CLOSE_MODAL} from "../../actions/shared/ModalAction";
 import {api} from "../../api";
+import Switch from "../shared/Switch";
 
 const BackButton = require('babel!svg-react!../../assets/images/back.svg?name=BackButton');
 
@@ -12,12 +13,17 @@ interface IProps {
 }
 
 interface IState {
-
+    adsEnabled?: boolean
+    linkEnabled?: boolean
 }
 
-export default class EditorPublishParamsModal extends React.Component<IProps, IState> {
+export default class PublishingParamsModal extends React.Component<IProps, IState> {
     constructor(props: any) {
         super(props);
+        this.state = {
+            adsEnabled: true,
+            linkEnabled: false
+        }
     }
 
     static defaultProps = {
@@ -35,6 +41,14 @@ export default class EditorPublishParamsModal extends React.Component<IProps, IS
         });
     }
 
+    handleAdsEnabledChange(isActive: boolean) {
+        this.setState({adsEnabled: isActive});
+    }
+
+    handleLinkEnabledChange(isActive: boolean) {
+        this.setState({linkEnabled: isActive});
+    }
+
     render() {
         return (
             <div className="editor_modal">
@@ -42,7 +56,16 @@ export default class EditorPublishParamsModal extends React.Component<IProps, IS
                     <BackButton className="editor_modal__back" onClick={this.back.bind(this)}/>
                     {Captions.editor.publishingParams}
                 </div>
-                <div className="editor_modal__content">__PARAMS__</div>
+                <div className="editor_modal__content">
+                    <div onClick={this.handleAdsEnabledChange.bind(this, !this.state.adsEnabled)} className={"editor_modal__param" + (this.state.adsEnabled ? ' active' : '')}>
+                        {Captions.editor.publishAds}
+                        <Switch isActive={this.state.adsEnabled} onChange={this.handleAdsEnabledChange.bind(this)}/>
+                    </div>
+                    <div onClick={this.handleLinkEnabledChange.bind(this, !this.state.linkEnabled)} className={"editor_modal__param" + (this.state.linkEnabled ? ' active' : '')}>
+                        {Captions.editor.publishLink}
+                        <Switch isActive={this.state.linkEnabled} onChange={this.handleLinkEnabledChange.bind(this)}/>
+                    </div>
+                </div>
                 <div className="editor_modal__publish" onClick={this.publish.bind(this)}>{Captions.editor.publish}</div>
             </div>
         )
