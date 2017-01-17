@@ -41,7 +41,15 @@ export namespace Captions {
         manage_profile: 'управление профилем',
         create_article: 'создать публикацию',
         drafts: 'черновики',
-        notification_default_text: 'Новые уведомления'
+        notification_default_text: 'Новые уведомления',
+        title: 'TEXTIUS',
+        forgotPassword: 'забли пароль?',
+        register: 'зарегистрироваться',
+        about: 'Что такое TEXTIUS?',
+        inputPhonePlaceholder: '+7 ',
+        inputPasswordPlaceholder: 'Введите пароль',
+        loginHint: 'логин',
+        passwordHint: 'пароль',
     };
 
     export const management = {

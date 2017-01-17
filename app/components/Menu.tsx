@@ -14,18 +14,49 @@ const InfoIcon = require('babel!svg-react!../assets/images/info-icon.svg?name=In
 const NotificationIcon = require('babel!svg-react!../assets/images/notification_icon.svg?name=NotificationIcon');
 
 class DefaultMenu extends React.Component<any, any> {
+
+    stopClose(e: any) {
+        e.stopPropagation();
+    }
+
+    handleUrlClick(url: string) {
+
+    }
+
+    handleSubmit(e: any) {
+
+    }
+
     render() {
         return (
-            <div>
-                <div className="menu__login_title"></div>
-                <div className="menu__login"></div>
-                <div className="menu__about">
-                    <div>о проекте</div>
-                    <InfoIcon />
+            <div className="main__menu_default" onClick={this.stopClose}>
+                <div className="menu__controls">
+                    <div onClick={this.handleUrlClick.bind(this, '/info/')} ><InfoIcon /></div>
                 </div>
+                <div className="menu__login_title">{Captions.main_menu.title}</div>
+                <div className="menu__login">
+                    <form onSubmit={this.handleSubmit.bind(this)}>
+                        <div className="login_element">
+                            <input type="text" name="phone" placeholder={Captions.main_menu.inputPhonePlaceholder} />
+                            <div className="hint"><span>{Captions.main_menu.loginHint}</span></div>
+                        </div>
+                        <div className="login_element">
+                            <input type="password" name="pwd" placeholder={Captions.main_menu.inputPasswordPlaceholder}/>
+                            <div className="hint">
+                                <span>{Captions.main_menu.passwordHint}</span>
+                                <span className="forgot_password">{Captions.main_menu.forgotPassword}</span>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+                <div className="menu__register">{Captions.main_menu.register}</div>
+                <div className="menu__about">{Captions.main_menu.about}</div>
             </div>);
     }
 }
+
+let DefaultMenuWithRouter = withRouter(DefaultMenu);
 
 
 class NotificationBlock extends React.Component<any, any> {
@@ -128,7 +159,7 @@ export default class Menu extends React.Component<any, IMenuStateInterface> {
 
     constructor() {
         super();
-        this.state = {open: false, user: UserAction.getStore().user}
+        this.state = {open: true, user: UserAction.getStore().user}
         this.setUser = this.setUser.bind(this);
         this.setOpen = this.setOpen.bind(this);
     }
@@ -164,7 +195,7 @@ export default class Menu extends React.Component<any, IMenuStateInterface> {
         if (!this.state.open) return null;
         return (
             <div id="main_menu" onClick={this.toggleMenu}>
-                { this.state.user ? <UserMenuWithRouter user={this.state.user} /> : <DefaultMenu /> }
+                { this.state.user ? <UserMenuWithRouter user={this.state.user} /> : <DefaultMenuWithRouter /> }
 
             </div>);
     }
