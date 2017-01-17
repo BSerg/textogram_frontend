@@ -13,6 +13,9 @@ const ExitIcon = require('babel!svg-react!../assets/images/exit-icon.svg?name=Ex
 const InfoIcon = require('babel!svg-react!../assets/images/info-icon.svg?name=InfoIcon');
 const NotificationIcon = require('babel!svg-react!../assets/images/notification_icon.svg?name=NotificationIcon');
 
+import {ModalAction, OPEN_MODAL} from '../actions/shared/ModalAction';
+import Registration from './Registration';
+
 class DefaultMenu extends React.Component<any, any> {
 
     stopClose(e: any) {
@@ -25,6 +28,15 @@ class DefaultMenu extends React.Component<any, any> {
 
     handleSubmit(e: any) {
 
+    }
+
+    registerUser() {
+        ModalAction.do(OPEN_MODAL, {content: <Registration />});
+        MenuAction.do(TOGGLE, false);
+    }
+
+    componentDidMount() {
+        this.registerUser();
     }
 
     render() {
@@ -50,7 +62,7 @@ class DefaultMenu extends React.Component<any, any> {
 
                     </form>
                 </div>
-                <div className="menu__register">{Captions.main_menu.register}</div>
+                <div className="menu__register" onClick={this.registerUser.bind(this)}>{Captions.main_menu.register}</div>
                 <div className="menu__about">{Captions.main_menu.about}</div>
             </div>);
     }

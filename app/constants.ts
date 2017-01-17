@@ -72,6 +72,16 @@ export namespace Captions {
         linkAddError: 'Некорректная ссылка',
 
     };
+
+    export const registration = {
+        register: "зарегистрироваться",
+        usernamePrompt: "Имя и фамилия или пароль",
+        password: "Придумайте пароль",
+        passwordAgain: "Новый пароль",
+
+        phoneDescription: "Введите ваш номер телефона, который станет постоянным логином:",
+        codeDescription: "Код подтверждения из смс:"
+    };
 }
 
 export namespace Constants {
