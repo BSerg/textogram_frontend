@@ -18,6 +18,7 @@ export const UserAction = new UserActionClass();
 
 UserAction.register(SAVE_USER, (store, data: any) => {
     store.user = data;
+    localStorage.setItem('authToken', data.token);
 });
 
 UserAction.registerAsync(GET_ME, (store, data: any) => {

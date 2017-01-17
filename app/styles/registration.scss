@@ -21,7 +21,7 @@
     font-weight: $font-weight-bold;
     letter-spacing: 2px;
     color: #FFFFFF;
-    padding: $padding/2 $padding;
+    padding: $padding;
 
     box-sizing: border-box;
 
@@ -79,6 +79,10 @@
       letter-spacing: 1px;
       font-family: $family_open_sans;
       border-bottom: 1px solid white;
+
+      &.error {
+        border-color: $color-accent;
+      }
     }
 
     input:-webkit-autofill {
