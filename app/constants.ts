@@ -38,7 +38,7 @@ export namespace Captions {
         publishAds: 'Реклама',
         publishLink: 'Доступ по ссылке',
         error_embed_url: 'Некорректная ссылка',
-        help_embed_video: 'Youtube, Vimeo, VK',
+        help_embed_video: 'Youtube, Vimeo, VK, Facebook',
         help_embed_audio: 'SoundCloud',
         help_embed_post: 'Twitter, Facebook, Instagram',
         help_embed_empty: 'Нажмите на блок и вставьте ссылку',
@@ -88,7 +88,7 @@ export namespace Embed {
             vk: /^https:\/\/vk\.com\/video-?\d+_\d+$/,
             youtube: /^https:\/\/www\.youtube\.com\/watch\?v=[\w\-_]+$/,
             youtubeShort: /^https:\/\/youtu\.be\/[\w\-_]+$/,
-            fb: /^https:\/\/(www|ru-ru)\.facebook\.com\/facebook\/videos\/[\w.]+\/\d+$/,
+            fb: /^https:\/\/(www|ru-ru)\.facebook\.com\/\w+\/videos\/\d+\/?$/,
             vimeo: /^https:\/\/vimeo\.com\/\d+$/,
             coub: /^https?:\/\/coub\.com\/view\/\w+$/
         },
