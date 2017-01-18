@@ -77,11 +77,13 @@ ContentAction.register(UPDATE_CONTENT, (store, data: {contentBlock: IContentData
 
 ContentAction.register(DELETE_CONTENT, (store, data: {id: string}) => {
     console.log(data);
+    console.log(store);
     let deletingItem = store.contentBlockMap[data.id];
     if (deletingItem) {
         store.content.blocks.splice(store.content.blocks.indexOf(deletingItem), 1);
         delete store.contentBlockMap[data.id];
     }
+    console.log(store)
 });
 
 ContentAction.register(UPDATE_TITLE_CONTENT, (store, data: {articleId: number, title: string}) => {

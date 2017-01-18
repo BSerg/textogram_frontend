@@ -20,6 +20,7 @@ export namespace Captions {
         enter_quote_replace: 'Заменить',
         enter_quote_delete: 'Удалить',
         enter_caption: 'Описание',
+        enter_embed_url: 'Вставьте ссылку',
         content_text: 'Текст',
         content_header: 'Заголовок',
         content_lead: 'Лид',
@@ -36,8 +37,12 @@ export namespace Captions {
         publishingParams: 'Настройки публикации',
         publishAds: 'Реклама',
         publishLink: 'Доступ по ссылке',
-
-
+        error_embed_url: 'Некорректная ссылка',
+        help_embed_video: 'Youtube, Vimeo, VK',
+        help_embed_audio: 'SoundCloud',
+        help_embed_post: 'Twitter, Facebook, Instagram',
+        help_embed_empty: 'Нажмите на блок и вставьте ссылку',
+        loading: 'Загрузка...'
     }
 }
 
@@ -69,4 +74,26 @@ export enum ListBlockContentTypes {
 
 export enum PhotoBlockContentTypes {
     TYPE1 = 1
+}
+
+export namespace Embed {
+    export const urlRegex = {
+        POST: {
+            twitter: /^https:\/\/twitter\.com\/\w+\/status\/\d+$/,
+            instagram: /^https:\/\/www\.instagram\.com\/p\/[\w\-_]+\/?$/,
+            fb: /^https:\/\/(www|ru-ru)\.facebook\.com\/\w+\/posts\/\d+$/
+        },
+        VIDEO: {
+            twitter: /^https:\/\/twitter\.com\/\w+\/status\/\d+$/,
+            vk: /^https:\/\/vk\.com\/video-?\d+_\d+$/,
+            youtube: /^https:\/\/www\.youtube\.com\/watch\?v=[\w\-_]+$/,
+            youtubeShort: /^https:\/\/youtu\.be\/[\w\-_]+$/,
+            fb: /^https:\/\/(www|ru-ru)\.facebook\.com\/facebook\/videos\/[\w.]+\/\d+$/,
+            vimeo: /^https:\/\/vimeo\.com\/\d+$/,
+            coub: /^https?:\/\/coub\.com\/view\/\w+$/
+        },
+        AUDIO: {
+            soundcloud: /^https:\/\/soundcloud\.com\/[\w\-]+\/[\w\-]+$/,
+        }
+    }
 }

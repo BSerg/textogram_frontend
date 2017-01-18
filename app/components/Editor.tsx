@@ -9,6 +9,7 @@ import PhraseContentBlock from './editor/PhraseContentBlock';
 import PhotoContentBlock from './editor/PhotoContentBlock';
 import ListContentBlock from './editor/ListContentBlock';
 import QuoteContentBlock from './editor/QuoteContentBlock';
+import EmbedContentBlock from './editor/EmbedContentBlock';
 import {
     ContentAction, RESET_CONTENT, UPDATE_CONTENT, DELETE_CONTENT, CREATE_CONTENT, IContentData, UPDATE_COVER_CONTENT,
     UPDATE_TITLE_CONTENT, SWAP_CONTENT
@@ -20,6 +21,7 @@ import {api} from '../api';
 import '../styles/editor.scss';
 import {ModalAction, OPEN_MODAL} from "../actions/shared/ModalAction";
 import PublishingParamsModal from "./editor/PublishingParamsModal";
+import {Hash} from "crypto";
 
 
 interface IEditorState {
@@ -76,11 +78,14 @@ export default class Editor extends React.Component<any, IEditorState> {
     componentDidMount() {
         api.get(`/articles/editor/${this.props.params.articleId}/`).then((response: any) => {
             this.setState({article: response.data, autoSave: response.data.status == ArticleStatuses.DRAFT}, () => {
+                console.log(response.data);
+                console.log(this.state.article)
                 ContentAction.do(
                     RESET_CONTENT,
                     {articleId: this.state.article.id, autoSave: false, content: this.state.article.content}
                 );
             });
+            console.log('TRATRATAR')
         }). catch((error) => {
             if (error.response) {
                 switch (error.response.status) {
@@ -154,6 +159,19 @@ export default class Editor extends React.Component<any, IEditorState> {
                                     case BlockContentTypes.QUOTE:
                                         block = <QuoteContentBlock key={"content" + contentBlock.id}
                                                                    articleId={this.state.article.id}
+                                                                   content={contentBlock}/>;
+                                        break;
+                                    case BlockContentTypes.VIDEO:
+                                        block = <EmbedContentBlock key={"content" + contentBlock.id}
+                                                                   content={contentBlock}/>;
+                                        break;
+                                    case BlockContentTypes.AUDIO:
+                                        block = <EmbedContentBlock key={"content" + contentBlock.id}
+                                                                   content={contentBlock}/>;
+                                        break;
+                                    case BlockContentTypes.POST:
+                                        let hash = btoa((contentBlock as any).value);
+                                        block = <EmbedContentBlock key={"content-" + contentBlock.id + '-' + hash}
                                                                    content={contentBlock}/>;
                                         break;
 

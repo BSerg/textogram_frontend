@@ -1,0 +1,44 @@
+@import "../contstants";
+@import "../mixins";
+
+.content_block_embed {
+  position: relative;
+  padding: $padding;
+
+  .content_block_embed__html {
+    width: 100%;
+
+    iframe {
+      width: 100%;
+    }
+  }
+
+  .content_block_embed__foreground {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+  }
+
+  &:not(.loaded) {
+    .content_block_embed__html {
+      visibility: hidden;
+    }
+
+    .content_block_embed__foreground {
+      background-color: $color3;
+    }
+  }
+
+  &.content_block_embed__video {
+    padding: $padding 0;
+
+    .content_block_embed__html {
+      width: 100%;
+    }
+  }
+}

@@ -103,7 +103,6 @@ export default class QuoteContentBlock extends React.Component<IQuoteContentBloc
     }
 
     shouldComponentUpdate(nextProps: any, nextState: any) {
-        console.log(nextState)
         if (nextState.doNotUpdateComponent) {
             delete nextState.doNotUpdateComponent;
             return false;
