@@ -63,7 +63,6 @@ class RegistrationClass extends React.Component<any, IRegistrationStateInterface
     submitForm(e: any) {
         e.preventDefault();
         this.sendData();
-
     }
 
     sendData() {
@@ -109,7 +108,7 @@ class RegistrationClass extends React.Component<any, IRegistrationStateInterface
             }
             else if (this.state.currentStep == this.STEP_SEND_REGISTRATION_DATA) {
                 UserAction.do(SAVE_USER, response.data.user);
-                this.props.router.push('/profile/' + response.data.user.id);
+                this.props.router.push('/manage');
                 ModalAction.do(CLOSE_MODAL, null);
             }
 
@@ -186,8 +185,8 @@ class RegistrationClass extends React.Component<any, IRegistrationStateInterface
                                 <form onSubmit={this.submitForm.bind(this)}>
                                     <input type="text" name="phone" className={ this.state.phoneError ? 'error': '' }
                                            ref="phone" onChange={this.phoneChange.bind(this)}
-                                           value={ this.state.phone }
-                                    />
+                                           value={ this.state.phone }/>
+                                    <button style={{display: 'none'}} type="submit">1</button>
                                 </form>
                             </div>
                         ) : null
@@ -200,6 +199,7 @@ class RegistrationClass extends React.Component<any, IRegistrationStateInterface
                                     <input type="text" name="code" value={this.state.code}
                                            className={ this.state.codeError ? 'error': '' }
                                            onChange={this.codeChange.bind(this)} />
+                                    <button style={{display: 'none'}} type="submit">1</button>
                                 </form>
                             </div>
                         ) : null
@@ -227,6 +227,7 @@ class RegistrationClass extends React.Component<any, IRegistrationStateInterface
                                             { this.state.passwordVisible ? <VisibilityIcon /> : <VisibilityOffIcon /> }
                                         </div>
                                     </div>
+                                    <button style={{display: 'none'}} type="submit">1</button>
                                 </form>
                             </div>
                         ) : null

@@ -2,7 +2,7 @@ import * as React from 'react';
 import {withRouter} from 'react-router';
 
 import {MenuAction, TOGGLE} from '../actions/MenuAction';
-import {UserAction, GET_ME, LOGIN, LOGOUT} from '../actions/user/UserAction';
+import {UserAction, GET_ME, LOGIN, LOGOUT, SAVE_USER} from '../actions/user/UserAction';
 import {NotificationAction, CHECK} from '../actions/NotificationAction'
 
 import {Captions} from '../constants';
@@ -15,18 +15,64 @@ const NotificationIcon = require('babel!svg-react!../assets/images/notification_
 
 import {ModalAction, OPEN_MODAL} from '../actions/shared/ModalAction';
 import Registration from './Registration';
+import {api} from "../api";
 
-class DefaultMenu extends React.Component<any, any> {
+interface IDefaultmenuStateInterface {
+    phone?: string;
+    password?: string;
+    patternInputPhone?: any;
+    patternPhone?: any;
+    loginError?: string;
+
+}
+
+class DefaultMenu extends React.Component<any, IDefaultmenuStateInterface> {
+
+    constructor() {
+        super();
+        let patternInputPhone = new RegExp('^\\' + this.getInitialCode() + '\\d{0,10}$');
+        let patternPhone = new RegExp('^\\' + this.getInitialCode() + '\\d{1,10}$');
+        this.state = {
+            phone: this.getInitialCode(), password: '', patternInputPhone: patternInputPhone,
+            patternPhone: patternPhone, loginError: null
+        };
+        this.handleSubmit = this.handleSubmit.bind(this);
+    }
+
+    getInitialCode() {
+        return '+7';
+    }
 
     stopClose(e: any) {
         e.stopPropagation();
     }
 
-    handleUrlClick(url: string) {
-
+    handleSubmit(e: any) {
+        e.preventDefault();
+        this.loginPhone();
     }
 
-    handleSubmit(e: any) {
+    loginPhone() {
+        if (this.state.phone.length < 3) return;
+        api.post('/login/', {phone: this.state.phone.substring(1), password: this.state.password}).then((response: any) => {
+            UserAction.do(SAVE_USER, response.data.user);
+        }).catch((error) => {
+            this.setState({loginError: 'error'})
+        })
+    }
+
+    phoneChange(e: any) {
+        let phone = e.target.value;
+        if (phone.match(this.state.patternInputPhone))
+            this.setState({phone: phone, loginError: null});
+    }
+
+    passwordChange(e: any) {
+        let password = e.target.value;
+        this.setState({password: password, loginError: null});
+    }
+
+    handleUrlClick(url: string) {
 
     }
 
@@ -43,19 +89,24 @@ class DefaultMenu extends React.Component<any, any> {
                 </div>
                 <div className="menu__login_title">{Captions.main_menu.title}</div>
                 <div className="menu__login">
-                    <form onSubmit={this.handleSubmit.bind(this)}>
+                    <form onSubmit={this.handleSubmit}>
                         <div className="login_element">
-                            <input type="text" name="phone" placeholder={Captions.main_menu.inputPhonePlaceholder} />
+                            <input type="text"
+                                   name="phone"
+                                   placeholder={Captions.main_menu.inputPhonePlaceholder}
+                                   value={this.state.phone} onChange={this.phoneChange.bind(this)}/>
                             <div className="hint"><span>{Captions.main_menu.loginHint}</span></div>
                         </div>
                         <div className="login_element">
-                            <input type="password" name="pwd" placeholder={Captions.main_menu.inputPasswordPlaceholder}/>
+                            <input type="password" name="pwd"
+                                   placeholder={Captions.main_menu.inputPasswordPlaceholder}
+                                   value={this.state.password} onChange={this.passwordChange.bind(this)}/>
                             <div className="hint">
                                 <span>{Captions.main_menu.passwordHint}</span>
                                 <span className="forgot_password">{Captions.main_menu.forgotPassword}</span>
                             </div>
                         </div>
-
+                        <button style={{display: 'none'}} type="submit">1</button>
                     </form>
                 </div>
                 <div className="menu__register" onClick={this.registerUser.bind(this)}>{Captions.main_menu.register}</div>
@@ -167,7 +218,7 @@ export default class Menu extends React.Component<any, IMenuStateInterface> {
 
     constructor() {
         super();
-        this.state = {open: true, user: UserAction.getStore().user}
+        this.state = {open: true, user: UserAction.getStore().user};
         this.setUser = this.setUser.bind(this);
         this.setOpen = this.setOpen.bind(this);
     }
@@ -186,6 +237,7 @@ export default class Menu extends React.Component<any, IMenuStateInterface> {
 
     componentDidMount() {
         MenuAction.onChange(TOGGLE, this.setOpen);
+        UserAction.onChange(SAVE_USER, this.setUser);
         UserAction.onChange(GET_ME, this.setUser);
         UserAction.onChange(LOGIN, this.setUser);
         UserAction.onChange(LOGOUT, this.setUser);
@@ -193,6 +245,7 @@ export default class Menu extends React.Component<any, IMenuStateInterface> {
 
     componentWillUnmount() {
         MenuAction.unbind(TOGGLE, this.setOpen);
+        UserAction.unbind(SAVE_USER, this.setUser);
         UserAction.unbind(GET_ME, this.setUser);
         UserAction.unbind(LOGIN, this.setUser);
         UserAction.unbind(LOGOUT, this.setUser);
