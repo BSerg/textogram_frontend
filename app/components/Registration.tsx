@@ -1,4 +1,5 @@
 import * as React from 'react';
+import {withRouter} from 'react-router';
 
 import {ModalAction, CLOSE_MODAL} from '../actions/shared/ModalAction';
 import {api} from '../api';
@@ -50,7 +51,7 @@ class RegistrationClass extends React.Component<any, IRegistrationStateInterface
         let patternInputPhone = new RegExp('^\\' + this.getInitialCode() + '\\d{0,10}$');
         let patternPhone = new RegExp('^\\' + this.getInitialCode() + '\\d{10}$');
         this.state = {
-            currentStep: this.STEP_SEND_REGISTRATION_DATA, phone: this.getInitialCode(), code: '', hash: '', password: '',
+            currentStep: this.STEP_SEND_PHONE, phone: this.getInitialCode(), code: '', hash: '', password: '',
             userName: '', patternPhone: patternPhone, patternInputPhone: patternInputPhone, passwordVisible: false
         };
     }
@@ -86,7 +87,7 @@ class RegistrationClass extends React.Component<any, IRegistrationStateInterface
         }
 
         else if (this.state.currentStep ==  this.STEP_SEND_REGISTRATION_DATA) {
-            if (this.state.userName && this.state.password && !this.state.userNameError && ! this.state.passwordError) {
+            if (this.state.userName && this.state.password && !this.state.userNameError && !this.state.passwordError) {
                 data['phone'] = this.state.phone;
                 data['hash'] = this.state.hash;
                 data['username'] = this.state.userName;
@@ -99,16 +100,17 @@ class RegistrationClass extends React.Component<any, IRegistrationStateInterface
         }
 
         api.post('registration/', data).then((response: any) => {
-            console.log(response.data);
             if (this.state.currentStep == this.STEP_SEND_PHONE) {
                 this.setState({phone: response.data.phone, currentStep: this.STEP_SEND_CODE});
             }
             else if (this.state.currentStep == this.STEP_SEND_CODE) {
-                this.setState({hash: response.data.code, phone: response.data.phone,
+                this.setState({hash: response.data.hash, phone: response.data.phone,
                     currentStep: this.STEP_SEND_REGISTRATION_DATA, passwordVisible: false});
             }
             else if (this.state.currentStep == this.STEP_SEND_REGISTRATION_DATA) {
                 UserAction.do(SAVE_USER, response.data.user);
+                this.props.router.push('/profile/' + response.data.user.id);
+                ModalAction.do(CLOSE_MODAL, null);
             }
 
 
@@ -122,7 +124,6 @@ class RegistrationClass extends React.Component<any, IRegistrationStateInterface
             else if (this.state.currentStep == this.STEP_SEND_REGISTRATION_DATA) {
                 this.setState({passwordError: 'error', userNameError: 'error'});
             }
-            console.log(error);
         })
     }
 
@@ -243,6 +244,6 @@ class RegistrationClass extends React.Component<any, IRegistrationStateInterface
     }
 }
 
-let Registration = RegistrationClass;
+let Registration = withRouter(RegistrationClass);
 
 export default Registration;

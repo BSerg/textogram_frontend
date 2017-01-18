@@ -35,10 +35,6 @@ class DefaultMenu extends React.Component<any, any> {
         MenuAction.do(TOGGLE, false);
     }
 
-    componentDidMount() {
-        this.registerUser();
-    }
-
     render() {
         return (
             <div className="main__menu_default" onClick={this.stopClose}>
