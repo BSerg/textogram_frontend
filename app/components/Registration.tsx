@@ -21,12 +21,16 @@ interface IRegistrationStateInterface {
     userName?: string,
     phoneError?: string,
     codeError?: string,
+    userNameError?: string,
     passwordError?: string,
     currentStep?: number,
+    patternInputPhone?: any,
+    patternPhone?: any,
+    passwordVisible?: boolean
 
 }
 
-export default class Registration extends React.Component<any, IRegistrationStateInterface> {
+class RegistrationClass extends React.Component<any, IRegistrationStateInterface> {
 
     STEP_SEND_PHONE: number = 1;
     STEP_SEND_CODE: number = 2;
@@ -35,9 +39,24 @@ export default class Registration extends React.Component<any, IRegistrationStat
     PATTERN_INPUT_PHONE = /^\+7\d{0,10}$/;
     PATTERN_PHONE = /^\+7\d{10}$/;
 
+    PATTERN_INPUT_USERNAME = /^([\wа-я]+\s?)*$/i;
+    PATTERN_USERNAME = /^[\wа-я]([\wа-я]+\s?)+$/i;
+
+    PATTERN_INPUT_PASSWORD = /^[^\s]*$/;
+    PATTERN_PASSWORD = /^[^\s]{5,}$/;
+
     constructor() {
         super();
-        this.state = {currentStep: this.STEP_SEND_PHONE}
+        let patternInputPhone = new RegExp('^\\' + this.getInitialCode() + '\\d{0,10}$');
+        let patternPhone = new RegExp('^\\' + this.getInitialCode() + '\\d{10}$');
+        this.state = {
+            currentStep: this.STEP_SEND_REGISTRATION_DATA, phone: this.getInitialCode(), code: '', hash: '', password: '',
+            userName: '', patternPhone: patternPhone, patternInputPhone: patternInputPhone, passwordVisible: false
+        };
+    }
+
+    getInitialCode() {
+        return '+7';
     }
 
     submitForm(e: any) {
@@ -50,15 +69,15 @@ export default class Registration extends React.Component<any, IRegistrationStat
         let data: any = {};
         if (this.state.currentStep ==  this.STEP_SEND_PHONE) {
             if (this.state.phone && !this.state.phoneError) {
-                data['phone'] = this.state.phone.substring(2);
+                data['phone'] = this.state.phone.substring(1);
             }
             else {
                 return;
             }
         }
-
         else if (this.state.currentStep ==  this.STEP_SEND_CODE) {
             if (this.state.code && !this.state.codeError) {
+                data['phone'] = this.state.phone;
                 data['code'] = this.state.code;
             }
             else {
@@ -67,7 +86,16 @@ export default class Registration extends React.Component<any, IRegistrationStat
         }
 
         else if (this.state.currentStep ==  this.STEP_SEND_REGISTRATION_DATA) {
-            return;
+            if (this.state.userName && this.state.password && !this.state.userNameError && ! this.state.passwordError) {
+                data['phone'] = this.state.phone;
+                data['hash'] = this.state.hash;
+                data['username'] = this.state.userName;
+                data['password'] = this.state.password;
+                data['password_again'] = this.state.passwordAgain;
+            }
+            else {
+                return;
+            }
         }
 
         api.post('registration/', data).then((response: any) => {
@@ -76,7 +104,8 @@ export default class Registration extends React.Component<any, IRegistrationStat
                 this.setState({phone: response.data.phone, currentStep: this.STEP_SEND_CODE});
             }
             else if (this.state.currentStep == this.STEP_SEND_CODE) {
-                this.setState({hash: response.data.code, phone: response.data.phone, currentStep: this.STEP_SEND_REGISTRATION_DATA});
+                this.setState({hash: response.data.code, phone: response.data.phone,
+                    currentStep: this.STEP_SEND_REGISTRATION_DATA, passwordVisible: false});
             }
             else if (this.state.currentStep == this.STEP_SEND_REGISTRATION_DATA) {
                 UserAction.do(SAVE_USER, response.data.user);
@@ -84,31 +113,54 @@ export default class Registration extends React.Component<any, IRegistrationStat
 
 
         }).catch((error: any) => {
+            if (this.state.currentStep == this.STEP_SEND_PHONE) {
+                this.setState({phoneError: 'error'});
+            }
+            else if (this.state.currentStep == this.STEP_SEND_CODE) {
+                this.setState({codeError: 'code'});
+            }
+            else if (this.state.currentStep == this.STEP_SEND_REGISTRATION_DATA) {
+                this.setState({passwordError: 'error', userNameError: 'error'});
+            }
             console.log(error);
         })
     }
 
-    confirmCode() {
-
-    }
-
     phoneChange(e: any) {
         let phone: string = e.target.value || '';
-        if (phone.match(this.PATTERN_INPUT_PHONE)) {
-            this.setState({phone: phone, phoneError: !phone.match(this.PATTERN_PHONE) ? 'error' : null});
+        if (phone.match(this.state.patternInputPhone)) {
+            this.setState({phone: phone, phoneError: !phone.match(this.state.patternPhone) ? 'error' : null});
         }
     }
 
+    codeChange(e: any) {
+        let code: string = e.target.value;
+        this.setState({code: code, codeError: null});
+    }
+
+    userNameChange(e: any) {
+        let userName: string = e.target.value || '';
+        if (userName.match(this.PATTERN_INPUT_USERNAME))
+            this.setState({userName: userName, userNameError: !userName.match(this.PATTERN_USERNAME) ? 'error': null});
+    }
+
+    passwordChange(e: any) {
+        let password: string = e.target.value || '';
+        if (password.match(this.PATTERN_INPUT_PASSWORD))
+            this.setState({ password: password, passwordError: !password.match(this.PATTERN_PASSWORD) ? 'error': null });
+    }
+
+    togglePasswordVisibility() {
+        this.setState({passwordVisible: !this.state.passwordVisible});
+    }
+
     back() {
-        this.setState({currentStep: this.STEP_SEND_PHONE, phone: null, code: null, hash: null, password: null, passwordAgain: null});
+        this.setState({currentStep: this.STEP_SEND_PHONE, phone: this.getInitialCode(), code: '', codeError: null,
+            hash: '', password: '', passwordAgain: ''});
     }
 
     cancel() {
         ModalAction.do(CLOSE_MODAL, null);
-    }
-
-    register() {
-
     }
 
     render() {
@@ -117,7 +169,7 @@ export default class Registration extends React.Component<any, IRegistrationStat
         return (
             <div className="registration">
                 <div className="registration__controls top">
-                    <div><CloseIcon /></div>
+                    <div onClick={this.cancel}><CloseIcon /></div>
                 </div>
                 <div className="registration__content">
 
@@ -129,11 +181,11 @@ export default class Registration extends React.Component<any, IRegistrationStat
 
                     {
                         this.state.currentStep == this.STEP_SEND_PHONE ? (
-                            <div className="registration__input" >
+                            <div className="registration__form" >
                                 <form onSubmit={this.submitForm.bind(this)}>
                                     <input type="text" name="phone" className={ this.state.phoneError ? 'error': '' }
                                            ref="phone" onChange={this.phoneChange.bind(this)}
-                                           value={ this.state.phone || "+7" }
+                                           value={ this.state.phone }
                                     />
                                 </form>
                             </div>
@@ -142,15 +194,42 @@ export default class Registration extends React.Component<any, IRegistrationStat
 
                     {
                         this.state.currentStep == this.STEP_SEND_CODE ? (
-                            <div className="registration__input">
+                            <div className="registration__form">
                                 <form onSubmit={this.submitForm.bind(this)}>
-                                    <input type="text" name="code" ref="code" />
+                                    <input type="text" name="code" value={this.state.code}
+                                           className={ this.state.codeError ? 'error': '' }
+                                           onChange={this.codeChange.bind(this)} />
                                 </form>
                             </div>
                         ) : null
                     }
 
+                    {
+                        this.state.currentStep == this.STEP_SEND_REGISTRATION_DATA ? (
+                            <div className="registration__form">
+                                <form onSubmit={this.submitForm.bind(this)} autoComplete="false" >
+                                    <div>
+                                        <input type="text" name="n" value={this.state.userName}
+                                               className={ this.state.userNameError ? 'error': '' }
+                                               placeholder={Captions.registration.usernamePrompt}
+                                               onChange={this.userNameChange.bind(this)} autoComplete="new-password" />
+                                    </div>
+                                    <div>
+                                        <input type={this.state.passwordVisible ? "text" :"password"}
+                                               className={ this.state.passwordError ? 'error': '' }
+                                               name="p" value={this.state.password}
+                                               placeholder={Captions.registration.passwordPrompt}
+                                               onChange={this.passwordChange.bind(this)} autoComplete="new-password" />
 
+                                        <div onClick={this.togglePasswordVisibility.bind(this)}
+                                             className={"password_visibility_icon" + (this.state.passwordVisible ? ' visible' : '')}>
+                                            { this.state.passwordVisible ? <VisibilityIcon /> : <VisibilityOffIcon /> }
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        ) : null
+                    }
                 </div>
 
                 <div className="registration__controls bottom">
@@ -163,3 +242,7 @@ export default class Registration extends React.Component<any, IRegistrationStat
         )
     }
 }
+
+let Registration = RegistrationClass;
+
+export default Registration;

@@ -56,34 +56,65 @@
       line-height: 18px;
     }
 
-    .registration__input {
+    .registration__form {
       width: 100%;
       box-sizing: border-box;
       padding: 0 $padding;
+
+      div {
+        position: relative;
+      }
+
+      input {
+        margin: $margin 0;
+        width: 100%;
+        background-color: transparent;
+        border: none;
+        text-align: center;
+        outline: none;
+        color: white;
+        font-size: 14px;
+        line-height: 30px;
+        letter-spacing: 1px;
+        font-family: $family_open_sans;
+        border-bottom: 1px solid white;
+
+        &.error {
+          border-color: $color-accent;
+        }
+      }
+      div input {
+        font-size: 12px;
+      }
+      input:-webkit-autofill, div input:-webkit-autofill {
+        -webkit-box-shadow: 0 0 0 1000px $color inset;
+        -webkit-text-fill-color: #FFFFFF !important;
+        outline: none;
+      }
+
+      .password_visibility_icon {
+        $icon-size: 25px;
+        width: $icon-size;
+        height: $icon-size;
+        position: absolute;
+        top: 18px;
+        right: 0;
+        svg {
+          width: $icon-size;
+          height: $icon-size;
+          fill: $color6;
+        }
+        &.visible {
+          svg { fill: #FFFFFF }
+        }
+
+      }
     }
 
     form {
       width: 100%;
     }
 
-    input {
-      margin: $margin * 2 0;
-      width: 100%;
-      background-color: transparent;
-      border: none;
-      text-align: center;
-      outline: none;
-      color: white;
-      font-size: 14px;
-      line-height: 30px;
-      letter-spacing: 1px;
-      font-family: $family_open_sans;
-      border-bottom: 1px solid white;
-
-      &.error {
-        border-color: $color-accent;
-      }
-    }
 
     input:-webkit-autofill {
       -webkit-box-shadow: 0 0 0 1000px transparent inset;
