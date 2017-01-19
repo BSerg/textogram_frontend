@@ -47,7 +47,8 @@ export default class ContentEditable extends React.Component<ContentEditableProp
         allowLineBreak: true,
         elementType: 'p',
         alignContent: 'left',
-        focusOnMount: false
+        focusOnMount: false,
+        forceUpdateContent: false
     };
     private getElementEmptyContentByType () {
         switch (this.props.elementType) {

@@ -125,8 +125,8 @@ export class PhotoModalContent extends React.Component<IPhotoModalContentProps, 
     }
 
     shouldComponentUpdate(nextProps: any, nextState: any) {
-        if (nextState.doNotUpdateComponent) {
-            delete nextState.doNotUpdateComponent;
+        if (nextState.updateComponent) {
+            delete nextState.updateComponent;
             return false;
         }
         return true;

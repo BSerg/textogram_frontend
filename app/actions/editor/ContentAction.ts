@@ -51,7 +51,6 @@ class ContentActionClass extends Action {
 export const ContentAction = new ContentActionClass();
 
 ContentAction.registerAsync(RESET_CONTENT, (store, data: {articleId: number, autoSave?: boolean, content: {title: string|null, cover: {id: number, image: string}|null, blocks: IContentData[]}}) => {
-    console.log(data);
     store.content = data.content;
     store.content.blocks.forEach((item: IContentData) => {
         store.contentBlockMap[item.id] = item;
@@ -60,7 +59,6 @@ ContentAction.registerAsync(RESET_CONTENT, (store, data: {articleId: number, aut
 });
 
 ContentAction.register(CREATE_CONTENT, (store, data: {contentBlock: IContentData, position: number}) => {
-    console.log(data);
     data.contentBlock.id = uuid4();
     store.content.blocks.splice(data.position, 0, data.contentBlock);
     store.content.blocks.forEach((item: IContentData) => {
@@ -69,15 +67,12 @@ ContentAction.register(CREATE_CONTENT, (store, data: {contentBlock: IContentData
 });
 
 ContentAction.register(UPDATE_CONTENT, (store, data: {contentBlock: IContentData}) => {
-    console.log(data);
     if (store.contentBlockMap[data.contentBlock.id]) {
         Object.assign(store.contentBlockMap[data.contentBlock.id], data.contentBlock);
     }
 });
 
 ContentAction.register(DELETE_CONTENT, (store, data: {id: string}) => {
-    console.log(data);
-    console.log(store);
     let deletingItem = store.contentBlockMap[data.id];
     if (deletingItem) {
         store.content.blocks.splice(store.content.blocks.indexOf(deletingItem), 1);
@@ -87,7 +82,6 @@ ContentAction.register(DELETE_CONTENT, (store, data: {id: string}) => {
 });
 
 ContentAction.register(UPDATE_TITLE_CONTENT, (store, data: {articleId: number, title: string}) => {
-    console.log(data);
     store.content.title = data.title;
 });
 
@@ -100,12 +94,10 @@ ContentAction.register(
             cover: {id: number, image: string} | null
         }
     ) => {
-    console.log(data);
     store.content.cover = data.cover;
 });
 
 ContentAction.register(SWAP_CONTENT, (store, data: {position: number}) => {
-    console.log(data);
     if (data.position >= 1 && data.position < store.content.blocks.length) {
         let swappedBlock = store.content.blocks.splice(data.position, 1)[0];
         store.content.blocks.splice(data.position - 1, 0, swappedBlock);
