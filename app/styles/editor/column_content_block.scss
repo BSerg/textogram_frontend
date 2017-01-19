@@ -9,7 +9,7 @@
   font-size: 16px;
   font-weight: $font-weight;
   line-height: 27px;
-  padding-top: $padding * 1.5;
+  padding: $padding * 1.5 $padding $padding $padding;
 
   p {
     &:not(:last-child) {
@@ -23,23 +23,22 @@
   }
 
   .content_block_column__column {
+    position: relative;
     min-height: 100px;
-    word-break: normal;
-    word-wrap: normal;
+    float: left;
 
     &.content_block_column__column_left {
-      flex: 1;
+      width: 38%;
       margin-right: $margin;
     }
 
     &.content_block_column__column_right {
-      flex: 1.62;
+      width: calc(62% - #{$margin});
     }
   }
 
   .content_block_column__image {
-    position: absolute;
-    min-width: 100px;
+    width: 100%;
     min-height: 100px;
     background-size: cover!important;
     margin-top: $margin/2;
@@ -47,7 +46,7 @@
 
   .content_block_column__image.empty {
     background: $color3 url('../../assets/images/image.svg') no-repeat center center;
-    background-size: 64px;
+    background-size: 64px!important;
   }
 
   .content_block_column__image.loading {

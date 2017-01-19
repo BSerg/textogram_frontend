@@ -77,6 +77,12 @@ export default class ColumnContentBlock extends React.Component<IColumnContentBl
         return true;
     }
 
+    fixImageSize(el: HTMLElement) {
+        console.log(el, el.offsetWidth);
+
+        el.style.height = el.offsetWidth + 'px';
+    }
+
     render() {
         let className = 'content_block_column';
         if (this.props.className) {
@@ -93,7 +99,10 @@ export default class ColumnContentBlock extends React.Component<IColumnContentBl
         return (
             <BaseContentBlock id={this.props.content.id} className={className}>
                 <div className="content_block_column__column content_block_column__column_left">
-                    <div className={imageClassName} style={imageStyle} onClick={this.openFileDialog.bind(this)}/>
+                    <div ref={this.fixImageSize.bind(this)}
+                         className={imageClassName}
+                         style={imageStyle}
+                         onClick={this.openFileDialog.bind(this)}/>
                 </div>
                     <div className="content_block_column__column content_block_column__column_right">
                     <ContentEditable onFocus={this.handleFocus.bind(this)}
