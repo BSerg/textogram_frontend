@@ -8,6 +8,7 @@ import '../styles/profile.scss';
 import {api} from '../api';
 
 import Header from './shared/Header';
+import ArticlePreview from './shared/ArticlePreview';
 import Error from './Error';
 import {UserAction, GET_ME, LOGIN, LOGOUT} from "../actions/user/UserAction";
 
@@ -35,12 +36,16 @@ class UserArticles extends React.Component<IUserArticlesPropsInterface, IUserArt
         this.state = {articles: [], feed: []};
     }
 
-    loadArticles() {
-
+    loadArticles(feed: boolean=false) {
+        api.get('/articles/').then((response: any) => {
+            console.log(response.data.results);
+            this.setState({ articles: response.data.results });
+        }).catch((error) => {});
     }
 
     componentDidMount() {
         console.log(this.props);
+        this.loadArticles();
     }
 
     render() {
@@ -50,9 +55,7 @@ class UserArticles extends React.Component<IUserArticlesPropsInterface, IUserArt
 
             {
                 this.state.articles.map((article, index) => {
-                    return (<div key={index}>
-                        {index}
-                    </div>)
+                    return (<ArticlePreview key={index} item={article} />)
                 })
             }
         </div>)
