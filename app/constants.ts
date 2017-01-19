@@ -39,7 +39,7 @@ export namespace Captions {
         publishLink: 'Доступ по ссылке',
         error_embed_url: 'Некорректная ссылка',
         help_embed_video: 'Youtube, Vimeo, VK, Facebook',
-        help_embed_audio: 'SoundCloud',
+        help_embed_audio: 'SoundCloud, Yandex Music, PromoDJ',
         help_embed_post: 'Twitter, Facebook, Instagram',
         help_embed_empty: 'Нажмите на блок и вставьте ссылку',
         loading: 'Загрузка...'
@@ -94,6 +94,8 @@ export namespace Embed {
         },
         AUDIO: {
             soundcloud: /^https:\/\/soundcloud\.com\/[\w\-]+\/[\w\-]+$/,
+            propmodj: /^http:\/\/promodj\.com\/[\w\-.]+\/tracks\/\d+\/\w+$/,
+            yandex: /^https:\/\/music\.yandex\.ru\/album\/\d+(\/track\/\d+)?$/
         }
     }
 }
