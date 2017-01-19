@@ -60,7 +60,6 @@ export namespace Captions {
     export const management = {
         title: "Управление профилем",
         usernamePlaceholder: "Введите имя",
-
         sectionLinks: 'Связи',
         sectionLogin: 'Вход',
         sectionNotifications: 'Уведомления',
@@ -75,6 +74,8 @@ export namespace Captions {
         linkAddPlaceholder: 'Вставьте ссылку',
         linkAddText: 'Ссылка на профиль соцсети или сайт',
         linkAddError: 'Некорректная ссылка',
+
+        drafts: "Черновики"
 
     };
 
