@@ -37,20 +37,71 @@
 
   .profile__username {
 
+    margin-bottom: $margin;
     span {
       display: inline-block;
     }
   }
 
+  .profile__subscription {
+
+    height: 45px;
+
+    margin-bottom: $margin;
+
+    .profile__subscription_subscribe, .profile__subscription_unsubscribe, .profile__subscription_info {
+      display: flex;
+      flex-direction: row;
+
+      align-items: center;
+
+      color: $color6;
+      text-transform: uppercase;
+      font-size: $font-size-small;
+      letter-spacing: 1px;
+      margin: 0 $margin/2;
+
+      svg {
+        width: 25px;
+        height: 25px;
+        fill: $color6;
+      }
+      span {
+        margin: 0 5px;
+      }
+    }
+
+    .profile__subscription_subscribe {
+      background-color: $color4;
+    }
+
+    .profile__subscription_subscribe, .profile__subscription_unsubscribe {
+      padding: 10px;
+    }
+  }
+
   .profile__social_links {
+    $link-size: 30px;
+
+    margin-bottom: $margin;
 
     .profile__social_icon {
 
-      padding: 5px;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+
+      width: $link-size;
+      height: $link-size;
+
       cursor: pointer;
+      background-color: $color4;
+      @include border-radius($link-size);
 
       svg {
-        width: 30px;
+        width: $link-size - 7px;
+        height: $link-size - 7px;
         fill: $color;
       }
     }

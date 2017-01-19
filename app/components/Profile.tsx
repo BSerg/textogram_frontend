@@ -14,6 +14,51 @@ import {UserAction, GET_ME, LOGIN, LOGOUT} from "../actions/user/UserAction";
 const VKIcon = require('babel!svg-react!../assets/images/profile_social_icon_vk.svg?name=VKIcon');
 const FBIcon = require('babel!svg-react!../assets/images/profile_social_icon_fb.svg?name=FBIcon');
 
+import {Captions} from '../constants';
+const ConfirmIcon = require('babel!svg-react!../assets/images/redactor_icon_confirm.svg?name=ConfirmIcon');
+const SubscriptionIcon = require('babel!svg-react!../assets/images/profile_subscription_icon.svg?name=SubscriptionIcon');
+
+interface IUserArticlesPropsInterface {
+    user: any;
+    isSelf: boolean;
+}
+
+interface IUserArticlesStateInterface {
+    articles?: any[];
+    feed?: any[];
+}
+
+class UserArticles extends React.Component<IUserArticlesPropsInterface, IUserArticlesStateInterface> {
+
+    constructor() {
+        super();
+        this.state = {articles: [], feed: []};
+    }
+
+    loadArticles() {
+
+    }
+
+    componentDidMount() {
+        console.log(this.props);
+    }
+
+    render() {
+        return (<div className="profile__articles">
+
+            {this.props.isSelf ? 'self' : 'nat'}
+
+            {
+                this.state.articles.map((article, index) => {
+                    return (<div key={index}>
+                        {index}
+                    </div>)
+                })
+            }
+        </div>)
+    }
+}
+
 
 interface ISocialLinkProps {
     social_link: any;
@@ -116,8 +161,9 @@ export default class Profile extends React.Component<any, IProfileState> {
         if (this.state && this.state.error) {
             return (this.state.error);
         }
-
+        console.log(this.state.isSelf);
         return (
+
             <div className="profile">
 
                  <div id="profile_content">
@@ -135,14 +181,22 @@ export default class Profile extends React.Component<any, IProfileState> {
                             </div>,
 
                             <div key="subscription" className="profile__subscription">
-                                <div>{ this.state.user.subscribers }</div>
+                                <div className="profile__subscription_info">
+                                    <SubscriptionIcon />
+                                    <span>{ this.state.user.subscribers }</span>
+                                </div>
 
                                 {
                                     (!this.state.isSelf && UserAction.getStore().user) ?
                                         <div>
                                             { this.state.user.is_subscribed ?
-                                                <div onClick={this.unSubscribe.bind(this)}>unsubscribe</div> :
-                                                <div onClick={this.subscribe.bind(this)}>subscribe</div> }
+                                                <div className="profile__subscription_unsubscribe" onClick={this.unSubscribe.bind(this)}>
+                                                    <ConfirmIcon />
+                                                    <span>{Captions.profile.subscribed}</span>
+                                                </div> :
+                                                <div className="profile__subscription_subscribe" onClick={this.subscribe.bind(this)}>
+                                                    <span>{Captions.profile.subscribe}</span>
+                                                </div> }
                                         </div> : null
                                 }
                             </div>,
@@ -152,7 +206,8 @@ export default class Profile extends React.Component<any, IProfileState> {
                                     return <SocialLink social_link={ social_link } key={ index }/>
                                 }) }
                             </div>,
-                            <div key="isself">{ this.state.isSelf ? "self" : "not self" }</div>
+                            <UserArticles user={this.state.user} isSelf={this.state.isSelf} key="articles" />
+
 
                         ] : null
                     }

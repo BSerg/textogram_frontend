@@ -37,6 +37,11 @@ export namespace Captions {
 
     };
 
+    export const profile = {
+        subscribe: 'Подписаться',
+        subscribed: 'Вы подписаны',
+    };
+
     export const main_menu = {
         manage_profile: 'управление профилем',
         create_article: 'создать публикацию',
