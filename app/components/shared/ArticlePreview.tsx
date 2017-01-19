@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {withRouter} from 'react-router';
+import {withRouter, Link} from 'react-router';
 
 import * as moment from 'moment';
 
@@ -41,24 +41,27 @@ class ArticlePreviewClass extends React.Component<IArticlePreviewPropsInterface,
 
     render() {
         let date = this.getDateString(this.props.item.published_at || this.props.item.published_at);
-        let views = this.getViewsString(this.props.item.views || 100999443);
+        let views = this.getViewsString(this.props.item.views || 10019);
 
         return (
             <div className="article_preview">
-                <div className="title">{ this.props.item.title }</div>
-                {
-                    this.props.item.lead ? (
-                        <div className="lead">{ this.props.item.lead }</div>
-                    ) : null
-                }
+                <Link to={this.props.item.is_draft ? ("/articles/" + this.props.item.id + "/edit/") :
+                            ("/articles/" + this.props.item.slug + "/")}>
+                    <div className="title">{ this.props.item.title }</div>
+                    {
+                        this.props.item.lead ? (
+                            <div className="lead">{ this.props.item.lead }</div>
+                        ) : null
+                    }
 
-                {
-                    this.props.item.cover ? (
-                        <div className="cover">
-                            <img  src={this.props.item.cover} />
-                        </div>
-                    ) : null
-                }
+                    {
+                        this.props.item.cover ? (
+                            <div className="cover">
+                                <img  src={this.props.item.cover} />
+                            </div>
+                        ) : null
+                    }
+                </Link>
                 <div className="bottom">
                     { this.props.item.owner ?
                         <div className="owner">{this.props.item.owner.first_name + " " + this.props.item.owner.last_name}</div> : null

@@ -38,13 +38,11 @@ class UserArticles extends React.Component<IUserArticlesPropsInterface, IUserArt
 
     loadArticles(feed: boolean=false) {
         api.get('/articles/').then((response: any) => {
-            console.log(response.data.results);
             this.setState({ articles: response.data.results });
         }).catch((error) => {});
     }
 
     componentDidMount() {
-        console.log(this.props);
         this.loadArticles();
     }
 
@@ -162,7 +160,6 @@ export default class Profile extends React.Component<any, IProfileState> {
         if (this.state && this.state.error) {
             return (this.state.error);
         }
-        console.log(this.state.isSelf);
         return (
 
             <div className="profile">

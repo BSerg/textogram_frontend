@@ -11,6 +11,11 @@
   box-sizing: border-box;
   color: $color;
 
+  a {
+    color: $color;
+    text-decoration: none;
+  }
+
   .title, .lead, .cover {
     margin-bottom: $margin;
     font-family: $family_arimo;

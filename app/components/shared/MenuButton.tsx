@@ -20,6 +20,7 @@ export default class MenuButton extends React.Component<MenuButtonPropsInterface
         super(props);
         this.state = {hidden: false};
         this.hideTimeout = null;
+        this.checkScroll = this.checkScroll.bind(this);
     }
 
     static defaultProps = {
@@ -52,11 +53,11 @@ export default class MenuButton extends React.Component<MenuButtonPropsInterface
     }
 
     componentDidMount() {
-        document.addEventListener('scroll', this.checkScroll.bind(this));
+        document.addEventListener('scroll', this.checkScroll);
     }
 
     componentWillUnmount() {
-        document.removeEventListener('scroll', this.checkScroll.bind(this));
+        document.removeEventListener('scroll', this.checkScroll);
     }
 
     render() {
