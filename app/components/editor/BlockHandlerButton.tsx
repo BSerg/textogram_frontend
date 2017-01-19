@@ -191,7 +191,17 @@ export default class BlockHandlerButton extends React.Component<IContentButtonPr
                 return {
                     icon: <ColumnsIcon/>,
                     onClick: () => {
-                        console.log('ADD COLUMNS')
+                        console.log('ADD COLUMNS');
+                        let data: {contentBlock: IContentData, position: number} = {
+                            contentBlock: {
+                                type: BlockContentTypes.COLUMNS,
+                                image: null,
+                                value: ''
+                            },
+                            position: this.props.blockPosition
+
+                        };
+                        ContentAction.do(CREATE_CONTENT, data);
                     }
                 };
             case BlockContentTypes.PHRASE:

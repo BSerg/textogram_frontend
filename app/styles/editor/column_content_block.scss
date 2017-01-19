@@ -1,0 +1,93 @@
+@import "../contstants";
+@import "../mixins";
+
+.content_block_column {
+  display: flex;
+  flex-flow: row wrap;
+  position: relative;
+  font-family: $family-noto;
+  font-size: 16px;
+  font-weight: $font-weight;
+  line-height: 27px;
+  padding-top: $padding * 1.5;
+
+  p {
+    &:not(:last-child) {
+      margin-bottom: $margin;
+    }
+  }
+
+  a, a:visited {
+    font-weight: $font-weight-bold;
+    text-decoration: underline;
+  }
+
+  .content_block_column__column {
+    min-height: 100px;
+    word-break: normal;
+    word-wrap: normal;
+
+    &.content_block_column__column_left {
+      flex: 1;
+      margin-right: $margin;
+    }
+
+    &.content_block_column__column_right {
+      flex: 1.62;
+    }
+  }
+
+  .content_block_column__image {
+    position: absolute;
+    min-width: 100px;
+    min-height: 100px;
+    background-size: cover!important;
+    margin-top: $margin/2;
+  }
+
+  .content_block_column__image.empty {
+    background: $color3 url('../../assets/images/image.svg') no-repeat center center;
+    background-size: 64px;
+  }
+
+  .content_block_column__image.loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: $color3;
+
+    &:after {
+      content: 'Загрузка...';
+      position: absolute;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      color: white;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-size: 12px;
+      font-family: $family_open_sans;
+    }
+  }
+
+  &:after {
+    content: '';
+    display: block;
+    position: absolute;
+    top: $padding;
+    width: calc(100% - #{$padding}*2);
+    height: 3px;
+    background-color: $color;
+  }
+
+  &.active {
+    .content_editable.empty:empty:after, .content_editable.empty:last-child:after {
+      font-weight: $font-weight-bold;
+    }
+  }
+}

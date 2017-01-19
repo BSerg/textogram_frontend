@@ -22,6 +22,7 @@ import '../styles/editor.scss';
 import {ModalAction, OPEN_MODAL} from "../actions/shared/ModalAction";
 import PublishingParamsModal from "./editor/PublishingParamsModal";
 import {Hash} from "crypto";
+import ColumnContentBlock from "./editor/ColumnContentBlock";
 
 
 interface IEditorState {
@@ -173,6 +174,11 @@ export default class Editor extends React.Component<any, IEditorState> {
                                         let hash = btoa((contentBlock as any).value);
                                         block = <EmbedContentBlock key={"content-" + contentBlock.id + '-' + hash}
                                                                    content={contentBlock}/>;
+                                        break;
+                                    case BlockContentTypes.COLUMNS:
+                                        block = <ColumnContentBlock key={"content-" + contentBlock.id + '-' + hash}
+                                                                    articleId={this.state.article.id}
+                                                                    content={contentBlock}/>;
                                         break;
 
 
