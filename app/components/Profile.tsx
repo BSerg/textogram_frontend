@@ -51,8 +51,6 @@ class UserArticles extends React.Component<IUserArticlesPropsInterface, IUserArt
     render() {
         return (<div className="profile__articles">
 
-            {this.props.isSelf ? 'self' : 'nat'}
-
             {
                 this.state.articles.map((article, index) => {
                     return (<ArticlePreview key={index} item={article} />)
@@ -178,9 +176,7 @@ export default class Profile extends React.Component<any, IProfileState> {
                             </div>,
 
                             <div key="username" className="profile__username">
-                                <div>
                                     <span>{this.state.user.first_name}</span> <span> {this.state.user.last_name}</span>
-                                </div>
                             </div>,
 
                             <div key="subscription" className="profile__subscription">

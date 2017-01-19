@@ -287,7 +287,7 @@
 }
 
 .add_link_modal {
-  //position: relative;
+  position: relative;
   color: #FFFFFF;
   height: 100%;
   display: flex;
@@ -308,7 +308,7 @@
   }
 
   .button {
-    position: fixed;
+    position: absolute;
     padding: $padding/2 $padding $padding $padding;
     width: 100%;
     box-sizing: border-box;

@@ -5,6 +5,73 @@
 
   display: flex;
   flex-direction: column;
+  max-width: 600px;
+  min-width: 250px;
+  padding: $padding;
+  box-sizing: border-box;
+  color: $color;
 
+  .title, .lead, .cover {
+    margin-bottom: $margin;
+    font-family: $family_arimo;
+  }
 
+  .title {
+    font-size: 17px;
+    line-height: 22px;
+    font-weight: $font-weight-bold;
+  }
+
+  .lead {
+    font-size: 13px;
+    letter-spacing: 1px;
+    line-height: 17px;
+    max-height: 51px;
+    overflow: hidden;
+  }
+
+  .cover {
+    width: 100%;
+
+    img {
+      width: 100%;
+      height: 100px;
+      object-fit: cover;
+    }
+  }
+
+  .bottom {
+    display: flex;
+    flex-direction: row;
+    font-family: $family-open-sans;
+    font-size: 10px;
+    letter-spacing: 1px;
+    align-items: center;
+
+    .owner {
+      font-weight: $font-weight-bold;
+      flex-grow: 1;
+    }
+
+    .views {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      svg {
+        width: 15px;
+        height: 15px;
+        stroke: $color;
+        stroke-width: 4px;
+        margin-right: 5px;
+      }
+    }
+
+    div {
+      margin-left: 5px;
+    }
+    div:first-child {
+      margin: 0;
+    }
+
+  }
 }

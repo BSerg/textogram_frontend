@@ -7,10 +7,11 @@
   align-items: center;
   justify-content: center;
   height: 100%;
+  position: relative;
 
   .registration__controls {
     width: 100%;
-    position: fixed;
+    position: absolute;
     left: 0;
     display: flex;
     flex-direction: row;

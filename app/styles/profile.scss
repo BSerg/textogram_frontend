@@ -38,8 +38,11 @@
   .profile__username {
 
     margin-bottom: $margin;
+    padding: 0 $padding;
+    box-sizing: border-box;
     span {
       display: inline-block;
+      text-align: center;
     }
   }
 
