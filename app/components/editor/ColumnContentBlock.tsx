@@ -59,14 +59,16 @@ export default class ColumnContentBlock extends React.Component<IColumnContentBl
     }
 
     updateImage() {
-        let file = this.refs.inputUpload.files[0];
-        UploadImageAction.doAsync(UPLOAD_IMAGE, {articleId: this.props.articleId, image: file}).then(() => {
-            let store = UploadImageAction.getStore();
-            this.state.content.image = store.image;
-            this.setState({content: this.state.content}, () => {
-                ContentAction.do(UPDATE_CONTENT, {contentBlock: this.state.content});
-            });
-        })
+        this.setState({uploadImageInProgress: true}, () => {
+            let file = this.refs.inputUpload.files[0];
+            UploadImageAction.doAsync(UPLOAD_IMAGE, {articleId: this.props.articleId, image: file}).then(() => {
+                let store = UploadImageAction.getStore();
+                this.state.content.image = store.image;
+                this.setState({content: this.state.content, uploadImageInProgress: false}, () => {
+                    ContentAction.do(UPDATE_CONTENT, {contentBlock: this.state.content});
+                });
+            })
+        });
     }
 
     shouldComponentUpdate(nextProps: any, nextState: any) {
