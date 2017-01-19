@@ -41,7 +41,7 @@ class ArticlePreviewClass extends React.Component<IArticlePreviewPropsInterface,
 
     render() {
         let date = this.getDateString(this.props.item.published_at || this.props.item.published_at);
-        let views = this.getViewsString(this.props.item.views || 10019);
+        let views = this.getViewsString(this.props.item.views || 0);
 
         return (
             <div className="article_preview">
