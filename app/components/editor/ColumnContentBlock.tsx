@@ -78,9 +78,10 @@ export default class ColumnContentBlock extends React.Component<IColumnContentBl
     }
 
     fixImageSize(el: HTMLElement) {
-        console.log(el, el.offsetWidth);
-
-        el.style.height = el.offsetWidth + 'px';
+        if (!el) return;
+        window.setTimeout(() => {
+            el.style.height = el.offsetWidth + 'px';
+        });
     }
 
     render() {
