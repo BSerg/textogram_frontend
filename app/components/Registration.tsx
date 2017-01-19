@@ -13,6 +13,11 @@ const VisibilityOffIcon = require('babel!svg-react!../assets/images/profile_visi
 const BackIcon = require('babel!svg-react!../assets/images/back.svg?name=BackIcon');
 const ConfirmIcon = require('babel!svg-react!../assets/images/redactor_icon_confirm.svg?name=ConfirmIcon');
 
+interface IRegistrationPropsInterface {
+    isForgotPassword?: boolean;
+    router?: any;
+}
+
 interface IRegistrationStateInterface {
     phone?: string,
     code?: string;
@@ -31,7 +36,11 @@ interface IRegistrationStateInterface {
 
 }
 
-class RegistrationClass extends React.Component<any, IRegistrationStateInterface> {
+class RegistrationClass extends React.Component<IRegistrationPropsInterface, IRegistrationStateInterface> {
+
+    static defaultProps: any = {
+        isForgotPassword: false
+    };
 
     STEP_SEND_PHONE: number = 1;
     STEP_SEND_CODE: number = 2;
@@ -86,7 +95,7 @@ class RegistrationClass extends React.Component<any, IRegistrationStateInterface
         }
 
         else if (this.state.currentStep ==  this.STEP_SEND_REGISTRATION_DATA) {
-            if (this.state.userName && this.state.password && !this.state.userNameError && !this.state.passwordError) {
+            if (((this.state.userName && !this.state.userNameError) || this.props.isForgotPassword) && this.state.password  && !this.state.passwordError) {
                 data['phone'] = this.state.phone;
                 data['hash'] = this.state.hash;
                 data['username'] = this.state.userName;
@@ -98,7 +107,9 @@ class RegistrationClass extends React.Component<any, IRegistrationStateInterface
             }
         }
 
-        api.post('registration/', data).then((response: any) => {
+        let url = this.props.isForgotPassword ? 'reset_password/' : 'registration/';
+
+        api.post(url, data).then((response: any) => {
             if (this.state.currentStep == this.STEP_SEND_PHONE) {
                 this.setState({phone: response.data.phone, currentStep: this.STEP_SEND_CODE});
             }
@@ -108,7 +119,9 @@ class RegistrationClass extends React.Component<any, IRegistrationStateInterface
             }
             else if (this.state.currentStep == this.STEP_SEND_REGISTRATION_DATA) {
                 UserAction.do(SAVE_USER, response.data.user);
-                this.props.router.push('/manage');
+                if (!this.props.isForgotPassword) {
+                    this.props.router.push('/manage');
+                }
                 ModalAction.do(CLOSE_MODAL, null);
             }
 
@@ -209,12 +222,17 @@ class RegistrationClass extends React.Component<any, IRegistrationStateInterface
                         this.state.currentStep == this.STEP_SEND_REGISTRATION_DATA ? (
                             <div className="registration__form">
                                 <form onSubmit={this.submitForm.bind(this)} autoComplete="false" >
-                                    <div>
-                                        <input type="text" name="n" value={this.state.userName}
-                                               className={ this.state.userNameError ? 'error': '' }
-                                               placeholder={Captions.registration.usernamePrompt}
-                                               onChange={this.userNameChange.bind(this)} autoComplete="new-password" />
-                                    </div>
+                                    {
+                                        !this.props.isForgotPassword ? (
+                                            <div>
+                                                <input type="text" name="n" value={this.state.userName}
+                                                       className={ this.state.userNameError ? 'error': '' }
+                                                       placeholder={Captions.registration.usernamePrompt}
+                                                       onChange={this.userNameChange.bind(this)} autoComplete="new-password" />
+                                            </div>
+                                        ) : null
+                                    }
+
                                     <div>
                                         <input type={this.state.passwordVisible ? "text" :"password"}
                                                className={ this.state.passwordError ? 'error': '' }

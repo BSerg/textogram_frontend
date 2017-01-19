@@ -29,6 +29,7 @@ UserAction.registerAsync(GET_ME, (store, data: any) => {
             localStorage.setItem('authToken', response.data.token);
             resolve(response.data);
         }).catch((error) => {
+            localStorage.removeItem('authToken');
             // reject(error);
         });
     });

@@ -76,8 +76,8 @@ class DefaultMenu extends React.Component<any, IDefaultmenuStateInterface> {
 
     }
 
-    registerUser() {
-        ModalAction.do(OPEN_MODAL, {content: <Registration />});
+    registration(isForgotPassword: boolean = false) {
+        ModalAction.do(OPEN_MODAL, {content: <Registration isForgotPassword={isForgotPassword} />});
         MenuAction.do(TOGGLE, false);
     }
 
@@ -103,13 +103,15 @@ class DefaultMenu extends React.Component<any, IDefaultmenuStateInterface> {
                                    value={this.state.password} onChange={this.passwordChange.bind(this)}/>
                             <div className="hint">
                                 <span>{Captions.main_menu.passwordHint}</span>
-                                <span className="forgot_password">{Captions.main_menu.forgotPassword}</span>
+                                <span className="forgot_password" onClick={this.registration.bind(this, true)}>
+                                    {Captions.main_menu.forgotPassword}
+                                </span>
                             </div>
                         </div>
                         <button style={{display: 'none'}} type="submit">1</button>
                     </form>
                 </div>
-                <div className="menu__register" onClick={this.registerUser.bind(this)}>{Captions.main_menu.register}</div>
+                <div className="menu__register" onClick={this.registration.bind(this, false)}>{Captions.main_menu.register}</div>
                 <div className="menu__about">{Captions.main_menu.about}</div>
             </div>);
     }
