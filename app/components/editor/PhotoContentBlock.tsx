@@ -315,7 +315,7 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
                        style={{display: "none"}}
                        ref="inputUpload"
                        type="file"
-                       accept="image/png,image/jpg,image/gif"
+                       accept="image/jpeg,image/png,image/gif"
                        onChange={this.addPhoto.bind(this)}/>
             </BaseContentBlock>
         )

@@ -162,7 +162,7 @@ export default class QuoteContentBlock extends React.Component<IQuoteContentBloc
                                  placeholder={Captions.editor.enter_quote}/>
                 <input ref="inputUpload"
                        type="file"
-                       accept="image/png,image/jpg,image/gif"
+                       accept="image/jpeg,image/png,image/gif"
                        style={{display: "none"}}
                        onChange={this.updateImage.bind(this)} />
             </BaseContentBlock>
