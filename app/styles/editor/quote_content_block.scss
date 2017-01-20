@@ -100,5 +100,14 @@ $photo_size: 70px;
       display: none;
     }
   }
+  
+  .progress_bar {
+    display: none;
+    margin-top: $margin;
+    
+    &.active {
+      display: block;
+    }
+  }
 }
 

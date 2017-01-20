@@ -1,11 +1,12 @@
 import * as React from "react";
-import {Captions, BlockContentTypes} from "../../constants";
+import {Captions, BlockContentTypes, Constants} from "../../constants";
 import ContentEditable from "../shared/ContentEditable";
 import BaseContentBlock from "./BaseContentBlock";
 import {ContentBlockAction, ACTIVATE_CONTENT_BLOCK} from "../../actions/editor/ContentBlockAction";
 import {ContentAction, UPDATE_CONTENT, IContentData} from "../../actions/editor/ContentAction";
 import "../../styles/editor/quote_content_block.scss";
 import {UploadImageAction, UPLOAD_IMAGE} from "../../actions/editor/UploadImageAction";
+import ProgressBar from "../shared/ProgressBar";
 
 interface IQuoteContent {
     id: string
@@ -25,6 +26,7 @@ interface IQuoteContentBlockState {
     menuOpened?: boolean
     doNotUpdateComponent?: boolean
     isActive?: boolean
+    loadingImage?: boolean
 }
 
 export default class QuoteContentBlock extends React.Component<IQuoteContentBlockProps, IQuoteContentBlockState> {
@@ -36,7 +38,8 @@ export default class QuoteContentBlock extends React.Component<IQuoteContentBloc
         super(props);
         this.state = {
             content: this.props.content as IQuoteContent,
-            menuOpened: false
+            menuOpened: false,
+            loadingImage: false
         };
         this.handleActivate = this.handleActivate.bind(this);
     }
@@ -69,14 +72,26 @@ export default class QuoteContentBlock extends React.Component<IQuoteContentBloc
 
     updateImage() {
         let file = this.refs.inputUpload.files[0];
-        UploadImageAction.doAsync(UPLOAD_IMAGE, {articleId: this.props.articleId, image: file}).then(() => {
-            let store = UploadImageAction.getStore();
-            this.state.content.image = store.image;
-            this.setState({content: this.state.content}, () => {
-                ContentAction.do(UPDATE_CONTENT, {contentBlock: this.state.content});
-                this.closePhotoMenu();
-            });
-        })
+        if (file.size > Constants.maxImageSize) {
+            alert(`Image size is more than ${Constants.maxImageSize/1024/1024}Mb`);
+            return;
+        }
+        this.setState({loadingImage: true, menuOpened: false});
+        let tempURL = window.URL.createObjectURL(file);
+        this.state.content.image = {id: null, image: tempURL};
+        this.setState({content: this.state.content}, () => {
+            UploadImageAction.doAsync(UPLOAD_IMAGE, {articleId: this.props.articleId, image: file}).then(() => {
+                let store = UploadImageAction.getStore();
+                this.state.content.image = store.image;
+                this.setState({content: this.state.content, loadingImage: false}, () => {
+                    ContentAction.do(UPDATE_CONTENT, {contentBlock: this.state.content});
+                    this.closePhotoMenu();
+                });
+            }).catch((err) => {
+                console.log(err);
+                this.setState({loadingImage: false});
+            })
+        });
     }
 
     deleteImage() {
@@ -87,7 +102,6 @@ export default class QuoteContentBlock extends React.Component<IQuoteContentBloc
     }
 
     handleClickPhoto() {
-        console.log('HELLO');
         this.handleFocus();
         this.openPhotoMenu();
     }
@@ -123,11 +137,14 @@ export default class QuoteContentBlock extends React.Component<IQuoteContentBloc
         if (this.props.className) {
             className += ' ' + this.props.className;
         }
-        let imageStyle = {};
+        let imageStyle: any = {};
         if (this.state.content.image) {
             imageStyle = {
                 background: `url('${this.state.content.image.image}') no-repeat center center`,
                 backgroundSize: 'cover'
+            };
+            if (this.state.content.image.id == null) {
+                imageStyle.filter = 'grayscale(1)'
             }
         }
         return (
@@ -160,6 +177,7 @@ export default class QuoteContentBlock extends React.Component<IQuoteContentBloc
                                  onChangeDelay={1000}
                                  content={this.state.content.value}
                                  placeholder={Captions.editor.enter_quote}/>
+                <ProgressBar className={this.state.loadingImage ? 'active' : ''} label={Captions.editor.loading_image}/>
                 <input ref="inputUpload"
                        type="file"
                        accept="image/jpeg,image/png,image/gif"
