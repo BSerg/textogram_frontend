@@ -34,7 +34,7 @@
   }
 
   .menu__user {
-    background-color: $color5;
+    background-color: $color5_1;
 
     padding: $padding 0 $padding/2 0;
 
@@ -87,7 +87,7 @@
   .menu__notifications {
 
     flex-wrap: nowrap;
-    background-color: $color5;
+    background-color: $color5_1;
     padding: $padding - 5px $padding;
     border-top: 3px solid $color;
     justify-content: flex-start;
@@ -156,7 +156,7 @@
     .menu__login {
       padding: $padding/2 $padding;
 
-      color: $color6;
+      color: $color6_1;
       display: flex;
       flex-direction: row;
       justify-content: center;
@@ -188,7 +188,7 @@
           width: 100%;
           font-size: $font_size6;
           font-weight: 300;
-          border-bottom: 1px solid $color6;
+          border-bottom: 1px solid $color6_1;
         }
       }
 

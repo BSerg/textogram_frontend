@@ -48,7 +48,7 @@
     width: 100%;
 
     .registration__description {
-      color: $color6;
+      color: $color6_1;
       font-size: 12px;
 
       text-align: center;
@@ -103,7 +103,7 @@
         svg {
           width: $icon-size;
           height: $icon-size;
-          fill: $color6;
+          fill: $color6_1;
         }
         &.visible {
           svg { fill: #FFFFFF }

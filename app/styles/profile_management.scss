@@ -167,7 +167,7 @@
         height: $button-size;
         @include border_radius($button-size);
         color: #FFFFFF;
-        background-color: $color5;
+        background-color: $color5_1;
         line-height: 35px;
         z-index: 2;
         cursor: pointer;
@@ -183,7 +183,7 @@
 
     .time {
       font-size: $font-size-small;
-      color: $color6;
+      color: $color6_1;
       line-height: 14px;
     }
 
@@ -304,7 +304,7 @@
   }
 
   .button.submit svg {
-      fill: $color6
+      fill: $color6_1
   }
 
   .button {
