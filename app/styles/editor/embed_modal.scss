@@ -1,0 +1,89 @@
+@import "../contstants";
+@import "../mixins";
+
+.embed_modal {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  .embed_modal__header {
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+
+    .embed_modal__back {
+      width: 50px;
+      height: 50px;
+      fill: white;
+    }
+  }
+
+  .embed_modal__content {
+    flex: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    form {
+      width: calc(100% - #{$padding}*2);
+    }
+
+    .embed_modal__input {
+      width: 100%;
+      background-color: transparent;
+      border: none;
+      text-align: center;
+      outline: none;
+      color: white;
+      font-size: 14px;
+      line-height: 30px;
+      letter-spacing: 1px;
+      font-family: $family_open_sans;
+      border-bottom: 1px solid white;
+    }
+
+    .content_block_embed__help, .content_block_embed__error {
+      font-size: 8px;
+      line-height: 30px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      text-align: center;
+      color: white;
+    }
+
+    .content_block_embed__error {
+      color: #FF3333;
+    }
+
+    &.error {
+      .embed_modal__input {
+        border-bottom: 1px solid #FF3333;
+      }
+    }
+  }
+
+  .editor_modal__tools {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    height: 50px;
+
+    svg {
+      width: 35px;
+      height: 35px;
+      fill: white;
+
+      &:not(:last-child) {
+        margin-right: $margin;
+      }
+
+      &.disabled {
+        fill: $color5;
+      }
+    }
+  }
+
+}

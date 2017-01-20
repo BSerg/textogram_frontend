@@ -6,6 +6,8 @@ import "../../styles/editor/block_handler_button.scss";
 import {ContentAction, CREATE_CONTENT, SWAP_CONTENT, IContentData} from "../../actions/editor/ContentAction";
 import ListContentBlock from "./ListContentBlock";
 import {UploadImageAction, UPLOAD_IMAGE} from "../../actions/editor/UploadImageAction";
+import {ModalAction, OPEN_MODAL} from "../../actions/shared/ModalAction";
+import EmbedModal from "./EmbedModal";
 
 const AddIcon = require('babel!svg-react!../../assets/images/redactor_icon_add.svg?name=AddIcon');
 const SwapIcon = require('babel!svg-react!../../assets/images/redactor_icon_swing.svg?name=SwapIcon');
@@ -125,6 +127,17 @@ export default class BlockHandlerButton extends React.Component<IContentButtonPr
                     icon: <VideoIcon/>,
                     onClick: () => {
                         console.log('ADD VIDEO');
+                        let content = {
+                            type: BlockContentTypes.VIDEO,
+                            value: "",
+                        };
+                        window.setTimeout(() => {
+                            ModalAction.do(
+                                OPEN_MODAL,
+                                {content: <EmbedModal blockPosition={this.props.blockPosition}
+                                                      content={content}/>}
+                            );
+                        }, 0);
                     }
                 };
             case BlockContentTypes.PHOTO:
@@ -143,8 +156,19 @@ export default class BlockHandlerButton extends React.Component<IContentButtonPr
                 return {
                     icon: <AudioIcon/>,
                     onClick: () => {
-                        console.log('ADD AUDIO')
-                    }
+                        console.log('ADD AUDIO');
+                        let content = {
+                            type: BlockContentTypes.AUDIO,
+                            value: "",
+                        };
+                        window.setTimeout(() => {
+                            ModalAction.do(
+                                OPEN_MODAL,
+                                {content: <EmbedModal blockPosition={this.props.blockPosition}
+                                                      content={content}/>}
+                            );
+                        }, 0);
+                        }
                 };
             case BlockContentTypes.QUOTE:
                 return {
@@ -167,7 +191,17 @@ export default class BlockHandlerButton extends React.Component<IContentButtonPr
                 return {
                     icon: <ColumnsIcon/>,
                     onClick: () => {
-                        console.log('ADD COLUMNS')
+                        console.log('ADD COLUMNS');
+                        let data: {contentBlock: IContentData, position: number} = {
+                            contentBlock: {
+                                type: BlockContentTypes.COLUMNS,
+                                image: null,
+                                value: ''
+                            },
+                            position: this.props.blockPosition
+
+                        };
+                        ContentAction.do(CREATE_CONTENT, data);
                     }
                 };
             case BlockContentTypes.PHRASE:
@@ -213,7 +247,18 @@ export default class BlockHandlerButton extends React.Component<IContentButtonPr
                 return {
                     icon: <PostIcon/>,
                     onClick: () => {
-                        console.log('ADD POST')
+                        console.log('ADD POST');
+                        let content = {
+                            type: BlockContentTypes.POST,
+                            value: "",
+                        };
+                        window.setTimeout(() => {
+                            ModalAction.do(
+                                OPEN_MODAL,
+                                {content: <EmbedModal blockPosition={this.props.blockPosition}
+                                                      content={content}/>}
+                            );
+                        }, 0);
                     }
                 };
         }

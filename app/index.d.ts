@@ -7,3 +7,7 @@ declare var toMarkdown: IToMarkdown;
 declare module 'to-markdown' {
     export = toMarkdown;
 }
+
+declare var twttr: any;
+
+declare var instgrm: any;

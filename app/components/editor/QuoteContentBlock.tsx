@@ -103,9 +103,8 @@ export default class QuoteContentBlock extends React.Component<IQuoteContentBloc
     }
 
     shouldComponentUpdate(nextProps: any, nextState: any) {
-        console.log(nextState)
-        if (nextState.doNotUpdateComponent) {
-            delete nextState.doNotUpdateComponent;
+        if (nextState.updateComponent) {
+            delete nextState.updateComponent;
             return false;
         }
         return true;
@@ -158,6 +157,7 @@ export default class QuoteContentBlock extends React.Component<IQuoteContentBloc
                                  onFocus={this.handleFocus.bind(this)}
                                  onBlur={this.handleBlur.bind(this)}
                                  onChange={this.handleChange.bind(this)}
+                                 onChangeDelay={1000}
                                  content={this.state.content.value}
                                  placeholder={Captions.editor.enter_quote}/>
                 <input ref="inputUpload" type="file" style={{display: "none"}} onChange={this.updateImage.bind(this)} />

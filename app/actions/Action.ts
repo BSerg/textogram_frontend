@@ -43,6 +43,10 @@ export default class Action extends events.EventEmitter {
         return this.getUpdateEventName(action) + '#' + uid;
     }
 
+    private getErrorUIDEventName(action: string, uid: string): string {
+        return this.getUpdateEventName(action) + '#' + uid + '__error';
+    }
+
     getStore(): any {
         return this.store;
     }
@@ -68,6 +72,8 @@ export default class Action extends events.EventEmitter {
                         if (payload.uid) {
                             this.emit(this.getUpdateUIDEventName(action, payload.uid));
                         }
+                    }).catch(() => {
+                        this.emit(this.getErrorUIDEventName(action, payload.uid));
                     });
                     break
             }
@@ -86,7 +92,6 @@ export default class Action extends events.EventEmitter {
                 this.on(this.getUpdateEventName(a), callback);
             });
         }
-
     }
 
     unbind(action: string | string[], callback: () => any) {
@@ -108,6 +113,9 @@ export default class Action extends events.EventEmitter {
         let promise = new Promise((resolve, reject) => {
             this.on(this.getUpdateUIDEventName(action, uid), () => {
                 resolve('DONE');
+            });
+            this.on(this.getErrorUIDEventName(action, uid), () => {
+                reject('ERROR');
             })
         });
         this.dispatcher.dispatch({action: action, data: data, uid: uid});

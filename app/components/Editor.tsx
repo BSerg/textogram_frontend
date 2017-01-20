@@ -9,6 +9,7 @@ import PhraseContentBlock from './editor/PhraseContentBlock';
 import PhotoContentBlock from './editor/PhotoContentBlock';
 import ListContentBlock from './editor/ListContentBlock';
 import QuoteContentBlock from './editor/QuoteContentBlock';
+import EmbedContentBlock from './editor/EmbedContentBlock';
 import {
     ContentAction, RESET_CONTENT, UPDATE_CONTENT, DELETE_CONTENT, CREATE_CONTENT, IContentData, UPDATE_COVER_CONTENT,
     UPDATE_TITLE_CONTENT, SWAP_CONTENT
@@ -19,7 +20,9 @@ import {api} from '../api';
 
 import '../styles/editor.scss';
 import {ModalAction, OPEN_MODAL} from "../actions/shared/ModalAction";
-import EditorPublishParamsModal from "./editor/EditorPublishParamsModal";
+import PublishingParamsModal from "./editor/PublishingParamsModal";
+import {Hash} from "crypto";
+import ColumnContentBlock from "./editor/ColumnContentBlock";
 
 
 interface IEditorState {
@@ -30,6 +33,8 @@ interface IEditorState {
 
 
 export default class Editor extends React.Component<any, IEditorState> {
+    forceUpdateContent: (forceUpdate?: boolean) => void;
+
     constructor(props: any) {
         super(props);
         this.state = {
@@ -37,7 +42,9 @@ export default class Editor extends React.Component<any, IEditorState> {
             error: null,
             autoSave: true
         };
-        this.handleUpdateContent = this.handleUpdateContent.bind(this);
+        this.resetContent = this.resetContent.bind(this);
+        this.updateContent = this.updateContent.bind(this);
+        this.forceUpdateContent = this.updateContent.bind(this, true);
     }
 
     processContentBlock(block: IContentData) {
@@ -51,19 +58,31 @@ export default class Editor extends React.Component<any, IEditorState> {
         return content;
     }
 
-    handleUpdateContent() {
+    resetContent(save: boolean = false) {
+        ContentAction.do(
+            RESET_CONTENT,
+            {articleId: this.state.article.id, autoSave: save, content: this.state.article.content}
+        )
+    }
+
+    updateContent(forceUpdate: boolean = false): void {
         let store: any = ContentAction.getStore();
         this.state.article.content = store.content;
-        this.setState({article: this.state.article}, () => {
-            ContentAction.do(
-                RESET_CONTENT,
-                {articleId: this.state.article.id, autoSave: this.state.autoSave, content: this.state.article.content}
-            )
-        });
+        if (forceUpdate) {
+            this.setState({article: this.state.article}, () => {
+                window.setTimeout(() => {
+                    this.resetContent(this.state.autoSave);
+                }); 
+            });
+        } else {
+            window.setTimeout(() => {
+                this.resetContent(this.state.autoSave);
+            });
+        }
     }
 
     openPublishParamsModal() {
-        ModalAction.do(OPEN_MODAL, {content: <EditorPublishParamsModal articleId={this.state.article.id}/>});
+        ModalAction.do(OPEN_MODAL, {content: <PublishingParamsModal article={this.state.article}/>});
     }
 
     publish() {
@@ -76,11 +95,9 @@ export default class Editor extends React.Component<any, IEditorState> {
     componentDidMount() {
         api.get(`/articles/editor/${this.props.params.articleId}/`).then((response: any) => {
             this.setState({article: response.data, autoSave: response.data.status == ArticleStatuses.DRAFT}, () => {
-                ContentAction.do(
-                    RESET_CONTENT,
-                    {articleId: this.state.article.id, autoSave: false, content: this.state.article.content}
-                );
+                this.resetContent(false);
             });
+            console.log('TRATRATAR')
         }). catch((error) => {
             if (error.response) {
                 switch (error.response.status) {
@@ -94,16 +111,18 @@ export default class Editor extends React.Component<any, IEditorState> {
             }
         });
 
+        ContentAction.onChange(UPDATE_CONTENT, this.updateContent);
         ContentAction.onChange(
-            [CREATE_CONTENT, UPDATE_CONTENT, DELETE_CONTENT, UPDATE_COVER_CONTENT, UPDATE_TITLE_CONTENT, SWAP_CONTENT],
-            this.handleUpdateContent
+            [CREATE_CONTENT, DELETE_CONTENT, UPDATE_COVER_CONTENT, UPDATE_TITLE_CONTENT, SWAP_CONTENT],
+            this.forceUpdateContent
         );
     }
 
     componentWillUnmount() {
+        ContentAction.unbind(UPDATE_CONTENT, this.updateContent);
         ContentAction.unbind(
-            [CREATE_CONTENT, UPDATE_CONTENT, DELETE_CONTENT, UPDATE_COVER_CONTENT, UPDATE_TITLE_CONTENT, SWAP_CONTENT],
-            this.handleUpdateContent
+            [CREATE_CONTENT, DELETE_CONTENT, UPDATE_COVER_CONTENT, UPDATE_TITLE_CONTENT, SWAP_CONTENT],
+            this.forceUpdateContent
         );
     }
 
@@ -156,6 +175,24 @@ export default class Editor extends React.Component<any, IEditorState> {
                                                                    articleId={this.state.article.id}
                                                                    content={contentBlock}/>;
                                         break;
+                                    case BlockContentTypes.VIDEO:
+                                        block = <EmbedContentBlock key={"content" + contentBlock.id}
+                                                                   content={contentBlock}/>;
+                                        break;
+                                    case BlockContentTypes.AUDIO:
+                                        block = <EmbedContentBlock key={"content" + contentBlock.id}
+                                                                   content={contentBlock}/>;
+                                        break;
+                                    case BlockContentTypes.POST:
+                                        let hash = btoa((contentBlock as any).value);
+                                        block = <EmbedContentBlock key={"content-" + contentBlock.id + '-' + hash}
+                                                                   content={contentBlock}/>;
+                                        break;
+                                    case BlockContentTypes.COLUMNS:
+                                        block = <ColumnContentBlock key={"content-" + contentBlock.id}
+                                                                    articleId={this.state.article.id}
+                                                                    content={contentBlock}/>;
+                                        break;
 
 
                                 }
@@ -189,7 +226,7 @@ export default class Editor extends React.Component<any, IEditorState> {
                                 </div> : null),
                             (this.state.article.status == ArticleStatuses.PUBLISHED ?
                                 <div className="editor__publish"
-                                     onClick={this.handleUpdateContent.bind(this)}>
+                                     onClick={this.resetContent.bind(this, true)}>
                                     Обновить публикацию
                                 </div> : null),
 

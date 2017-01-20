@@ -12,7 +12,8 @@
       "./app/*"
     ],
     "files": [
-        "./app/index.d.ts"
+        "./app/index.d.ts",
+        "./node_modules/retyped-fbsdk-tsd-ambient/fbsdk.d.ts"
     ],
     "exclude": [
         "node_modules"

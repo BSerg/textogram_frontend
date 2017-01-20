@@ -2,7 +2,6 @@ import * as axios from 'axios';
 
 export let api = axios.create({
     baseURL: process.env.API_URL,
-    timeout: 1000,
 });
 
 api.interceptors.request.use(function(config) {
