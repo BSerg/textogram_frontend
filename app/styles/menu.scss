@@ -192,6 +192,10 @@
         }
       }
 
+      form.error input {
+        border-color: $color-accent;
+      }
+
       .hint {
         display: flex;
         flex-direction: row;

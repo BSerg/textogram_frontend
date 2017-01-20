@@ -54,11 +54,8 @@ class DefaultMenu extends React.Component<any, IDefaultmenuStateInterface> {
 
     loginPhone() {
         if (this.state.phone.length < 3) return;
-        // api.post('/login/', {phone: this.state.phone.substring(1), password: this.state.password}).then((response: any) => {
-        //     UserAction.do(SAVE_USER, response.data.user);
-        // }).catch((error) => {
-        //     this.setState({loginError: 'error'})
-        // })
+        let data: any = {phone: this.state.phone.substring(1), password: this.state.password};
+        UserAction.doAsync(LOGIN, data).catch((error) => { this.setState({loginError: 'error'}); });
     }
 
     phoneChange(e: any) {
@@ -89,7 +86,7 @@ class DefaultMenu extends React.Component<any, IDefaultmenuStateInterface> {
                 </div>
                 <div className="menu__login_title">{Captions.main_menu.title}</div>
                 <div className="menu__login">
-                    <form onSubmit={this.handleSubmit}>
+                    <form onSubmit={this.handleSubmit} className={this.state.loginError ? 'error': null}>
                         <div className="login_element">
                             <input type="text"
                                    name="phone"

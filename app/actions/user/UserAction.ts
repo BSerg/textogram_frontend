@@ -38,7 +38,11 @@ UserAction.registerAsync(GET_ME, (store, data: any) => {
 UserAction.registerAsync(LOGIN, (store, data: any) => {
     return new Promise((resolve, reject) => {
         api.post('/login/', data).then((response: any) => {
-
+            store.user = response.data;
+            localStorage.setItem('authToken', response.data.token);
+            resolve(response.data);
+        }).catch((error) => {
+            reject(error);
         })
     });
 });
