@@ -164,7 +164,8 @@ export class PhotoModalContent extends React.Component<IPhotoModalContentProps, 
                                type="text"
                                placeholder={Captions.editor.enter_caption}
                                value={this.state.photos[this.state.currentPhotoIndex].caption}
-                               onChange={this.handleCaption.bind(this)}/>
+                               onChange={this.handleCaption.bind(this)}
+                               autoComplete="off"/>
                     </form>
                 </div>
             </div>
