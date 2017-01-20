@@ -114,6 +114,7 @@ export default class ColumnContentBlock extends React.Component<IColumnContentBl
                 <input type="file"
                        ref="inputUpload"
                        style={{display: "none"}}
+                       accept="image/png,image/jpg,image/gif"
                        onChange={this.updateImage.bind(this)}/>
             </BaseContentBlock>
         )
