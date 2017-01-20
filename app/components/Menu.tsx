@@ -54,11 +54,11 @@ class DefaultMenu extends React.Component<any, IDefaultmenuStateInterface> {
 
     loginPhone() {
         if (this.state.phone.length < 3) return;
-        api.post('/login/', {phone: this.state.phone.substring(1), password: this.state.password}).then((response: any) => {
-            UserAction.do(SAVE_USER, response.data.user);
-        }).catch((error) => {
-            this.setState({loginError: 'error'})
-        })
+        // api.post('/login/', {phone: this.state.phone.substring(1), password: this.state.password}).then((response: any) => {
+        //     UserAction.do(SAVE_USER, response.data.user);
+        // }).catch((error) => {
+        //     this.setState({loginError: 'error'})
+        // })
     }
 
     phoneChange(e: any) {

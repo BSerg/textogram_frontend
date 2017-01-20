@@ -35,6 +35,14 @@ UserAction.registerAsync(GET_ME, (store, data: any) => {
     });
 });
 
+UserAction.registerAsync(LOGIN, (store, data: any) => {
+    return new Promise((resolve, reject) => {
+        api.post('/login/', data).then((response: any) => {
+
+        })
+    });
+});
+
 UserAction.registerAsync(LOGOUT, (store, data: any) => {
     return new Promise((resolve, reject) => {
         api.post('/logout/').then((response: any) => {
