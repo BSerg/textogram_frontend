@@ -1,6 +1,6 @@
 import * as React from 'react';
 import * as moment from 'moment';
-import {Captions} from '../constants';
+import {Captions, Constants} from '../constants';
 
 import {UserAction, SAVE_USER, GET_ME, LOGIN, LOGOUT} from '../actions/user/UserAction';
 import {NotificationAction, CHECK} from '../actions/NotificationAction';
@@ -26,6 +26,8 @@ const BackIcon = require('babel!svg-react!../assets/images/back.svg?name=BackIco
 const ConfirmIcon = require('babel!svg-react!../assets/images/redactor_icon_confirm.svg?name=ConfirmIcon');
 
 import {ModalAction, OPEN_MODAL, CLOSE_MODAL} from '../actions/shared/ModalAction';
+
+import AvatarEditor from './shared/AvatarEditor';
 
 
 import {api} from '../api';
@@ -265,6 +267,8 @@ interface ISectionLinksStateInterface {
 
 
 class SocialLinks extends React.Component<ISectionPropsInterface, ISectionLinksStateInterface> {
+
+
     constructor(props: any) {
         super(props);
         this.state = {links: [], authLink: null};
@@ -378,6 +382,10 @@ export default class ProfileManagement extends React.Component<any, IProfileMana
         { name: this.SECTION_SUBSCRIPTIONS, caption: Captions.management.sectionSubscriptions, icon: SubscriptionIcon, section: Subscriptions },
     ];
 
+    refs: {
+        inputAvatar: HTMLInputElement;
+    };
+
 
     constructor() {
         super();
@@ -386,6 +394,8 @@ export default class ProfileManagement extends React.Component<any, IProfileMana
         this.checkUser = this.checkUser.bind(this);
         this.userNameChange = this.userNameChange.bind(this);
         this.saveUserName = this.saveUserName.bind(this);
+        this.avatarClick = this.avatarClick.bind(this);
+        this.uploadAvatar = this.uploadAvatar.bind(this);
     }
 
     setSection(index: number) {
@@ -420,7 +430,7 @@ export default class ProfileManagement extends React.Component<any, IProfileMana
     }
 
     checkUser() {
-        this.setState(this.getStateData);
+        this.setState(this.getStateData(), () => {this.uploadAvatar()});
     }
 
     userNameChange(content: string, contentText: string) {
@@ -429,6 +439,44 @@ export default class ProfileManagement extends React.Component<any, IProfileMana
 
     saveUserName() {
         this.setState({userNameContent: this.getUserNameContent(this.state.userName)});
+    }
+
+    avatarClick() {
+        this.refs.inputAvatar.click();
+    }
+
+    uploadAvatar() {
+        // let file = this.refs.inputAvatar.files[0];
+        // if (!file) return;
+        // if (!file || (file.type != 'image/png' && file.type != 'image/jpeg')) {
+        //     return;
+        // }
+        //
+        // if (file.size > Constants.maxImageSize) {
+        //     return;
+        // }
+        let _URL = window.URL;
+        let img = new Image();
+        let url = 'http://www.catgallery.ru/kototeka/wp-content/uploads/2015/07/Kotiki-pyut-vodu-7.jpg';
+        try {
+            // img.src = _URL.createObjectURL(file);
+            img.src = url;
+        }
+        catch (e) {
+            return;
+        }
+
+        img.onload = () => {
+            // console.log(img);
+            let aspectRatio = (img.width / img.height);
+            // console.log(aspectRatio);
+            if ((aspectRatio < 0.5 || aspectRatio > 2) || (img.width < 150 || img.height < 150))  {
+                return;
+            }
+            ModalAction.do(OPEN_MODAL, { content: <AvatarEditor image={img} />});
+
+        }
+
     }
 
     componentDidMount() {
@@ -453,7 +501,10 @@ export default class ProfileManagement extends React.Component<any, IProfileMana
         return (
             <div id="profile_management">
                 <Header>{Captions.management.title}</Header>
-                <div className="profile__avatar"><img src={this.state.user.avatar}/></div>
+                <div className="profile__avatar" onClick={this.avatarClick} >
+                    <input type="file" style={{display: 'none'}} ref="inputAvatar" onChange={this.uploadAvatar}/>
+                    <img src={this.state.user.avatar} />
+                </div>
                 <div className="profile__username">
                     <ContentEditable
                         elementType="inline"

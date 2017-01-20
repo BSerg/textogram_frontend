@@ -3,6 +3,11 @@
 
 
 #profile_management {
+
+  .profile__avatar {
+    cursor: pointer;
+  }
+
   div {
     display: flex;
     flex-direction: row;
