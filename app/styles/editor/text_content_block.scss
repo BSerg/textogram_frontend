@@ -19,7 +19,7 @@
   }
 
   &.active {
-    .content_editable.empty:empty:after, .content_editable.empty:last-child:after {
+    .content_editable.empty:empty:after, .content_editable.empty .empty_tag:last-child:after {
       font-weight: $font-weight-bold;
     }
   }

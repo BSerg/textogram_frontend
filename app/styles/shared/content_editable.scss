@@ -6,11 +6,12 @@
 
 .content_editable {
   position: relative;
+
   .empty_tag {
     position: relative;
   }
 
-  &.empty:empty:after, &.empty:last-child:after {
+  &.empty:empty:after, &.empty .empty_tag:last-child:after {
     content: attr(data-placeholder);
     position: absolute;
     top: 0;

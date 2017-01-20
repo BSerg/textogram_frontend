@@ -29,12 +29,12 @@ $photo_size: 70px;
     }
   }
 
-  .content_editable.empty:empty:after, .content_editable.empty:last-child:after {
+  .content_editable.empty:empty:after, .content_editable.empty .empty_tag:last-child:after {
     padding-left: 40px;
   }
 
   &.active {
-    .content_editable.empty:empty:after, .content_editable.empty:last-child:after {
+    .content_editable.empty:empty:after, .content_editable.empty .empty_tag:last-child:after {
       font-weight: $font-weight-bold;
     }
   }
