@@ -42,7 +42,8 @@ export namespace Captions {
         help_embed_audio: 'SoundCloud, Yandex Music, PromoDJ',
         help_embed_post: 'Twitter, Facebook, Instagram',
         help_embed_empty: 'Нажмите на блок и вставьте ссылку',
-        loading: 'Загрузка...'
+        loading: 'Загрузка...',
+        loading_image: 'Загрузка изображения',
     }
 }
 

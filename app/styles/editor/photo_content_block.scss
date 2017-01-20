@@ -45,6 +45,14 @@
       display: none;
     }
   }
+
+  .progress_bar {
+    display: none;
+
+    &.active {
+      display: block;
+    }
+  }
 }
 
 .content_block_photo__empty_label {

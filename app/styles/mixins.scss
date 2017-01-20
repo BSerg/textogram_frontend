@@ -4,11 +4,15 @@
   border-radius: $radius;
 }
 
-@mixin transition($duration: 100ms, $type: ease-out) {
+@mixin transition($duration: 100ms, $type: ease-out, $delay: 0s) {
   -webkit-transition: $duration $type;
   -moz-transition: $duration $type;
   -o-transition: $duration $type;
   transition: $duration $type;
+  -webkit-transition-delay: $delay;
+  -moz-transition-delay: $delay;
+  -o-transition-delay: $delay;
+  transition-delay: $delay;
 }
 
 @mixin scale($x, $y) {

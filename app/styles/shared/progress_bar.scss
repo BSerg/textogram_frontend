@@ -1,0 +1,70 @@
+@import "../contstants";
+@import "../mixins";
+
+.progress_bar {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 50px;
+  margin: $margin 0;
+
+  .progress_bar__bar_container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+
+    .progress_bar__bar {
+      position: relative;
+      flex: 1;
+      height: 7px;
+      margin-right: $margin;
+      background-color: $color3;
+      overflow: hidden;
+    }
+
+    .progress_bar__item {
+      @include transition();
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 7px;
+      width: 30px;
+      background-color: $color5;
+    }
+
+    .progress_bar__cancel {
+      width: 10px;
+      height: 10px;
+    }
+  }
+
+  .progress_bar__label {
+    font-size: 10px;
+    letter-spacing: 1px;
+    line-height: 17px;
+    color: $color5;
+    text-transform: uppercase;
+    text-align: center;
+    margin-top: $margin/2;
+  }
+
+  @keyframes indeterminate_animation {
+    0%{
+      left: -30px;
+    }
+    100%{
+      left: 100%;
+    }
+  }
+
+  &.indeterminate {
+    .progress_bar__item {
+      -webkit-animation: indeterminate_animation 1s ease 0s infinite normal ;
+       animation: indeterminate_animation 1s ease 0s infinite normal
+    }
+  }
+}

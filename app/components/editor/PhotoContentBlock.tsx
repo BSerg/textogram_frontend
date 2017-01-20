@@ -9,6 +9,7 @@ import ContentBlockPopup from "./ContentBlockPopup";
 import {PopupPanelAction, OPEN_POPUP} from "../../actions/shared/PopupPanelAction";
 import {UploadImageAction, UPLOAD_IMAGE} from "../../actions/editor/UploadImageAction";
 import "../../styles/editor/photo_content_block.scss";
+import ProgressBar from "../shared/ProgressBar";
 
 const AddButton = require('babel!svg-react!../../assets/images/redactor_icon_popup_add.svg?name=AddButton');
 const DeleteButton = require('babel!svg-react!../../assets/images/close.svg?name=DeleteButton');
@@ -43,6 +44,7 @@ interface IPhotoContentBlockProps {
 interface IPhotoContentBlockState {
     isActive?: boolean
     content?: IPhotoContent
+    loadingImage?: boolean
 }
 
 export class Photo extends React.Component<IPhotoProps, any> {
@@ -167,7 +169,8 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
         super(props);
         this.state = {
             content: this.props.content as IPhotoContent,
-            isActive: false
+            isActive: false,
+            loadingImage: false
         };
         this.handleBlockActive = this.handleBlockActive.bind(this);
     }
@@ -214,15 +217,21 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
     }
 
     addPhoto() {
-        let file = this.refs.inputUpload.files[0];
-        UploadImageAction.doAsync(UPLOAD_IMAGE, {articleId: this.props.articleId, image: file}).then(() => {
-            let store = UploadImageAction.getStore();
-            this.state.content.photos.push(store.image);
-            this.setState({content: this.state.content}, () => {
-                PopupPanelAction.do(OPEN_POPUP, {content: this.getPopupContent()});
-                ContentAction.do(UPDATE_CONTENT, {contentBlock: this.state.content});
+        this.setState({loadingImage: true}, () => {
+            let file = this.refs.inputUpload.files[0];
+            UploadImageAction.doAsync(UPLOAD_IMAGE, {articleId: this.props.articleId, image: file}).then(() => {
+                let store = UploadImageAction.getStore();
+                this.state.content.photos.push(store.image);
+                this.setState({content: this.state.content, loadingImage: false}, () => {
+                    PopupPanelAction.do(OPEN_POPUP, {content: this.getPopupContent()});
+                    ContentAction.do(UPDATE_CONTENT, {contentBlock: this.state.content});
+                });
+            }).catch((err) => {
+                console.log(err);
+                this.setState({loadingImage: false});
             });
         });
+
     }
 
     deletePhoto(id: number) {
@@ -288,6 +297,7 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
                 }
 
                 <div style={{clear: "both"}}/>
+                <ProgressBar className={this.state.loadingImage ? 'active' : ''} label={Captions.editor.loading_image}/>
                 <input id={"inputUpload" + this.props.content.id}
                        style={{display: "none"}}
                        ref="inputUpload"
