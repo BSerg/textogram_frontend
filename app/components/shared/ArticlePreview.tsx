@@ -3,12 +3,15 @@ import {withRouter, Link} from 'react-router';
 
 import * as moment from 'moment';
 
+import {Captions} from '../../constants';
 import '../../styles/shared/article_preview.scss';
 const ViewsIcon = require('babel!svg-react!../../assets/images/views_icon.svg?name=ViewsIcon');
+const CloseIcon = require('babel!svg-react!../../assets/images/close.svg?name=CloseIcon');
 
 
 interface IArticlePreviewPropsInterface {
-    item: any
+    item: any,
+    onDelete?: (id: number) => {}
 }
 
 
@@ -36,7 +39,10 @@ class ArticlePreviewClass extends React.Component<IArticlePreviewPropsInterface,
             return (Math.floor(views/1000000)).toString() + 'M';
         }
         return '';
+    }
 
+    deleteArticle() {
+        if (this.props.onDelete) this.props.onDelete(this.props.item.id);
     }
 
     render() {
@@ -47,13 +53,19 @@ class ArticlePreviewClass extends React.Component<IArticlePreviewPropsInterface,
             <div className="article_preview">
                 <Link to={this.props.item.is_draft ? ("/articles/" + this.props.item.id + "/edit/") :
                             ("/articles/" + this.props.item.slug + "/")}>
-                    <div className="title">{ this.props.item.title }</div>
+
+                    {
+                        (!this.props.item.title && ! this.props.item.cover && !this.props.item.lead) ?
+                        <div className="title">{ date }</div>: null
+                    }
+                    {
+                        this.props.item.title ? (<div className="title">{ this.props.item.title }</div>) : null
+                    }
                     {
                         this.props.item.lead ? (
                             <div className="lead">{ this.props.item.lead }</div>
                         ) : null
                     }
-
                     {
                         this.props.item.cover ? (
                             <div className="cover">
@@ -63,11 +75,16 @@ class ArticlePreviewClass extends React.Component<IArticlePreviewPropsInterface,
                     }
                 </Link>
                 <div className="bottom">
-                    { this.props.item.owner ?
+                    { (this.props.item.owner && !this.props.item.is_draft) ?
                         <div className="owner">{this.props.item.owner.first_name + " " + this.props.item.owner.last_name}</div> : null
                     }
                     <div>{date}</div>
                     <div className="views"><ViewsIcon /> {views}</div>
+                    {
+                        this.props.item.is_draft ? (
+                        <div className="delete" onClick={this.deleteArticle.bind(this)}><span>{Captions.management.draftDelete}</span> <CloseIcon /></div>) :
+                        null
+                    }
 
                 </div>
 

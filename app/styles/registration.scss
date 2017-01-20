@@ -73,16 +73,21 @@
         border: none;
         text-align: center;
         outline: none;
-        color: white;
+        color: $color5;
         font-size: 14px;
         line-height: 30px;
         letter-spacing: 1px;
         font-family: $family_open_sans;
-        border-bottom: 1px solid white;
+        border-bottom: 1px solid $color5;
 
         &.error {
           border-color: $color-accent;
         }
+      }
+
+      input:focus {
+        color: #FFFFFF;
+        border-color: #FFFFFF;
       }
       div input {
         font-size: 12px;

@@ -80,36 +80,39 @@ class DefaultMenu extends React.Component<any, IDefaultmenuStateInterface> {
 
     render() {
         return (
-            <div className="main__menu_default" onClick={this.stopClose}>
-                <div className="menu__controls">
-                    <div onClick={this.handleUrlClick.bind(this, '/info/')} ><InfoIcon /></div>
-                </div>
-                <div className="menu__login_title">{Captions.main_menu.title}</div>
-                <div className="menu__login">
-                    <form onSubmit={this.handleSubmit} className={this.state.loginError ? 'error': null}>
-                        <div className="login_element">
-                            <input type="text"
-                                   name="phone"
-                                   placeholder={Captions.main_menu.inputPhonePlaceholder}
-                                   value={this.state.phone} onChange={this.phoneChange.bind(this)}/>
-                            <div className="hint"><span>{Captions.main_menu.loginHint}</span></div>
-                        </div>
-                        <div className="login_element">
-                            <input type="password" name="pwd"
-                                   placeholder={Captions.main_menu.inputPasswordPlaceholder}
-                                   value={this.state.password} onChange={this.passwordChange.bind(this)}/>
-                            <div className="hint">
-                                <span>{Captions.main_menu.passwordHint}</span>
-                                <span className="forgot_password" onClick={this.registration.bind(this, true)}>
-                                    {Captions.main_menu.forgotPassword}
-                                </span>
+            <div className="menu__content main__menu_default" >
+                <div onClick={this.stopClose}>
+                    <div className="menu__controls">
+                        <div onClick={this.handleUrlClick.bind(this, '/info/')} ><InfoIcon /></div>
+                    </div>
+                    <div className="menu__login_title">{Captions.main_menu.title}</div>
+                    <div className="menu__login">
+                        <form onSubmit={this.handleSubmit} className={this.state.loginError ? 'error': null}>
+                            <div className="login_element">
+                                <input type="text"
+                                       name="phone"
+                                       placeholder={Captions.main_menu.inputPhonePlaceholder}
+                                       value={this.state.phone} onChange={this.phoneChange.bind(this)}/>
+                                <div className="hint"><span>{Captions.main_menu.loginHint}</span></div>
                             </div>
-                        </div>
-                        <button style={{display: 'none'}} type="submit">1</button>
-                    </form>
+                            <div className="login_element">
+                                <input type="password" name="pwd"
+                                       placeholder={Captions.main_menu.inputPasswordPlaceholder}
+                                       value={this.state.password} onChange={this.passwordChange.bind(this)}/>
+                                <div className="hint">
+                                    <span>{Captions.main_menu.passwordHint}</span>
+                                    <span className="forgot_password" onClick={this.registration.bind(this, true)}>
+                                        {Captions.main_menu.forgotPassword}
+                                    </span>
+                                </div>
+                            </div>
+                            <button style={{display: 'none'}} type="submit">1</button>
+                        </form>
+                    </div>
+                    <div className="menu__register" onClick={this.registration.bind(this, false)}>{Captions.main_menu.register}</div>
+                    <div className="menu__about">{Captions.main_menu.about}</div>
                 </div>
-                <div className="menu__register" onClick={this.registration.bind(this, false)}>{Captions.main_menu.register}</div>
-                <div className="menu__about">{Captions.main_menu.about}</div>
+
             </div>);
     }
 }
@@ -184,7 +187,7 @@ class UserMenu extends React.Component<IUserMenuProps, any> {
 
     render() {
         return (
-            <div>
+            <div className="menu__content">
                 <div className="menu__controls">
                     <div onClick={this.handleUrlClick.bind(this, '/info/')} ><InfoIcon /></div>
                     <div onClick={this.logout.bind(this)}><ExitIcon /></div>

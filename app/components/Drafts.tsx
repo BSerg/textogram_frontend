@@ -24,22 +24,35 @@ export default class Drafts extends React.Component<any, IDraftsStateInterface> 
 
     loadDrafts() {
         api.get('/drafts/').then((response: any) => {
-            console.log(response.data);
+            this.setState({items: response.data});
         }).catch((error) => {})
     }
 
     setUser() {
         let user = UserAction.getStore().user;
-        console.log(user);
         if (user) {
             if (!this.state.user || (this.state.user && (this.state.user.id != user.id))) {
-                console.log('set state');
                 this.setState({user: user}, () => {this.loadDrafts()});
             }
         }
         else {
             this.setState({user: null, items: []});
         }
+    }
+
+    deleteArticle(id: number) {
+        if (!confirm('delete')) return;
+        api.post('/drafts/' + id + '/delete/').then((response: any) => {
+            let indexToRemove;
+            this.state.items.forEach((item, index) => {
+                if (item.id == id) indexToRemove = index;
+            });
+            if (indexToRemove != undefined) {
+                let items = this.state.items;
+                items.splice(indexToRemove, 1);
+                this.setState({items: items});
+            }
+        }).catch((error) => {})
     }
 
     componentDidMount() {
@@ -63,7 +76,7 @@ export default class Drafts extends React.Component<any, IDraftsStateInterface> 
                 <div className="drafts__content">
                     {
                         this.state.items.map((item, index) => {
-                            return (<ArticlePreview item={item} key={index} />);
+                            return (<ArticlePreview item={item} onDelete={this.deleteArticle.bind(this, item.id)} key={index} />);
                         })
                     }
                 </div>

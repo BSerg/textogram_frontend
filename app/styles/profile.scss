@@ -102,6 +102,8 @@
       background-color: $color4;
       @include border-radius($link-size);
 
+      margin: 0 5px;
+
       svg {
         width: $link-size - 7px;
         height: $link-size - 7px;
@@ -110,6 +112,14 @@
     }
   }
 
+  .profile__articles {
+    padding: 0 $padding;
+  }
+
+}
+
+.drafts__content {
+  padding: 0 $padding;
 }
 
 

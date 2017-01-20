@@ -70,7 +70,7 @@ export namespace Captions {
         title: "Управление профилем",
         usernamePlaceholder: "Введите имя",
         sectionLinks: 'Связи',
-        sectionLogin: 'Вход',
+        sectionLogin: 'Учетная запись',
         sectionNotifications: 'Уведомления',
         sectionSubscriptions: 'Подписки',
 
@@ -84,7 +84,8 @@ export namespace Captions {
         linkAddText: 'Ссылка на профиль соцсети или сайт',
         linkAddError: 'Некорректная ссылка',
 
-        drafts: "Черновики"
+        drafts: "Черновики",
+        draftDelete: "удалить",
 
     };
 
