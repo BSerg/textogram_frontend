@@ -1,5 +1,5 @@
 import * as React from "react";
-import {Captions, BlockContentTypes} from "../../constants";
+import {Captions, BlockContentTypes, Constants} from "../../constants";
 import ContentEditable from "../shared/ContentEditable";
 import BaseContentBlock from "./BaseContentBlock";
 import {ContentBlockAction, ACTIVATE_CONTENT_BLOCK} from "../../actions/editor/ContentBlockAction";
@@ -23,6 +23,7 @@ interface IPhoto {
 
 interface IPhotoProps {
     className?: string
+    style?: any
     content: IPhoto
     onDelete?: (id: number) => any
     onOpenModal?: (id: number) => any
@@ -69,10 +70,11 @@ export class Photo extends React.Component<IPhotoProps, any> {
         if (this.props.className) {
             className += ' ' + this.props.className
         }
-        let style = {
+        let style = this.props.style || {};
+        Object.assign(style, {
             background: `url('${this.props.content.image}') no-repeat center center`,
             backgroundSize: 'cover'
-        };
+        });
         return (
             <div className={className} style={style} onClick={this.handleOpenModal.bind(this)}>
                 <DeleteButton onClick={this.handleDelete.bind(this)} className="content_block_photo__delete"/>
@@ -230,10 +232,18 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
     }
 
     addPhoto() {
-        this.setState({loadingImage: true}, () => {
-            let file = this.refs.inputUpload.files[0];
+        let file = this.refs.inputUpload.files[0];
+        if (file.size > Constants.maxImageSize) {
+            alert(`Image size is more than ${Constants.maxImageSize/1024/1024}Mb`);
+            return;
+        }
+        let tempURL = window.URL.createObjectURL(file);
+        this.state.content.photos.push({id: null, image: tempURL});
+        this.setState({loadingImage: true, content: this.state.content}, () => {
+            PopupPanelAction.do(OPEN_POPUP, {content: this.getPopupContent()});
             UploadImageAction.doAsync(UPLOAD_IMAGE, {articleId: this.props.articleId, image: file}).then(() => {
                 let store = UploadImageAction.getStore();
+                this.state.content.photos.pop();
                 this.state.content.photos.push(store.image);
                 this.setState({content: this.state.content, loadingImage: false}, () => {
                     PopupPanelAction.do(OPEN_POPUP, {content: this.getPopupContent()});
@@ -300,8 +310,13 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
                               disableDefaultPopup={true}>
                 {this.state.content.photos.length ?
                     this.state.content.photos.map((photo: IPhoto, index: number) => {
+                        let photoStyle = {};
+                        if (photo.id == null) {
+                            photoStyle = {filter: 'grayscale(1)'}
+                        }
                         return <Photo key={'photo' + photo.id}
                                       className={'photo' + index}
+                                      style={photoStyle}
                                       content={photo}
                                       onDelete={this.deletePhoto.bind(this)}
                                       onOpenModal={this.openModal.bind(this)}/>
