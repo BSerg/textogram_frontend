@@ -95,8 +95,21 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: $font-size6;
-    line-height: 20px;
+
+    input {
+      min-width: 50%;
+      background-color: transparent;
+      border: none;
+      color: white;
+      text-align: center;
+      font-family: $family_open_sans;
+      font-size: $font-size6;
+      line-height: 20px;
+
+      &:focus {
+        border-bottom: 1px solid white;
+      }
+    }
 
     .content_editable {
       min-width: 50%;

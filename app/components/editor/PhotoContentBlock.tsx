@@ -103,11 +103,16 @@ export class PhotoModalContent extends React.Component<IPhotoModalContentProps, 
         }
     }
 
+    refs: {
+        inputCaption: HTMLInputElement
+    };
+
     back() {
         ModalAction.do(CLOSE_MODAL, null);
     }
 
-    handleCaption(content: string, contentText: string) {
+    handleCaption() {
+        let contentText = this.refs.inputCaption.value;
         this.state.photos[this.state.currentPhotoIndex].caption = contentText;
         this.setState({photos: this.state.photos, doNotUpdateComponent: true}, () => {
             ContentAction.do(UPDATE_CONTENT, {contentBlock: {
@@ -116,6 +121,12 @@ export class PhotoModalContent extends React.Component<IPhotoModalContentProps, 
                 photos: this.state.photos
             }})
         });
+    }
+
+    handleSubmit(e: Event) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.refs.inputCaption.blur();
     }
 
     nextPhoto() {
@@ -148,12 +159,13 @@ export class PhotoModalContent extends React.Component<IPhotoModalContentProps, 
                 </div>
                 <div className="photo_modal__image" style={imageStyle} onClick={this.nextPhoto.bind(this)}/>
                 <div className="photo_modal__caption">
-                    <ContentEditable elementType="inline"
-                                     allowLineBreak={false}
-                                     alignContent="center"
-                                     onChange={this.handleCaption.bind(this)}
-                                     content={this.state.photos[this.state.currentPhotoIndex].caption}
-                                     placeholder={Captions.editor.enter_caption}/>
+                    <form onSubmit={this.handleSubmit.bind(this)}>
+                        <input ref="inputCaption"
+                               type="text"
+                               placeholder={Captions.editor.enter_caption}
+                               value={this.state.photos[this.state.currentPhotoIndex].caption}
+                               onChange={this.handleCaption.bind(this)}/>
+                    </form>
                 </div>
             </div>
         );

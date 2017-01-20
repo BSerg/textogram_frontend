@@ -11,8 +11,9 @@ interface IPopupPanelProps {
 }
 
 interface IPopupPanelState {
-    opened: boolean
-    content: any
+    opened?: boolean
+    content?: any
+    contentHistory?: any[]
 }
 
 export default class PopupPanel extends React.Component<IPopupPanelProps, IPopupPanelState> {
@@ -23,7 +24,8 @@ export default class PopupPanel extends React.Component<IPopupPanelProps, IPopup
         this.closeTimeout = -1;
         this.state = {
             opened: false,
-            content: null
+            content: null,
+            contentHistory: []
         }
     }
 
@@ -36,7 +38,9 @@ export default class PopupPanel extends React.Component<IPopupPanelProps, IPopup
     handleOpen() {
         window.clearTimeout(this.closeTimeout);
         let store: any = PopupPanelAction.getStore();
-        this.setState({opened: true, content: store.content}, () => {
+        let content = store.content;
+        this.state.contentHistory.push(content);
+        this.setState({opened: true, content: content, contentHistory: this.state.contentHistory}, () => {
             if (this.props.autoClose) {
                 this.closeTimeout = window.setTimeout(() => {
                     this.handleClose();
@@ -46,6 +50,8 @@ export default class PopupPanel extends React.Component<IPopupPanelProps, IPopup
     }
 
     handleClose() {
+        let content;
+        // this.state.contentHistory.splice(this.state.contentHistory.indexOf())
         this.setState({opened: false, content: null});
     }
 
