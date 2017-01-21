@@ -5,7 +5,7 @@ import {api} from '../../api';
 export const GET_ME = 'get_me';
 export const LOGIN = 'login';
 export const LOGOUT = 'logout';
-export const UPDATE = 'update';
+export const UPDATE_USER = 'update';
 export const SAVE_USER = 'save';
 
 class UserActionClass extends Action {
@@ -57,7 +57,7 @@ UserAction.registerAsync(LOGOUT, (store, data: any) => {
     });
 });
 
-UserAction.registerAsync(UPDATE, (store, data: any) => {
+UserAction.registerAsync(UPDATE_USER, (store, data: any) => {
     return new Promise((resolve, reject) => {
         api.patch('/users/me/', data).then((response: any) => {
             store.user = response.data;

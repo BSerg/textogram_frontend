@@ -5,7 +5,7 @@ const CloseIcon = require('babel!svg-react!../../assets/images/close.svg?name=Cl
 import {Captions} from '../../constants';
 
 import {ModalAction, CLOSE_MODAL} from '../../actions/shared/ModalAction';
-import {UserAction, UPDATE} from '../../actions/user/UserAction';
+import {UserAction, UPDATE_USER} from '../../actions/user/UserAction';
 
 interface IAvatarEditorPropsInterface {
     image: any;
@@ -59,7 +59,7 @@ export default class AvatarEditor extends React.Component<IAvatarEditorPropsInte
         this.move = this.move.bind(this);
         this.startDown = this.startDown.bind(this);
         this.endDown = this.endDown.bind(this);
-        this.setOffset = this.setOffset.bind(this);
+        this.__setOffset = this.__setOffset.bind(this);
         this.resizeHandler = this.resizeHandler.bind(this);
         this.closeModal = this.closeModal.bind(this);
         this.uploadAvatar = this.uploadAvatar.bind(this);
@@ -74,6 +74,7 @@ export default class AvatarEditor extends React.Component<IAvatarEditorPropsInte
     }
 
     startDown(e: any) {
+        if (this.state.isUploading) return;
         let coords = this.getCoordinates(e);
         this.setState({
             downX: coords.pageX - this.refs.canvas.offsetLeft,
@@ -83,6 +84,7 @@ export default class AvatarEditor extends React.Component<IAvatarEditorPropsInte
     }
 
     endDown(e: any) {
+        if (this.state.isUploading) return;
         this.setState({
             posX: this.state.offsetX,
             posY: this.state.offsetY,
@@ -91,18 +93,20 @@ export default class AvatarEditor extends React.Component<IAvatarEditorPropsInte
     }
 
     move(e: any) {
+        if (this.state.isUploading) return;
         if (!this.state.isDown) return;
         let coords = this.getCoordinates(e);
         let offsetX = this.state.posX + (this.state.downX - (coords.pageX - this.refs.canvas.offsetLeft));
         let offsetY = this.state.posY + (this.state.downY - (coords.pageY - this.refs.canvas.offsetTop));
-        this.setOffset(offsetX, offsetY);
+        this.__setOffset(offsetX, offsetY);
     }
 
     scaleChange(e: any) {
-        this.setState({scale: Number(e.target.value)}, () => {this.setOffset()});
+        if (this.state.isUploading) return;
+        this.setState({scale: Number(e.target.value)}, () => {this.__setOffset()});
     }
 
-    setOffset(offsetX?: number, offsetY?: number) {
+    __setOffset(offsetX?: number, offsetY?: number) {
         offsetX = offsetX || this.state.offsetX;
         offsetY = offsetY || this.state.offsetY;
 
@@ -173,12 +177,9 @@ export default class AvatarEditor extends React.Component<IAvatarEditorPropsInte
     }
 
     uploadAvatar() {
-        // let imgData = this.refs.canvas2.
         if (this.state.isUploading) return;
         this.setState({isUploading: true}, () => {
-            // let imageData = this.refs.canvas2.getContext('2d').getImageData(0, 0, this.refs.canvas2.width, this.refs.canvas2.height).toDataURL('image/jpeg');
             let imageUrl = this.refs.canvas2.toDataURL('image/jpeg');
-
             let byteString = window.atob(imageUrl.split(',')[1]);
             let ab = new ArrayBuffer(byteString.length);
             let ia = new Uint8Array(ab);
@@ -187,12 +188,11 @@ export default class AvatarEditor extends React.Component<IAvatarEditorPropsInte
             }
             let file = new Blob([ia], {type: 'image/jpeg'});
             console.log(file);
-
             let fd = new FormData();
             fd.append('avatar', file);
-            UserAction.doAsync(UPDATE, fd).then(() => {
-                console.log('looded');
-            });
+            UserAction.doAsync(UPDATE_USER, fd).then(() => {
+                ModalAction.do(CLOSE_MODAL, null);
+            }).catch(() => {this.setState({ isUploading: false })});
         });
 
 
@@ -262,7 +262,8 @@ export default class AvatarEditor extends React.Component<IAvatarEditorPropsInte
 
                 </div>
                 <div className="image_editor__bottom">
-                    <div onClick={this.uploadAvatar}>{Captions.management.avatarSave}</div>
+                    <div onClick={this.uploadAvatar}
+                         className={this.state.isUploading ? 'saving' : ''}>{Captions.management.avatarSave}</div>
                 </div>
 
             </div>);
