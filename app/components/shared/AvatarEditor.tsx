@@ -10,6 +10,11 @@ interface IAvatarEditorPropsInterface {
 
 interface  IAvatarEditorStateInterface {
     scale?: number;
+
+    width?: number;
+    height?: number;
+    border?: number;
+
     offsetX?: number;
     offsetY?: number;
 
@@ -27,6 +32,10 @@ interface  IAvatarEditorStateInterface {
 
 export default class AvatarEditor extends React.Component<IAvatarEditorPropsInterface, IAvatarEditorStateInterface> {
 
+    DEFAULT_WIDTH: number = 400;
+    DEFAULT_HEIGHT: number = 400;
+    DEFAULT_BORDER: number = 5;
+
     refs: {
         canvas: HTMLCanvasElement;
         canvas2: HTMLCanvasElement;
@@ -35,13 +44,17 @@ export default class AvatarEditor extends React.Component<IAvatarEditorPropsInte
     constructor() {
         super();
 
-        this.state = { scale: 1, offsetX: 0, offsetY: 0, isDown: false, posX: 0, posY: 0 };
+        this.state = {
+            scale: 1, offsetX: 0, offsetY: 0, isDown: false, posX: 0, posY: 0, width: this.DEFAULT_WIDTH,
+            height: this.DEFAULT_HEIGHT, border: this.DEFAULT_BORDER
+        };
         this.renderImage = this.renderImage.bind(this);
         this.scaleChange = this.scaleChange.bind(this);
         this.move = this.move.bind(this);
         this.startDown = this.startDown.bind(this);
         this.endDown = this.endDown.bind(this);
         this.setOffset = this.setOffset.bind(this);
+        this.resizeHandler = this.resizeHandler.bind(this);
     }
 
     getCoordinates(e: any): {pageX: number, pageY: number} {
@@ -89,17 +102,13 @@ export default class AvatarEditor extends React.Component<IAvatarEditorPropsInte
             offsetX = this.state.drawWidth * this.state.scale - this.refs.canvas.width;
         }
 
-        if (offsetX < 0) {
-            offsetX = 0;
-        }
+        if (offsetX < 0) { offsetX = 0; }
 
         if (offsetY > (this.state.drawHeight * this.state.scale - this.refs.canvas.height)) {
             offsetY = this.state.drawHeight * this.state.scale - this.refs.canvas.height;
         }
 
-        if (offsetY < 0) {
-            offsetY = 0;
-        }
+        if (offsetY < 0) { offsetY = 0; }
 
         this.setState({
             offsetX: offsetX,
@@ -115,11 +124,21 @@ export default class AvatarEditor extends React.Component<IAvatarEditorPropsInte
             this.state.drawWidth * this.state.scale, this.state.drawHeight * this.state.scale);
 
 
-        // let ctx2 = this.refs.canvas2.getContext('2d');
-        // ctx2.clearRect(0, 0, this.refs.canvas2.width, this.refs.canvas2.height);
-        // ctx2.drawImage(this.props.image, -this.state.offsetX - 10, -this.state.offsetY -10,
-        //     (this.state.drawWidth) * this.state.scale, (this.state.drawHeight) * this.state.scale);
+        let ctx2 = this.refs.canvas2.getContext('2d');
+        ctx2.clearRect(0, 0, this.refs.canvas2.width, this.refs.canvas2.height);
 
+        ctx2.drawImage(this.refs.canvas, this.state.border, this.state.border, this.refs.canvas2.width, this.refs.canvas2.height, 0, 0,
+            this.refs.canvas2.width, this.refs.canvas2.height)
+    }
+
+    resizeHandler() {
+        let parent = this.refs.canvas.getBoundingClientRect();
+        this.refs.canvas2.style.top = (parent.top + this.state.border) + 'px';
+        this.refs.canvas2.style.left = (parent.left + this.state.border) + 'px';
+        this.refs.canvas2.style.width = (parent.width - this.state.border * 2) + 'px';
+        this.refs.canvas2.style.height = (parent.height - this.state.border * 2) + 'px';
+        this.refs.canvas2.style.maxWidth = (parent.width - this.state.border * 2) + 'px';
+        this.refs.canvas2.style.maxHeight = (parent.height - this.state.border * 2) + 'px';
     }
 
     componentDidMount() {
@@ -138,9 +157,22 @@ export default class AvatarEditor extends React.Component<IAvatarEditorPropsInte
             drawHeight = drawWidth / aspectRatio;
         }
 
-        this.setState({drawWidth: drawWidth, drawHeight: drawHeight}, () => {
+        let offsetX = Math.abs(drawWidth - this.refs.canvas.width)/2;
+        let offsetY = Math.abs(drawHeight - this.refs.canvas.height)/2;
+
+        this.setState({
+            drawWidth: drawWidth, drawHeight: drawHeight, offsetX: offsetX, offsetY: offsetY, posX: offsetX, posY: offsetY
+        }, () => {
             this.renderImage();
         });
+
+        this.resizeHandler();
+
+        window.addEventListener('resize', this.resizeHandler);
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener('resize', this.resizeHandler);
     }
 
     render() {
@@ -148,6 +180,10 @@ export default class AvatarEditor extends React.Component<IAvatarEditorPropsInte
         return (
             <div className="image_editor">
                 <div className="image_editor__canvas_container">
+                    <canvas width={this.state.width} height={this.state.height}
+                            className="canvas"
+                            ref="canvas" />
+
                     <canvas onMouseMove={this.move}
                             onMouseDown={this.startDown}
                             onMouseUp={this.endDown}
@@ -155,13 +191,14 @@ export default class AvatarEditor extends React.Component<IAvatarEditorPropsInte
                             onTouchStart={this.startDown}
                             onTouchEnd={this.endDown}
                             onTouchMove={this.move}
-                            width={500} height={500}
-                            className="canvas"
-                            ref="canvas" />
+                            ref="canvas2"
+                            className="canvas2"
+                            width={this.state.width - (this.state.border * 2)}
+                            height={this.state.height - (this.state.border * 2)}/>
                 </div>
 
                 <div className="image_editor__controls">
-                    <input type="range" min="1" max="2" step="0.1" value={ this.state.scale } onChange={this.scaleChange} />
+                    <input type="range" min="1" max="3" step="0.1" value={ this.state.scale } onChange={this.scaleChange} />
 
                 </div>
 

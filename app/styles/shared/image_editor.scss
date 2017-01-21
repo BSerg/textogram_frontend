@@ -15,18 +15,18 @@
       height: 100%;
       max-width: 400px;
       max-height: 400px;
-      z-index: 1000;
-      @include border_radius(50%);
-      cursor:move;
+      opacity: 0.3;
     }
 
     .canvas2 {
       position: absolute;
       width: 100%;
       height: 100%;
-      max-width: 220px;
-      max-height: 220px;
-      opacity: 0.2;
+      max-width: 380px;
+      max-height: 380px;
+      z-index: 1000;
+      @include border_radius(50%);
+      cursor:move;
     }
   }
 
