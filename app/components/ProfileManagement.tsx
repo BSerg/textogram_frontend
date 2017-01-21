@@ -2,7 +2,7 @@ import * as React from 'react';
 import * as moment from 'moment';
 import {Captions, Constants} from '../constants';
 
-import {UserAction, SAVE_USER, GET_ME, LOGIN, LOGOUT} from '../actions/user/UserAction';
+import {UserAction, SAVE_USER, GET_ME, LOGIN, LOGOUT, UPDATE} from '../actions/user/UserAction';
 import {NotificationAction, CHECK} from '../actions/NotificationAction';
 
 import Error from './Error';
@@ -487,6 +487,7 @@ export default class ProfileManagement extends React.Component<any, IProfileMana
         UserAction.onChange(GET_ME, this.checkUser);
         UserAction.onChange(LOGIN, this.checkUser);
         UserAction.onChange(LOGOUT, this.checkUser);
+        UserAction.onChange(UPDATE, this.checkUser);
         UserAction.onChange(SAVE_USER, this.checkUser);
     }
 
@@ -494,6 +495,7 @@ export default class ProfileManagement extends React.Component<any, IProfileMana
         UserAction.unbind(GET_ME, this.checkUser);
         UserAction.unbind(LOGIN, this.checkUser);
         UserAction.unbind(LOGOUT, this.checkUser);
+        UserAction.unbind(UPDATE, this.checkUser);
         UserAction.unbind(SAVE_USER, this.checkUser);
     }
 

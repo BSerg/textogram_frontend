@@ -5,6 +5,7 @@ const CloseIcon = require('babel!svg-react!../../assets/images/close.svg?name=Cl
 import {Captions} from '../../constants';
 
 import {ModalAction, CLOSE_MODAL} from '../../actions/shared/ModalAction';
+import {UserAction, UPDATE} from '../../actions/user/UserAction';
 
 interface IAvatarEditorPropsInterface {
     image: any;
@@ -61,6 +62,7 @@ export default class AvatarEditor extends React.Component<IAvatarEditorPropsInte
         this.setOffset = this.setOffset.bind(this);
         this.resizeHandler = this.resizeHandler.bind(this);
         this.closeModal = this.closeModal.bind(this);
+        this.uploadAvatar = this.uploadAvatar.bind(this);
     }
 
     getCoordinates(e: any): {pageX: number, pageY: number} {
@@ -171,6 +173,28 @@ export default class AvatarEditor extends React.Component<IAvatarEditorPropsInte
     }
 
     uploadAvatar() {
+        // let imgData = this.refs.canvas2.
+        if (this.state.isUploading) return;
+        this.setState({isUploading: true}, () => {
+            // let imageData = this.refs.canvas2.getContext('2d').getImageData(0, 0, this.refs.canvas2.width, this.refs.canvas2.height).toDataURL('image/jpeg');
+            let imageUrl = this.refs.canvas2.toDataURL('image/jpeg');
+
+            let byteString = window.atob(imageUrl.split(',')[1]);
+            let ab = new ArrayBuffer(byteString.length);
+            let ia = new Uint8Array(ab);
+            for (let i = 0; i < byteString.length; i++) {
+                ia[i] = byteString.charCodeAt(i);
+            }
+            let file = new Blob([ia], {type: 'image/jpeg'});
+            console.log(file);
+
+            let fd = new FormData();
+            fd.append('avatar', file);
+            UserAction.doAsync(UPDATE, fd).then(() => {
+                console.log('looded');
+            });
+        });
+
 
     }
 

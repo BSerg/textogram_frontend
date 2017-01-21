@@ -62,6 +62,8 @@ UserAction.registerAsync(UPDATE, (store, data: any) => {
         api.patch('/users/me/', data).then((response: any) => {
             store.user = response.data;
             resolve(response.data);
-        }).catch((error) => {})
+        }).catch((error) => {
+            console.log(error);
+        })
     })
 });

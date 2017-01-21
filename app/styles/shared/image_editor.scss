@@ -40,8 +40,9 @@
 
     input[type="range"] {
       width: 100%;
-      max-width: 300px;
+      max-width: 400px;
       background: transparent;
+      cursor: pointer;
 
       @include input-range-thumb($color5, 20px, 20px, 50%, -5px);
       @include input-range-track($color3, 100%, 10px, none, 10px);
