@@ -459,7 +459,7 @@ export default class ProfileManagement extends React.Component<any, IProfileMana
         // }
         let _URL = window.URL;
         let img = new Image();
-        let url = 'http://prikolnie-kartinki.ru/uploads/posts/2016-08/1472503377_prikolnye-kotiki-foto2.jpg';
+        let url = 'http://localhost:8000/data/avatars/e9/c5/e9c5bf39-e403-4d74-9764-414ff0062d73.jpg';
         try {
             // img.src = _URL.createObjectURL(file);
             img.src = url;
@@ -467,6 +467,8 @@ export default class ProfileManagement extends React.Component<any, IProfileMana
         catch (e) {
             return;
         }
+
+        img.crossOrigin = "Anonymous";
 
         img.onload = () => {
             // console.log(img);

@@ -128,7 +128,28 @@ export default class AvatarEditor extends React.Component<IAvatarEditorPropsInte
         ctx2.clearRect(0, 0, this.refs.canvas2.width, this.refs.canvas2.height);
 
         ctx2.drawImage(this.refs.canvas, this.state.border, this.state.border, this.refs.canvas2.width, this.refs.canvas2.height, 0, 0,
-            this.refs.canvas2.width, this.refs.canvas2.height)
+            this.refs.canvas2.width, this.refs.canvas2.height);
+
+        let imageData = ctx2.getImageData(0, 0, this.refs.canvas2.width, this.refs.canvas2.height);
+
+        let filteredData = this.filterData(imageData);
+
+        ctx2.putImageData(filteredData, 0, 0);
+    }
+
+    filterData(imageData: ImageData): ImageData {
+
+        let pixels = imageData.data;
+        for (let i = 0; i < pixels.length; i += 4) {
+            let r = pixels[i];
+            let g = pixels[i + 1];
+            let b = pixels[i + 2];
+            pixels[i]     = (r * 0.393)+(g * 0.769)+(b * 0.189); // red
+            pixels[i + 1] = (r * 0.349)+(g * 0.686)+(b * 0.168); // green
+            pixels[i + 2] = (r * 0.272)+(g * 0.534)+(b * 0.131); // blue
+          }
+
+        return imageData
     }
 
     resizeHandler() {
