@@ -34,6 +34,8 @@ interface  IAvatarEditorStateInterface {
 
     isUploading?: boolean;
 
+    filter?: string;
+
 }
 
 export default class AvatarEditor extends React.Component<IAvatarEditorPropsInterface, IAvatarEditorStateInterface> {
@@ -41,6 +43,14 @@ export default class AvatarEditor extends React.Component<IAvatarEditorPropsInte
     DEFAULT_WIDTH: number = 400;
     DEFAULT_HEIGHT: number = 400;
     DEFAULT_BORDER: number = 5;
+
+    FILTER_DEFAULT: string = 'default';
+    FILTER_GRAY_SCALE: string = 'gray_scale';
+    FILTER_SEPIA: string = 'sepia';
+    FILTER_INVERT: string = 'invert';
+
+    FILTERS: string[] = [this.FILTER_DEFAULT, this.FILTER_GRAY_SCALE, this.FILTER_SEPIA, this.FILTER_INVERT];
+
 
     refs: {
         canvas: HTMLCanvasElement;
@@ -52,7 +62,7 @@ export default class AvatarEditor extends React.Component<IAvatarEditorPropsInte
 
         this.state = {
             scale: 1, offsetX: 0, offsetY: 0, isDown: false, posX: 0, posY: 0, width: this.DEFAULT_WIDTH,
-            height: this.DEFAULT_HEIGHT, border: this.DEFAULT_BORDER, isUploading: false
+            height: this.DEFAULT_HEIGHT, border: this.DEFAULT_BORDER, isUploading: false, filter: this.FILTER_DEFAULT
         };
         this.renderImage = this.renderImage.bind(this);
         this.scaleChange = this.scaleChange.bind(this);
@@ -142,13 +152,30 @@ export default class AvatarEditor extends React.Component<IAvatarEditorPropsInte
         ctx2.drawImage(this.refs.canvas, this.state.border, this.state.border, this.refs.canvas2.width, this.refs.canvas2.height, 0, 0,
             this.refs.canvas2.width, this.refs.canvas2.height);
 
-        // let imageData = ctx2.getImageData(0, 0, this.refs.canvas2.width, this.refs.canvas2.height);
-        // let filteredData = this.filterData(imageData);
-        // ctx2.putImageData(filteredData, 0, 0);
+        if (this.state.filter && this.state.filter != this.FILTER_DEFAULT) {
+            let imageData = ctx2.getImageData(0, 0, this.refs.canvas2.width, this.refs.canvas2.height);
+            let filteredData = this.__filterData(imageData);
+            ctx2.putImageData(filteredData, 0, 0);
+        }
     }
 
-    filterData(imageData: ImageData): ImageData {
+    private __filterData(imageData: ImageData): ImageData {
 
+        switch (this.state.filter) {
+            case this.FILTER_GRAY_SCALE: {
+                return this.__filterGrayScale(imageData);
+            }
+            case this.FILTER_SEPIA: {
+                return this.__filterSepia(imageData);
+            }
+            case this.FILTER_INVERT: {
+                return this.__filterInvert(imageData);
+            }
+        }
+        return imageData
+    }
+
+    private __filterSepia(imageData: ImageData): ImageData {
         let pixels = imageData.data;
         for (let i = 0; i < pixels.length; i += 4) {
             let r = pixels[i];
@@ -158,8 +185,31 @@ export default class AvatarEditor extends React.Component<IAvatarEditorPropsInte
             pixels[i + 1] = (r * 0.349)+(g * 0.686)+(b * 0.168); // green
             pixels[i + 2] = (r * 0.272)+(g * 0.534)+(b * 0.131); // blue
           }
+        return imageData;
+    }
 
-        return imageData
+    private __filterGrayScale(imageData: ImageData): ImageData {
+        let pixels = imageData.data;
+        for (let i=0; i< pixels.length; i+=4) {
+            var r = pixels[i];
+            var g = pixels[i+1];
+            var b = pixels[i+2];
+            let v = 0.2126*r + 0.7152*g + 0.0722*b;
+            pixels[i] = pixels[i+1] = pixels[i+2] = v;
+        }
+        return imageData;
+    }
+
+    private __filterInvert(imageData: ImageData): ImageData {
+        let pixels = imageData.data;
+        for (let i = 0; i < pixels.length; i += 4) {
+            pixels[i] = 255-pixels[i];
+            pixels[i+1] = 255-pixels[i+1];
+            pixels[i+2] = 255-pixels[i+2];
+            // pixels[i+3] = pixels[i+3];
+        }
+
+        return imageData;
     }
 
     resizeHandler() {
@@ -187,11 +237,10 @@ export default class AvatarEditor extends React.Component<IAvatarEditorPropsInte
                 ia[i] = byteString.charCodeAt(i);
             }
             let file = new Blob([ia], {type: 'image/jpeg'});
-            console.log(file);
             let fd = new FormData();
             fd.append('avatar', file);
             UserAction.doAsync(UPDATE_USER, fd).then(() => {
-                ModalAction.do(CLOSE_MODAL, null);
+                this.closeModal();
             }).catch(() => {this.setState({ isUploading: false })});
         });
 

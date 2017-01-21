@@ -430,9 +430,7 @@ export default class ProfileManagement extends React.Component<any, IProfileMana
     }
 
     checkUser() {
-        this.setState(this.getStateData(), () => {
-            this.uploadAvatar();
-        });
+        this.setState(this.getStateData(), () => {  });
     }
 
     userNameChange(content: string, contentText: string) {
@@ -448,21 +446,21 @@ export default class ProfileManagement extends React.Component<any, IProfileMana
     }
 
     uploadAvatar() {
-        // let file = this.refs.inputAvatar.files[0];
-        // if (!file) return;
-        // if (!file || (file.type != 'image/png' && file.type != 'image/jpeg')) {
-        //     return;
-        // }
-        //
-        // if (file.size > Constants.maxImageSize) {
-        //     return;
-        // }
+        let file = this.refs.inputAvatar.files[0];
+        if (!file) return;
+        if (!file || (file.type != 'image/png' && file.type != 'image/jpeg')) {
+            return;
+        }
+
+        if (file.size > Constants.maxImageSize) {
+            return;
+        }
         let _URL = window.URL;
         let img = new Image();
-        let url = 'http://localhost:8000/data/avatars/e9/c5/e9c5bf39-e403-4d74-9764-414ff0062d73.jpg';
+        // let url = 'http://localhost:8000/data/avatars/e9/c5/e9c5bf39-e403-4d74-9764-414ff0062d73.jpg';
         try {
-            // img.src = _URL.createObjectURL(file);
-            img.src = url;
+            img.src = _URL.createObjectURL(file);
+            // img.src = url;
         }
         catch (e) {
             return;
@@ -471,12 +469,11 @@ export default class ProfileManagement extends React.Component<any, IProfileMana
         img.crossOrigin = "Anonymous";
 
         img.onload = () => {
-            // console.log(img);
             let aspectRatio = (img.width / img.height);
-            // console.log(aspectRatio);
             if ((aspectRatio < 0.5 || aspectRatio > 2) || (img.width < 150 || img.height < 150))  {
                 return;
             }
+            this.refs.inputAvatar.value = '';
             ModalAction.do(OPEN_MODAL, { content: <AvatarEditor image={img} />});
 
         }

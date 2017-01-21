@@ -80,7 +80,7 @@
         font-family: $family_open_sans;
         border-bottom: 1px solid $color5;
 
-        &.error {
+        &.error, &:focus {
           border-color: $color-accent;
         }
       }
@@ -88,7 +88,11 @@
       input:focus {
         color: #FFFFFF;
         border-color: #FFFFFF;
+        &.error {
+          border-color: $color-accent;
+        }
       }
+
       div input {
         font-size: 12px;
       }

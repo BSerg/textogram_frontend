@@ -63,7 +63,7 @@ UserAction.registerAsync(UPDATE_USER, (store, data: any) => {
             store.user = response.data;
             resolve(response.data);
         }).catch((error) => {
-            console.log(error);
+            reject(error);
         })
     })
 });

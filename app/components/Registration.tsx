@@ -199,7 +199,7 @@ class RegistrationClass extends React.Component<IRegistrationPropsInterface, IRe
                                     <input type="text" name="phone" className={ this.state.phoneError ? 'error': '' }
                                            ref="phone" onChange={this.phoneChange.bind(this)}
                                            value={ this.state.phone }/>
-                                    <button style={{display: 'none'}} type="submit">1</button>
+                                    <button style={{position: 'absolute', opacity: 0}} type="submit">1</button>
                                 </form>
                             </div>
                         ) : null
@@ -212,7 +212,7 @@ class RegistrationClass extends React.Component<IRegistrationPropsInterface, IRe
                                     <input type="text" name="code" value={this.state.code}
                                            className={ this.state.codeError ? 'error': '' }
                                            onChange={this.codeChange.bind(this)} />
-                                    <button style={{display: 'none'}} type="submit">1</button>
+                                    <button style={{position: 'absolute', opacity: 0}} type="submit">1</button>
                                 </form>
                             </div>
                         ) : null
@@ -245,7 +245,7 @@ class RegistrationClass extends React.Component<IRegistrationPropsInterface, IRe
                                             { this.state.passwordVisible ? <VisibilityIcon /> : <VisibilityOffIcon /> }
                                         </div>
                                     </div>
-                                    <button style={{display: 'none'}} type="submit">1</button>
+                                    <button style={{position: 'absolute', opacity: 0}} type="submit">1</button>
                                 </form>
                             </div>
                         ) : null
