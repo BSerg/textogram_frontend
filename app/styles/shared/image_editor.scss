@@ -4,7 +4,7 @@
 .image_editor {
 
   .image_editor__canvas_container {
-    padding: $padding;
+    padding: 0 $padding;
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -48,6 +48,42 @@
 
     }
 
+  }
+
+  .image_editor__top, .image_editor__bottom {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    padding: $padding;
+
+    svg {
+      cursor: pointer;
+      fill: #FFFFFF;
+      width: 20px;
+      height: 20px;
+    }
+  }
+
+  .image_editor__bottom {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    font-size: $font-size-small;
+    font-weight: $font-weight-bold;
+    letter-spacing: 2px;
+    color: #FFFFFF;
+    text-transform: uppercase;
+
+    div {
+      cursor: pointer;
+      &.saving {
+        color: $color5;
+        cursor: default;
+      }
+    }
   }
 
 

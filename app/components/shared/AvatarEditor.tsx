@@ -1,7 +1,10 @@
 import * as React from 'react';
 import '../../styles/shared/image_editor.scss';
 
+const CloseIcon = require('babel!svg-react!../../assets/images/close.svg?name=CloseIcon');
+import {Captions} from '../../constants';
 
+import {ModalAction, CLOSE_MODAL} from '../../actions/shared/ModalAction';
 
 interface IAvatarEditorPropsInterface {
     image: any;
@@ -28,6 +31,8 @@ interface  IAvatarEditorStateInterface {
     drawWidth?: number;
     drawHeight?: number;
 
+    isUploading?: boolean;
+
 }
 
 export default class AvatarEditor extends React.Component<IAvatarEditorPropsInterface, IAvatarEditorStateInterface> {
@@ -46,7 +51,7 @@ export default class AvatarEditor extends React.Component<IAvatarEditorPropsInte
 
         this.state = {
             scale: 1, offsetX: 0, offsetY: 0, isDown: false, posX: 0, posY: 0, width: this.DEFAULT_WIDTH,
-            height: this.DEFAULT_HEIGHT, border: this.DEFAULT_BORDER
+            height: this.DEFAULT_HEIGHT, border: this.DEFAULT_BORDER, isUploading: false
         };
         this.renderImage = this.renderImage.bind(this);
         this.scaleChange = this.scaleChange.bind(this);
@@ -55,6 +60,7 @@ export default class AvatarEditor extends React.Component<IAvatarEditorPropsInte
         this.endDown = this.endDown.bind(this);
         this.setOffset = this.setOffset.bind(this);
         this.resizeHandler = this.resizeHandler.bind(this);
+        this.closeModal = this.closeModal.bind(this);
     }
 
     getCoordinates(e: any): {pageX: number, pageY: number} {
@@ -130,11 +136,9 @@ export default class AvatarEditor extends React.Component<IAvatarEditorPropsInte
         ctx2.drawImage(this.refs.canvas, this.state.border, this.state.border, this.refs.canvas2.width, this.refs.canvas2.height, 0, 0,
             this.refs.canvas2.width, this.refs.canvas2.height);
 
-        let imageData = ctx2.getImageData(0, 0, this.refs.canvas2.width, this.refs.canvas2.height);
-
-        let filteredData = this.filterData(imageData);
-
-        ctx2.putImageData(filteredData, 0, 0);
+        // let imageData = ctx2.getImageData(0, 0, this.refs.canvas2.width, this.refs.canvas2.height);
+        // let filteredData = this.filterData(imageData);
+        // ctx2.putImageData(filteredData, 0, 0);
     }
 
     filterData(imageData: ImageData): ImageData {
@@ -160,6 +164,14 @@ export default class AvatarEditor extends React.Component<IAvatarEditorPropsInte
         this.refs.canvas2.style.height = (parent.height - this.state.border * 2) + 'px';
         this.refs.canvas2.style.maxWidth = (parent.width - this.state.border * 2) + 'px';
         this.refs.canvas2.style.maxHeight = (parent.height - this.state.border * 2) + 'px';
+    }
+
+    closeModal() {
+        ModalAction.do(CLOSE_MODAL, null);
+    }
+
+    uploadAvatar() {
+
     }
 
     componentDidMount() {
@@ -200,6 +212,9 @@ export default class AvatarEditor extends React.Component<IAvatarEditorPropsInte
 
         return (
             <div className="image_editor">
+                <div className="image_editor__top">
+                    <div onClick={this.closeModal}><CloseIcon /></div>
+                </div>
                 <div className="image_editor__canvas_container">
                     <canvas width={this.state.width} height={this.state.height}
                             className="canvas"
@@ -221,6 +236,9 @@ export default class AvatarEditor extends React.Component<IAvatarEditorPropsInte
                 <div className="image_editor__controls">
                     <input type="range" min="1" max="3" step="0.1" value={ this.state.scale } onChange={this.scaleChange} />
 
+                </div>
+                <div className="image_editor__bottom">
+                    <div onClick={this.uploadAvatar}>{Captions.management.avatarSave}</div>
                 </div>
 
             </div>);

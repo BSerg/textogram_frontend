@@ -87,6 +87,8 @@ export namespace Captions {
         drafts: "Черновики",
         draftDelete: "удалить",
 
+        avatarSave: "Сохранить"
+
     };
 
     export const registration = {
