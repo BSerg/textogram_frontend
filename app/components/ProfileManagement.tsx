@@ -430,7 +430,9 @@ export default class ProfileManagement extends React.Component<any, IProfileMana
     }
 
     checkUser() {
-        this.setState(this.getStateData(), () => {this.uploadAvatar()});
+        this.setState(this.getStateData(), () => {
+            this.uploadAvatar();
+        });
     }
 
     userNameChange(content: string, contentText: string) {

@@ -106,7 +106,7 @@ class DefaultMenu extends React.Component<any, IDefaultmenuStateInterface> {
                                     </span>
                                 </div>
                             </div>
-                            <button style={{display: 'none'}} type="submit">1</button>
+                            <button style={{display: 'block'}} type="submit">1</button>
                         </form>
                     </div>
                     <div className="menu__register" onClick={this.registration.bind(this, false)}>{Captions.main_menu.register}</div>

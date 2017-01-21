@@ -40,10 +40,19 @@ export default class AvatarEditor extends React.Component<IAvatarEditorPropsInte
         this.setOffset = this.setOffset.bind(this);
     }
 
+    getCoordinates(e: any): {pageX: number, pageY: number} {
+        return {
+            pageX: (e.touches && e.touches[0]) ? e.touches[0].pageX : e.pageX,
+            pageY: (e.touches && e.touches[0]) ? e.touches[0].pageY : e.pageY,
+
+        }
+    }
+
     startDown(e: any) {
+        let coords = this.getCoordinates(e);
         this.setState({
-            downX: e.pageX - this.refs.canvas.offsetLeft,
-            downY: e.pageY - this.refs.canvas.offsetTop,
+            downX: coords.pageX - this.refs.canvas.offsetLeft,
+            downY: coords.pageY - this.refs.canvas.offsetTop,
             isDown: true,
         });
     }
@@ -58,8 +67,9 @@ export default class AvatarEditor extends React.Component<IAvatarEditorPropsInte
 
     move(e: any) {
         if (!this.state.isDown) return;
-        let offsetX = this.state.posX + (this.state.downX - (e.pageX - this.refs.canvas.offsetLeft));
-        let offsetY = this.state.posY + (this.state.downY - (e.pageY - this.refs.canvas.offsetTop));
+        let coords = this.getCoordinates(e);
+        let offsetX = this.state.posX + (this.state.downX - (coords.pageX - this.refs.canvas.offsetLeft));
+        let offsetY = this.state.posY + (this.state.downY - (coords.pageY - this.refs.canvas.offsetTop));
         this.setOffset(offsetX, offsetY);
     }
 
@@ -130,6 +140,9 @@ export default class AvatarEditor extends React.Component<IAvatarEditorPropsInte
                     <canvas onMouseMove={this.move}
                             onMouseDown={this.startDown}
                             onMouseUp={this.endDown}
+                            onTouchStart={this.startDown}
+                            onTouchEnd={this.endDown}
+                            onTouchMove={this.move}
                         style={{width: '100%'}}
                         width={500} height={500}
                         ref="canvas" />
