@@ -459,7 +459,7 @@ export default class ProfileManagement extends React.Component<any, IProfileMana
         // }
         let _URL = window.URL;
         let img = new Image();
-        let url = 'http://artsvadba31.ru/images/826urrhkjZk.jpg';
+        let url = 'http://minionomaniya.ru/wp-content/uploads/2016/01/%D0%BC%D0%B8%D0%BD%D1%8C%D0%BE%D0%BD%D1%8B-%D0%BF%D1%80%D0%B8%D0%BA%D0%BE%D0%BB%D1%8B-%D0%BA%D0%B0%D1%80%D1%82%D0%B8%D0%BD%D0%BA%D0%B8.jpg';
         try {
             // img.src = _URL.createObjectURL(file);
             img.src = url;

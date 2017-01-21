@@ -1,4 +1,7 @@
 import * as React from 'react';
+import '../../styles/shared/image_editor.scss';
+
+
 
 interface IAvatarEditorPropsInterface {
     image: any;
@@ -26,6 +29,7 @@ export default class AvatarEditor extends React.Component<IAvatarEditorPropsInte
 
     refs: {
         canvas: HTMLCanvasElement;
+        canvas2: HTMLCanvasElement;
     };
 
     constructor() {
@@ -109,6 +113,13 @@ export default class AvatarEditor extends React.Component<IAvatarEditorPropsInte
         ctx.clearRect(0, 0, this.refs.canvas.width, this.refs.canvas.height);
         ctx.drawImage(this.props.image, -this.state.offsetX, -this.state.offsetY,
             this.state.drawWidth * this.state.scale, this.state.drawHeight * this.state.scale);
+
+
+        // let ctx2 = this.refs.canvas2.getContext('2d');
+        // ctx2.clearRect(0, 0, this.refs.canvas2.width, this.refs.canvas2.height);
+        // ctx2.drawImage(this.props.image, -this.state.offsetX - 10, -this.state.offsetY -10,
+        //     (this.state.drawWidth) * this.state.scale, (this.state.drawHeight) * this.state.scale);
+
     }
 
     componentDidMount() {
@@ -135,19 +146,21 @@ export default class AvatarEditor extends React.Component<IAvatarEditorPropsInte
     render() {
 
         return (
-            <div>
-                <div style={ {padding: '30px' } }>
+            <div className="image_editor">
+                <div className="image_editor__canvas_container">
                     <canvas onMouseMove={this.move}
                             onMouseDown={this.startDown}
                             onMouseUp={this.endDown}
+                            onMouseLeave={this.endDown}
                             onTouchStart={this.startDown}
                             onTouchEnd={this.endDown}
                             onTouchMove={this.move}
-                        style={{width: '100%'}}
-                        width={500} height={500}
-                        ref="canvas" />
+                            width={500} height={500}
+                            className="canvas"
+                            ref="canvas" />
                 </div>
-                <div>
+
+                <div className="image_editor__controls">
                     <input type="range" min="1" max="2" step="0.1" value={ this.state.scale } onChange={this.scaleChange} />
 
                 </div>
