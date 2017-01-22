@@ -22,6 +22,24 @@ class App extends React.Component<any, any> {
     }
 
     componentDidMount() {
+
+        window.vkAsyncInit = function() {
+            VK.init({
+              apiId: process.env.VK_APP_ID
+            });
+            // VKAuthAction.do(VK);
+
+        };
+
+        setTimeout(function() {
+            var el = document.createElement("script");
+            el.type = "text/javascript";
+            el.src = "//vk.com/js/api/openapi.js";
+            el.async = true;
+            document.getElementById("vk_api_transport").appendChild(el);
+        }, 0);
+
+
         UserAction.do(GET_ME, null);
     }
 

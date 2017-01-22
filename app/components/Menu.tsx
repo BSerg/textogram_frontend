@@ -4,8 +4,10 @@ import {withRouter} from 'react-router';
 import {MenuAction, TOGGLE} from '../actions/MenuAction';
 import {UserAction, GET_ME, LOGIN, LOGOUT, SAVE_USER} from '../actions/user/UserAction';
 import {NotificationAction, CHECK} from '../actions/NotificationAction'
-
+import {ModalAction, OPEN_MODAL} from '../actions/shared/ModalAction';
+import Registration from './Registration';
 import {Captions} from '../constants';
+import LoginBlock from './shared/LoginBlock';
 
 import '../styles/menu.scss';
 
@@ -13,9 +15,6 @@ const ExitIcon = require('babel!svg-react!../assets/images/exit-icon.svg?name=Ex
 const InfoIcon = require('babel!svg-react!../assets/images/info-icon.svg?name=InfoIcon');
 const NotificationIcon = require('babel!svg-react!../assets/images/notification_icon.svg?name=NotificationIcon');
 
-import {ModalAction, OPEN_MODAL} from '../actions/shared/ModalAction';
-import Registration from './Registration';
-import {api} from "../api";
 
 interface IDefaultmenuStateInterface {
     phone?: string;
@@ -110,6 +109,7 @@ class DefaultMenu extends React.Component<any, IDefaultmenuStateInterface> {
                             <button style={{position: 'absolute', opacity: 0}} type="submit">1</button>
                         </form>
                     </div>
+                    <div style={{color: '#FFFFFF'}}><LoginBlock /></div>
                     <div className="menu__register" onClick={this.registration.bind(this, false)}>{Captions.main_menu.register}</div>
                     <div className="menu__about">{Captions.main_menu.about}</div>
                 </div>
@@ -221,7 +221,7 @@ export default class Menu extends React.Component<any, IMenuStateInterface> {
 
     constructor() {
         super();
-        this.state = {open: false, user: UserAction.getStore().user};
+        this.state = {open: true, user: UserAction.getStore().user};
         this.setUser = this.setUser.bind(this);
         this.setOpen = this.setOpen.bind(this);
     }
