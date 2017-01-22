@@ -41,6 +41,7 @@ class DefaultMenu extends React.Component<any, IDefaultmenuStateInterface> {
 
     getInitialCode() {
         return '+7';
+
     }
 
     stopClose(e: any) {
