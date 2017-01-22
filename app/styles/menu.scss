@@ -232,6 +232,10 @@
       letter-spacing: 1px;
       cursor: pointer;
     }
+
+    .menu__register {
+      margin-top: $margin * 4;
+    }
   }
 
   .menu__link, .menu__register, .menu__about, .menu__controls, .menu__user  {

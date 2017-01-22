@@ -1,11 +1,15 @@
 import * as React from 'react';
 import {UserAction, LOGIN, LOGOUT, GET_ME} from '../../actions/user/UserAction';
+import SocialIcon from './SocialIcon';
+import '../../styles/shared/login_block.scss';
 
 interface ILoginBlockStateInterface {
     isLogging?: boolean
 }
 
 export default class LoginBlock extends React.Component<any, ILoginBlockStateInterface> {
+
+    SOCIALS = ["vk", "fb", "twitter", "google"];
 
     constructor() {
         super();
@@ -19,6 +23,7 @@ export default class LoginBlock extends React.Component<any, ILoginBlockStateInt
         console.log(social);
         this.setState({isLogging: true}, () => {
             if (social == 'vk') this.__loginVK();
+            else if (social == 'fb') this.__loginFB();
 
         });
     }
@@ -32,18 +37,31 @@ export default class LoginBlock extends React.Component<any, ILoginBlockStateInt
             VK.api('users.get', {access_token: response.session.sid, fields: 'photo_100'}, (userData) => {
                 data.user.avatar = userData.response[0].photo_100;
                 console.log(data);
+                UserAction.do(LOGIN, data);
             })
         }, 4194304);
+    }
+
+    __loginFB() {
+
     }
 
 
     render() {
         return (
             <div className="login_block">
-                <div onClick={this.login.bind(this, 'vk')}>vk</div>
-                <div  onClick={this.login.bind(this, 'fb')}>fb</div>
-                <div onClick={this.login.bind(this, 'twitter')}>twitter</div>
-                <div  onClick={this.login.bind(this, 'google')}>google</div>
+                {
+                    this.SOCIALS.map((social, index) => {
+                        return (
+                            <div key={index} onClick={this.login.bind(this, social)}>
+                                <SocialIcon social={social} />
+                            </div>)
+                    })
+                }
+                {/*<div onClick={this.login.bind(this, 'vk')}>vk</div>*/}
+                {/*<div  onClick={this.login.bind(this, 'fb')}>fb</div>*/}
+                {/*<div onClick={this.login.bind(this, 'twitter')}>twitter</div>*/}
+                {/*<div  onClick={this.login.bind(this, 'google')}>google</div>*/}
             </div>);
     }
 }

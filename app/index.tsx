@@ -27,8 +27,6 @@ class App extends React.Component<any, any> {
             VK.init({
               apiId: process.env.VK_APP_ID
             });
-            // VKAuthAction.do(VK);
-
         };
 
         setTimeout(function() {

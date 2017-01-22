@@ -69,7 +69,6 @@ class DefaultMenu extends React.Component<any, IDefaultmenuStateInterface> {
     }
 
     handleUrlClick(url: string) {
-        // let l = process.env.VK_APP_ID;
 
     }
 
@@ -221,7 +220,7 @@ export default class Menu extends React.Component<any, IMenuStateInterface> {
 
     constructor() {
         super();
-        this.state = {open: true, user: UserAction.getStore().user};
+        this.state = {open: false, user: UserAction.getStore().user};
         this.setUser = this.setUser.bind(this);
         this.setOpen = this.setOpen.bind(this);
     }
