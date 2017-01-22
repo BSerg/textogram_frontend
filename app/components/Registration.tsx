@@ -15,6 +15,7 @@ const ConfirmIcon = require('babel!svg-react!../assets/images/redactor_icon_conf
 
 interface IRegistrationPropsInterface {
     isForgotPassword?: boolean;
+    isSetPhone?: boolean;
     router?: any;
 }
 
@@ -39,7 +40,8 @@ interface IRegistrationStateInterface {
 class RegistrationClass extends React.Component<IRegistrationPropsInterface, IRegistrationStateInterface> {
 
     static defaultProps: any = {
-        isForgotPassword: false
+        isForgotPassword: false,
+        isSetPhone: false,
     };
 
     STEP_SEND_PHONE: number = 1;
@@ -119,7 +121,7 @@ class RegistrationClass extends React.Component<IRegistrationPropsInterface, IRe
             }
             else if (this.state.currentStep == this.STEP_SEND_REGISTRATION_DATA) {
                 UserAction.do(SAVE_USER, response.data.user);
-                if (!this.props.isForgotPassword) {
+                if (!this.props.isForgotPassword && !this.props.isSetPhone) {
                     this.props.router.push('/manage');
                 }
                 ModalAction.do(CLOSE_MODAL, null);

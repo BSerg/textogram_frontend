@@ -265,7 +265,6 @@ interface ISectionLinksStateInterface {
     authLink?: any;
 }
 
-
 class SocialLinks extends React.Component<ISectionPropsInterface, ISectionLinksStateInterface> {
 
 
@@ -359,6 +358,52 @@ class SocialLinks extends React.Component<ISectionPropsInterface, ISectionLinksS
 }
 
 
+class Account extends React.Component<ISectionPropsInterface, any> {
+
+    setPhone() {
+
+    }
+
+    setPassword() {
+
+    }
+
+    getPhoneRepresentation(phone: string) {
+        return phone;
+    }
+
+    render() {
+        let phoneRepresentation = this.getPhoneRepresentation(this.props.user.phone || "");
+        return (
+            <div>
+                { this.props.user.phone ? (
+                    <div className="profile__section">
+                        <div className="profile__phone">
+                            <div className="profile__phone_caption">{Captions.management.captionPhone}</div>
+                            <div className="profile__phone_data">
+                                <div className="data_value">{ phoneRepresentation }</div>
+                                <div className="data_change">{Captions.management.change}</div>
+                            </div>
+                        </div>
+                        <div className="profile__phone">
+                            <div className="profile__phone_caption">{Captions.management.captionPassword}</div>
+                            <div className="profile__phone_data">
+                                <div className="data_value">******</div>
+                                <div className="data_change">{Captions.management.change}</div>
+                            </div>
+                        </div>
+                    </div>) :
+                    (<div>
+                        <div className="link_add_text">{Captions.management.setPhone}</div>
+                        <div className="profile__add_link">
+                            <div className="line"></div>
+                            <div className="button" onClick={this.setPhone.bind(this)}>+</div>
+                        </div>
+                    </div>) }
+            </div>);
+    }
+}
+
 interface IProfileManagementState {
     user?: any,
     error?: any,
@@ -377,7 +422,7 @@ export default class ProfileManagement extends React.Component<any, IProfileMana
     SECTIONS: { name: string, caption: string, icon: any, section: any }[] = [
 
         { name: this.SECTION_LINKS, caption: Captions.management.sectionLinks, icon: ConnectionIcon, section: SocialLinks },
-        { name: this.SECTION_LOGIN, caption: Captions.management.sectionLogin, icon: LoginIcon, section: null },
+        { name: this.SECTION_LOGIN, caption: Captions.management.sectionLogin, icon: LoginIcon, section: Account },
         { name: this.SECTION_NOTIFICATIONS, caption: Captions.management.sectionNotifications, icon: NotificationIcon, section: Notifications },
         { name: this.SECTION_SUBSCRIPTIONS, caption: Captions.management.sectionSubscriptions, icon: SubscriptionIcon, section: Subscriptions },
     ];
@@ -390,7 +435,7 @@ export default class ProfileManagement extends React.Component<any, IProfileMana
     constructor() {
         super();
         this.state = this.getStateData();
-        this.state.currentSection = 0;
+        this.state.currentSection = 1;
         this.checkUser = this.checkUser.bind(this);
         this.userNameChange = this.userNameChange.bind(this);
         this.saveUserName = this.saveUserName.bind(this);

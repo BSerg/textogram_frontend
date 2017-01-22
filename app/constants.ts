@@ -77,6 +77,10 @@ export namespace Captions {
         authAccount: "Аккаунт авторизации",
         additionalLinks: "Дополнительные связи",
         addLinks: "Чтобы добавить ссылки на свои аккаунты в соцсетях, нажмите «плюс»",
+        setPhone: "Чтобы добавить подключить телефон, нажмите «плюс»",
+        captionPhone: "ЛОГИН (НОМЕР ТЕЛЕФОНА)",
+        captionPassword: "ПАРОЛЬ",
+        change: "изменить",
 
         fastSearch: 'Быстрый поиск',
 

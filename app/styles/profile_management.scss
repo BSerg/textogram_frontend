@@ -45,6 +45,9 @@
       justify-content: flex-start;
       padding: $padding/2;
       border-bottom: 2px solid $color3;
+      cursor: pointer;
+      @include transition();
+
       svg {
         width: 25px;
         height: 25px;
@@ -61,6 +64,7 @@
       &.active {
         border-bottom: 3px solid $color;
         flex-grow: 1;
+        cursor: default;
         span {
           display: block;
         }
@@ -70,9 +74,45 @@
 
   .profile__section {
     display: block;
-
+    width: 100%;
     div {
       display: block;
+    }
+
+    .profile__phone {
+      display: flex;
+      width: 100%;
+      flex-direction: column;
+      align-items: flex-start;
+      padding: $padding/2 $padding;
+
+      .profile__phone_caption, .profile__phone_data .data_change {
+        font-size: $font-size-smaller;
+        letter-spacing: 1px;
+        font-family: $family-open-sans;
+      }
+
+      .profile__phone_caption {
+        padding-bottom: $padding/2;
+      }
+
+      .profile__phone_data {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+
+        .data_value {
+          font-size: 12px;
+        }
+
+        .data_change {
+          text-transform: uppercase;
+          cursor: pointer;
+          text-decoration: underline;
+        }
+      }
     }
 
     .profile__auth_link {
@@ -376,8 +416,5 @@
     }
 
   }
-
-
-
 
 }
