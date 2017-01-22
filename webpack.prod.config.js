@@ -53,7 +53,9 @@ module.exports = {
         new DefinePlugin({
             "process.env": {
                 NODE_ENV: JSON.stringify("prod"),
-                API_URL: "http://localhost:8000/api/v1"
+                API_URL: "http://localhost:8000/api/v1",
+                "VK_APP_ID": JSON.stringify(""),
+                "FB_APP_ID": JSON.stringify("")
             }
         }),
         HTMLWebpackPluginConfig

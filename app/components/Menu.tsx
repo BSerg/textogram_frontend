@@ -41,7 +41,6 @@ class DefaultMenu extends React.Component<any, IDefaultmenuStateInterface> {
 
     getInitialCode() {
         return '+7';
-
     }
 
     stopClose(e: any) {
@@ -71,6 +70,7 @@ class DefaultMenu extends React.Component<any, IDefaultmenuStateInterface> {
     }
 
     handleUrlClick(url: string) {
+        // let l = process.env.VK_APP_ID;
 
     }
 

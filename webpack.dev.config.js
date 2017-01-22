@@ -52,7 +52,9 @@ module.exports = {
         new DefinePlugin({
             "process.env": {
                 NODE_ENV: JSON.stringify("dev"),
-                API_URL: JSON.stringify("http://textius.tk/api/v1")
+                API_URL: JSON.stringify("http://textius.tk/api/v1"),
+                "VK_APP_ID": JSON.stringify(""),
+                "FB_APP_ID": JSON.stringify("")
             }
         }),
         HTMLWebpackPluginConfig
