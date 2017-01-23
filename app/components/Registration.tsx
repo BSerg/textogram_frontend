@@ -97,7 +97,7 @@ class RegistrationClass extends React.Component<IRegistrationPropsInterface, IRe
         }
 
         else if (this.state.currentStep ==  this.STEP_SEND_REGISTRATION_DATA) {
-            if (((this.state.userName && !this.state.userNameError) || this.props.isForgotPassword) && this.state.password  && !this.state.passwordError) {
+            if (((this.state.userName && !this.state.userNameError) || (this.props.isForgotPassword || this.props.isSetPhone)) && this.state.password  && !this.state.passwordError) {
                 data['phone'] = this.state.phone;
                 data['hash'] = this.state.hash;
                 data['username'] = this.state.userName;
@@ -108,8 +108,14 @@ class RegistrationClass extends React.Component<IRegistrationPropsInterface, IRe
                 return;
             }
         }
+        let url;
 
-        let url = this.props.isForgotPassword ? 'reset_password/' : 'registration/';
+        if (this.props.isForgotPassword) url = 'reset_password/';
+        else if (this.props.isSetPhone) url = 'set_phone/';
+        else url = 'registration/';
+
+
+        // let url = this.props.isForgotPassword ? 'reset_password/' : 'registration/';
 
         api.post(url, data).then((response: any) => {
             if (this.state.currentStep == this.STEP_SEND_PHONE) {
@@ -181,6 +187,12 @@ class RegistrationClass extends React.Component<IRegistrationPropsInterface, IRe
     render() {
         if (this.state.currentStep != this.STEP_SEND_PHONE && this.state.currentStep != this.STEP_SEND_CODE && this.state.currentStep != this.STEP_SEND_REGISTRATION_DATA)
             return null;
+
+        let saveCaption;
+        if (this.props.isForgotPassword) saveCaption = Captions.registration.reset;
+        else if (this.props.isSetPhone) saveCaption = Captions.registration.save;
+        else saveCaption = Captions.registration.register;
+
         return (
             <div className="registration">
                 <div className="registration__controls top">
@@ -189,7 +201,11 @@ class RegistrationClass extends React.Component<IRegistrationPropsInterface, IRe
                 <div className="registration__content">
 
                     <div className="registration__description">
-                        { this.state.currentStep == this.STEP_SEND_PHONE ? Captions.registration.phoneDescription : null }
+                        {
+                            this.state.currentStep == this.STEP_SEND_PHONE ?
+                                (this.props.isSetPhone ? Captions.registration.phoneDescriptionAlt : Captions.registration.phoneDescription) :
+
+                                null }
                         { this.state.currentStep == this.STEP_SEND_CODE ? Captions.registration.codeDescription : null }
 
                     </div>
@@ -225,7 +241,7 @@ class RegistrationClass extends React.Component<IRegistrationPropsInterface, IRe
                             <div className="registration__form">
                                 <form onSubmit={this.submitForm.bind(this)} autoComplete="false" >
                                     {
-                                        !this.props.isForgotPassword ? (
+                                        (!this.props.isForgotPassword && !this.props.isSetPhone) ? (
                                             <div>
                                                 <input type="text" name="n" value={this.state.userName}
                                                        className={ this.state.userNameError ? 'error': '' }
@@ -257,7 +273,7 @@ class RegistrationClass extends React.Component<IRegistrationPropsInterface, IRe
                 <div className="registration__controls bottom">
                     { this.state.currentStep == this.STEP_SEND_CODE ? <div onClick={this.back.bind(this)}><BackIcon /></div> : null }
                     <div onClick={this.sendData.bind(this)}>
-                        { this.state.currentStep == this.STEP_SEND_REGISTRATION_DATA ? Captions.registration.register : <ConfirmIcon />}
+                        { this.state.currentStep == this.STEP_SEND_REGISTRATION_DATA ? saveCaption : <ConfirmIcon />}
                     </div>
                 </div>
             </div>

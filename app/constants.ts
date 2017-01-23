@@ -97,12 +97,16 @@ export namespace Captions {
 
     export const registration = {
         register: "зарегистрироваться",
+        reset: "восстановить",
+        save: "сохранить",
         usernamePrompt: "Имя и фамилия или псевдоним",
         passwordPrompt: "Придумайте пароль",
         passwordAgainPrompt: "Повторите пароль",
 
         phoneDescription: "Введите ваш номер телефона, который станет постоянным логином:",
-        codeDescription: "Код подтверждения из смс:"
+        phoneDescriptionAlt: "Введите ваш номер телефона:",
+        codeDescription: "Код подтверждения из смс:",
+
     };
 }
 

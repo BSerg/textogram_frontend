@@ -79,6 +79,47 @@
       display: block;
     }
 
+    .link_add_text {
+      padding: $padding $padding $padding/2 $padding;
+      color: $color3;
+      font-size: 12px;
+      letter-spacing: 1px;
+      line-height: 14px;
+      text-align: center;
+    }
+
+    .profile__add_link {
+      position: relative;
+      text-align: center;
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+      margin: $margin $margin * 2;
+
+      .line {
+        position: absolute;
+        left: 0;
+        top: 50%;
+        background-color: $color3;
+        height: 1px;
+        width: 100%;
+        min-width: 100%;
+      }
+      .button {
+        $button-size: 35px;
+        width: $button-size;
+        height: $button-size;
+        @include border_radius($button-size);
+        color: #FFFFFF;
+        background-color: $color5_1;
+        line-height: 35px;
+        z-index: 2;
+        cursor: pointer;
+
+      }
+    }
+
     .profile__phone {
       display: flex;
       width: 100%;
@@ -105,6 +146,7 @@
 
         .data_value {
           font-size: 12px;
+          letter-spacing: 1px;
         }
 
         .data_change {
@@ -179,48 +221,9 @@
       font-size: $font-size-smaller;
       letter-spacing: 1px;
     }
-
-    .link_add_text {
-      padding: $padding $padding $padding/2 $padding;
-      color: $color3;
-      font-size: 12px;
-      letter-spacing: 1px;
-      line-height: 14px;
-      text-align: center;
-    }
-
-    .profile__add_link {
-      position: relative;
-      text-align: center;
-      display: flex;
-      flex-direction: row;
-      justify-content: center;
-      align-items: center;
-      margin: $margin $margin * 2;
-
-      .line {
-        position: absolute;
-        left: 0;
-        top: 50%;
-        background-color: $color3;
-        height: 1px;
-        width: 100%;
-        min-width: 100%;
-      }
-      .button {
-        $button-size: 35px;
-        width: $button-size;
-        height: $button-size;
-        @include border_radius($button-size);
-        color: #FFFFFF;
-        background-color: $color5_1;
-        line-height: 35px;
-        z-index: 2;
-        cursor: pointer;
-
-      }
-    }
   }
+
+
 
   .profile__notification {
     margin: 0 $margin * 2;

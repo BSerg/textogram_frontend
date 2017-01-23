@@ -4,6 +4,10 @@ import {Captions, Constants} from '../constants';
 
 import {UserAction, SAVE_USER, GET_ME, LOGIN, LOGOUT, UPDATE_USER} from '../actions/user/UserAction';
 import {NotificationAction, CHECK} from '../actions/NotificationAction';
+import {ModalAction, OPEN_MODAL, CLOSE_MODAL} from '../actions/shared/ModalAction';
+import AvatarEditor from './shared/AvatarEditor';
+import Registration from './Registration';
+
 
 import Error from './Error';
 import Header from './shared/Header';
@@ -24,10 +28,6 @@ const CloseIcon = require('babel!svg-react!../assets/images/close.svg?name=Close
 
 const BackIcon = require('babel!svg-react!../assets/images/back.svg?name=BackIcon');
 const ConfirmIcon = require('babel!svg-react!../assets/images/redactor_icon_confirm.svg?name=ConfirmIcon');
-
-import {ModalAction, OPEN_MODAL, CLOSE_MODAL} from '../actions/shared/ModalAction';
-
-import AvatarEditor from './shared/AvatarEditor';
 
 
 import {api} from '../api';
@@ -360,7 +360,8 @@ class SocialLinks extends React.Component<ISectionPropsInterface, ISectionLinksS
 
 class Account extends React.Component<ISectionPropsInterface, any> {
 
-    setPhone() {
+    setPhonePassword() {
+        ModalAction.do(OPEN_MODAL, {content: <Registration isSetPhone={true} />});
 
     }
 
@@ -375,21 +376,23 @@ class Account extends React.Component<ISectionPropsInterface, any> {
     render() {
         let phoneRepresentation = this.getPhoneRepresentation(this.props.user.phone || "");
         return (
-            <div>
+            <div className="profile__section">
                 { this.props.user.phone ? (
-                    <div className="profile__section">
+                    <div>
                         <div className="profile__phone">
                             <div className="profile__phone_caption">{Captions.management.captionPhone}</div>
                             <div className="profile__phone_data">
                                 <div className="data_value">{ phoneRepresentation }</div>
-                                <div className="data_change">{Captions.management.change}</div>
+                                <div className="data_change" onClick={this.setPhonePassword.bind(this)}>
+                                    {Captions.management.change}
+                                </div>
                             </div>
                         </div>
                         <div className="profile__phone">
                             <div className="profile__phone_caption">{Captions.management.captionPassword}</div>
                             <div className="profile__phone_data">
                                 <div className="data_value">******</div>
-                                <div className="data_change">{Captions.management.change}</div>
+                                <div className="data_change" onClick={this.setPhonePassword.bind(this)}>{Captions.management.change}</div>
                             </div>
                         </div>
                     </div>) :
@@ -397,7 +400,7 @@ class Account extends React.Component<ISectionPropsInterface, any> {
                         <div className="link_add_text">{Captions.management.setPhone}</div>
                         <div className="profile__add_link">
                             <div className="line"></div>
-                            <div className="button" onClick={this.setPhone.bind(this)}>+</div>
+                            <div className="button" onClick={this.setPhonePassword.bind(this)}>+</div>
                         </div>
                     </div>) }
             </div>);
