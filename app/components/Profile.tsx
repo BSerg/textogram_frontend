@@ -15,9 +15,12 @@ import {UserAction, GET_ME, LOGIN, LOGOUT} from "../actions/user/UserAction";
 const VKIcon = require('babel!svg-react!../assets/images/profile_social_icon_vk.svg?name=VKIcon');
 const FBIcon = require('babel!svg-react!../assets/images/profile_social_icon_fb.svg?name=FBIcon');
 
+import SocialIcon from './shared/SocialIcon';
+
 import {Captions} from '../constants';
 const ConfirmIcon = require('babel!svg-react!../assets/images/redactor_icon_confirm.svg?name=ConfirmIcon');
 const SubscriptionIcon = require('babel!svg-react!../assets/images/profile_subscription_icon.svg?name=SubscriptionIcon');
+
 
 interface IUserArticlesPropsInterface {
     user: any;
@@ -57,34 +60,6 @@ class UserArticles extends React.Component<IUserArticlesPropsInterface, IUserArt
         </div>)
     }
 }
-
-
-interface ISocialLinkProps {
-    social_link: any;
-}
-
-class SocialLink extends React.Component<ISocialLinkProps, any> {
-
-    ICONS: any = {
-        'vk': VKIcon,
-        'fb': FBIcon,
-        'facebook': FBIcon
-    };
-
-    getIcon(social: string) {
-        let Icon = this.ICONS[social];
-        return Icon ? <Icon /> : null;
-    }
-
-    render() {
-        let Icon = this.ICONS[this.props.social_link.social];
-        return (
-            <div className={ Icon ? "profile__social_icon" : "" }>
-                { Icon ? <Link to={this.props.social_link.url} target="_blank" ><Icon /></Link> : null }
-            </div>)
-    }
-}
-
 
 interface IProfileState {
     user?: any;
@@ -199,7 +174,12 @@ export default class Profile extends React.Component<any, IProfileState> {
 
                             <div className="profile__social_links" key="social_links">
                                 { this.state.user.social_links.map((social_link: any, index: number) => {
-                                    return <SocialLink social_link={ social_link } key={ index }/>
+                                    return (
+                                        <div className="profile__social_icon" key={index}>
+                                            <Link to={social_link.url} target="_blank" >
+                                                <SocialIcon social={social_link.social} />
+                                            </Link>
+                                        </div>)
                                 }) }
                             </div>,
                             <UserArticles user={this.state.user} isSelf={this.state.isSelf} key="articles" />

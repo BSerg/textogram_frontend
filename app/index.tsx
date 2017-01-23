@@ -10,6 +10,7 @@ import Editor from './components/Editor';
 import Error from './components/Error';
 import ProfileManagement from'./components/ProfileManagement';
 import Drafts from './components/Drafts';
+import TwitterAuth from './components/TwitterAuth';
 
 import {UserAction, GET_ME} from './actions/user/UserAction';
 
@@ -87,6 +88,7 @@ class App extends React.Component<any, any> {
                     <Route path="articles/:articleSlug" component={Article}/>
                     <Route path="drafts" component={Drafts} />
                     <Route path="manage" component={ProfileManagement}/>
+                    <Route path="auth/twitter/" component={TwitterAuth}/>
                 </Route>
                 <Route path="*" component={() => {return <Error code={404} msg="Page not found"/>}}/>
             </Router>
