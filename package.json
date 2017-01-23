@@ -29,6 +29,8 @@
     "@types/axios": "^0.9.34",
     "@types/core-js": "^0.9.35",
     "@types/flux": "0.0.33",
+    "@types/gapi": "0.0.30",
+    "@types/gapi.auth2": "0.0.32",
     "@types/marked": "0.0.28",
     "@types/node": "^6.0.52",
     "@types/react": "^0.14.54",

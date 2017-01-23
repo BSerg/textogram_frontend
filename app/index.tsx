@@ -53,6 +53,25 @@ class App extends React.Component<any, any> {
           fjs.parentNode.insertBefore(js, fjs);
         }(document, 'script', 'facebook-jssdk'));
 
+        function onGAPILoad() {
+            try {
+                gapi.load('client:auth2', () => {
+
+                    gapi.auth2.init({
+                        client_id: process.env.GOOGLE_APP,
+                        cookie_policy: 'single_host_origin',
+                        scope: 'profile'
+                    }).then(() => {
+                        gapi.auth2.getAuthInstance();
+                    }, () => {});
+                });
+            } catch (e) {
+                window.setTimeout(onGAPILoad.bind(this), 0)
+            }
+        }
+
+        window.setTimeout(onGAPILoad.bind(this), 0);
+
         UserAction.do(GET_ME, null);
     }
 

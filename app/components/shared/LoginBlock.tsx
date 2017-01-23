@@ -24,6 +24,7 @@ export default class LoginBlock extends React.Component<any, ILoginBlockStateInt
         this.setState({isLogging: true}, () => {
             if (social == 'vk') this.__loginVK();
             else if (social == 'fb') this.__loginFB();
+            else if (social == 'google') this.__loginGoogle();
 
         });
     }
@@ -52,6 +53,15 @@ export default class LoginBlock extends React.Component<any, ILoginBlockStateInt
            console.log(response);
         });
 
+    }
+
+    __loginGoogle() {
+        let authInstance = gapi.auth2.getAuthInstance();
+        authInstance.signIn({'scope': ''}).then((response: any) => {
+            let data: any = response.getAuthResponse();
+            let authData = { social: 'google', id_token: data.id_token };
+            UserAction.do(LOGIN, authData);
+        });
     }
 
 
