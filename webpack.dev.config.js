@@ -53,8 +53,8 @@ module.exports = {
             "process.env": {
                 NODE_ENV: JSON.stringify("dev"),
                 API_URL: JSON.stringify("http://textius.tk/api/v1"),
-                "VK_APP_ID": JSON.stringify(""),
-                "FB_APP_ID": JSON.stringify("")
+                "VK_APP": JSON.stringify(""),
+                "FB_APP": JSON.stringify("")
             }
         }),
         HTMLWebpackPluginConfig

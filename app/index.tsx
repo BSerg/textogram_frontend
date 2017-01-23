@@ -25,7 +25,7 @@ class App extends React.Component<any, any> {
 
         window.vkAsyncInit = function() {
             VK.init({
-              apiId: process.env.VK_APP_ID
+              apiId: process.env.VK_APP
             });
         };
 
