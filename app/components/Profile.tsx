@@ -30,23 +30,45 @@ interface IUserArticlesPropsInterface {
 interface IUserArticlesStateInterface {
     articles?: any[];
     feed?: any[];
+    selectedSection?: any[];
 }
 
 class UserArticles extends React.Component<IUserArticlesPropsInterface, IUserArticlesStateInterface> {
+
+    SECTION_SUBSCRIPTIONS = 'subscriptions';
+    SECTION_ARTICLES = 'articles';
+
 
     constructor() {
         super();
         this.state = {articles: [], feed: []};
     }
 
-    loadArticles(feed: boolean=false) {
-        api.get('/articles/').then((response: any) => {
-            this.setState({ articles: response.data.results });
+    loadArticles(userId: string|number) {
+
+        api.get('/articles/', {params: {user: userId}}).then((response: any) => {
+            if (userId=='me') this.setState(
+                { feed: this.state.feed.concat(response.data.results || []) }
+            );
+            else this.setState(
+                { articles: this.state.articles.concat(response.data.results || []) }
+            )
         }).catch((error) => {});
     }
 
+    componentWillReceiveProps(nextProps: any) {
+        if (nextProps.user.id != this.props.user.id) {
+            this.setState({articles: []}, () => { this.loadArticles(nextProps.user.id) });
+        }
+        if (nextProps.isSelf && !this.props.isSelf) {
+            this.setState({feed: []}, () => { this.loadArticles('me') });
+        }
+        if (!nextProps.isSelf) { this.setState({feed: []}) }
+    }
+
     componentDidMount() {
-        this.loadArticles();
+        this.loadArticles(this.props.user.id);
+        if (this.props.isSelf) this.loadArticles('me');
     }
 
     render() {
