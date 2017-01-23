@@ -30,13 +30,28 @@ class App extends React.Component<any, any> {
         };
 
         setTimeout(function() {
-            var el = document.createElement("script");
+            let el = document.createElement("script");
             el.type = "text/javascript";
             el.src = "//vk.com/js/api/openapi.js";
             el.async = true;
             document.getElementById("vk_api_transport").appendChild(el);
         }, 0);
 
+        window.fbAsyncInit = function() {
+            FB.init({
+                appId      : process.env.FB_APP,
+                xfbml      : true,
+                version    : 'v2.8'
+            });
+        }.bind(this);
+
+        (function(d, s, id) {
+          let js: any, fjs: any = d.getElementsByTagName(s)[0];
+          if (d.getElementById(id)) return;
+          js = d.createElement(s); js.id = id;
+          js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.8";
+          fjs.parentNode.insertBefore(js, fjs);
+        }(document, 'script', 'facebook-jssdk'));
 
         UserAction.do(GET_ME, null);
     }

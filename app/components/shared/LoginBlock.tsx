@@ -43,6 +43,14 @@ export default class LoginBlock extends React.Component<any, ILoginBlockStateInt
     }
 
     __loginFB() {
+        FB.login((response: any) => {
+            if (response.status == 'connected') {
+                let data: any = response.authResponse;
+                data.social = 'fb';
+                UserAction.do(LOGIN, data);
+            }
+           console.log(response);
+        });
 
     }
 

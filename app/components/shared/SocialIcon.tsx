@@ -3,6 +3,7 @@ import * as React from 'react';
 const VKIcon = require('babel!svg-react!../../assets/images/profile_social_icon_vk.svg?name=VKIcon');
 const FBIcon = require('babel!svg-react!../../assets/images/profile_social_icon_fb.svg?name=FBIcon');
 const TwitterIcon = require('babel!svg-react!../../assets/images/profile_social_icon_twitter.svg?name=TwitterIcon');
+const GoogleIcon = require('babel!svg-react!../../assets/images/profile_social_icon_google.svg?name=GoogleIcon');
 const UrlIcon = require('babel!svg-react!../../assets/images/profile_web_link_icon.svg?name=UrlIcon');
 
 interface ISocialIconProps {
@@ -15,7 +16,8 @@ export default class SocialIcon extends React.Component<ISocialIconProps, any> {
         'vk': VKIcon,
         'fb': FBIcon,
         'facebook': FBIcon,
-        'twitter': TwitterIcon
+        'twitter': TwitterIcon,
+        'google': GoogleIcon,
     };
 
     constructor(props: any) {
