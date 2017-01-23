@@ -49,6 +49,8 @@ export namespace Captions {
     export const profile = {
         subscribe: 'Подписаться',
         subscribed: 'Вы подписаны',
+        menuSubscriptions: "Подписки",
+        menuArticles: "Публикации",
     };
 
     export const main_menu = {

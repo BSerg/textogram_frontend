@@ -30,7 +30,7 @@ interface IUserArticlesPropsInterface {
 interface IUserArticlesStateInterface {
     articles?: any[];
     feed?: any[];
-    selectedSection?: any[];
+    selectedSection?: string;
 }
 
 class UserArticles extends React.Component<IUserArticlesPropsInterface, IUserArticlesStateInterface> {
@@ -41,7 +41,7 @@ class UserArticles extends React.Component<IUserArticlesPropsInterface, IUserArt
 
     constructor() {
         super();
-        this.state = {articles: [], feed: []};
+        this.state = {articles: [], feed: [], selectedSection: this.SECTION_ARTICLES};
     }
 
     loadArticles(userId: string|number) {
@@ -56,26 +56,47 @@ class UserArticles extends React.Component<IUserArticlesPropsInterface, IUserArt
         }).catch((error) => {});
     }
 
+    setSection(sectionName: string) {
+        if (sectionName != this.SECTION_ARTICLES && sectionName != this.SECTION_SUBSCRIPTIONS) return;
+        if (sectionName == this.SECTION_SUBSCRIPTIONS && !this.props.isSelf) return;
+        this.setState({selectedSection: sectionName});
+    }
+
     componentWillReceiveProps(nextProps: any) {
         if (nextProps.user.id != this.props.user.id) {
             this.setState({articles: []}, () => { this.loadArticles(nextProps.user.id) });
         }
         if (nextProps.isSelf && !this.props.isSelf) {
-            this.setState({feed: []}, () => { this.loadArticles('me') });
+            this.setState({feed: [], selectedSection: this.SECTION_SUBSCRIPTIONS}, () => { this.loadArticles('me') });
         }
-        if (!nextProps.isSelf) { this.setState({feed: []}) }
+        if (!nextProps.isSelf) { this.setState({feed: [], selectedSection: this.SECTION_ARTICLES}) }
     }
 
     componentDidMount() {
         this.loadArticles(this.props.user.id);
-        if (this.props.isSelf) this.loadArticles('me');
+
+        if (this.props.isSelf) this.setState(
+            {selectedSection: this.SECTION_SUBSCRIPTIONS}, () => {this.loadArticles('me');});
     }
 
     render() {
+
+        let items: any[] = (this.state.selectedSection == this.SECTION_ARTICLES) ? this.state.articles : this.state.feed;
+
         return (<div className="profile__articles">
 
+            {this.props.isSelf ? (
+                <div className="profile__articles__menu">
+                    <div onClick={this.setSection.bind(this, this.SECTION_SUBSCRIPTIONS)}  className={(this.state.selectedSection == this.SECTION_SUBSCRIPTIONS) ? 'active': null}>
+                        {Captions.profile.menuSubscriptions}
+                    </div>
+                    <div onClick={this.setSection.bind(this, this.SECTION_ARTICLES)} className={(this.state.selectedSection == this.SECTION_ARTICLES) ? 'active': null}>
+                        {Captions.profile.menuArticles}
+                    </div>
+                </div>) : null}
+
             {
-                this.state.articles.map((article, index) => {
+                items.map((article, index) => {
                     return (<ArticlePreview key={index} item={article} />)
                 })
             }
