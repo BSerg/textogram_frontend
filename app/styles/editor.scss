@@ -22,10 +22,6 @@
 }
 
 .editor__publish {
-  //position: fixed;
-  //bottom: 0;
-  //left: 0;
-  //width: 100%;
   display:flex;
   align-items: center;
   justify-content: center;
@@ -37,4 +33,8 @@
   font-size: 12px;
   font-weight: $font-weight-bold;
   z-index: 10;
+
+  &.disabled {
+    color: $color5;
+  }
 }

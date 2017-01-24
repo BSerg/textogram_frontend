@@ -1,6 +1,6 @@
-import * as React from 'react';
-import Action from '../Action';
-import {api} from '../../api';
+import * as React from "react";
+import Action from "../Action";
+import {api} from "../../api";
 import {BlockContentTypes} from "../../constants";
 const uuid4 = require('uuid/v4');
 
@@ -43,7 +43,6 @@ class ContentActionClass extends Action {
             } else {
                 resolve('OK');
             }
-
         });
     }
 }

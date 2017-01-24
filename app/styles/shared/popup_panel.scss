@@ -19,4 +19,23 @@ $size: 50px;
   &:not(.opened) {
     display: none;
   }
+
+  &.notification {
+    height: unset;
+    max-height: 30vw;
+  }
+
+  .popup_panel__close {
+    position: absolute;
+    top: $margin/2;
+    right: $margin/2;
+    background: url('../../assets/images/close.svg') no-repeat center center;
+    background-size: 20px;
+  }
+
+  &:not(.notification) {
+    .popup_panel__close {
+      display: none;
+    }
+  }
 }

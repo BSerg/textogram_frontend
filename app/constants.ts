@@ -100,3 +100,39 @@ export namespace Embed {
         }
     }
 }
+
+export namespace Validation {
+    // isRequired means not null or empty value
+    export const ROOT = {
+        title: {isRequired: true, maxLength: 150},
+    };
+
+    export const TEXT = {
+        value: {maxLength: 100}
+    };
+
+    export const HEADER = {
+        value: {maxLength: 100}
+    };
+
+    export const LEAD = {
+        value: {maxLength: 400}
+    };
+
+    export const PHRASE = {
+        value: {maxLength: 200}
+    };
+
+    export const QUOTE = {
+        value: {maxLength: 500}
+    };
+
+    export const COLUMN = {
+        image: {isRequired: true},
+        value: {maxLength: 300}
+    };
+
+    export const LIST = {
+        value: {maxLength: 3000}
+    };
+}

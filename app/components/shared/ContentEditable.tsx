@@ -64,20 +64,6 @@ export default class ContentEditable extends React.Component<ContentEditableProp
                 return '';
         }
     }
-    private getNodeEmptyContentByType () {
-        switch (this.props.elementType) {
-            case 'p':
-                return `<p class="empty_tag" data-placeholder="${this.props.placeholder}"><br/></p>`;
-            case 'div':
-                return `<div class="empty_tag" data-placeholder="${this.props.placeholder}"><br/></div>`;
-            case 'ul':
-                return `<ul><li class="empty_tag" data-placeholder="${this.props.placeholder}"><br/></li></ul>`;
-            case 'ol':
-                return `<ol><li class="empty_tag" data-placeholder="${this.props.placeholder}"><br/></li></ol>`;
-            default:
-                return '';
-        }
-    }
     extractContent() {
         let content = this.refs.editableElement.innerHTML;
         let contentText = this.refs.editableElement.innerText;
@@ -115,9 +101,17 @@ export default class ContentEditable extends React.Component<ContentEditableProp
             }
         }
     }
+    updateEmptyState() {
+        if (!this.state.contentText.trim()) {
+            this.refs.editableElement.classList.add('empty');
+        } else {
+            this.refs.editableElement.classList.remove('empty');
+        }
+    }
     handleInput (e?: Event) {
         clearTimeout(this.handleChangeDelayProcess);
         this.setState(this.extractContent(), () => {
+            this.updateEmptyState();
             if (!this.state.contentText.trim()) {
                 this.refs.editableElement.innerHTML = this.getElementEmptyContentByType();
                 let el = this.refs.editableElement.childNodes[0];
@@ -149,12 +143,18 @@ export default class ContentEditable extends React.Component<ContentEditableProp
         }
     }
     componentDidMount() {
-        this.setState(this.extractContent());
+        this.setState(this.extractContent(), () => {
+            this.updateEmptyState();
+        });
         if (this.props.focusOnMount) {
             setTimeout(() => {
                 this.refs.editableElement.focus();
             }, 0)
         }
+    }
+
+    shouldComponentUpdate(nextProps: any, nextState: any) {
+        return false;
     }
     render() {
         let className = 'content_editable';
@@ -163,9 +163,6 @@ export default class ContentEditable extends React.Component<ContentEditableProp
         }
         if (this.props.disabled) {
             className += ' disabled'
-        }
-        if (!this.state.contentText.trim().length) {
-            className += ' empty'
         }
         className += (this.props.alignContent == 'left' ? '' : (' ' + this.props.alignContent));
         return (

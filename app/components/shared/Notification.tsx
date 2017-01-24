@@ -1,22 +1,22 @@
 import * as React from 'react';
-import {PopupPanelAction, OPEN_POPUP, CLOSE_POPUP} from '../../actions/shared/PopupPanelAction';
-import '../../styles/shared/popup_panel.scss';
+import {NotificationAction, SHOW_NOTIFICATION, CLOSE_NOTIFICATION} from '../../actions/shared/NotificationAction';
+import '../../styles/shared/notification.scss';
 
-type PopupType = 'simple' | 'notification';
+const CloseIcon = require('babel!svg-react!../../assets/images/close.svg?name=CloseIcon');
 
-interface IPopupPanelProps {
-    type?: PopupType
+
+interface INotificationProps {
     autoClose?: boolean
     autoCloseDelay?: number
 }
 
-interface IPopupPanelState {
+interface INotificationState {
     opened?: boolean
     content?: any
     contentHistory?: any[]
 }
 
-export default class PopupPanel extends React.Component<IPopupPanelProps, IPopupPanelState> {
+export default class Notification extends React.Component<INotificationProps, INotificationState> {
     private closeTimeout: number;
 
     constructor(props: any) {
@@ -30,14 +30,14 @@ export default class PopupPanel extends React.Component<IPopupPanelProps, IPopup
     }
 
     static defaultProps = {
-        type: 'simple',
-        autoClose: false,
-        autoCloseDelay: 3000
+        autoClose: true,
+        autoCloseDelay: 5000
     };
 
     handleOpen() {
+        console.log('SHOW NOTIFICATION');
         window.clearTimeout(this.closeTimeout);
-        let store: any = PopupPanelAction.getStore();
+        let store: any = NotificationAction.getStore();
         let content = store.content;
         this.state.contentHistory.push(content);
         this.setState({opened: true, content: content, contentHistory: this.state.contentHistory}, () => {
@@ -54,29 +54,24 @@ export default class PopupPanel extends React.Component<IPopupPanelProps, IPopup
     }
 
     componentDidMount() {
-        PopupPanelAction.onChange(OPEN_POPUP, this.handleOpen.bind(this));
-        PopupPanelAction.onChange(CLOSE_POPUP, this.handleClose.bind(this));
+        NotificationAction.onChange(SHOW_NOTIFICATION, this.handleOpen.bind(this));
+        NotificationAction.onChange(CLOSE_NOTIFICATION, this.handleClose.bind(this));
     }
 
     componentWillUnmount() {
-        PopupPanelAction.unbind(OPEN_POPUP, this.handleOpen.bind(this));
-        PopupPanelAction.unbind(CLOSE_POPUP, this.handleClose.bind(this));
+        NotificationAction.unbind(SHOW_NOTIFICATION, this.handleOpen.bind(this));
+        NotificationAction.unbind(CLOSE_NOTIFICATION, this.handleClose.bind(this));
     }
 
     render() {
-        let className = 'popup_panel';
-        switch (this.props.type) {
-            case 'notification':
-                className += ' notification';
-                break;
-        }
+        let className = 'notification';
         if (this.state.opened) {
             className += ' opened';
         }
         return (
             <div className={className}>
                 {this.state.content}
-                {this.props.type == 'notification' ? <div className="popup_panel__close"/> : null}
+                <CloseIcon onClick={this.handleClose.bind(this)} className="notification__close"/>
             </div>
         )
     }

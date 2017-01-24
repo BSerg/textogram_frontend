@@ -1,32 +1,39 @@
-import * as React from 'react';
-import TitleBlock from './editor/TitleBlock'
-import BlockHandler from './editor/BlockHandler';
-import BaseContentBlock from './editor/BaseContentBlock';
-import TextContentBlock from './editor/TextContentBlock';
-import HeaderContentBlock from './editor/HeaderContentBlock';
-import LeadContentBlock from './editor/LeadContentBlock';
-import PhraseContentBlock from './editor/PhraseContentBlock';
-import PhotoContentBlock from './editor/PhotoContentBlock';
-import ListContentBlock from './editor/ListContentBlock';
-import QuoteContentBlock from './editor/QuoteContentBlock';
-import EmbedContentBlock from './editor/EmbedContentBlock';
+import * as React from "react";
+import TitleBlock from "./editor/TitleBlock";
+import BlockHandler from "./editor/BlockHandler";
+import TextContentBlock from "./editor/TextContentBlock";
+import HeaderContentBlock from "./editor/HeaderContentBlock";
+import LeadContentBlock from "./editor/LeadContentBlock";
+import PhraseContentBlock from "./editor/PhraseContentBlock";
+import PhotoContentBlock from "./editor/PhotoContentBlock";
+import ListContentBlock from "./editor/ListContentBlock";
+import QuoteContentBlock from "./editor/QuoteContentBlock";
+import EmbedContentBlock from "./editor/EmbedContentBlock";
 import {
-    ContentAction, RESET_CONTENT, UPDATE_CONTENT, DELETE_CONTENT, CREATE_CONTENT, IContentData, UPDATE_COVER_CONTENT,
-    UPDATE_TITLE_CONTENT, SWAP_CONTENT
-} from '../actions/editor/ContentAction';
-import {Captions, BlockContentTypes, ArticleStatuses} from '../constants'
-import Error from './Error';
-import {api} from '../api';
-
-import '../styles/editor.scss';
+    ContentAction,
+    RESET_CONTENT,
+    UPDATE_CONTENT,
+    DELETE_CONTENT,
+    CREATE_CONTENT,
+    IContentData,
+    UPDATE_COVER_CONTENT,
+    UPDATE_TITLE_CONTENT,
+    SWAP_CONTENT
+} from "../actions/editor/ContentAction";
+import {NotificationAction, SHOW_NOTIFICATION, CLOSE_NOTIFICATION} from '../actions/shared/NotificationAction';
+import {Captions, BlockContentTypes, ArticleStatuses, Validation} from "../constants";
 import {ModalAction, OPEN_MODAL} from "../actions/shared/ModalAction";
 import PublishingParamsModal from "./editor/PublishingParamsModal";
-import {Hash} from "crypto";
 import ColumnContentBlock from "./editor/ColumnContentBlock";
+import {Validator} from "./editor/utils";
+import Error from "./Error";
+import {api} from "../api";
+import "../styles/editor.scss";
 
 
 interface IEditorState {
     article?: any,
+    isValid?: boolean,
     error?: any,
     autoSave?: boolean
 }
@@ -39,6 +46,7 @@ export default class Editor extends React.Component<any, IEditorState> {
         super(props);
         this.state = {
             article: null,
+            isValid: true,
             error: null,
             autoSave: true
         };
@@ -58,6 +66,40 @@ export default class Editor extends React.Component<any, IEditorState> {
         return content;
     }
 
+    validateContent(content: any, config: any) {
+        let isValid = Validator.isValid(content, config);
+        for (let index in content.blocks || []) {
+            let block = content.blocks[index], validationConfig;
+            switch (block.type) {
+                case BlockContentTypes.TEXT:
+                    validationConfig = Validation.TEXT;
+                    break;
+                case BlockContentTypes.HEADER:
+                    validationConfig = Validation.HEADER;
+                    break;
+                case BlockContentTypes.LEAD:
+                    validationConfig = Validation.LEAD;
+                    break;
+                case BlockContentTypes.QUOTE:
+                    validationConfig = Validation.QUOTE;
+                    break;
+                case BlockContentTypes.COLUMNS:
+                    validationConfig = Validation.COLUMN;
+                    break;
+                case BlockContentTypes.PHRASE:
+                    validationConfig = Validation.PHRASE;
+                    break;
+                case BlockContentTypes.LIST:
+                    validationConfig = Validation.LIST;
+                    break;
+            }
+            if (!Validator.isValid(block, validationConfig)) {
+                isValid = false;
+            }
+        }
+        return isValid;
+    }
+
     resetContent(save: boolean = false) {
         ContentAction.do(
             RESET_CONTENT,
@@ -68,8 +110,12 @@ export default class Editor extends React.Component<any, IEditorState> {
     updateContent(forceUpdate: boolean = false): void {
         let store: any = ContentAction.getStore();
         this.state.article.content = store.content;
+        let isValid = this.validateContent(store.content, Validation.ROOT);
+        if (isValid != this.state.isValid) {
+            forceUpdate = true;
+        }
         if (forceUpdate) {
-            this.setState({article: this.state.article}, () => {
+            this.setState({article: this.state.article, isValid: isValid}, () => {
                 window.setTimeout(() => {
                     this.resetContent(this.state.autoSave);
                 }); 
@@ -97,7 +143,6 @@ export default class Editor extends React.Component<any, IEditorState> {
             this.setState({article: response.data, autoSave: response.data.status == ArticleStatuses.DRAFT}, () => {
                 this.resetContent(false);
             });
-            console.log('TRATRATAR')
         }). catch((error) => {
             if (error.response) {
                 switch (error.response.status) {
@@ -220,13 +265,13 @@ export default class Editor extends React.Component<any, IEditorState> {
                                 }
                             </div>,
                             (this.state.article.status == ArticleStatuses.DRAFT ?
-                                <div className="editor__publish"
-                                     onClick={this.openPublishParamsModal.bind(this)}>
+                                <div className={"editor__publish" + (!this.state.isValid ? ' disabled': '')}
+                                     onClick={this.state.isValid && this.openPublishParamsModal.bind(this)}>
                                     Опубликовать
                                 </div> : null),
                             (this.state.article.status == ArticleStatuses.PUBLISHED ?
-                                <div className="editor__publish"
-                                     onClick={this.resetContent.bind(this, true)}>
+                                <div className={"editor__publish" + (!this.state.isValid ? ' disabled': '')}
+                                     onClick={this.state.isValid && this.resetContent.bind(this, true)}>
                                     Обновить публикацию
                                 </div> : null),
 
