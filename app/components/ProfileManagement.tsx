@@ -11,7 +11,6 @@ import Registration from './Registration';
 
 import Error from './Error';
 import Header from './shared/Header';
-import ContentEditable from './shared/ContentEditable';
 import SocialIcon from './shared/SocialIcon';
 
 import '../styles/common.scss';
@@ -28,6 +27,7 @@ const CloseIcon = require('babel!svg-react!../assets/images/close.svg?name=Close
 
 const BackIcon = require('babel!svg-react!../assets/images/back.svg?name=BackIcon');
 const ConfirmIcon = require('babel!svg-react!../assets/images/redactor_icon_confirm.svg?name=ConfirmIcon');
+const EditIcon = require('babel!svg-react!../assets/images/edit.svg?name=EditIcon');
 
 
 import {api} from '../api';
@@ -410,9 +410,10 @@ class Account extends React.Component<ISectionPropsInterface, any> {
 interface IProfileManagementState {
     user?: any,
     error?: any,
-    userName?: null | string,
-    userNameContent?: null | string,
+    userName?: string,
     currentSection?: number,
+    userNameEdit?: boolean,
+    // userNameError
 }
 
 export default class ProfileManagement extends React.Component<any, IProfileManagementState> {
@@ -421,6 +422,9 @@ export default class ProfileManagement extends React.Component<any, IProfileMana
     SECTION_LOGIN:string = 'login';
     SECTION_NOTIFICATIONS:string = 'notifications';
     SECTION_SUBSCRIPTIONS:string = 'subscriptions';
+
+    PATTERN_INPUT_USERNAME = /^([\wа-я]+\s?)*$/i;
+    PATTERN_USERNAME = /^[\wа-я]([\wа-я]+\s?)+$/i;
 
     SECTIONS: { name: string, caption: string, icon: any, section: any }[] = [
 
@@ -440,10 +444,10 @@ export default class ProfileManagement extends React.Component<any, IProfileMana
         this.state = this.getStateData();
         this.state.currentSection = 0;
         this.checkUser = this.checkUser.bind(this);
-        this.userNameChange = this.userNameChange.bind(this);
-        this.saveUserName = this.saveUserName.bind(this);
         this.avatarClick = this.avatarClick.bind(this);
         this.uploadAvatar = this.uploadAvatar.bind(this);
+        this.toggleEditUserName = this.toggleEditUserName.bind(this);
+        // this.userNameChange = this.userNameChange.bind(this);
     }
 
     setSection(index: number) {
@@ -453,41 +457,27 @@ export default class ProfileManagement extends React.Component<any, IProfileMana
     getStateData(): IProfileManagementState {
         let user = UserAction.getStore().user;
         let userName = user ?user.first_name + " " + user.last_name : "";
-        let userNameContent = this.getUserNameContent(userName);
+
         return {
             user: user,
             userName: userName,
-            userNameContent: userNameContent,
+            userNameEdit: false,
             error: user ? null : <Error code={404} msg="page not found" /> };
-    }
-
-    getUserNameContent(userName: string): string {
-        userName = userName.replace(/\s\s+/g, ' ');
-        let arr = userName.split(" ");
-        let first: string;
-        let rest: string;
-        if (arr.length <= 1) {
-            first = userName;
-            rest = "";
-        }
-        else {
-            first = arr.splice(0, 1).join("");
-            rest = arr.join(" ");
-        }
-        return "<div class='editable'>" + "<span>" + first + " </span>" + "<span>" + rest + "</span>" + "</div>";
     }
 
     checkUser() {
         this.setState(this.getStateData(), () => {  });
     }
 
-    userNameChange(content: string, contentText: string) {
-        this.setState({userName: contentText});
+    userNameChange(e: any) {
+        let userName = e.target.value;
+        this.setState({userName: userName});
     }
 
-    saveUserName() {
-        this.setState({userNameContent: this.getUserNameContent(this.state.userName)});
+    toggleEditUserName() {
+        this.setState({ userNameEdit: !this.state.userNameEdit })
     }
+
 
     avatarClick() {
         this.refs.inputAvatar.click();
@@ -505,10 +495,8 @@ export default class ProfileManagement extends React.Component<any, IProfileMana
         }
         let _URL = window.URL;
         let img = new Image();
-        // let url = 'http://localhost:8000/data/avatars/e9/c5/e9c5bf39-e403-4d74-9764-414ff0062d73.jpg';
         try {
             img.src = _URL.createObjectURL(file);
-            // img.src = url;
         }
         catch (e) {
             return;
@@ -557,14 +545,19 @@ export default class ProfileManagement extends React.Component<any, IProfileMana
                     <img src={this.state.user.avatar} />
                 </div>
                 <div className="profile__username">
-                    <ContentEditable
-                        elementType="inline"
-                        allowLineBreak={false}
-                        placeholder={Captions.management.usernamePlaceholder}
-                        alignContent="center"
-                        onChange={this.userNameChange}
-                        onBlur={this.saveUserName}
-                        content={ this.state.userNameContent } />
+                    { this.state.userNameEdit ? (
+                        <form>
+                            <input type="text" value={this.state.userName} onChange={this.userNameChange.bind(this)} />
+                            <span ><ConfirmIcon /></span>
+
+                        </form>
+                    ) : (
+                        <div>
+                            <span>{ this.state.user.first_name }</span>
+                            <span>{ this.state.user.last_name }</span>
+                            <span onClick={this.toggleEditUserName}><EditIcon /></span>
+                        </div>
+                    ) }
                 </div>
 
                 <div className="profile__menu">
