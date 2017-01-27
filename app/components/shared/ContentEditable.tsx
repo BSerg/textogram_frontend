@@ -20,6 +20,7 @@ interface ContentEditableProps {
     focusOnMount?: boolean
     onFocus?: () => any
     onBlur?: () => any
+    onKeyDown?: (e: KeyboardEvent) => any
 }
 
 interface ContentEditableState {
@@ -142,6 +143,13 @@ export default class ContentEditable extends React.Component<ContentEditableProp
             document.execCommand('insertText', false, content);
         }
     }
+    handleKeyDown(e: KeyboardEvent) {
+        if (!this.props.allowLineBreak && e.keyCode == 13) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        this.props.onKeyDown && this.props.onKeyDown(e);
+    }
     componentDidMount() {
         this.setState(this.extractContent(), () => {
             this.updateEmptyState();
@@ -175,6 +183,7 @@ export default class ContentEditable extends React.Component<ContentEditableProp
                  onPaste={this.handlePaste.bind(this)}
                  onFocus={this.handleFocus.bind(this)}
                  onBlur={this.handleBlur.bind(this)}
+                 onKeyDown={this.handleKeyDown.bind(this)}
                  dangerouslySetInnerHTML={{__html: this.props.content || this.getElementEmptyContentByType()}}>
             </div>
         )

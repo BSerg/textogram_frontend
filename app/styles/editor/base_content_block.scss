@@ -19,7 +19,26 @@
   }
 
   &.invalid {
-    border-left: 2px solid #FF3333;
-    //background-color: #FF3333;
+    position: relative;
+
+    &:after {
+      content: '';
+      display: block;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 2px;
+      height: 100%;
+      background-color: #FF3333;
+    }
   }
+}
+
+.help {
+  font-family: $family_open_sans;
+  font-size: 14px;
+  line-height: 20px;
+  text-align: center;
+  color: $color3;
+  letter-spacing: 1px;
 }

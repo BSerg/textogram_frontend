@@ -29,6 +29,7 @@ import {Validator} from "./editor/utils";
 import Error from "./Error";
 import {api} from "../api";
 import "../styles/editor.scss";
+import DialogContentBlock from "./editor/DialogContentBlock";
 
 
 interface IEditorState {
@@ -118,7 +119,7 @@ export default class Editor extends React.Component<any, IEditorState> {
             this.setState({article: this.state.article, isValid: isValid}, () => {
                 window.setTimeout(() => {
                     this.resetContent(this.state.autoSave);
-                }); 
+                });
             });
         } else {
             window.setTimeout(() => {
@@ -238,8 +239,12 @@ export default class Editor extends React.Component<any, IEditorState> {
                                                                     articleId={this.state.article.id}
                                                                     content={contentBlock}/>;
                                         break;
-
-
+                                    case BlockContentTypes.DIALOG:
+                                        console.log(contentBlock)
+                                        block = <DialogContentBlock key={"content-" + contentBlock.id}
+                                                                    articleId={this.state.article.id}
+                                                                    content={contentBlock}/>;
+                                        break;
                                 }
 
                                 return [

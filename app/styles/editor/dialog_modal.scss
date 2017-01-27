@@ -1,0 +1,75 @@
+@import "../contstants";
+@import "../mixins";
+
+.dialog_modal {
+  display: flex;
+  flex-direction: column;
+  color: white;
+  height: 100%;
+
+  .dialog_modal__header {
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+
+    .dialog_modal__back {
+      width: 50px;
+      height: 50px;
+      fill: white;
+    }
+  }
+
+  .dialog_modal__content {
+      padding: $padding;
+      flex: auto;
+  }
+
+  .dialog_modal__participant {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    height: 50px;
+    margin: $margin 0;
+
+    .dialog_modal__check {
+      margin-right: $margin;
+
+    }
+
+    .dialog_modal__avatar {
+      $size: 50px;
+      @include border_radius($size);
+      width: $size;
+      height: $size;
+      background-size: cover!important;
+      margin-right: $margin;
+
+      &.empty {
+        background: $color5 url('../../assets/images/redactor_icon_person.svg') no-repeat center center;
+        background-size: 24px!important;
+      }
+    }
+
+    .dialog_modal__name {
+      flex: 1;
+    }
+
+    &.interviewer {
+      .dialog_modal__name {
+        font-weight: $font-weight-bold;
+      }
+    }
+  }
+
+
+
+  .dialog_modal__choose {
+    height: 50px;
+    font-size: 12px;
+    font-weight: $font-weight-bold;
+    text-align: center;
+    text-transform: uppercase;
+    line-height: 50px;
+  }
+}

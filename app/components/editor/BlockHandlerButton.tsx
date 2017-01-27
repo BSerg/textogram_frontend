@@ -240,7 +240,31 @@ export default class BlockHandlerButton extends React.Component<IContentButtonPr
                 return {
                     icon: <DialogIcon/>,
                     onClick: () => {
-                        console.log('ADD DIALOG')
+                        console.log('ADD DIALOG');
+                        let questioner: any = {
+                            id: 1,
+                            avatar: null,
+                            name: 'Sarah',
+                            is_interviewer: true
+                        };
+                        let answerer: any = {
+                            id: 2,
+                            avatar: null,
+                            name: 'John'
+                        };
+                        let data: any = {
+                            contentBlock: {
+                                type: BlockContentTypes.DIALOG,
+                                recipients: [questioner, answerer],
+                                remarks: [
+                                    {recipient: questioner, value: ""},
+                                    {recipient: answerer, value: ""}
+                                ],
+                            },
+                            position: this.props.blockPosition
+                        };
+                        console.log(data)
+                        ContentAction.do(CREATE_CONTENT, data);
                     }
                 };
             case BlockContentTypes.POST:

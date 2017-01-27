@@ -1,0 +1,61 @@
+@import "../contstants";
+@import "../mixins";
+
+$avatar_size: 32px;
+
+.content_block_dialog {
+  font-family: $family-noto;
+  font-size: 18px;
+  font-weight: $font-weight;
+  line-height: 31px;
+
+  .content_editable.empty {
+    padding-left: $avatar_size + $margin;
+  }
+
+  .content_editable.empty:empty:after, .content_editable.empty .empty_tag:last-child:after {
+    padding-left: $avatar_size + $margin;
+  }
+
+  &.active {
+    .content_editable.empty:empty:after, .content_editable.empty .empty_tag:last-child:after {
+      font-weight: $font-weight-bold;
+    }
+  }
+}
+
+.content_block_dialog__remark {
+  position: relative;
+  margin: $margin 0;
+
+  .content_block_dialog__participant {
+    @include border_radius($avatar_size);
+    position: absolute;
+    top: -5px;
+    left: 0;
+    display: inline-block;
+    width: $avatar_size;
+    height: $avatar_size;
+    background-color: $color3;
+    background-size: cover!important;
+    z-index: 10;
+  }
+
+  .content_block_dialog__text {
+    &:before {
+      content: '';
+      display: inline-block;
+      width: $avatar_size;
+      height: 31px;
+      margin-right: $margin;
+      float: left;
+    }
+  }
+
+  &.interviewer {
+    .content_block_dialog__text {
+      font-weight: $font-weight-bold;
+    }
+  }
+
+}

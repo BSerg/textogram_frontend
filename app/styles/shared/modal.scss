@@ -9,6 +9,9 @@
   height: 100%;
   background-color: rgba(0, 0, 0, 0.6);
   z-index: 50;
+  color: white;
+  font-size: 14px;
+  letter-spacing: 1px;
 
   &:not(.opened) {
     display: none;
