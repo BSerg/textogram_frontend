@@ -28,7 +28,8 @@ $avatar_size: 32px;
   position: relative;
   margin: $margin 0;
 
-  .content_block_dialog__participant {
+  .content_block_dialog__participant,
+  .content_block_dialog__faceless_participant {
     @include border_radius($avatar_size);
     position: absolute;
     top: -5px;
@@ -38,6 +39,15 @@ $avatar_size: 32px;
     height: $avatar_size;
     background-color: $color3;
     background-size: cover!important;
+    z-index: 1;
+  }
+
+  .content_block_dialog__faceless_participant {
+    font-family: $family_open_sans;
+    color: white;
+    line-height: $avatar_size;
+    text-align: center;
+    text-transform: uppercase;
   }
 
   .content_block_dialog__text {

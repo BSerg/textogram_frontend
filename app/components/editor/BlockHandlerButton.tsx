@@ -8,6 +8,7 @@ import ListContentBlock from "./ListContentBlock";
 import {UploadImageAction, UPLOAD_IMAGE} from "../../actions/editor/UploadImageAction";
 import {ModalAction, OPEN_MODAL} from "../../actions/shared/ModalAction";
 import EmbedModal from "./EmbedModal";
+import {IParticipant} from "./DialogContentBlock";
 
 const AddIcon = require('babel!svg-react!../../assets/images/redactor_icon_add.svg?name=AddIcon');
 const SwapIcon = require('babel!svg-react!../../assets/images/redactor_icon_swing.svg?name=SwapIcon');
@@ -241,29 +242,28 @@ export default class BlockHandlerButton extends React.Component<IContentButtonPr
                     icon: <DialogIcon/>,
                     onClick: () => {
                         console.log('ADD DIALOG');
-                        let questioner: any = {
+                        let questioner: IParticipant = {
                             id: 1,
                             avatar: null,
-                            name: 'Sarah',
+                            name: 'Q',
                             is_interviewer: true
                         };
-                        let answerer: any = {
+                        let answerer: IParticipant = {
                             id: 2,
                             avatar: null,
-                            name: 'John'
+                            name: 'A'
                         };
                         let data: any = {
                             contentBlock: {
                                 type: BlockContentTypes.DIALOG,
-                                recipients: [questioner, answerer],
+                                participants: [questioner, answerer],
                                 remarks: [
-                                    {recipient: questioner, value: ""},
-                                    {recipient: answerer, value: ""}
+                                    {participant_id: questioner.id, value: ""},
+                                    {participant_id: answerer.id, value: ""}
                                 ],
                             },
                             position: this.props.blockPosition
                         };
-                        console.log(data)
                         ContentAction.do(CREATE_CONTENT, data);
                     }
                 };

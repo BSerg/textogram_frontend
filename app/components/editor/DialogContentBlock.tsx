@@ -143,6 +143,7 @@ export default class DialogContentBlock extends React.Component<IDialogContentBl
     }
 
     openFileDialog(participantId: number) {
+        console.log('HELLO')
         this.__recipientId = participantId;
         this.refs.inputUpload.click();
     }
@@ -191,6 +192,7 @@ export default class DialogContentBlock extends React.Component<IDialogContentBl
                               disableDefaultPopup={true}>
                 {this.state.content.remarks.map((remark, index) => {
                     let participant = this.state.content.participantsMap[remark.participant_id];
+                    console.log(this.state.content.participantsMap, remark, participant)
                     let className = "content_block_dialog__remark";
                     if (participant.is_interviewer) {
                         className += ' interviewer'
@@ -200,7 +202,9 @@ export default class DialogContentBlock extends React.Component<IDialogContentBl
                             {participant && participant.avatar ?
                                 <div className="content_block_dialog__participant"
                                      style={{background: `url('${participant.avatar.image}') no-repeat center center`}}
-                                     onClick={this.openFileDialog.bind(this, remark.participant_id)}/> : null
+                                     onClick={this.openFileDialog.bind(this, remark.participant_id)}/>
+                                : <div className="content_block_dialog__faceless_participant"
+                                       onClick={this.openFileDialog.bind(this, remark.participant_id)}>{participant.name.substr(0, 1)}</div>
                             }
                             <ContentEditable id={"remark_" + this.props.content.id + "_" + index}
                                              className="content_block_dialog__text"
