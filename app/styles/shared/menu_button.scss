@@ -6,6 +6,7 @@ $menu_button_size: 50px;
 .menu_button {
   @include transition();
   @include border_radius($menu_button_size);
+  @include box_shadow(10px, rgba(0, 0, 0, 0.2), 3px, 3px);
   position: fixed;
   top: $margin;
   left: $margin;
@@ -23,6 +24,7 @@ $menu_button_size: 50px;
   
   &.hidden {
     opacity: 0;
+    @include scale(0, 0);
     //top: -$menu_button_size;
   }
 }

@@ -23,8 +23,8 @@
   transform: scale($x, $y);
 }
 
-@mixin box_shadow($radius, $color: rgba(0, 0, 0, 0.5)) {
-  -webkit-box-shadow: 0px 0px $radius 0px $color;
-  -moz-box-shadow: 0px 0px $radius 0px $color;
-  box-shadow: 0px 0px $radius 0px $color;
+@mixin box_shadow($radius: 10px, $color: rgba(0, 0, 0, 0.5), $hshift: 0px, $vshift: 0px) {
+  -webkit-box-shadow: $hshift $vshift $radius 0px $color;
+  -moz-box-shadow: $hshift $vshift $radius 0px $color;
+  box-shadow: $hshift $vshift $radius 0px $color;
 }

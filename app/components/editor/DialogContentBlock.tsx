@@ -8,13 +8,6 @@ import {IPhoto} from "../../actions/editor/PhotoContentBlockAction";
 import {ContentBlockAction, ACTIVATE_CONTENT_BLOCK} from "../../actions/editor/ContentBlockAction";
 import {PopupPanelAction, OPEN_POPUP} from "../../actions/shared/PopupPanelAction";
 import ContentBlockPopup from "./ContentBlockPopup";
-import {
-    DialogContentBlockAction,
-    RESET_CONTENT,
-    CREATE_PARTICIPANT,
-    UPDATE_PARTICIPANT,
-    DELETE_PARTICIPANT
-} from "../../actions/editor/DialogContentBlockAction";
 import "../../styles/editor/dialog_content_block.scss";
 import {UploadImageAction, UPLOAD_IMAGE} from "../../actions/editor/UploadImageAction";
 

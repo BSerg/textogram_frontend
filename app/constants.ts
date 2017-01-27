@@ -111,7 +111,7 @@ export namespace Validation {
     };
 
     export const TEXT = {
-        value: {maxLength: 100}
+        value: {maxLength: 3000}
     };
 
     export const HEADER = {
@@ -137,5 +137,9 @@ export namespace Validation {
 
     export const LIST = {
         value: {maxLength: 3000}
+    };
+
+    export const DIALOGUE = {
+        participants: {isRequired: true},
     };
 }
