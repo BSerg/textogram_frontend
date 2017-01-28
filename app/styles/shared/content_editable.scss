@@ -16,13 +16,22 @@
     position: absolute;
     top: 0;
     left: 0;
-    //width: 100%;
+    right: 0;
     color: $color3;
     cursor: text;
+
+    &.center {
+      text-align: center;
+    }
+
+    &.right {
+      text-align: right;
+    }
   }
 
   &.center {
     text-align: center;
+
   }
 
   &.right {

@@ -106,7 +106,6 @@ export default class DialogContentBlock extends React.Component<IDialogContentBl
     }
 
     addRemark(position?: number) {
-        console.log('ADD REMARK IN POSITION: ' + position);
         this.state.content.remarks.push({
             participant_id: this.nextRecipient(),
             value: ""
@@ -131,7 +130,6 @@ export default class DialogContentBlock extends React.Component<IDialogContentBl
     }
 
     updateRemark(remark: IRemark, content: string, contentText: string) {
-        console.log(remark, content, contentText);
         remark.value = contentText;
         this.setState({content: this.state.content}, () => {
             this.updateContent();
@@ -143,13 +141,11 @@ export default class DialogContentBlock extends React.Component<IDialogContentBl
     }
 
     openFileDialog(participantId: number) {
-        console.log('HELLO')
         this.__recipientId = participantId;
         this.refs.inputUpload.click();
     }
 
     uploadImage() {
-        console.log(this.__recipientId,this.state.content.participantsMap[this.__recipientId])
         if (this.__recipientId && this.state.content.participantsMap[this.__recipientId]) {
             let file = this.refs.inputUpload.files[0];
             UploadImageAction.doAsync(UPLOAD_IMAGE, {articleId: this.props.articleId, image: file}).then(() => {
@@ -192,7 +188,6 @@ export default class DialogContentBlock extends React.Component<IDialogContentBl
                               disableDefaultPopup={true}>
                 {this.state.content.remarks.map((remark, index) => {
                     let participant = this.state.content.participantsMap[remark.participant_id];
-                    console.log(this.state.content.participantsMap, remark, participant)
                     let className = "content_block_dialog__remark";
                     if (participant.is_interviewer) {
                         className += ' interviewer'

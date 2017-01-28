@@ -17,6 +17,7 @@ $menu_button_size: 50px;
   line-height: $menu_button_size;
   color: white;
   font-size: 20px;
+  z-index: 20;
 
   &:after {
     content: 'T';
@@ -25,6 +26,5 @@ $menu_button_size: 50px;
   &.hidden {
     opacity: 0;
     @include scale(0, 0);
-    //top: -$menu_button_size;
   }
 }
