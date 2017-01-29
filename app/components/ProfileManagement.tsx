@@ -413,6 +413,7 @@ interface IProfileManagementState {
     userName?: string,
     currentSection?: number,
     userNameEdit?: boolean,
+    userNameError?: boolean
     // userNameError
 }
 
@@ -462,6 +463,7 @@ export default class ProfileManagement extends React.Component<any, IProfileMana
             user: user,
             userName: userName,
             userNameEdit: false,
+            userNameError: false,
             error: user ? null : <Error code={404} msg="page not found" /> };
     }
 
@@ -471,13 +473,32 @@ export default class ProfileManagement extends React.Component<any, IProfileMana
 
     userNameChange(e: any) {
         let userName = e.target.value;
-        this.setState({userName: userName});
+        if (userName.match(this.PATTERN_INPUT_USERNAME))
+            this.setState({userName: userName, userNameError: !userName.match(this.PATTERN_USERNAME) ? true: false});
+        // this.setState({userName: userName});
     }
 
     toggleEditUserName() {
         this.setState({ userNameEdit: !this.state.userNameEdit })
     }
 
+    userNameSubmit(e: any) {
+        e.preventDefault();
+        this.userNameSave();
+    }
+
+    userNameSave() {
+        if (this.state.userNameError || ! this.state.userName) return;
+        let userNameArr = this.state.userName.split(' ');
+        let firstName = userNameArr[0];
+
+        let lastName = userNameArr.length > 1 ? userNameArr.slice(1).join(' ') : '';
+        console.log(firstName);
+        console.log(lastName);
+        UserAction.doAsync(UPDATE_USER, { first_name: firstName, last_name: lastName }).then(() => {
+            this.setState({userNameEdit: false});
+        })
+    }
 
     avatarClick() {
         this.refs.inputAvatar.click();
@@ -546,9 +567,9 @@ export default class ProfileManagement extends React.Component<any, IProfileMana
                 </div>
                 <div className="profile__username">
                     { this.state.userNameEdit ? (
-                        <form>
-                            <input type="text" value={this.state.userName} onChange={this.userNameChange.bind(this)} />
-                            <span ><ConfirmIcon /></span>
+                        <form onSubmit={this.userNameSubmit.bind(this)}>
+                            <input className={ this.state.userNameError ? 'error': '' } type="text" value={this.state.userName} onChange={this.userNameChange.bind(this)} />
+                            <span onClick={this.userNameSave}><ConfirmIcon /></span>
 
                         </form>
                     ) : (

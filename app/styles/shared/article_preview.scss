@@ -26,6 +26,22 @@
     font-size: 17px;
     line-height: 22px;
     font-weight: $font-weight-bold;
+
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+
+    .title__avatar {
+
+      margin-right: $margin;
+
+      img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+      }
+
+    }
   }
 
   .lead {

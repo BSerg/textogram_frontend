@@ -55,6 +55,10 @@
       border: none;
       font-size: 18px;
       text-align: center;
+
+      &.error {
+        border-bottom: 1px solid $color-accent;
+      }
     }
 
     .editable {

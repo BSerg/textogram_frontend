@@ -271,10 +271,23 @@ class RegistrationClass extends React.Component<IRegistrationPropsInterface, IRe
                 </div>
 
                 <div className="registration__controls bottom">
-                    { this.state.currentStep == this.STEP_SEND_CODE ? <div onClick={this.back.bind(this)}><BackIcon /></div> : null }
-                    <div onClick={this.sendData.bind(this)}>
-                        { this.state.currentStep == this.STEP_SEND_REGISTRATION_DATA ? saveCaption : <ConfirmIcon />}
-                    </div>
+                    { this.state.currentStep == this.STEP_SEND_CODE ?
+                        <div onClick={this.back.bind(this)} className={"registration__controls__button active"}>
+                            <BackIcon /> {Captions.registration.changeNumber}
+                        </div> : null }
+                    {
+                        (this.state.currentStep == this.STEP_SEND_PHONE) ? (
+                            <div className={"registration__controls__button submit" + (!this.state.phoneError && this.state.phone.length > 2 ? ' active': '' )} onClick={this.sendData.bind(this)}>{ Captions.registration.next }</div>) : null
+                    }
+                    {
+                        (this.state.currentStep == this.STEP_SEND_CODE) ? (
+                            <div className={"registration__controls__button submit" + (!this.state.codeError && this.state.code ? ' active': '')} onClick={this.sendData.bind(this)}>{ Captions.registration.next }</div>) : null
+                    }
+                    {
+                        (this.state.currentStep == this.STEP_SEND_REGISTRATION_DATA) ? (
+                            <div className={"registration__controls__button submit" + (!this.state.passwordError && this.state.password ? ' active': '') }
+                                 onClick={this.sendData.bind(this)}>{ Captions.registration.finish }</div>) : null
+                    }
                 </div>
             </div>
         )

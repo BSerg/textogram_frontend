@@ -11,7 +11,8 @@ const CloseIcon = require('babel!svg-react!../../assets/images/close.svg?name=Cl
 
 interface IArticlePreviewPropsInterface {
     item: any,
-    onDelete?: (id: number) => {}
+    onDelete?: (id: number) => {},
+    isFeed?: boolean,
 }
 
 
@@ -59,7 +60,14 @@ class ArticlePreviewClass extends React.Component<IArticlePreviewPropsInterface,
                         <div className="title">{ date }</div>: null
                     }
                     {
-                        this.props.item.title ? (<div className="title">{ this.props.item.title }</div>) : null
+                        this.props.item.title ? (
+                            <div className="title">
+                                { this.props.isFeed ? (<div className="title__avatar">
+                                    <img src={this.props.item.owner.avatar}/>
+                                </div>) : null }
+                                <div>{ this.props.item.title }</div>
+
+                            </div>) : null
                     }
                     {
                         this.props.item.lead ? (

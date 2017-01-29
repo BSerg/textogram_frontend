@@ -134,4 +134,34 @@
 
   }
 
+  .registration__controls.bottom {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+  }
+
+  .registration__controls__button {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 260px;
+    background-color: #282828;
+    padding: 15px;
+    color: $color5;
+    box-sizing: border-box;
+    height: 50px;
+    margin-top: $margin * 2;
+
+
+    &.active {
+      color: #FFFFFF;
+    }
+    &.active.submit {
+      background-color: #000000;
+    }
+  }
+
 }

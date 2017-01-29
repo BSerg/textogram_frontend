@@ -82,6 +82,7 @@ class UserArticles extends React.Component<IUserArticlesPropsInterface, IUserArt
     render() {
 
         let items: any[] = (this.state.selectedSection == this.SECTION_ARTICLES) ? this.state.articles : this.state.feed;
+        let isFeed = this.state.selectedSection == this.SECTION_SUBSCRIPTIONS;
 
         return (<div className="profile__articles">
 
@@ -97,7 +98,7 @@ class UserArticles extends React.Component<IUserArticlesPropsInterface, IUserArt
 
             {
                 items.map((article, index) => {
-                    return (<ArticlePreview key={index} item={article} />)
+                    return (<ArticlePreview isFeed={isFeed} key={index} item={article} />)
                 })
             }
         </div>)

@@ -104,7 +104,9 @@ export namespace Captions {
         usernamePrompt: "Имя и фамилия или псевдоним",
         passwordPrompt: "Придумайте пароль",
         passwordAgainPrompt: "Повторите пароль",
-
+        next: "далее",
+        finish: "завершить",
+        changeNumber: "Изменить номер",
         phoneDescription: "Введите ваш номер телефона, который станет постоянным логином:",
         phoneDescriptionAlt: "Введите ваш номер телефона:",
         codeDescription: "Код подтверждения из смс:",
