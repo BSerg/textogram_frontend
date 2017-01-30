@@ -14,7 +14,7 @@ TitleBlockAction.registerAsync(UPDATE_TITLE_ACTION, (store, data: {articleSlug: 
     return new Promise((resolve, reject) => {
         this.actionTimeout = setTimeout(() => {
             api.patch(`/articles/editor/${data.articleSlug}/`, {title: data.title}).then((response: any) => {
-                console.log('UPDATE ARTICLE TITLE', response);
+                console.log('UPDATE_USER ARTICLE TITLE', response);
                 store.title = response.data.title;
                 resolve('OK')
             }).catch((err: any) => {
@@ -37,7 +37,7 @@ TitleBlockAction.registerAsync(UPDATE_COVER_ACTION, (store, data: {articleSlug: 
                 _data.append('cover', data.cover);
             }
             api.patch(`/articles/editor/${data.articleSlug}/`, _data).then((response: any) => {
-                console.log('UPDATE ARTICLE COVER', response);
+                console.log('UPDATE_USER ARTICLE COVER', response);
                 store.cover = response.data.cover;
                 resolve('OK')
             }).catch((err: any) => {
