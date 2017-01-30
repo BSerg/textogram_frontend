@@ -30,6 +30,7 @@ import Error from "./Error";
 import {api} from "../api";
 import "../styles/editor.scss";
 import DialogContentBlock from "./editor/DialogContentBlock";
+import {ContentBlockAction, ACTIVATE_CONTENT_BLOCK} from "../actions/editor/ContentBlockAction";
 
 
 interface IEditorState {
@@ -37,6 +38,7 @@ interface IEditorState {
     isValid?: boolean,
     error?: any,
     autoSave?: boolean
+    showLastBlockHandler?: boolean
 }
 
 
@@ -49,11 +51,13 @@ export default class Editor extends React.Component<any, IEditorState> {
             article: null,
             isValid: true,
             error: null,
-            autoSave: true
+            autoSave: true,
+            showLastBlockHandler: true
         };
         this.resetContent = this.resetContent.bind(this);
         this.updateContent = this.updateContent.bind(this);
         this.forceUpdateContent = this.updateContent.bind(this, true);
+        this.handleActiveBlock = this.handleActiveBlock.bind(this);
     }
 
     processContentBlock(block: IContentData) {
@@ -139,6 +143,11 @@ export default class Editor extends React.Component<any, IEditorState> {
         });
     }
 
+    handleActiveBlock() {
+        let store = ContentBlockAction.getStore();
+        this.setState({showLastBlockHandler: store.id == -1});
+    }
+
     componentDidMount() {
         api.get(`/articles/editor/${this.props.params.articleId}/`).then((response: any) => {
             this.setState({article: response.data, autoSave: response.data.status == ArticleStatuses.DRAFT}, () => {
@@ -162,6 +171,7 @@ export default class Editor extends React.Component<any, IEditorState> {
             [CREATE_CONTENT, DELETE_CONTENT, UPDATE_COVER_CONTENT, UPDATE_TITLE_CONTENT, SWAP_CONTENT],
             this.forceUpdateContent
         );
+        ContentBlockAction.onChange(ACTIVATE_CONTENT_BLOCK, this.handleActiveBlock);
     }
 
     componentWillUnmount() {
@@ -170,6 +180,7 @@ export default class Editor extends React.Component<any, IEditorState> {
             [CREATE_CONTENT, DELETE_CONTENT, UPDATE_COVER_CONTENT, UPDATE_TITLE_CONTENT, SWAP_CONTENT],
             this.forceUpdateContent
         );
+        ContentBlockAction.unbind(ACTIVATE_CONTENT_BLOCK, this.handleActiveBlock);
     }
 
     render() {
@@ -255,15 +266,17 @@ export default class Editor extends React.Component<any, IEditorState> {
                                     block
                                 ]
                             }),
-                            <BlockHandler key="handlerLast"
-                                          articleId={this.state.article.id}
-                                          blockPosition={this.state.article.content.blocks.length}
-                                          isLast={true}
-                                          items={[
-                                              BlockContentTypes.TEXT,
-                                              BlockContentTypes.ADD,
-                                              BlockContentTypes.PHOTO
-                                          ]}/>,
+                            this.state.showLastBlockHandler ?
+                                <BlockHandler key="handlerLast"
+                                              articleId={this.state.article.id}
+                                              blockPosition={this.state.article.content.blocks.length}
+                                              isLast={true}
+                                              items={[
+                                                  BlockContentTypes.TEXT,
+                                                  BlockContentTypes.ADD,
+                                                  BlockContentTypes.PHOTO
+                                              ]}/> : null
+                            ,
                             <div key="add_content_help" className="add_content_help">
                                 {!this.state.article.content.blocks.length ?
                                     Captions.editor.add_content_help : null
