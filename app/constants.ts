@@ -48,10 +48,81 @@ export namespace Captions {
         choose: 'Выбрать',
         help_dialogue: 'Добавьте реплики, нажав на "+" в панели инструментов'
     }
+        loading: 'Загрузка...'
+
+    };
+
+    export const profile = {
+        subscribe: 'Подписаться',
+        subscribed: 'Вы подписаны',
+        menuSubscriptions: "Подписки",
+        menuArticles: "Публикации",
+    };
+
+    export const main_menu = {
+        manage_profile: 'управление профилем',
+        create_article: 'создать публикацию',
+        drafts: 'черновики',
+        notification_default_text: 'Новые уведомления',
+        title: 'TEXTIUS',
+        forgotPassword: 'забли пароль?',
+        register: 'зарегистрироваться',
+        about: 'Что такое TEXTIUS?',
+        inputPhonePlaceholder: '+7 ',
+        inputPasswordPlaceholder: 'Введите пароль',
+        loginHint: 'логин',
+        passwordHint: 'пароль',
+    };
+
+    export const management = {
+        title: "Управление профилем",
+        usernamePlaceholder: "Введите имя",
+        sectionLinks: 'Связи',
+        sectionLogin: 'Учетная запись',
+        sectionNotifications: 'Уведомления',
+        sectionSubscriptions: 'Подписки',
+
+        authAccount: "Аккаунт авторизации",
+        additionalLinks: "Дополнительные связи",
+        addLinks: "Чтобы добавить ссылки на свои аккаунты в соцсетях, нажмите «плюс»",
+        setPhone: "Чтобы добавить подключить телефон, нажмите «плюс»",
+        captionPhone: "ЛОГИН (НОМЕР ТЕЛЕФОНА)",
+        captionPassword: "ПАРОЛЬ",
+        change: "изменить",
+
+        fastSearch: 'Быстрый поиск',
+
+        linkAddPlaceholder: 'Вставьте ссылку',
+        linkAddText: 'Ссылка на профиль соцсети или сайт',
+        linkAddError: 'Некорректная ссылка',
+
+        drafts: "Черновики",
+        draftDelete: "удалить",
+
+        avatarSave: "Сохранить"
+
+    };
+
+    export const registration = {
+        register: "зарегистрироваться",
+        reset: "восстановить",
+        save: "сохранить",
+        usernamePrompt: "Имя и фамилия или псевдоним",
+        passwordPrompt: "Придумайте пароль",
+        passwordAgainPrompt: "Повторите пароль",
+        next: "далее",
+        finish: "завершить",
+        changeNumber: "Изменить номер",
+        phoneDescription: "Введите ваш номер телефона, который станет постоянным логином:",
+        phoneDescriptionAlt: "Введите ваш номер телефона:",
+        codeDescription: "Код подтверждения из смс:",
+
+    };
 }
 
 export namespace Constants {
     export const maxImageSize = 5 * 1024 * 1024;
+    export const notificationIntervalTime = 20000;
 }
 
 export enum BlockContentTypes {

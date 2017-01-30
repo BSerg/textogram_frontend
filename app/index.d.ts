@@ -11,3 +11,5 @@ declare module 'to-markdown' {
 declare var twttr: any;
 
 declare var instgrm: any;
+
+declare const VK_APP_ID: string;

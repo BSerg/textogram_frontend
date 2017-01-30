@@ -1,5 +1,6 @@
 import * as React from 'react';
 import '../../styles/shared/menu_button.scss';
+import {MenuAction, TOGGLE} from '../../actions/MenuAction';
 
 interface MenuButtonPropsInterface {
     disabled?: boolean,
@@ -21,6 +22,7 @@ export default class MenuButton extends React.Component<MenuButtonPropsInterface
         this.state = {hidden: false};
         this.hideTimeout = null;
         this.scrollDelta = 0;
+        this.checkScroll = this.checkScroll.bind(this);
     }
 
     static defaultProps = {
@@ -29,7 +31,7 @@ export default class MenuButton extends React.Component<MenuButtonPropsInterface
     };
 
     handleClick() {
-        console.log('MENU BUTTON CLICKED');
+        MenuAction.do(TOGGLE, true);
     }
 
     checkScroll() {
@@ -57,11 +59,11 @@ export default class MenuButton extends React.Component<MenuButtonPropsInterface
     }
 
     componentDidMount() {
-        document.addEventListener('scroll', this.checkScroll.bind(this));
+        document.addEventListener('scroll', this.checkScroll);
     }
 
     componentWillUnmount() {
-        document.removeEventListener('scroll', this.checkScroll.bind(this));
+        document.removeEventListener('scroll', this.checkScroll);
     }
 
     render() {

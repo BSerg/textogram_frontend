@@ -1,0 +1,157 @@
+@import "contstants";
+@import "mixins";
+
+
+#profile_content {
+  $avatar-side-size: 78px;
+
+  //margin-top: $header-height + $avatar-side-size/2 + $margin;
+
+  .profile__header {
+    background-color: $color;
+    height: $header-height;
+    min-width: 100%;
+
+  }
+
+
+  .profile__avatar, .profile__username, .profile__social_links, .profile__subscription {
+    min-width: 100%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .profile__avatar {
+
+    position: relative;
+    height: $profile-avatar-side-size / 2;
+
+    img {
+      position: absolute;
+      top: -$avatar-side-size/2;
+    }
+  }
+
+  .profile__username {
+
+    margin-bottom: $margin;
+    padding: 0 $padding;
+    box-sizing: border-box;
+    span {
+      display: inline-block;
+      text-align: center;
+    }
+  }
+
+  .profile__subscription {
+
+    height: 45px;
+
+    margin-bottom: $margin;
+
+    .profile__subscription_subscribe, .profile__subscription_unsubscribe, .profile__subscription_info {
+      display: flex;
+      flex-direction: row;
+
+      align-items: center;
+
+      color: $color6_1;
+      text-transform: uppercase;
+      font-size: $font-size-small;
+      letter-spacing: 1px;
+      margin: 0 $margin/2;
+
+      svg {
+        width: 25px;
+        height: 25px;
+        fill: $color6_1;
+      }
+      span {
+        margin: 0 5px;
+      }
+    }
+
+    .profile__subscription_subscribe {
+      background-color: $color4;
+    }
+
+    .profile__subscription_subscribe, .profile__subscription_unsubscribe {
+      padding: 10px;
+    }
+  }
+
+  .profile__social_links {
+    $link-size: 30px;
+
+    margin-bottom: $margin;
+
+    .profile__social_icon {
+
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+
+      width: $link-size;
+      height: $link-size;
+
+      cursor: pointer;
+      background-color: $color4;
+      @include border-radius($link-size);
+
+      margin: 0 5px;
+
+      svg {
+        width: $link-size - 7px;
+        height: $link-size - 7px;
+        fill: $color;
+      }
+    }
+  }
+
+  .profile__articles {
+    padding: 0 $padding;
+
+    .profile__articles__menu {
+      display: inline-block;
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+
+      div {
+        font-size: $font-size-small;
+        text-transform: uppercase;
+        text-align: center;
+        flex-grow: 1;
+        max-width: 160px;
+        padding: $padding/2;
+        cursor: pointer;
+        color: $color5;
+        border-bottom: 1px solid $color5;
+
+        @include transition();
+
+        &.active {
+          border-bottom: 3px solid #000000;
+          color: $color;
+        }
+      }
+    }
+
+    .article_preview:first-child {
+      margin-top: $margin * 2;
+      border-top: 1px solid $color3;
+    }
+  }
+
+}
+
+.drafts__content {
+  padding: 0 $padding;
+}
+
+

@@ -1,0 +1,31 @@
+@import "contstants";
+@import "mixins";
+
+//$profile-avatar-side-size: 78px;
+
+.profile__avatar {
+
+  margin-bottom: $margin;
+
+  img {
+    width: $profile-avatar-side-size;
+    height: $profile-avatar-side-size;
+
+    @include border_radius($profile-avatar-side-size);
+  }
+
+}
+
+.profile__username {
+  text-transform: uppercase;
+  margin-bottom: $margin * 2;
+  word-spacing: 5px;
+
+  span {
+    font-size: $font-size;
+  }
+
+  span:first-child {
+    font-weight: $font-weight-bold;
+  }
+}

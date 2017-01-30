@@ -1,0 +1,167 @@
+@import "contstants";
+@import "mixins";
+
+.registration {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  position: relative;
+
+  .registration__controls {
+    width: 100%;
+    position: absolute;
+    left: 0;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    text-transform: uppercase;
+    font-size: $font-size-small;
+    font-weight: $font-weight-bold;
+    letter-spacing: 2px;
+    color: #FFFFFF;
+    padding: $padding;
+
+    box-sizing: border-box;
+
+    &.top {
+      top: 0;
+    }
+    &.bottom {
+      bottom: 0;
+    }
+
+    svg {
+      fill: #FFFFFF;
+      width: 20px;
+      height: 20px;
+    }
+  }
+
+  .registration__content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+
+    .registration__description {
+      color: $color6_1;
+      font-size: 12px;
+
+      text-align: center;
+      padding: 0 $padding/2;
+      letter-spacing: 1px;
+      line-height: 18px;
+    }
+
+    .registration__form {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 0 $padding;
+
+      div {
+        position: relative;
+      }
+
+      input {
+        margin: $margin 0;
+        width: 100%;
+        background-color: transparent;
+        border: none;
+        text-align: center;
+        outline: none;
+        color: $color5;
+        font-size: 14px;
+        line-height: 30px;
+        letter-spacing: 1px;
+        font-family: $family_open_sans;
+        border-bottom: 1px solid $color5;
+
+        &.error, &:focus {
+          border-color: $color-accent;
+        }
+      }
+
+      input:focus {
+        color: #FFFFFF;
+        border-color: #FFFFFF;
+        &.error {
+          border-color: $color-accent;
+        }
+      }
+
+      div input {
+        font-size: 12px;
+      }
+      input:-webkit-autofill, div input:-webkit-autofill {
+        -webkit-box-shadow: 0 0 0 1000px $color inset;
+        -webkit-text-fill-color: #FFFFFF !important;
+        outline: none;
+      }
+
+      .password_visibility_icon {
+        $icon-size: 25px;
+        width: $icon-size;
+        height: $icon-size;
+        position: absolute;
+        top: 18px;
+        right: 0;
+        svg {
+          width: $icon-size;
+          height: $icon-size;
+          fill: $color6_1;
+        }
+        &.visible {
+          svg { fill: #FFFFFF }
+        }
+
+      }
+    }
+
+    form {
+      width: 100%;
+    }
+
+
+    input:-webkit-autofill {
+      -webkit-box-shadow: 0 0 0 1000px transparent inset;
+      -webkit-text-fill-color: #FFFFFF !important;
+      outline: none;
+    }
+
+  }
+
+  .registration__controls.bottom {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+  }
+
+  .registration__controls__button {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 260px;
+    background-color: #282828;
+    padding: 15px;
+    color: $color5;
+    box-sizing: border-box;
+    height: 50px;
+    margin-top: $margin * 2;
+
+
+    &.active {
+      color: #FFFFFF;
+    }
+    &.active.submit {
+      background-color: #000000;
+    }
+  }
+
+}

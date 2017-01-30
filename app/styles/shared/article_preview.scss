@@ -1,0 +1,119 @@
+@import "../contstants";
+@import "../mixins";
+
+.article_preview {
+
+  display: flex;
+  flex-direction: column;
+  max-width: 600px;
+  min-width: 250px;
+  padding: $padding 0;
+  box-sizing: border-box;
+  color: $color;
+  border-bottom: 1px solid $color3;
+
+  a {
+    color: $color;
+    text-decoration: none;
+  }
+
+  .title, .lead, .cover {
+    margin-bottom: $margin;
+    font-family: $family_arimo;
+  }
+
+  .title {
+    font-size: 17px;
+    line-height: 22px;
+    font-weight: $font-weight-bold;
+
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+
+    .title__avatar {
+
+      margin-right: $margin;
+
+      img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+      }
+
+    }
+  }
+
+  .lead {
+    font-size: 13px;
+    letter-spacing: 1px;
+    line-height: 17px;
+    max-height: 51px;
+    overflow: hidden;
+  }
+
+  .cover {
+    width: 100%;
+
+    img {
+      width: 100%;
+      height: 100px;
+      object-fit: cover;
+    }
+  }
+
+  .bottom {
+    display: flex;
+    flex-direction: row;
+    font-family: $family-open-sans;
+    font-size: 10px;
+    letter-spacing: 1px;
+    align-items: center;
+    justify-content: space-between;
+
+    .owner {
+      font-weight: $font-weight-bold;
+      flex-grow: 1;
+    }
+
+    .views {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      svg {
+        width: 15px;
+        height: 15px;
+        stroke: $color;
+        fill: transparent;
+        stroke-width: 4px;
+        margin-right: 5px;
+      }
+    }
+
+    .delete {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: row;
+      justify-content: flex-end;
+      align-items: center;
+      font-size: 9px;
+      text-transform: uppercase;
+      cursor: pointer;
+
+      svg {
+        width: 7px;
+        height: 7px;
+        fill: $color;
+        margin-left: 5px;
+      }
+    }
+
+    div {
+      margin-left: 5px;
+    }
+    div:first-child {
+      margin: 0;
+    }
+
+  }
+}

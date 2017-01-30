@@ -1,0 +1,22 @@
+@import "../contstants";
+@import "../mixins";
+
+.login_block {
+  display: inline-block;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+
+
+  div {
+    cursor: pointer;
+    padding: 15px;
+    svg {
+      width: 25px;
+      height: 25px;
+      fill: #FFFFFF;
+
+    }
+  }
+}

@@ -28,3 +28,95 @@
   -moz-box-shadow: $hshift $vshift $radius 0px $color;
   box-shadow: $hshift $vshift $radius 0px $color;
 }
+@mixin placeholder ($font, $size, $weight, $color) {
+  ::-webkit-input-placeholder {font-family: $font; color:$color!important; font-weight: $weight; font-size: $size}
+  ::-moz-placeholder          {font-family: $font; color:$color!important; font-weight: $weight; font-size: $size}
+  :-moz-placeholder           {font-family: $font; color:$color!important; font-weight: $weight; font-size: $size}
+  :-ms-input-placeholder      {font-family: $font; color:$color!important; font-weight: $weight; font-size: $size}
+}
+
+@mixin box_shadow($radius, $color: rgba(0, 0, 0, 0.5)) {
+  -webkit-box-shadow: 0px 0px $radius 0px $color;
+  -moz-box-shadow: 0px 0px $radius 0px $color;
+  box-shadow: 0px 0px $radius 0px $color;
+}
+
+@mixin input-range-track ($bg-color, $width, $height, $border, $border-radius) {
+
+  -webkit-appearance: none;
+
+  &::-webkit-slider-runnable-track {
+    -webkit-appearance: none;
+    background-color: $bg-color;
+    width: $width;
+    height: $height;
+    border: $border;
+    border-radius: $border-radius;
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  &:focus::-webkit-slider-runnable-track {
+    background-color: $bg-color;
+  }
+
+  &::-moz-range-track {
+    background-color: $bg-color;
+    width: $width;
+    height: $height;
+    border: $border;
+    border-radius: $border-radius;
+  }
+
+  &:-moz-focusring {
+    outline: none;
+  }
+
+  &:focus::-moz-range-track {
+    background-color: $bg-color;
+  }
+
+  &::-ms-track {
+    background-color: $bg-color;
+    width: $width;
+    height: $height;
+    border: $border;
+    border-radius: $border-radius;
+  }
+
+}
+
+@mixin input-range-thumb ($bg-color, $width, $height, $border-radius, $chrome-margin-top) {
+  -webkit-appearance: none;
+
+  &::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    margin-top: $chrome-margin-top;
+    border: none;
+    background: $bg-color;
+    //background-color: $bg-color;
+    width: $width;
+    height: $height;
+    @include border_radius($border-radius);
+  }
+
+  &::-moz-range-thumb {
+    border: none;
+    background-color: $bg-color;
+    width: $width;
+    height: $height;
+    @include border_radius($border-radius);
+  }
+
+  &::-ms-thumb {
+    background-color: $bg-color;
+    width: $width;
+    height: $height;
+    @include border_radius($border-radius);
+  }
+
+
+
+}
