@@ -47,6 +47,7 @@ export namespace Captions {
         dialog_participants: 'Участники диалога',
         choose: 'Выбрать',
         help_dialogue: 'Добавьте реплики, нажав на "+" в панели инструментов',
+        help_url_modal: 'Введите ссылку',
     };
 
     export const profile = {

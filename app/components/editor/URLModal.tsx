@@ -60,7 +60,7 @@ export default class URLModal extends React.Component<{onURL?: (url: string) => 
                     </form>
                     {this.state.isError ?
                     <div className="url_modal__error">{Captions.editor.error_embed_url}</div>:
-                    <div className="url_modal__help">URL</div>
+                    <div className="url_modal__help">{Captions.editor.help_url_modal}</div>
                     }
                 </div>
                 <div className="url_modal__tools">
