@@ -1,6 +1,12 @@
 import * as React from 'react';
+import {
+    PopupPanelAction, OPEN_POPUP, BACK_POPUP, REPLACE_POPUP,
+    CLOSE_POPUP
+} from "../../actions/shared/PopupPanelAction";
+
 
 import '../../styles/shared/content_editable.scss';
+import TextFormatPopup from "../editor/TextFormatPopup";
 
 type ElementType = 'inline' | 'p' | 'div' | 'ul' | 'ol';
 type AlignContent = 'left' | 'center' | 'right';
@@ -21,11 +27,20 @@ interface ContentEditableProps {
     onFocus?: () => any
     onBlur?: () => any
     onKeyDown?: (e: KeyboardEvent) => any
+    enableTextFormat?: boolean
+}
+
+interface ISelection {
+    selection?: Selection
+    range?: Range
 }
 
 interface ContentEditableState {
-    content: string
-    contentText: string
+    content?: string
+    contentText?: string
+    textFormatMode?: boolean
+    selectionState?: ISelection | null
+    textFormatPopupId?: string
 }
 
 export default class ContentEditable extends React.Component<ContentEditableProps, ContentEditableState> {
@@ -37,7 +52,12 @@ export default class ContentEditable extends React.Component<ContentEditableProp
     };
     constructor(props: any) {
         super(props);
-        this.state = {content: '', contentText: ''};
+        this.state = {
+            content: '',
+            contentText: '',
+            textFormatMode: false,
+            textFormatPopupId: null
+        };
     }
     static defaultProps = {
         id: 'contentEditable' + Math.random().toString().substr(2, 7),
@@ -49,7 +69,8 @@ export default class ContentEditable extends React.Component<ContentEditableProp
         elementType: 'p',
         alignContent: 'left',
         focusOnMount: false,
-        forceUpdateContent: false
+        forceUpdateContent: false,
+        enableTextFormat: false
     };
     private getElementEmptyContentByType () {
         switch (this.props.elementType) {
@@ -133,7 +154,10 @@ export default class ContentEditable extends React.Component<ContentEditableProp
         this.props.onFocus && this.props.onFocus();
     }
     handleBlur() {
-        this.props.onBlur && this.props.onBlur();
+        if (this.state.textFormatPopupId) {
+            PopupPanelAction.do(CLOSE_POPUP, {id: this.state.textFormatPopupId});
+            this.state.textFormatPopupId = null;
+        }
     }
     handlePaste(e: any) {
         let content;
@@ -150,6 +174,34 @@ export default class ContentEditable extends React.Component<ContentEditableProp
         }
         this.props.onKeyDown && this.props.onKeyDown(e);
     }
+    private restoreSelection() {
+        if (this.state.selectionState) {
+            let selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(this.state.selectionState.range);
+        }
+    }
+    handleSelect(e: Event) {
+        if (!this.props.enableTextFormat) return;
+        let selection = window.getSelection();
+        if (!selection.isCollapsed) {
+            console.log('SELECTION', this.state);
+            let content = <TextFormatPopup
+                isBold={document.queryCommandState("bold")}
+                isItalic={document.queryCommandState("italic")}
+                onBold={() => {document.execCommand('bold')}}
+                onItalic={() => {document.execCommand('italic')}}
+                onURL={() => {
+                    console.log('OPEN MODAL WITH URL');
+                }}
+                onClose={() => {
+                    PopupPanelAction.do(CLOSE_POPUP, {id: 'text_formatting'});
+                }}/>;
+            PopupPanelAction.do(OPEN_POPUP, {content: content, id: 'text_formatting'});
+        } else {
+            PopupPanelAction.do(CLOSE_POPUP, {id: 'text_formatting'});
+        }
+    }
     componentDidMount() {
         this.setState(this.extractContent(), () => {
             this.updateEmptyState();
@@ -159,6 +211,9 @@ export default class ContentEditable extends React.Component<ContentEditableProp
                 this.refs.editableElement.focus();
             }, 0)
         }
+    }
+    componentWillUnmount() {
+        PopupPanelAction.do(CLOSE_POPUP, {id: 'text_formatting'});
     }
 
     shouldComponentUpdate(nextProps: any, nextState: any) {
@@ -184,6 +239,7 @@ export default class ContentEditable extends React.Component<ContentEditableProp
                  onFocus={this.handleFocus.bind(this)}
                  onBlur={this.handleBlur.bind(this)}
                  onKeyDown={this.handleKeyDown.bind(this)}
+                 onSelect={this.handleSelect.bind(this)}
                  dangerouslySetInnerHTML={{__html: this.props.content || this.getElementEmptyContentByType()}}>
             </div>
         )

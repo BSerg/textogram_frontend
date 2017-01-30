@@ -45,7 +45,6 @@ export default class TextContentBlock extends React.Component<ITextContentBlockP
     }
 
     handleChange(content: string, contentText: string) {
-        console.log(content, contentText);
         this.state.content.value = toMarkdown(content);
         let isValid = this.isValid(this.state.content);
         if (!isValid && isValid != this.state.isValid) {
@@ -69,6 +68,7 @@ export default class TextContentBlock extends React.Component<ITextContentBlockP
                                  onChange={this.handleChange.bind(this)}
                                  onChangeDelay={0}
                                  content={marked(this.state.content.value)}
+                                 enableTextFormat={true}
                                  placeholder={Captions.editor.enter_text}/>
             </BaseContentBlock>
         )
