@@ -6,6 +6,7 @@ import * as moment from 'moment';
 import {Captions} from '../../constants';
 import '../../styles/shared/article_preview.scss';
 const ViewsIcon = require('babel!svg-react!../../assets/images/views_icon.svg?name=ViewsIcon');
+const LockIcon = require('babel!svg-react!../../assets/images/lock.svg?name=LockIcon');
 const CloseIcon = require('babel!svg-react!../../assets/images/close.svg?name=CloseIcon');
 
 
@@ -89,7 +90,10 @@ class ArticlePreviewClass extends React.Component<IArticlePreviewPropsInterface,
                         </div></Link> : null
                     }
                     <div>{date}</div>
-                    <div className="views"><ViewsIcon /> {views}</div>
+                    {
+                        this.props.item.is_draft ? null : (<div className="views">{ this.props.item.link_access ? <LockIcon/> : <ViewsIcon />} {views}</div>)
+                    }
+
                     {
                         this.props.item.is_draft ? (
                         <div className="delete" onClick={this.deleteArticle.bind(this)}><span>{Captions.management.draftDelete}</span> <CloseIcon /></div>) :
