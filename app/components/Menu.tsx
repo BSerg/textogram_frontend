@@ -1,5 +1,6 @@
 import * as React from 'react';
 import {withRouter} from 'react-router';
+import {api} from '../api';
 
 import {MenuAction, TOGGLE} from '../actions/MenuAction';
 import {UserAction, GET_ME, LOGIN, LOGOUT, SAVE_USER} from '../actions/user/UserAction';
@@ -173,6 +174,12 @@ class UserMenu extends React.Component<IUserMenuProps, any> {
         MenuAction.do(TOGGLE, false);
     }
 
+    createArticle() {
+        api.post('/articles/editor/').then((response: any) => {
+            this.props.router.push('/articles/' + response.data.id + '/edit/');
+        }).catch((error) => {});
+    }
+
     logout(e: any) {
         e.stopPropagation();
         UserAction.do(LOGOUT, null);
@@ -201,7 +208,7 @@ class UserMenu extends React.Component<IUserMenuProps, any> {
                 <NotificationBlockWithRouter />
                 <div className="menu__links">
                     <div className="menu__link" onClick={this.handleUrlClick.bind(this, '/manage/')}>{ Captions.main_menu.manage_profile }</div>
-                    <div className="menu__link" onClick={this.handleUrlClick.bind(this, '/articles/new/')}>{ Captions.main_menu.create_article }</div>
+                    <div className="menu__link" onClick={this.createArticle.bind(this)}>{ Captions.main_menu.create_article }</div>
                     <div className="menu__link" onClick={this.handleUrlClick.bind(this, '/drafts/')}>{ Captions.main_menu.drafts }</div>
                 </div>
             </div>)

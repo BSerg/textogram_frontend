@@ -7,7 +7,8 @@ export default class Index extends React.Component<any, any> {
         super();
         this.state = {
             authenticated: !!localStorage.getItem('authToken')
-        }
+        };
+        this.redirectToProfile = this.redirectToProfile.bind(this);
     }
 
     refs: {
@@ -31,13 +32,13 @@ export default class Index extends React.Component<any, any> {
     }
 
     componentDidMount() {
-        UserAction.onChange(GET_ME, this.redirectToProfile.bind(this));
-        UserAction.onChange(LOGIN, this.redirectToProfile.bind(this));
+        UserAction.onChange(GET_ME, this.redirectToProfile);
+        UserAction.onChange(LOGIN, this.redirectToProfile);
     }
 
     componentWillUnmount() {
-        UserAction.unbind(GET_ME, this.redirectToProfile.bind(this));
-        UserAction.unbind(LOGIN, this.redirectToProfile.bind(this));
+        UserAction.unbind(GET_ME, this.redirectToProfile);
+        UserAction.unbind(LOGIN, this.redirectToProfile);
     }
 
     render() {
