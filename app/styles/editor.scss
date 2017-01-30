@@ -9,12 +9,15 @@
 }
 
 .add_content_help {
-  color: $color3;
-  letter-spacing: 1px;
-  text-align: center;
   padding: $padding;
   margin-top: $margin;
   margin-bottom: 50px;
+  font-family: $family_open_sans;
+  font-size: 14px;
+  line-height: 20px;
+  text-align: center;
+  color: $color3;
+  letter-spacing: 1px;
 }
 
 .editor__wrapper .base_content_block:last-child {

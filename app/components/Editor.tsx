@@ -278,7 +278,7 @@ export default class Editor extends React.Component<any, IEditorState> {
                                               ]}/> : null
                             ,
                             <div key="add_content_help" className="add_content_help">
-                                {!this.state.article.content.blocks.length ?
+                                {!this.state.article.content.blocks.length || !this.state.article.content.blocks.length ?
                                     Captions.editor.add_content_help : null
                                 }
                             </div>,

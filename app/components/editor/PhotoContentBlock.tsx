@@ -10,6 +10,7 @@ import {PopupPanelAction, OPEN_POPUP} from "../../actions/shared/PopupPanelActio
 import {UploadImageAction, UPLOAD_IMAGE} from "../../actions/editor/UploadImageAction";
 import "../../styles/editor/photo_content_block.scss";
 import ProgressBar from "../shared/ProgressBar";
+import Sortable = require('sortablejs');
 
 const AddButton = require('babel!svg-react!../../assets/images/redactor_icon_popup_add.svg?name=AddButton');
 const DeleteButton = require('babel!svg-react!../../assets/images/close.svg?name=DeleteButton');
@@ -178,7 +179,8 @@ export class PhotoModalContent extends React.Component<IPhotoModalContentProps, 
 
 export default class PhotoContentBlock extends React.Component<IPhotoContentBlockProps, IPhotoContentBlockState> {
     refs: {
-        inputUpload: HTMLInputElement
+        inputUpload: HTMLInputElement,
+        photosContainer: HTMLDivElement
     };
     constructor(props: any) {
         super(props);
@@ -206,6 +208,12 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
         let store = ContentBlockAction.getStore();
         this.setState({isActive: store.id == this.state.content.id}, () => {
             if (this.state.isActive) {
+                let sortable = new Sortable(this.refs.photosContainer, {
+                    sort: true,
+                    delay: 100,
+                    animation: 150,
+                });
+                console.log(sortable);
                 PopupPanelAction.do(OPEN_POPUP, {content: this.getPopupContent()});
             }
         });
@@ -308,22 +316,23 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
                               className={className}
                               onClick={this.handleFocus.bind(this)}
                               disableDefaultPopup={true}>
-                {this.state.content.photos.length ?
-                    this.state.content.photos.map((photo: IPhoto, index: number) => {
-                        let photoStyle = {};
-                        if (photo.id == null) {
-                            photoStyle = {filter: 'grayscale(1)'}
-                        }
-                        return <Photo key={'photo' + photo.id}
-                                      className={'photo' + index}
-                                      style={photoStyle}
-                                      content={photo}
-                                      onDelete={this.deletePhoto.bind(this)}
-                                      onOpenModal={this.openModal.bind(this)}/>
-                    }) :
-                    <div className="content_block_photo__empty_label">{Captions.editor.add_photo_help}</div>
-                }
-
+                <div ref="photosContainer">
+                    {this.state.content.photos.length ?
+                        this.state.content.photos.map((photo: IPhoto, index: number) => {
+                            let photoStyle = {};
+                            if (photo.id == null) {
+                                photoStyle = {filter: 'grayscale(1)'}
+                            }
+                            return <Photo key={'photo' + photo.id}
+                                          className={'photo' + index}
+                                          style={photoStyle}
+                                          content={photo}
+                                          onDelete={this.deletePhoto.bind(this)}
+                                          onOpenModal={this.openModal.bind(this)}/>
+                        }) :
+                        <div className="content_block_photo__empty_label">{Captions.editor.add_photo_help}</div>
+                    }
+                </div>
                 <div style={{clear: "both"}}/>
                 <ProgressBar className={this.state.loadingImage ? 'active' : ''} label={Captions.editor.loading_image}/>
                 <input id={"inputUpload" + this.props.content.id}
