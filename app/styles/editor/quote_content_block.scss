@@ -14,10 +14,24 @@ $photo_size: 70px;
   line-height: 26px;
   //padding-top: $photo_size + $padding;
 
+  b, strong {
+    font-weight: $font-weight-bold;
+  }
+
+  i, em {
+    font-style: italic;
+  }
+
+  a, a:visited {
+    color: $color;
+    font-weight: $font-weight-bold;
+    text-decoration: underline;
+  }
+
   .content_editable {
     width: 100%;
 
-    &:before {
+    p:first-child:before {
       content: '';
       display: inline-block;
       background: url('../../assets/images/pub_quote.svg') no-repeat center center;

@@ -157,6 +157,7 @@ export default class ColumnContentBlock extends React.Component<IColumnContentBl
                                  onChange={this.handleChange.bind(this)}
                                  onChangeDelay={1000}
                                  content={marked(this.state.content.value)}
+                                 enableTextFormat={true}
                                  placeholder={Captions.editor.enter_text}/>
                 <div style={{clear: "both"}}/>
                 <ProgressBar className={this.state.loadingImage ? 'active' : ''} label={Captions.editor.loading_image}/>

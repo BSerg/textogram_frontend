@@ -7,6 +7,8 @@ import {ContentAction, UPDATE_CONTENT, IContentData} from "../../actions/editor/
 import "../../styles/editor/quote_content_block.scss";
 import {UploadImageAction, UPLOAD_IMAGE} from "../../actions/editor/UploadImageAction";
 import ProgressBar from "../shared/ProgressBar";
+import * as toMarkdown from 'to-markdown';
+import * as marked from 'marked';
 
 interface IQuoteContent {
     id: string
@@ -60,7 +62,7 @@ export default class QuoteContentBlock extends React.Component<IQuoteContentBloc
 
     handleChange(content: string, contentText: string) {
         console.log(content, contentText);
-        this.state.content.value = contentText;
+        this.state.content.value = toMarkdown(content);
         this.setState({content: this.state.content, doNotUpdateComponent: true}, () => {
             ContentAction.do(UPDATE_CONTENT, {contentBlock: this.state.content});
         });
@@ -169,13 +171,13 @@ export default class QuoteContentBlock extends React.Component<IQuoteContentBloc
                     ] :
                     <div className="content_block_quote__empty_photo" onClick={this.openFileDialog.bind(this)}/>
                 }
-                <ContentEditable elementType="inline"
-                                 allowLineBreak={false}
+                <ContentEditable allowLineBreak={false}
                                  onFocus={this.handleFocus.bind(this)}
                                  onBlur={this.handleBlur.bind(this)}
                                  onChange={this.handleChange.bind(this)}
                                  onChangeDelay={1000}
-                                 content={this.state.content.value}
+                                 content={marked(this.state.content.value)}
+                                 enableTextFormat={true}
                                  placeholder={Captions.editor.enter_quote}/>
                 <ProgressBar className={this.state.loadingImage ? 'active' : ''} label={Captions.editor.loading_image}/>
                 <input ref="inputUpload"

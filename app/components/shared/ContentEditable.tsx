@@ -197,13 +197,13 @@ export default class ContentEditable extends React.Component<ContentEditableProp
                     ModalAction.do(
                         OPEN_MODAL,
                         {content: <URLModal onURL={(url) => {
+                            ModalAction.do(CLOSE_MODAL, null);
                             window.setTimeout(() => {
-                                ModalAction.do(CLOSE_MODAL, null);
                                 let _selection = window.getSelection();
                                 _selection.removeAllRanges();
                                 _selection.addRange(range);
                                 document.execCommand('createLink', false, url);
-                            });
+                            }, 50);
                         }}/>}
                     );
                 }}

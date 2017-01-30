@@ -17,7 +17,16 @@
     }
   }
 
+  b, strong {
+    font-weight: $font-weight-bold;
+  }
+
+  i, em {
+    font-style: italic;
+  }
+
   a, a:visited {
+    color: $color;
     font-weight: $font-weight-bold;
     text-decoration: underline;
   }
