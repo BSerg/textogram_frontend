@@ -569,8 +569,7 @@ export default class ProfileManagement extends React.Component<any, IProfileMana
                     { this.state.userNameEdit ? (
                         <form onSubmit={this.userNameSubmit.bind(this)}>
                             <input className={ this.state.userNameError ? 'error': '' } type="text" value={this.state.userName} onChange={this.userNameChange.bind(this)} />
-                            <span onClick={this.userNameSave}><ConfirmIcon /></span>
-
+                            <span onClick={this.userNameSave.bind(this)}><ConfirmIcon /></span>
                         </form>
                     ) : (
                         <div>
