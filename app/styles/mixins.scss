@@ -28,6 +28,16 @@
   -moz-box-shadow: $hshift $vshift $radius 0px $color;
   box-shadow: $hshift $vshift $radius 0px $color;
 }
+
+@mixin no_select() {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
 @mixin placeholder ($font, $size, $weight, $color) {
   ::-webkit-input-placeholder {font-family: $font; color:$color!important; font-weight: $weight; font-size: $size}
   ::-moz-placeholder          {font-family: $font; color:$color!important; font-weight: $weight; font-size: $size}
