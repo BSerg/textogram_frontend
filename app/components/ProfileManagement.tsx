@@ -493,8 +493,6 @@ export default class ProfileManagement extends React.Component<any, IProfileMana
         let firstName = userNameArr[0];
 
         let lastName = userNameArr.length > 1 ? userNameArr.slice(1).join(' ') : '';
-        console.log(firstName);
-        console.log(lastName);
         UserAction.doAsync(UPDATE_USER, { first_name: firstName, last_name: lastName }).then(() => {
             this.setState({userNameEdit: false});
         })
@@ -537,7 +535,20 @@ export default class ProfileManagement extends React.Component<any, IProfileMana
 
     }
 
+    componentWillReceiveProps(nextProps: any) {
+        if (nextProps.location.query
+                && nextProps.location.query.show != this.props.location.query.show
+                && nextProps.location.query.show == 'notifications') {
+            this.setState({currentSection: 2});
+        }
+    }
+
     componentDidMount() {
+        if (this.props.location.query && this.props.location.query.show == 'notifications') {
+            this.setState({currentSection: 2});
+        }
+
+
         UserAction.onChange(GET_ME, this.checkUser);
         UserAction.onChange(LOGIN, this.checkUser);
         UserAction.onChange(LOGOUT, this.checkUser);

@@ -133,6 +133,10 @@ class NotificationBlock extends React.Component<any, any> {
         this.setState({ count: NotificationAction.getStore().count, last: NotificationAction.getStore().last });
     }
 
+    openNotifications() {
+        this.props.router.push('/manage/?show=notifications');
+    }
+
     componentDidMount() {
         this.checkNotifications();
         NotificationAction.onChange(CHECK, this.checkNotifications);
@@ -145,7 +149,7 @@ class NotificationBlock extends React.Component<any, any> {
     render() {
         if (!this.state.count || ! this.state.last) return null;
         return (
-            <div className="menu__notifications">
+            <div className="menu__notifications" onClick={this.openNotifications.bind(this)}>
                 <div className="menu__notifications_icon">
                     <NotificationIcon />
                     <div className="menu__notifications_count">{ this.state.count < 10 ? this.state.count : '9+'}</div>
