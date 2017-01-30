@@ -84,7 +84,9 @@ class ArticlePreviewClass extends React.Component<IArticlePreviewPropsInterface,
                 </Link>
                 <div className="bottom">
                     { (this.props.item.owner && !this.props.item.is_draft) ?
-                        <div className="owner">{this.props.item.owner.first_name + " " + this.props.item.owner.last_name}</div> : null
+                        <Link to={ "/profile/" + this.props.item.owner.id }><div className="owner">
+                            {this.props.item.owner.first_name + " " + this.props.item.owner.last_name}
+                        </div></Link> : null
                     }
                     <div>{date}</div>
                     <div className="views"><ViewsIcon /> {views}</div>
