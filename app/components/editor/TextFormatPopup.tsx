@@ -47,7 +47,11 @@ export default class TextFormatPopup extends React.Component<IProps, any> {
         });
     }
 
-    onURL() {}
+    onURL() {
+        this.setState({isURL: !this.state.isURL}, () => {
+            this.props.onURL && this.props.onURL();
+        });
+    }
 
     onClose() {
         this.props.onClose && this.props.onClose();
@@ -58,7 +62,10 @@ export default class TextFormatPopup extends React.Component<IProps, any> {
             <div className="text_format_popup">
                 <BoldIcon className={this.state.isBold ? 'active' : ''} onClick={this.onBold.bind(this)}/>
                 <ItalicIcon className={this.state.isItalic ? 'active' : ''} onClick={this.onItalics.bind(this)}/>
-                <LinkIcon className={this.state.isURL ? 'active' : ''} onClick={this.onURL.bind(this)}/>
+                {this.state.isURL ?
+                    <UnLinkIcon className="active" onClick={this.onURL.bind(this)}/> :
+                    <LinkIcon onClick={this.onURL.bind(this)}/>
+                }
                 <CloseIcon className="close" onClick={this.onClose.bind(this)}/>
             </div>
         )

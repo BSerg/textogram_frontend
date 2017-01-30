@@ -7,6 +7,8 @@ import {
 
 import '../../styles/shared/content_editable.scss';
 import TextFormatPopup from "../editor/TextFormatPopup";
+import {ModalAction, OPEN_MODAL, CLOSE_MODAL} from "../../actions/shared/ModalAction";
+import URLModal from "../editor/URLModal";
 
 type ElementType = 'inline' | 'p' | 'div' | 'ul' | 'ol';
 type AlignContent = 'left' | 'center' | 'right';
@@ -116,7 +118,6 @@ export default class ContentEditable extends React.Component<ContentEditableProp
             );
             if (elementsForExcluding.length) {
                 for (let i = 0; i < elementsForExcluding.length; i++) {
-                    console.log(elementsForExcluding[i]);
                     this.refs.editableElement.removeChild(elementsForExcluding[i]);
                 }
                 this.setCursorTo(this.refs.editableElement.lastChild);
@@ -185,14 +186,26 @@ export default class ContentEditable extends React.Component<ContentEditableProp
         if (!this.props.enableTextFormat) return;
         let selection = window.getSelection();
         if (!selection.isCollapsed) {
-            console.log('SELECTION', this.state);
+            let range = selection.getRangeAt(0);
             let content = <TextFormatPopup
                 isBold={document.queryCommandState("bold")}
                 isItalic={document.queryCommandState("italic")}
+                isURL={document.queryCommandState("CreateLink")}
                 onBold={() => {document.execCommand('bold')}}
                 onItalic={() => {document.execCommand('italic')}}
                 onURL={() => {
-                    console.log('OPEN MODAL WITH URL');
+                    ModalAction.do(
+                        OPEN_MODAL,
+                        {content: <URLModal onURL={(url) => {
+                            window.setTimeout(() => {
+                                ModalAction.do(CLOSE_MODAL, null);
+                                let _selection = window.getSelection();
+                                _selection.removeAllRanges();
+                                _selection.addRange(range);
+                                document.execCommand('createLink', false, url);
+                            });
+                        }}/>}
+                    );
                 }}
                 onClose={() => {
                     PopupPanelAction.do(CLOSE_POPUP, {id: 'text_formatting'});
