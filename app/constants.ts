@@ -46,10 +46,7 @@ export namespace Captions {
         loading_image: 'Загрузка изображения',
         dialog_participants: 'Участники диалога',
         choose: 'Выбрать',
-        help_dialogue: 'Добавьте реплики, нажав на "+" в панели инструментов'
-    }
-        loading: 'Загрузка...'
-
+        help_dialogue: 'Добавьте реплики, нажав на "+" в панели инструментов',
     };
 
     export const profile = {
