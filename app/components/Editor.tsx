@@ -153,7 +153,11 @@ export default class Editor extends React.Component<any, IEditorState> {
 
     componentDidMount() {
         api.get(`/articles/editor/${this.props.params.articleId}/`).then((response: any) => {
-            this.setState({article: response.data, autoSave: response.data.status == ArticleStatuses.DRAFT}, () => {
+            this.setState({
+                article: response.data,
+                autoSave: response.data.status == ArticleStatuses.DRAFT,
+                isValid: this.validateContent(response.data.content, Validation.ROOT)
+            }, () => {
                 this.resetContent(false);
             });
         }). catch((error) => {
@@ -275,9 +279,7 @@ export default class Editor extends React.Component<any, IEditorState> {
                                               blockPosition={this.state.article.content.blocks.length}
                                               isLast={true}
                                               items={[
-                                                  BlockContentTypes.TEXT,
                                                   BlockContentTypes.ADD,
-                                                  BlockContentTypes.PHOTO
                                               ]}/> : null
                             ,
                             <div key="add_content_help" className="add_content_help">

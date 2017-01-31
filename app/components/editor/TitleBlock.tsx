@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Captions, Constants} from '../../constants';
+import {Captions, Constants, Validation} from '../../constants';
 import ContentEditable from '../shared/ContentEditable';
 import {UploadImageAction, UPLOAD_IMAGE} from '../../actions/editor/UploadImageAction';
 import {ContentAction, UPDATE_TITLE_CONTENT, UPDATE_COVER_CONTENT} from '../../actions/editor/ContentAction';
@@ -9,6 +9,8 @@ import {TitleBlockAction, UPDATE_COVER_ACTION, UPDATE_TITLE_ACTION} from '../../
 import {api} from '../../api';
 
 import '../../styles/editor/title_block.scss';
+import {NotificationAction, SHOW_NOTIFICATION} from "../../actions/shared/NotificationAction";
+import {Validator} from "./utils";
 
 interface TitleBlockPropsInterface {
     title: string|null,
@@ -20,6 +22,7 @@ interface TitleBlockPropsInterface {
 interface TitleBlockStateInterface {
     title?: string|null,
     cover?: {id: number, image: string} | null,
+    isValid?: boolean
 }
 
 export default class TitleBlock extends React.Component<TitleBlockPropsInterface, TitleBlockStateInterface> {
@@ -27,7 +30,7 @@ export default class TitleBlock extends React.Component<TitleBlockPropsInterface
         super(props);
         this.state = {
             title: props.title,
-            cover: props.cover
+            cover: props.cover,
         }
     }
 
@@ -40,6 +43,18 @@ export default class TitleBlock extends React.Component<TitleBlockPropsInterface
         componentRootElement: HTMLElement
     };
 
+    isValid(title: string) {
+        return Validator.isValid(this.state, Validation.ROOT);
+    }
+
+    private updateValidState() {
+        if (!this.isValid(this.state.title) && !this.refs.componentRootElement.classList.contains('invalid')) {
+            this.refs.componentRootElement.classList.add('invalid');
+        } else if (this.isValid(this.state.title) && this.refs.componentRootElement.classList.contains('invalid')) {
+            this.refs.componentRootElement.classList.remove('invalid');
+        }
+    }
+
     openFileDialog() {
         this.refs.fileInput.click();
     }
@@ -47,6 +62,13 @@ export default class TitleBlock extends React.Component<TitleBlockPropsInterface
     handleTitle(content: string, contentText: string) {
         this.setState({title: contentText}, () => {
             ContentAction.do(UPDATE_TITLE_CONTENT, {articleId: this.props.articleSlug, autoSave: this.props.autoSave, title: this.state.title});
+            this.updateValidState();
+            if (!this.isValid(this.state.title)) {
+                NotificationAction.do(
+                    SHOW_NOTIFICATION,
+                    {content: Validation.ROOT.title.message}
+                );
+            }
         });
     }
 
@@ -74,6 +96,7 @@ export default class TitleBlock extends React.Component<TitleBlockPropsInterface
 
     componentDidMount() {
         document.addEventListener('scroll', this.handleScroll.bind(this));
+        this.updateValidState();
     }
 
     componentWillUnmount() {

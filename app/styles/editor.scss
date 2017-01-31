@@ -1,5 +1,15 @@
 @import "contstants";
 
+//.editor, .editor__wrapper {
+//  min-height: 100%;
+//  height: 100%;
+//}
+
+.editor__wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
 .title {
   $font-size: 32px;
   font-size: $font-size;
@@ -11,7 +21,7 @@
 .add_content_help {
   padding: $padding;
   margin-top: $margin;
-  margin-bottom: 50px;
+  //margin-bottom: 50px;
   font-family: $family_open_sans;
   font-size: 14px;
   line-height: 20px;
@@ -36,8 +46,10 @@
   font-size: 12px;
   font-weight: $font-weight-bold;
   z-index: 10;
+  margin: $margin;
 
   &.disabled {
-    color: $color5;
+    color: $color3;
+    background-color: $color5;
   }
 }

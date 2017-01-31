@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Captions, Constants, BlockContentTypes} from '../../constants';
+import {Captions, Constants, BlockContentTypes, Validation} from '../../constants';
 import ContentEditable from '../shared/ContentEditable';
 import BaseContentBlock from './BaseContentBlock';
 import {ContentBlockAction, ACTIVATE_CONTENT_BLOCK} from '../../actions/editor/ContentBlockAction';
@@ -10,12 +10,15 @@ import {IPhoto} from "../../actions/editor/PhotoContentBlockAction";
 import {UploadImageAction, UPLOAD_IMAGE} from "../../actions/editor/UploadImageAction";
 import '../../styles/editor/column_content_block.scss';
 import ProgressBar from "../shared/ProgressBar";
+import {Validator} from "./utils";
+import {NotificationAction, SHOW_NOTIFICATION} from "../../actions/shared/NotificationAction";
 
 interface IColumnContent {
     id: string
     type: BlockContentTypes
     image: null|IPhoto|{id: null, image: string}
     value: string
+    __meta?: any
 }
 
 interface IColumnContentBlockProps {
@@ -48,12 +51,32 @@ export default class ColumnContentBlock extends React.Component<IColumnContentBl
         inputUpload: HTMLInputElement
     };
 
+    updateValidationState() {
+        let validationState = this.isValid(this.state.content);
+        let el = document.getElementById(this.state.content.id);
+        if (!validationState.isValid && !el.classList.contains('invalid')) el.classList.add('invalid');
+        else if (validationState.isValid && el.classList.contains('invalid')) el.classList.remove('invalid');
+        return validationState;
+    }
+
+    private isValid(content: IColumnContent): any {
+        return Validator.validate(content, Validation.COLUMN);
+    }
+
     handleFocus() {
         ContentBlockAction.do(ACTIVATE_CONTENT_BLOCK, {id: this.props.content.id});
     }
 
     handleChange(content: string, contentText: string) {
         this.state.content.value = toMarkdown(content);
+        let validationState = this.updateValidationState();
+        if (!validationState.isValid) {
+            NotificationAction.do(
+                SHOW_NOTIFICATION,
+                {content: Object.values(validationState.messages).join(', ')}
+            );
+        }
+        this.state.content.__meta = {is_valid: validationState.isValid};
         this.setState({content: this.state.content}, () => {
             ContentAction.do(UPDATE_CONTENT, {contentBlock: this.state.content});
         });
@@ -71,7 +94,10 @@ export default class ColumnContentBlock extends React.Component<IColumnContentBl
     updateImage() {
         let file = this.refs.inputUpload.files[0];
         if (file.size > Constants.maxImageSize) {
-            alert(`Image size is more than ${Constants.maxImageSize/1024/1024}Mb`);
+            NotificationAction.do(
+                SHOW_NOTIFICATION,
+                {content: `Размер изображения не может превышать ${Constants.maxImageSize/1024/1024}Mb`}
+            );
             return;
         }
         let tempURL = window.URL.createObjectURL(file);
@@ -90,13 +116,20 @@ export default class ColumnContentBlock extends React.Component<IColumnContentBl
                     updateComponent: true,
                     uploadImageInProgress: false,
                     loadingImage: false
-                }, () => {ContentAction.do(UPDATE_CONTENT, {contentBlock: this.state.content});});
+                }, () => {
+                    ContentAction.do(UPDATE_CONTENT, {contentBlock: this.state.content});
+                    this.updateValidationState();
+                });
             }).catch((error) => {
                 this.setState({
                     updateComponent: true,
                     uploadImageInProgress: false,
                     loadingImage: false
-                })
+                });
+                NotificationAction.do(
+                    SHOW_NOTIFICATION,
+                    {content: `Ошибка при загрузке изображения`}
+                );
             })
         });
     }
@@ -123,6 +156,7 @@ export default class ColumnContentBlock extends React.Component<IColumnContentBl
 
     componentDidMount() {
         ContentBlockAction.onChange(ACTIVATE_CONTENT_BLOCK, this.handleActive);
+        this.updateValidationState();
     }
 
     componentWillUnmount() {
@@ -146,7 +180,7 @@ export default class ColumnContentBlock extends React.Component<IColumnContentBl
             }
         }
         return (
-            <BaseContentBlock id={this.props.content.id} className={className}>
+            <BaseContentBlock id={this.state.content.id} className={className}>
                 <div className="content_block_column__column content_block_column__column_left">
                     <div className={imageClassName}
                          style={imageStyle}
@@ -155,7 +189,7 @@ export default class ColumnContentBlock extends React.Component<IColumnContentBl
                 <ContentEditable className="content_block_column__column content_block_column__column_right"
                                  onFocus={this.handleFocus.bind(this)}
                                  onChange={this.handleChange.bind(this)}
-                                 onChangeDelay={1000}
+                                 onChangeDelay={0}
                                  content={marked(this.state.content.value)}
                                  enableTextFormat={true}
                                  placeholder={Captions.editor.enter_text}/>

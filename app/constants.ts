@@ -176,36 +176,36 @@ export namespace Embed {
 export namespace Validation {
     // isRequired means not null or empty value
     export const ROOT = {
-        title: {isRequired: true, maxLength: 150},
+        title: {isRequired: true, maxLength: 150, message: `Заголовок обязателен и ограничен 150 символами`},
     };
 
     export const TEXT = {
-        value: {maxLength: 3000}
+        value: {maxLength: 3000, message: `Текст ограничен 3000 символами`}
     };
 
     export const HEADER = {
-        value: {maxLength: 100}
+        value: {maxLength: 100, message: `Заголовок ограничен 150 символами`}
     };
 
     export const LEAD = {
-        value: {maxLength: 400}
+        value: {maxLength: 400, message: `Заголовок ограничен 150 символами`}
     };
 
     export const PHRASE = {
-        value: {maxLength: 200}
+        value: {maxLength: 200, message: `Заголовок ограничен 150 символами`}
     };
 
     export const QUOTE = {
-        value: {maxLength: 500}
+        value: {maxLength: 500, message: `Текст цитаты ограничен 500 символами`}
     };
 
     export const COLUMN = {
-        image: {isRequired: true},
-        value: {maxLength: 300}
+        image: {isRequired: true, message: `Добавьте изображение`},
+        value: {maxLength: 300, message: `Заголовок ограничен 150 символами`}
     };
 
     export const LIST = {
-        value: {maxLength: 3000}
+        value: {maxLength: 3000, message: `Заголовок ограничен 150 символами`}
     };
 
     export const DIALOGUE = {

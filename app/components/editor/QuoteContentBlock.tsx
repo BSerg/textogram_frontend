@@ -1,20 +1,23 @@
 import * as React from "react";
-import {Captions, BlockContentTypes, Constants} from "../../constants";
+import {Captions, BlockContentTypes, Constants, Validation} from "../../constants";
 import ContentEditable from "../shared/ContentEditable";
 import BaseContentBlock from "./BaseContentBlock";
 import {ContentBlockAction, ACTIVATE_CONTENT_BLOCK} from "../../actions/editor/ContentBlockAction";
 import {ContentAction, UPDATE_CONTENT, IContentData} from "../../actions/editor/ContentAction";
-import "../../styles/editor/quote_content_block.scss";
 import {UploadImageAction, UPLOAD_IMAGE} from "../../actions/editor/UploadImageAction";
 import ProgressBar from "../shared/ProgressBar";
-import * as toMarkdown from 'to-markdown';
-import * as marked from 'marked';
+import {Validator} from "./utils";
+import {SHOW_NOTIFICATION, NotificationAction} from "../../actions/shared/NotificationAction";
+import * as toMarkdown from "to-markdown";
+import * as marked from "marked";
+import "../../styles/editor/quote_content_block.scss";
 
 interface IQuoteContent {
     id: string
     type: BlockContentTypes
     value: string
     image: {id: number, image: string} | null
+    __meta?: any
 }
 
 interface IQuoteContentBlockProps {
@@ -33,7 +36,7 @@ interface IQuoteContentBlockState {
 
 export default class QuoteContentBlock extends React.Component<IQuoteContentBlockProps, IQuoteContentBlockState> {
     refs: {
-        inputUpload: HTMLInputElement
+        inputUpload: HTMLInputElement,
     };
 
     constructor(props: any) {
@@ -41,9 +44,17 @@ export default class QuoteContentBlock extends React.Component<IQuoteContentBloc
         this.state = {
             content: this.props.content as IQuoteContent,
             menuOpened: false,
-            loadingImage: false
+            loadingImage: false,
         };
         this.handleActivate = this.handleActivate.bind(this);
+    }
+
+    private isValid(content: IQuoteContent): boolean {
+        return Validator.isValid(content, Validation.QUOTE);
+    }
+
+    private validate(content: IQuoteContent): any {
+        return Validator.validate(content, Validation.QUOTE);
     }
 
     handleActivate() {
@@ -60,11 +71,26 @@ export default class QuoteContentBlock extends React.Component<IQuoteContentBloc
         this.closePhotoMenu();
     }
 
+    updateValidationState() {
+        let el = document.getElementById(this.state.content.id);
+        if (!this.isValid(this.state.content) && !el.classList.contains('invalid')) el.classList.add('invalid');
+        else if (this.isValid(this.state.content) && el.classList.contains('invalid')) el.classList.remove('invalid');
+    }
+
     handleChange(content: string, contentText: string) {
         console.log(content, contentText);
         this.state.content.value = toMarkdown(content);
+        let validationInfo = this.validate(this.state.content);
+        if (!validationInfo.isValid) {
+            NotificationAction.do(
+                SHOW_NOTIFICATION,
+                {content: Object.values(validationInfo.messages)}
+            );
+        }
+        this.state.content.__meta = {is_valid: validationInfo.isValid};
         this.setState({content: this.state.content, doNotUpdateComponent: true}, () => {
             ContentAction.do(UPDATE_CONTENT, {contentBlock: this.state.content});
+            this.updateValidationState();
         });
     }
 
@@ -128,6 +154,7 @@ export default class QuoteContentBlock extends React.Component<IQuoteContentBloc
 
     componentDidMount() {
         ContentBlockAction.onChange(ACTIVATE_CONTENT_BLOCK, this.handleActivate);
+        this.updateValidationState();
     }
 
     componentWillUnmount() {
@@ -175,7 +202,7 @@ export default class QuoteContentBlock extends React.Component<IQuoteContentBloc
                                  onFocus={this.handleFocus.bind(this)}
                                  onBlur={this.handleBlur.bind(this)}
                                  onChange={this.handleChange.bind(this)}
-                                 onChangeDelay={1000}
+                                 onChangeDelay={0}
                                  content={marked(this.state.content.value)}
                                  enableTextFormat={true}
                                  placeholder={Captions.editor.enter_quote}/>
