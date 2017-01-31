@@ -196,6 +196,23 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
         maxPhotoCount: 6
     };
 
+    initSortable() {
+        let sortable = new Sortable(this.refs.photosContainer, {
+            sort: true,
+            delay: 0,
+            animation: 150,
+        });
+        sortable.options.onEnd = (e: any) => {
+            console.log(e, this.state);
+            let movedPhoto = this.state.content.photos.splice(e.oldIndex, 1)[0];
+            this.state.content.photos.splice(e.newIndex, 0, movedPhoto);
+            this.setState({content: this.state.content}, () => {
+                ContentAction.do(UPDATE_CONTENT, {contentBlock: this.state.content});
+            });
+        }
+
+    }
+
     handleFocus() {
         ContentBlockAction.do(ACTIVATE_CONTENT_BLOCK, {id: this.props.content.id});
     }
@@ -208,12 +225,7 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
         let store = ContentBlockAction.getStore();
         this.setState({isActive: store.id == this.state.content.id}, () => {
             if (this.state.isActive) {
-                let sortable = new Sortable(this.refs.photosContainer, {
-                    sort: true,
-                    delay: 100,
-                    animation: 150,
-                });
-                console.log(sortable);
+                this.initSortable();
                 PopupPanelAction.do(OPEN_POPUP, {content: this.getPopupContent()});
             }
         });
