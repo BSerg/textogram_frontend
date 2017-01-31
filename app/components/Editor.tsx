@@ -34,6 +34,7 @@ import {
     ContentBlockAction, ACTIVATE_CONTENT_BLOCK,
     DEACTIVATE_CONTENT_BLOCK
 } from "../actions/editor/ContentBlockAction";
+import {PopupPanelAction, CLOSE_POPUP} from "../actions/shared/PopupPanelAction";
 
 
 interface IEditorState {
@@ -188,6 +189,7 @@ export default class Editor extends React.Component<any, IEditorState> {
             this.forceUpdateContent
         );
         ContentBlockAction.unbind([ACTIVATE_CONTENT_BLOCK, DEACTIVATE_CONTENT_BLOCK], this.handleActiveBlock);
+        PopupPanelAction.do(CLOSE_POPUP, null);
     }
 
     render() {
