@@ -110,6 +110,10 @@
       display: block;
     }
 
+    .profile__link_input {
+      display: none;
+    }
+
     .link_add_text {
       padding: $padding $padding $padding/2 $padding;
       color: $color3;
@@ -404,6 +408,7 @@
     text-align: center;
   }
 
+
   .link_form {
     //position: absolute;
     //top: 50%;
@@ -505,10 +510,33 @@
     }
 
     .profile__section {
+
+      .profile__notification {
+        min-height: 120px;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: space-around;
+        margin: $margin 15%;
+
+
+        .time {
+          font-size: 11px;
+          letter-spacing: 1px;
+        }
+
+        .text {
+          font-size: 15px;
+          line-height: 17px;
+          letter-spacing: 1px;
+        }
+      }
+
       .profile__auth_link, .profile__additional_links {
         display: flex;
         flex-direction: row;
         justify-content: flex-start;
+        padding-left: 40px;
 
         .link_text {
           font-size: $font-size-small;
@@ -539,10 +567,64 @@
 
       .profile__auth_link {
         align-items: center;
+        height: 100px;
+        margin-bottom: $margin;
       }
       .profile__additional_links {
         align-items: flex-start;
       }
+
+      .profile__link_input.active {
+        display: flex;
+        text-align: center;
+        flex-direction: row;
+        justify-content: center;
+        align-items: flex-end;
+        height: 100px;
+        position: relative;
+        padding-bottom: $padding/2;
+
+        form {
+          width: 100%;
+        }
+        form input {
+          width: 80%;
+          text-align: center;
+          border: none;
+          padding: 0;
+          margin: 0;
+          outline: none;
+          font-size: 15px;
+          line-height: 25px;
+
+          &.error {
+            border-bottom: 1px solid $color-accent;
+          }
+        }
+
+        .close {
+          position: absolute;
+          top: $margin;
+          right: $margin;
+          cursor: pointer;
+          svg {
+            fill: $color3;
+          }
+        }
+
+
+
+      }
+
+      .profile__add_link {
+        display: none;
+
+        &.active, &.phone {
+          display: flex;
+        }
+      }
+
+
     }
 
     .profile__subscriptions {
@@ -568,6 +650,7 @@
         }
       }
     }
+
   }
 
 

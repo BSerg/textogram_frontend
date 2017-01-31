@@ -92,6 +92,7 @@ export namespace Captions {
 
         linkAddPlaceholder: 'Вставьте ссылку',
         linkAddText: 'Ссылка на профиль соцсети или сайт',
+        linkAddTextDesktop: "Вставьте ссылку на профиль в соцсети и нажмите Enter",
         linkAddError: 'Некорректная ссылка',
 
         drafts: "Черновики",
@@ -121,6 +122,7 @@ export namespace Captions {
 export namespace Constants {
     export const maxImageSize = 5 * 1024 * 1024;
     export const notificationIntervalTime = 20000;
+    export const desktopWidth = 1024;
 }
 
 export enum BlockContentTypes {

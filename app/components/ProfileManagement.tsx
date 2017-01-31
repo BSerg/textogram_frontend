@@ -4,6 +4,8 @@ import {Captions, Constants} from '../constants';
 
 import {UserAction, SAVE_USER, GET_ME, LOGIN, LOGOUT, UPDATE_USER} from '../actions/user/UserAction';
 import {NotificationAction, CHECK} from '../actions/NotificationAction';
+import {MediaQueryAction} from '../actions/MediaQueryAction';
+
 import {ModalAction, OPEN_MODAL, CLOSE_MODAL} from '../actions/shared/ModalAction';
 import AvatarEditor from './shared/AvatarEditor';
 import Registration from './Registration';
@@ -260,8 +262,10 @@ class AddLinkModal extends React.Component<any, any> {
 }
 
 interface ISectionLinksStateInterface {
-    links: any[];
+    links?: any[];
     authLink?: any;
+    linkInputActive?: boolean;
+    linkInputError?: boolean;
 }
 
 class SocialLinks extends React.Component<ISectionPropsInterface, ISectionLinksStateInterface> {
@@ -269,7 +273,7 @@ class SocialLinks extends React.Component<ISectionPropsInterface, ISectionLinksS
 
     constructor(props: any) {
         super(props);
-        this.state = {links: [], authLink: null};
+        this.state = {links: [], authLink: null, linkInputActive: false, linkInputError: false};
     }
 
     setLinks(props: any) {
@@ -322,18 +326,11 @@ class SocialLinks extends React.Component<ISectionPropsInterface, ISectionLinksS
                 representationName = link.url;
             }
         }
-        representationName = representationName.replace('/', '');
+        representationName = representationName.replace(/\/$/, "");
         link.representationName = representationName;
         return link;
     }
 
-    componentWillReceiveProps(nextProps: any) {
-        this.setLinks(nextProps);
-    }
-
-    componentDidMount() {
-        this.setLinks(this.props);
-    }
 
     removeLink(id: number) {
         api.delete('/social_links/' + id + '/').then((response) => {
@@ -360,7 +357,53 @@ class SocialLinks extends React.Component<ISectionPropsInterface, ISectionLinksS
     }
 
     addLink() {
-        ModalAction.do(OPEN_MODAL, {content: <AddLinkModal />});
+        // console.log(MediaQueryAction.getStore().isDesktop);
+        if (MediaQueryAction.getStore().isDesktop) {
+            this.setState({linkInputActive: true});
+        }
+        else {
+            ModalAction.do(OPEN_MODAL, {content: <AddLinkModal />});
+        }
+    }
+
+    linkInputEnter() {
+        this.setState({linkInputError: false});
+    }
+
+    linkInputSubmit(e: any) {
+        e.preventDefault();
+        let url = e.target.url.value || "";
+        if (url == "") return;
+        api.post('/social_links/', {url: url, user: UserAction.getStore().user.id}).then((response: any) => {
+            let socialLink = response.data;
+            let social_links = UserAction.getStore().user.social_links || [];
+            let contains = false;
+            social_links.map((lnk: any) => {
+                if (lnk.id == socialLink.id) contains = true;
+            });
+            if (!contains)  {
+                social_links.push(socialLink);
+                let user = UserAction.getStore().user;
+                user.social_links = social_links;
+                UserAction.do(SAVE_USER, user);
+            }
+
+            this.setState({linkInputActive: false});
+
+        }).catch((error) => {this.setState({linkInputError: true})});
+
+    }
+
+    setLinkInputInactive() {
+        this.setState({linkInputActive: false});
+    }
+
+    componentWillReceiveProps(nextProps: any) {
+        this.setLinks(nextProps);
+    }
+
+    componentDidMount() {
+        this.setLinks(this.props);
     }
 
     render() {
@@ -403,7 +446,14 @@ class SocialLinks extends React.Component<ISectionPropsInterface, ISectionLinksS
                         <div className="link_add_text">{Captions.management.addLinks}</div>
                     ) : null
                 }
-                <div className="profile__add_link">
+                <div className={"profile__link_input" + (this.state.linkInputActive ? " active" : "")}>
+                    <form onSubmit={this.linkInputSubmit.bind(this)}>
+                        <input name="url" className={ this.state.linkInputError ? "error" : "" }
+                               onChange={this.linkInputEnter.bind(this)} type="text" placeholder={Captions.management.linkAddTextDesktop}/>
+                    </form>
+                    <div className="close" onClick={this.setLinkInputInactive.bind(this)}><CloseIcon /></div>
+                </div>
+                <div className={"profile__add_link" + (this.state.linkInputActive ? "": " active") }>
                     <div className="line"></div>
                     <div className="button" onClick={this.addLink.bind(this)}>+</div>
                 </div>
@@ -452,7 +502,7 @@ class Account extends React.Component<ISectionPropsInterface, any> {
                     </div>) :
                     (<div>
                         <div className="link_add_text">{Captions.management.setPhone}</div>
-                        <div className="profile__add_link">
+                        <div className="profile__add_link phone">
                             <div className="line"></div>
                             <div className="button" onClick={this.setPhonePassword.bind(this)}>+</div>
                         </div>
@@ -468,7 +518,6 @@ interface IProfileManagementState {
     currentSection?: number,
     userNameEdit?: boolean,
     userNameError?: boolean
-    // userNameError
 }
 
 export default class ProfileManagement extends React.Component<any, IProfileManagementState> {
@@ -497,12 +546,11 @@ export default class ProfileManagement extends React.Component<any, IProfileMana
     constructor() {
         super();
         this.state = this.getStateData();
-        this.state.currentSection = 3;
+        this.state.currentSection = 2;
         this.checkUser = this.checkUser.bind(this);
         this.avatarClick = this.avatarClick.bind(this);
         this.uploadAvatar = this.uploadAvatar.bind(this);
         this.toggleEditUserName = this.toggleEditUserName.bind(this);
-        // this.userNameChange = this.userNameChange.bind(this);
     }
 
     setSection(index: number) {
