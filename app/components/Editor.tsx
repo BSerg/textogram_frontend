@@ -30,7 +30,10 @@ import Error from "./Error";
 import {api} from "../api";
 import "../styles/editor.scss";
 import DialogContentBlock from "./editor/DialogContentBlock";
-import {ContentBlockAction, ACTIVATE_CONTENT_BLOCK} from "../actions/editor/ContentBlockAction";
+import {
+    ContentBlockAction, ACTIVATE_CONTENT_BLOCK,
+    DEACTIVATE_CONTENT_BLOCK
+} from "../actions/editor/ContentBlockAction";
 
 
 interface IEditorState {
@@ -171,7 +174,7 @@ export default class Editor extends React.Component<any, IEditorState> {
             [CREATE_CONTENT, DELETE_CONTENT, UPDATE_COVER_CONTENT, UPDATE_TITLE_CONTENT, SWAP_CONTENT],
             this.forceUpdateContent
         );
-        ContentBlockAction.onChange(ACTIVATE_CONTENT_BLOCK, this.handleActiveBlock);
+        ContentBlockAction.onChange([ACTIVATE_CONTENT_BLOCK, DEACTIVATE_CONTENT_BLOCK], this.handleActiveBlock);
     }
 
     componentWillUnmount() {
@@ -180,7 +183,7 @@ export default class Editor extends React.Component<any, IEditorState> {
             [CREATE_CONTENT, DELETE_CONTENT, UPDATE_COVER_CONTENT, UPDATE_TITLE_CONTENT, SWAP_CONTENT],
             this.forceUpdateContent
         );
-        ContentBlockAction.unbind(ACTIVATE_CONTENT_BLOCK, this.handleActiveBlock);
+        ContentBlockAction.unbind([ACTIVATE_CONTENT_BLOCK, DEACTIVATE_CONTENT_BLOCK], this.handleActiveBlock);
     }
 
     render() {

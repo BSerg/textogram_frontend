@@ -1,7 +1,10 @@
 import * as React from 'react';
 import {Captions, Constants} from '../../constants';
 import ContentEditable from '../shared/ContentEditable';
-import {ContentBlockAction, ACTIVATE_CONTENT_BLOCK, DELETE_CONTENT_BLOCK} from '../../actions/editor/ContentBlockAction';
+import {
+    ContentBlockAction, ACTIVATE_CONTENT_BLOCK, DELETE_CONTENT_BLOCK,
+    DEACTIVATE_CONTENT_BLOCK
+} from '../../actions/editor/ContentBlockAction';
 import {ContentAction, DELETE_CONTENT} from '../../actions/editor/ContentAction';
 import {PopupPanelAction, OPEN_POPUP, CLOSE_POPUP} from '../../actions/shared/PopupPanelAction';
 import ContentBlockPopup from './ContentBlockPopup'
@@ -61,7 +64,8 @@ export default class BaseContentBlock extends React.Component<IBaseContnentBlock
     }
 
     handleDelete() {
-        ContentAction.do(DELETE_CONTENT, {id: this.props.id})
+        ContentAction.do(DELETE_CONTENT, {id: this.props.id});
+        ContentBlockAction.do(DEACTIVATE_CONTENT_BLOCK, null);
     }
 
     componentDidMount() {
