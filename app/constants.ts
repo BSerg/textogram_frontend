@@ -188,11 +188,11 @@ export namespace Validation {
     };
 
     export const LEAD = {
-        value: {maxLength: 400, message: `Заголовок ограничен 150 символами`}
+        value: {maxLength: 400, message: `Лид ограничен 400 символами`}
     };
 
     export const PHRASE = {
-        value: {maxLength: 200, message: `Заголовок ограничен 150 символами`}
+        value: {maxLength: 200, message: `Фраза ограничена 200 символами`}
     };
 
     export const QUOTE = {
@@ -201,11 +201,11 @@ export namespace Validation {
 
     export const COLUMN = {
         image: {isRequired: true, message: `Добавьте изображение`},
-        value: {maxLength: 300, message: `Заголовок ограничен 150 символами`}
+        value: {maxLength: 300, message: `Текст колонки ограничен 300 символами`}
     };
 
     export const LIST = {
-        value: {maxLength: 3000, message: `Заголовок ограничен 150 символами`}
+        value: {maxLength: 3000, message: `Текст списков ограничен 3000 символами`}
     };
 
     export const DIALOGUE = {

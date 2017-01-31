@@ -11,7 +11,7 @@
   padding-top: $padding * 1.5;
   padding-left: 25%;
 
-  &:after {
+  &:before {
     content: '';
     position: absolute;
     top: $padding;
