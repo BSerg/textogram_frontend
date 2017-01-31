@@ -67,13 +67,13 @@ export default class Action extends events.EventEmitter {
             switch (payload.action) {
                 case action:
                     this.emit(this.getStartEventName(action));
-                    callback(this.store, payload.data).then(() => {
-                        this.emit(this.getUpdateEventName(action));
+                    callback(this.store, payload.data).then((data: any) => {
+                        this.emit(this.getUpdateEventName(action), data);
                         if (payload.uid) {
-                            this.emit(this.getUpdateUIDEventName(action, payload.uid));
+                            this.emit(this.getUpdateUIDEventName(action, payload.uid), data);
                         }
-                    }).catch(() => {
-                        this.emit(this.getErrorUIDEventName(action, payload.uid));
+                    }).catch((error: any) => {
+                        this.emit(this.getErrorUIDEventName(action, payload.uid), error);
                     });
                     break
             }
@@ -111,11 +111,11 @@ export default class Action extends events.EventEmitter {
     doAsync(action: string, data: any): Promise<any> {
         const uid = this.generateUID();
         let promise = new Promise((resolve, reject) => {
-            this.on(this.getUpdateUIDEventName(action, uid), () => {
-                resolve('DONE');
+            this.on(this.getUpdateUIDEventName(action, uid), (data: any) => {
+                resolve(data);
             });
-            this.on(this.getErrorUIDEventName(action, uid), () => {
-                reject('ERROR');
+            this.on(this.getErrorUIDEventName(action, uid), (error: any) => {
+                reject(error);
             })
         });
         this.dispatcher.dispatch({action: action, data: data, uid: uid});

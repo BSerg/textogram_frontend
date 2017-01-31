@@ -47,6 +47,7 @@ interface ContentEditableState {
 
 export default class ContentEditable extends React.Component<ContentEditableProps, ContentEditableState> {
     private handleChangeDelayProcess: number;
+    private formatPopupId: string;
 
     refs: {
         [key: string]: (Element);
@@ -54,6 +55,7 @@ export default class ContentEditable extends React.Component<ContentEditableProp
     };
     constructor(props: any) {
         super(props);
+        this.formatPopupId = null;
         this.state = {
             content: '',
             contentText: '',

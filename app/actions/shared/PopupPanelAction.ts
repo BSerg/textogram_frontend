@@ -19,7 +19,6 @@ PopupPanelAction.registerAsync(OPEN_POPUP, (store, data: {content: any, id?: str
             store.contentStack.push({id: id, content: data.content});
         }
         store.contentMap[id] = data.content;
-        console.log('OPEN', store)
         resolve(id);
     });
 });
@@ -41,18 +40,15 @@ PopupPanelAction.register(CLOSE_POPUP, (store, data?: {id: string}) => {
 
 PopupPanelAction.register(REPLACE_POPUP, (store, data?: {content: any}) => {
     store.content = data.content;
-    console.log('REPLACE', store)
 });
 
 
 PopupPanelAction.register(BACK_POPUP, (store, data?: any) => {
-    console.log('BACK POPUP');
     if (store.contentHistory.length) {
         store.content = store.contentHistory.pop();
     } else {
         store.content = null;
     }
-    console.log(store)
 });
 
 
