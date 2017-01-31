@@ -14,7 +14,11 @@ import '../styles/menu.scss';
 
 const ExitIcon = require('babel!svg-react!../assets/images/exit-icon.svg?name=ExitIcon');
 const InfoIcon = require('babel!svg-react!../assets/images/info-icon.svg?name=InfoIcon');
+const SettingsIcon = require('babel!svg-react!../assets/images/settings.svg?name=SettingsIcon');
+const CloseIcon = require('babel!svg-react!../assets/images/close.svg?name=CloseIcon');
+
 const NotificationIcon = require('babel!svg-react!../assets/images/notification_icon.svg?name=NotificationIcon');
+
 
 
 interface IDefaultmenuStateInterface {
@@ -23,6 +27,7 @@ interface IDefaultmenuStateInterface {
     patternInputPhone?: any;
     patternPhone?: any;
     loginError?: string;
+    isAuthorization?: boolean
 
 }
 
@@ -34,7 +39,7 @@ class DefaultMenu extends React.Component<any, IDefaultmenuStateInterface> {
         let patternPhone = new RegExp('^\\' + this.getInitialCode() + '\\d{1,10}$');
         this.state = {
             phone: this.getInitialCode(), password: '', patternInputPhone: patternInputPhone,
-            patternPhone: patternPhone, loginError: null
+            patternPhone: patternPhone, loginError: null, isAuthorization: false
         };
         this.handleSubmit = this.handleSubmit.bind(this);
     }
@@ -78,50 +83,67 @@ class DefaultMenu extends React.Component<any, IDefaultmenuStateInterface> {
         MenuAction.do(TOGGLE, false);
     }
 
+    stopClosePropagation(e: any) {
+        e.stopPropagation();
+    }
+
+    closeMenu() {
+        MenuAction.do(TOGGLE, false);
+    }
+
     render() {
         return (
-            <div className="menu__content main__menu_default" >
-                <div onClick={this.stopClose}>
-                    <div className="menu__controls">
-                        <div onClick={this.handleUrlClick.bind(this, '/info/')} ><InfoIcon /></div>
-                    </div>
-                    <div className="menu__login_title">{Captions.main_menu.title}</div>
-                    <div className="menu__login">
-                        <form onSubmit={this.handleSubmit} className={this.state.loginError ? 'error': null}>
-                            <div className="login_element">
-                                <input type="text"
-                                       name="phone"
-                                       placeholder={Captions.main_menu.inputPhonePlaceholder}
-                                       value={this.state.phone} onChange={this.phoneChange.bind(this)}/>
-                                <div className="hint"><span>{Captions.main_menu.loginHint}</span></div>
-                            </div>
-                            <div className="login_element">
-                                <input type="password" name="pwd"
-                                       placeholder={Captions.main_menu.inputPasswordPlaceholder}
-                                       value={this.state.password} onChange={this.passwordChange.bind(this)}/>
-                                <div className="hint">
-                                    <span>{Captions.main_menu.passwordHint}</span>
-                                    <span className="forgot_password" onClick={this.registration.bind(this, true)}>
-                                        {Captions.main_menu.forgotPassword}
-                                    </span>
-                                </div>
-                            </div>
-                            <button style={{position: 'absolute', opacity: 0}} type="submit">1</button>
-                        </form>
-                    </div>
-                    <div style={{color: '#FFFFFF'}}><LoginBlock /></div>
-                    <div className="menu__register" onClick={this.registration.bind(this, false)}>{Captions.main_menu.register}</div>
-                    <div className="menu__about">{Captions.main_menu.about}</div>
+            <div className="menu__content main__menu_default" onClick={this.stopClosePropagation.bind(this)}>
+                <div className="menu__controls mobile">
+                    <div onClick={this.handleUrlClick.bind(this, '/info/')} ><InfoIcon /></div>
                 </div>
+                <div className="menu__close desktop" onClick={this.closeMenu.bind(this)}>
+                    <CloseIcon />
+                </div>
+                <div className="menu__login_title">{Captions.main_menu.title}</div>
+                <div className="menu__login mobile">
+                    <form onSubmit={this.handleSubmit} className={this.state.loginError ? 'error': null}>
+                        <div className="login_element">
+                            <input type="text"
+                                   name="phone"
+                                   placeholder={Captions.main_menu.inputPhonePlaceholder}
+                                   value={this.state.phone} onChange={this.phoneChange.bind(this)}/>
+                            <div className="hint"><span>{Captions.main_menu.loginHint}</span></div>
+                        </div>
+                        <div className="login_element">
+                            <input type="password" name="pwd"
+                                   placeholder={Captions.main_menu.inputPasswordPlaceholder}
+                                   value={this.state.password} onChange={this.passwordChange.bind(this)}/>
+                            <div className="hint">
+                                <span>{Captions.main_menu.passwordHint}</span>
+                                <span className="forgot_password" onClick={this.registration.bind(this, true)}>
+                                    {Captions.main_menu.forgotPassword}
+                                </span>
+                            </div>
+                        </div>
+                        <button style={{position: 'absolute', opacity: 0}} type="submit">1</button>
+                    </form>
+                </div>
+                <div style={{color: '#FFFFFF', justifyContent: 'center'}} className="mobile"><LoginBlock /></div>
+                <div className="menu__about desktop">{Captions.main_menu.about}</div>
+                <div className="menu__register" onClick={this.registration.bind(this, false)}>{Captions.main_menu.register}</div>
+                <div className="menu__about mobile">{Captions.main_menu.about}</div>
+                <div className="menu__authorization desktop">
 
+                </div>
             </div>);
     }
 }
 
 let DefaultMenuWithRouter = withRouter(DefaultMenu);
 
+interface NotificationBlockPropsInterface {
+    className?: string;
+    router?: any;
+    showZero?: boolean;
+}
 
-class NotificationBlock extends React.Component<any, any> {
+class NotificationBlock extends React.Component<NotificationBlockPropsInterface, any> {
 
     constructor() {
         super();
@@ -135,6 +157,7 @@ class NotificationBlock extends React.Component<any, any> {
 
     openNotifications() {
         this.props.router.push('/manage/?show=notifications');
+        MenuAction.do(TOGGLE, false);
     }
 
     componentDidMount() {
@@ -147,14 +170,19 @@ class NotificationBlock extends React.Component<any, any> {
     }
 
     render() {
-        if (!this.state.count || ! this.state.last) return null;
+        if ((!this.state.count || ! this.state.last) && !this.props.showZero) return null;
+
         return (
-            <div className="menu__notifications" onClick={this.openNotifications.bind(this)}>
+            <div className={"menu__notifications " + (this.props.className || "") + ((!this.state.count || ! this.state.last) ? " zero" : "")}
+                 onClick={this.openNotifications.bind(this)}>
                 <div className="menu__notifications_icon">
                     <NotificationIcon />
                     <div className="menu__notifications_count">{ this.state.count < 10 ? this.state.count : '9+'}</div>
                 </div>
-                <div className="menu__notifications_text">{ (this.state.last && this.state.last.text) ? this.state.last.text : Captions.main_menu.notification_default_text }</div>
+                <div className="menu__notifications_text">
+                    { (this.state.count && this.state.last && this.state.last.text) ? this.state.last.text : '' }
+                    { (!this.state.count && !this.state.last) ? Captions.main_menu.notificationZeroText : null }
+                </div>
             </div>)
     }
 }
@@ -182,12 +210,21 @@ class UserMenu extends React.Component<IUserMenuProps, any> {
         api.post('/articles/editor/').then((response: any) => {
             this.props.router.push('/articles/' + response.data.id + '/edit/');
         }).catch((error) => {});
+        MenuAction.do(TOGGLE, false);
     }
 
     logout(e: any) {
         e.stopPropagation();
         UserAction.do(LOGOUT, null);
         MenuAction.do(TOGGLE, null);
+    }
+
+    stopClosePropagation(e: any) {
+        e.stopPropagation();
+    }
+
+    closeMenu() {
+        MenuAction.do(TOGGLE, false);
     }
 
     handleUrlClick(url: string, e: any) {
@@ -198,10 +235,9 @@ class UserMenu extends React.Component<IUserMenuProps, any> {
 
     render() {
         return (
-            <div className="menu__content">
-                <div className="menu__controls">
-                    <div onClick={this.handleUrlClick.bind(this, '/info/')} ><InfoIcon /></div>
-                    <div onClick={this.logout.bind(this)}><ExitIcon /></div>
+            <div className="menu__content" onClick={this.stopClosePropagation.bind(this)}>
+                <div className="menu__close desktop" onClick={this.closeMenu.bind(this)}>
+                    <CloseIcon />
                 </div>
                 <div className="menu__user" onClick={this.goToProfile.bind(this)}>
                     <div className="menu__user_avatar">
@@ -209,11 +245,17 @@ class UserMenu extends React.Component<IUserMenuProps, any> {
                     </div>
                     <div className="menu__user_username"><span>{this.props.user.first_name}</span> <span>{this.props.user.last_name}</span></div>
                 </div>
-                <NotificationBlockWithRouter />
+                <NotificationBlockWithRouter className="mobile" />
                 <div className="menu__links">
-                    <div className="menu__link" onClick={this.handleUrlClick.bind(this, '/manage/')}>{ Captions.main_menu.manage_profile }</div>
+                    <div className="menu__link mobile" onClick={this.handleUrlClick.bind(this, '/manage/')}>{ Captions.main_menu.manage_profile }</div>
                     <div className="menu__link" onClick={this.createArticle.bind(this)}>{ Captions.main_menu.create_article }</div>
                     <div className="menu__link" onClick={this.handleUrlClick.bind(this, '/drafts/')}>{ Captions.main_menu.drafts }</div>
+                </div>
+                <NotificationBlockWithRouter className="desktop" showZero={true} />
+                <div className="menu__controls">
+                    <div onClick={this.handleUrlClick.bind(this, '/manage/')} className="desktop"><SettingsIcon /></div>
+                    <div onClick={this.handleUrlClick.bind(this, '/info/')} ><InfoIcon /></div>
+                    <div onClick={this.logout.bind(this)}><ExitIcon /></div>
                 </div>
             </div>)
     }
@@ -231,7 +273,7 @@ export default class Menu extends React.Component<any, IMenuStateInterface> {
 
     constructor() {
         super();
-        this.state = {open: false, user: UserAction.getStore().user};
+        this.state = {open: true, user: UserAction.getStore().user};
         this.setUser = this.setUser.bind(this);
         this.setOpen = this.setOpen.bind(this);
     }
