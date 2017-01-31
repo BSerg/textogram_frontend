@@ -1,9 +1,10 @@
 @import "contstants";
 @import "mixins";
 
+$avatar-side-size: 78px;
 
 #profile_content {
-  $avatar-side-size: 78px;
+
 
   //margin-top: $header-height + $avatar-side-size/2 + $margin;
 
@@ -43,6 +44,7 @@
     span {
       display: inline-block;
       text-align: center;
+      margin: 0 5px;
     }
   }
 
@@ -154,4 +156,10 @@
   padding: 0 $padding;
 }
 
-
+@media (min-width: 1024px) {
+  #profile_content {
+    .header {
+      display: none;
+    }
+  }
+}

@@ -179,60 +179,57 @@ export default class Profile extends React.Component<any, IProfileState> {
         if (this.state && this.state.error) {
             return (this.state.error);
         }
+        if (!this.state.user) return null;
         return (
 
             <div className="profile">
 
                  <div id="profile_content">
-                    {
-                        this.state && this.state.user ? [
-                            <Header key="header"/>,
-                            <div className="profile__avatar" key="avatar">
-                                <img src={this.state.user.avatar}/>
-                            </div>,
 
-                            <div key="username" className="profile__username">
-                                    <span>{this.state.user.first_name}</span> <span> {this.state.user.last_name}</span>
-                            </div>,
+                     <Header key="header"/>
+                     <div className="profile__avatar" key="avatar">
+                         <img src={this.state.user.avatar}/>
+                     </div>
 
-                            <div key="subscription" className="profile__subscription">
-                                <div className="profile__subscription_info">
-                                    <SubscriptionIcon />
-                                    <span>{ this.state.user.subscribers }</span>
-                                </div>
+                     <div key="username" className="profile__username">
+                            <span>{this.state.user.first_name}</span> <span> {this.state.user.last_name}</span>
+                     </div>
 
-                                {
-                                    (!this.state.isSelf && UserAction.getStore().user) ?
-                                        <div>
-                                            { this.state.user.is_subscribed ?
-                                                <div className="profile__subscription_unsubscribe" onClick={this.unSubscribe.bind(this)}>
-                                                    <ConfirmIcon />
-                                                    <span>{Captions.profile.subscribed}</span>
-                                                </div> :
-                                                <div className="profile__subscription_subscribe" onClick={this.subscribe.bind(this)}>
-                                                    <span>{Captions.profile.subscribe}</span>
-                                                </div> }
-                                        </div> : null
-                                }
-                            </div>,
+                     <div key="subscription" className="profile__subscription">
+                         <div className="profile__subscription_info">
+                             <SubscriptionIcon />
+                             <span>{ this.state.user.subscribers }</span>
+                         </div>
 
-                            <div className="profile__social_links" key="social_links">
-                                { this.state.user.social_links.map((social_link: any, index: number) => {
-                                    return (
-                                        <div className="profile__social_icon" key={index}>
-                                            <Link to={social_link.url} target="_blank" >
-                                                <SocialIcon social={social_link.social} />
-                                            </Link>
-                                        </div>)
-                                }) }
-                            </div>,
-                            <UserArticles user={this.state.user} isSelf={this.state.isSelf} key="articles" />
+                         {
+                             (!this.state.isSelf && UserAction.getStore().user) ?
+                                 <div>
+                                     { this.state.user.is_subscribed ?
+                                         <div className="profile__subscription_unsubscribe" onClick={this.unSubscribe.bind(this)}>
+                                             <ConfirmIcon />
+                                             <span>{Captions.profile.subscribed}</span>
+                                         </div> :
+                                         <div className="profile__subscription_subscribe" onClick={this.subscribe.bind(this)}>
+                                             <span>{Captions.profile.subscribe}</span>
+                                         </div> }
+                                 </div> : null
+                         }
+                     </div>
 
+                     <div className="profile__social_links" key="social_links">
+                         { this.state.user.social_links.map((social_link: any, index: number) => {
+                             return (
+                                 <div className="profile__social_icon" key={index}>
+                                     <Link to={social_link.url} target="_blank" >
+                                         <SocialIcon social={social_link.social} />
+                                     </Link>
+                                </div>)
+                         }) }
+                     </div>
+                     <UserArticles user={this.state.user} isSelf={this.state.isSelf} key="articles" />
 
-                        ] : null
-                    }
-                </div>
-            </div>
+                 </div>
+             </div>
         )
     }
 }

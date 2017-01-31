@@ -78,6 +78,7 @@
       @include transition();
 
       svg {
+        cursor: pointer;
         width: 25px;
         height: 25px;
         fill: $color;
@@ -88,6 +89,7 @@
         display: none;
         text-transform: uppercase;
         font-size: $font-size-small;
+        letter-spacing: 1px;
       }
 
       &.active {
@@ -227,6 +229,7 @@
         fill: #000000;
         width: 18px;
         height: 18px;
+        cursor: pointer;
       }
 
       .close_icon svg {
@@ -305,7 +308,7 @@
       background-color: $color;
 
       input {
-        background-color: $color;
+        background-color: transparent;
         outline: none;
         height: $input_height;
         text-align: center;
@@ -448,5 +451,124 @@
     }
 
   }
+
+}
+
+@media (min-width: 1024px) {
+  .content {
+    display: flex;
+    justify-content: center;
+    width: unset;
+  }
+
+  #profile_management {
+
+    width: 800px;
+    margin: auto;
+
+    .header {
+      display: none;
+    }
+
+    .profile__avatar {
+      img {
+        width: 122px;
+        height: 122px;
+        border-radius: 50%;
+      }
+    }
+
+    .profile__username {
+      span, input {
+        font-size: 24px;
+      }
+
+      svg {
+        width: 30px;
+        height: 30px;
+      }
+
+    }
+
+    .profile__menu {
+      .profile__menu_section {
+        flex-grow: 1;
+        //width: 25%;
+
+        span {
+          font-size: 11px;
+          letter-spacing: 1px;
+          margin-left: 20px;
+          display: block;
+        }
+      }
+    }
+
+    .profile__section {
+      .profile__auth_link, .profile__additional_links {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+
+        .link_text {
+          font-size: $font-size-small;
+          width: 220px;
+        }
+        .url {
+          font-size: $font_size6;
+          width: 250px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+        .profile__link {
+          svg {
+            width: 25px;
+            height: 25px;
+          }
+          .close_icon svg {
+            width: 10px;
+            height: 10px;
+          }
+
+          .eye, .close_icon {
+            width: 100px;
+            text-align: center;
+          }
+        }
+      }
+
+      .profile__auth_link {
+        align-items: center;
+      }
+      .profile__additional_links {
+        align-items: flex-start;
+      }
+    }
+
+    .profile__subscriptions {
+      padding-top: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      .profile__subscription {
+        width: 80%;
+        .name {
+          font-size: $font-size6;
+        }
+      }
+
+      .filter_input {
+        position: relative;
+        background-color: $color4;
+        height: 85px;
+        margin-bottom: $margin * 2;
+        input {
+          color: $color;
+        }
+      }
+    }
+  }
+
 
 }

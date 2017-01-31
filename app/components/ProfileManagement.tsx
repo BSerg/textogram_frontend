@@ -110,6 +110,9 @@ class Subscriptions extends React.Component<ISectionPropsInterface, ISubscriptio
     render() {
         return (
             <div className="profile__subscriptions">
+                <div className="filter_input">
+                    <input onChange={this.filterSubscriptions.bind(this)} type="text" placeholder={Captions.management.fastSearch} />
+                </div>
                 {this.state.objectsFiltered.map((subscription, index) => {
                     return (
                         <div className="profile__subscription" key={index}>
@@ -120,10 +123,6 @@ class Subscriptions extends React.Component<ISectionPropsInterface, ISubscriptio
                             <div className="close_icon" onClick={this.removeSubscription.bind(this, subscription.author.id)}><CloseIcon /></div>
                         </div>)
                 })}
-
-                <div className="filter_input">
-                    <input onChange={this.filterSubscriptions.bind(this)} type="text" placeholder={Captions.management.fastSearch} />
-                </div>
             </div>);
     }
 }
@@ -275,9 +274,57 @@ class SocialLinks extends React.Component<ISectionPropsInterface, ISectionLinksS
 
     setLinks(props: any) {
         let links: any[] = (props.user && props.user.social_links) ? props.user.social_links : [];
+
+        links = links.map((link) => {
+            return this.processLink(link);
+        });
+
         let authLink = (links[0] && links[0].is_auth) ? links[0] : null;
 
         this.setState({links: authLink ? links.slice(1, links.length) : links, authLink: authLink});
+    }
+
+    processLink(link: any|null) {
+        if (!link) {
+            return;
+        }
+        let representationName: string;
+
+        switch (link.social) {
+
+            case 'vk': {
+                representationName = link.url.replace('https://vk.com/', '');
+                break;
+            }
+            case 'twitter': {
+                representationName = '@' + link.url.replace('https://twitter.com/', '');
+                break;
+            }
+
+            case 'google': {
+                representationName = link.url.replace('https://plus.google.com/u/0/', '');
+                break;
+            }
+
+            case 'fb': {
+                representationName = link.url.replace('https://www.facebook.com/', '');
+                break;
+            }
+            case 'facebook': {
+                representationName = link.url.replace('https://www.facebook.com/', '');
+                break;
+            }
+            case 'instagram': {
+                representationName = link.url.replace('https://www.instagram.com/', '');
+                break;
+            }
+            default: {
+                representationName = link.url;
+            }
+        }
+        representationName = representationName.replace('/', '');
+        link.representationName = representationName;
+        return link;
     }
 
     componentWillReceiveProps(nextProps: any) {
@@ -325,25 +372,32 @@ class SocialLinks extends React.Component<ISectionPropsInterface, ISectionLinksS
                             <div className="link_text">{Captions.management.authAccount}</div>
                             <div className="profile__link">
                                 <div><SocialIcon social={this.state.authLink.social} /></div>
-                                <div className="url">{ this.state.authLink.url }</div>
+                                <div className="url">{ this.state.authLink.representationName }</div>
                                 <div className="eye" onClick={this.toggleHidden.bind(this, this.state.authLink.id)}>{ this.state.authLink.is_hidden ? <VisibilityOffIcon /> : <VisibilityIcon />}</div>
                             </div>
                         </div>
                     ) : null
                 }
                 {
-                    (this.state.authLink && this.state.links.length) ? (<div className="link_text">{Captions.management.additionalLinks}</div>) : null
+                    (this.state.authLink && this.state.links.length) ? (
+                        <div className="profile__additional_links">
+                            <div className="link_text">{Captions.management.additionalLinks}</div>
+                            <div>
+                                {
+                                    this.state.links.map((link, index) => {
+                                        return (
+                                            <div className="profile__link" key={index}>
+                                                <div><SocialIcon social={link.social} /></div>
+                                                <div className="url">{ link.representationName }</div>
+                                                <div className="close_icon" onClick={this.removeLink.bind(this, link.id)}><CloseIcon /></div>
+                                            </div>)
+                                    })
+                                }
+                            </div>
+                        </div>
+                        ) : null
                 }
-                {
-                    this.state.links.map((link, index) => {
-                        return (
-                            <div className="profile__link" key={index} onClick={this.removeLink.bind(this, link.id)}>
-                                <div><SocialIcon social={link.social} /></div>
-                                <div className="url">{ link.url }</div>
-                                <div className="close_icon"><CloseIcon /></div>
-                            </div>)
-                    })
-                }
+
                 {
                     (!this.state.links.length) ? (
                         <div className="link_add_text">{Captions.management.addLinks}</div>
@@ -443,7 +497,7 @@ export default class ProfileManagement extends React.Component<any, IProfileMana
     constructor() {
         super();
         this.state = this.getStateData();
-        this.state.currentSection = 0;
+        this.state.currentSection = 3;
         this.checkUser = this.checkUser.bind(this);
         this.avatarClick = this.avatarClick.bind(this);
         this.uploadAvatar = this.uploadAvatar.bind(this);
