@@ -54,7 +54,7 @@ module.exports = {
                 NODE_ENV: JSON.stringify("dev"),
                 API_URL: JSON.stringify("http://textius.tk/api/v1"),
                 "VK_APP": JSON.stringify("5829713"),
-                "FB_APP": JSON.stringify(""),
+                "FB_APP": JSON.stringify("388271138196824"),
                 "GOOGLE_APP": JSON.stringify("40195744486-2lr3lt2adencnt9k54rc1mhl4a4kh70i.apps.googleusercontent.com")
             }
         }),
