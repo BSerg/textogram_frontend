@@ -36,7 +36,7 @@ export default class URLModal extends React.Component<{onURL?: (url: string) => 
     }
 
     validate(url: string): boolean {
-        const regex = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
+        const regex = /((ftp|http|https):\/\/)?(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
         return regex.test(url);
     }
 
@@ -56,11 +56,12 @@ export default class URLModal extends React.Component<{onURL?: (url: string) => 
                                ref="urlInput"
                                type="text"
                                value={this.state.url}
-                               placeholder={Captions.editor.enter_embed_url} onChange={this.handleChangeUrl.bind(this)}/>
+                               placeholder={Captions.editor.enter_embed_url}
+                               onChange={this.handleChangeUrl.bind(this)}/>
                     </form>
                     {this.state.isError ?
                     <div className="url_modal__error">{Captions.editor.error_embed_url}</div>:
-                    <div className="url_modal__help">{Captions.editor.help_url_modal}</div>
+                    <div className="url_modal__help">&nbsp;</div>
                     }
                 </div>
                 <div className="url_modal__tools">
