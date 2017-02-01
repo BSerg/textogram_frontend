@@ -9,11 +9,23 @@
   }
 
   div {
+    box-sizing: border-box;
+  }
+
+  .profile__username, .profile__avatar, .profile__username>div{
     display: flex;
     flex-direction: row;
-    justify-content: center;
     align-items: center;
-    box-sizing: border-box;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .profile__username .name {
+    display: flex;
+    flex-direction: row;
+    flex-flow: wrap;
+    align-items: center;
+    justify-content: center;
   }
 
   .profile__avatar {
@@ -24,7 +36,6 @@
     width: 100%;
     padding: $padding/2 ;
     div {
-      width: 100%;
       word-break: break-all;
     }
 
@@ -67,10 +78,16 @@
   }
 
   .profile__menu {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
 
     justify-content: flex-start;
 
     .profile__menu_section {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
       justify-content: flex-start;
       padding: $padding/2;
       border-bottom: 2px solid $color3;
@@ -104,11 +121,7 @@
   }
 
   .profile__section {
-    display: block;
     width: 100%;
-    div {
-      display: block;
-    }
 
     .profile__link_input {
       display: none;
@@ -301,6 +314,10 @@
     padding-top: 15px;
 
     .filter_input {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
       $input_height: 50px;
 
       position: fixed;
@@ -496,10 +513,10 @@
     }
 
     .profile__menu {
+
+
       .profile__menu_section {
         flex-grow: 1;
-        //width: 25%;
-
         span {
           font-size: 11px;
           letter-spacing: 1px;
@@ -510,6 +527,24 @@
     }
 
     .profile__section {
+
+      .profile__phone {
+        flex-direction: row;
+        align-items: center;
+        //width: 100%;
+        //max-width: 600px;
+
+        .profile__phone_caption, .profile__phone_data {
+          flex-grow: 1;
+        }
+
+        .profile__phone_caption {
+          padding: 0;
+        }
+        .profile__phone_data {
+          width: auto;
+        }
+      }
 
       .profile__notification {
         min-height: 120px;
@@ -611,9 +646,6 @@
             fill: $color3;
           }
         }
-
-
-
       }
 
       .profile__add_link {
@@ -623,8 +655,6 @@
           display: flex;
         }
       }
-
-
     }
 
     .profile__subscriptions {

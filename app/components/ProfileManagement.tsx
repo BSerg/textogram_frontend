@@ -406,6 +406,8 @@ class SocialLinks extends React.Component<ISectionPropsInterface, ISectionLinksS
     }
 
     render() {
+        console.log(this.state.links.length);
+        console.log(this.state.links);
         return (
             <div className="profile__section">
                 {
@@ -421,9 +423,9 @@ class SocialLinks extends React.Component<ISectionPropsInterface, ISectionLinksS
                     ) : null
                 }
                 {
-                    (this.state.authLink && this.state.links.length) ? (
+                    (this.state.links.length) ? (
                         <div className="profile__additional_links">
-                            <div className="link_text">{Captions.management.additionalLinks}</div>
+                            { this.state.authLink ? (<div className="link_text">{Captions.management.additionalLinks}</div>) : null }
                             <div>
                                 {
                                     this.state.links.map((link, index) => {
@@ -437,14 +439,9 @@ class SocialLinks extends React.Component<ISectionPropsInterface, ISectionLinksS
                                 }
                             </div>
                         </div>
-                        ) : null
+                        ) : (<div className="link_add_text">{Captions.management.addLinks}</div>)
                 }
 
-                {
-                    (!this.state.links.length) ? (
-                        <div className="link_add_text">{Captions.management.addLinks}</div>
-                    ) : null
-                }
                 <div className={"profile__link_input" + (this.state.linkInputActive ? " active" : "")}>
                     <form onSubmit={this.linkInputSubmit.bind(this)}>
                         <input name="url" className={ this.state.linkInputError ? "error" : "" }
@@ -545,7 +542,7 @@ export default class ProfileManagement extends React.Component<any, IProfileMana
     constructor() {
         super();
         this.state = this.getStateData();
-        this.state.currentSection = 2;
+        this.state.currentSection = 1;
         this.checkUser = this.checkUser.bind(this);
         this.avatarClick = this.avatarClick.bind(this);
         this.uploadAvatar = this.uploadAvatar.bind(this);
@@ -685,8 +682,10 @@ export default class ProfileManagement extends React.Component<any, IProfileMana
                         </form>
                     ) : (
                         <div>
-                            <span>{ this.state.user.first_name }</span>
-                            <span>{ this.state.user.last_name }</span>
+                            <div className="name">
+                                <span>{ this.state.user.first_name }</span>
+                                <span>{ this.state.user.last_name }</span>
+                            </div>
                             <span onClick={this.toggleEditUserName}><EditIcon /></span>
                         </div>
                     ) }
