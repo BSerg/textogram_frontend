@@ -10,6 +10,8 @@ import Registration from './Registration';
 import {Captions} from '../constants';
 import LoginBlock from './shared/LoginBlock';
 
+import {MediaQuerySerice} from '../services/MediaQueryService';
+
 import '../styles/menu.scss';
 
 const ExitIcon = require('babel!svg-react!../assets/images/exit-icon.svg?name=ExitIcon');
@@ -20,6 +22,10 @@ const CloseIcon = require('babel!svg-react!../assets/images/close.svg?name=Close
 const NotificationIcon = require('babel!svg-react!../assets/images/notification_icon.svg?name=NotificationIcon');
 
 
+interface DefaultMenuPropsInterface {
+    isDesktop: boolean;
+}
+
 
 interface IDefaultmenuStateInterface {
     phone?: string;
@@ -27,11 +33,11 @@ interface IDefaultmenuStateInterface {
     patternInputPhone?: any;
     patternPhone?: any;
     loginError?: string;
-    isAuthorization?: boolean
+    isAuthorization?: boolean;
 
 }
 
-class DefaultMenu extends React.Component<any, IDefaultmenuStateInterface> {
+class DefaultMenu extends React.Component<DefaultMenuPropsInterface, IDefaultmenuStateInterface> {
 
     constructor() {
         super();
@@ -39,7 +45,7 @@ class DefaultMenu extends React.Component<any, IDefaultmenuStateInterface> {
         let patternPhone = new RegExp('^\\' + this.getInitialCode() + '\\d{1,10}$');
         this.state = {
             phone: this.getInitialCode(), password: '', patternInputPhone: patternInputPhone,
-            patternPhone: patternPhone, loginError: null, isAuthorization: false
+            patternPhone: patternPhone, loginError: null, isAuthorization: true
         };
         this.handleSubmit = this.handleSubmit.bind(this);
     }
@@ -91,46 +97,114 @@ class DefaultMenu extends React.Component<any, IDefaultmenuStateInterface> {
         MenuAction.do(TOGGLE, false);
     }
 
+    componentWillReceiveProps(nextProps: any) {
+        if (nextProps.isDesktop != this.props.isDesktop) {
+            this.forceUpdate();
+        }
+    }
+
     render() {
+        console.log(this.props.isDesktop);
         return (
             <div className="menu__content main__menu_default" onClick={this.stopClosePropagation.bind(this)}>
-                <div className="menu__controls mobile">
-                    <div onClick={this.handleUrlClick.bind(this, '/info/')} ><InfoIcon /></div>
-                </div>
-                <div className="menu__close desktop" onClick={this.closeMenu.bind(this)}>
-                    <CloseIcon />
-                </div>
-                <div className="menu__login_title">{Captions.main_menu.title}</div>
-                <div className="menu__login mobile">
-                    <form onSubmit={this.handleSubmit} className={this.state.loginError ? 'error': null}>
-                        <div className="login_element">
-                            <input type="text"
-                                   name="phone"
-                                   placeholder={Captions.main_menu.inputPhonePlaceholder}
-                                   value={this.state.phone} onChange={this.phoneChange.bind(this)}/>
-                            <div className="hint"><span>{Captions.main_menu.loginHint}</span></div>
-                        </div>
-                        <div className="login_element">
-                            <input type="password" name="pwd"
-                                   placeholder={Captions.main_menu.inputPasswordPlaceholder}
-                                   value={this.state.password} onChange={this.passwordChange.bind(this)}/>
-                            <div className="hint">
-                                <span>{Captions.main_menu.passwordHint}</span>
-                                <span className="forgot_password" onClick={this.registration.bind(this, true)}>
-                                    {Captions.main_menu.forgotPassword}
-                                </span>
-                            </div>
-                        </div>
-                        <button style={{position: 'absolute', opacity: 0}} type="submit">1</button>
-                    </form>
-                </div>
-                <div style={{color: '#FFFFFF', justifyContent: 'center'}} className="mobile"><LoginBlock /></div>
-                <div className="menu__about desktop">{Captions.main_menu.about}</div>
-                <div className="menu__register" onClick={this.registration.bind(this, false)}>{Captions.main_menu.register}</div>
-                <div className="menu__about mobile">{Captions.main_menu.about}</div>
-                <div className="menu__authorization desktop">
 
-                </div>
+                {
+                    !this.props.isDesktop ? (
+                        <div className="menu__controls">
+                            <div onClick={this.handleUrlClick.bind(this, '/info/')} ><InfoIcon /></div>
+                        </div>
+                    ) : null
+                }
+                {
+                    this.props.isDesktop ? (
+                        <div className="menu__close" onClick={this.closeMenu.bind(this)}>
+                            <CloseIcon />
+                        </div>
+                    ) : null
+                }
+                <div className="menu__login_title">{Captions.main_menu.title}</div>
+
+                {
+                    !this.props.isDesktop ? (
+                        <div className="menu__login">
+                            <form onSubmit={this.handleSubmit} className={this.state.loginError ? 'error': null}>
+                                <div className="login_element">
+                                    <input type="text"
+                                           name="phone"
+                                           placeholder={Captions.main_menu.inputPhonePlaceholder}
+                                           value={this.state.phone} onChange={this.phoneChange.bind(this)}/>
+                                    <div className="hint"><span>{Captions.main_menu.loginHint}</span></div>
+                                </div>
+                                <div className="login_element">
+                                    <input type="password" name="pwd"
+                                           placeholder={Captions.main_menu.inputPasswordPlaceholder}
+                                           value={this.state.password} onChange={this.passwordChange.bind(this)}/>
+                                    <div className="hint">
+                                        <span>{Captions.main_menu.passwordHint}</span>
+                                        <span className="forgot_password" onClick={this.registration.bind(this, true)}>
+                                            {Captions.main_menu.forgotPassword}
+                                        </span>
+                                    </div>
+                                </div>
+                                <button style={{position: 'absolute', opacity: 0}} type="submit">1</button>
+                            </form>
+                        </div>
+                    ) : null
+                }
+
+                {
+                    !this.props.isDesktop ? (<div style={{color: '#FFFFFF', justifyContent: 'center'}}><LoginBlock /></div>) : null
+                }
+
+                {
+                    this.props.isDesktop ? (
+                        <div className="menu__about">{Captions.main_menu.about}</div>
+                    ) : null
+                }
+
+                <div className="menu__register" onClick={this.registration.bind(this, false)}>{Captions.main_menu.register}</div>
+
+                {
+                    !this.props.isDesktop ? (<div className="menu__about">{Captions.main_menu.about}</div>) : null
+                }
+                {
+                    this.props.isDesktop ?
+                        (this.state.isAuthorization ? (
+                            <div className="menu__authorization menu__login">
+
+                                <form onSubmit={this.handleSubmit} className={this.state.loginError ? 'error': null}>
+                                    <div className="login_element">
+                                        <input type="text"
+                                               name="phone"
+                                               placeholder={Captions.main_menu.inputPhonePlaceholder}
+                                               value={this.state.phone} onChange={this.phoneChange.bind(this)}/>
+                                        <div className="hint"><span>{Captions.main_menu.loginHint}</span></div>
+                                    </div>
+                                    <div className="login_element">
+                                        <input type="password" name="pwd"
+                                               placeholder={Captions.main_menu.passwordHint}
+                                               value={this.state.password} onChange={this.passwordChange.bind(this)}/>
+                                        <div className="hint">
+                                            <span className="forgot_password" onClick={this.registration.bind(this, true)}>
+                                                {Captions.main_menu.forgotPassword}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <button style={{position: 'absolute', opacity: 0}} type="submit">1</button>
+                                </form>
+
+                                <div className="menu__authorization_close"><CloseIcon /></div>
+
+
+                            </div>) : (
+                            <div className="menu__authorization">
+                                <div className="menu__authorization_caption">{Captions.main_menu.authorize}</div>
+                                <LoginBlock />
+                            </div>))
+                     : null
+                }
+
+
             </div>);
     }
 }
@@ -191,6 +265,7 @@ let NotificationBlockWithRouter = withRouter(NotificationBlock);
 
 interface IUserMenuProps {
     user: any;
+    isDesktop: boolean;
     router?: any;
 }
 
@@ -267,13 +342,14 @@ let UserMenuWithRouter = withRouter(UserMenu);
 interface IMenuStateInterface {
     open?: boolean
     user?: any
+    isDesktop?: boolean;
 }
 
 export default class Menu extends React.Component<any, IMenuStateInterface> {
 
     constructor() {
         super();
-        this.state = {open: true, user: UserAction.getStore().user};
+        this.state = {open: true, user: UserAction.getStore().user,  isDesktop: MediaQuerySerice.getIsDesktop()};
         this.setUser = this.setUser.bind(this);
         this.setOpen = this.setOpen.bind(this);
     }
@@ -291,6 +367,13 @@ export default class Menu extends React.Component<any, IMenuStateInterface> {
     }
 
     componentDidMount() {
+
+        MediaQuerySerice.listen((isDesktop: boolean) => {
+            if (isDesktop != this.state.isDesktop) {
+                this.setState({isDesktop: isDesktop});
+            }
+        });
+
         MenuAction.onChange(TOGGLE, this.setOpen);
         UserAction.onChange(SAVE_USER, this.setUser);
         UserAction.onChange(GET_ME, this.setUser);
@@ -307,11 +390,12 @@ export default class Menu extends React.Component<any, IMenuStateInterface> {
     }
 
     render() {
-
         if (!this.state.open) return null;
         return (
             <div id="main_menu" onClick={this.toggleMenu}>
-                { this.state.user ? <UserMenuWithRouter user={this.state.user} /> : <DefaultMenuWithRouter /> }
+                { this.state.user ?
+                    <UserMenuWithRouter user={this.state.user} isDesktop={this.state.isDesktop} /> :
+                        <DefaultMenuWithRouter isDesktop={this.state.isDesktop} /> }
 
             </div>);
     }

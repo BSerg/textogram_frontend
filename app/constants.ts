@@ -69,8 +69,9 @@ export namespace Captions {
         about: 'Что такое TEXTIUS?',
         inputPhonePlaceholder: '+7 ',
         inputPasswordPlaceholder: 'Введите пароль',
-        loginHint: 'логин',
-        passwordHint: 'пароль',
+        loginHint: 'Логин',
+        passwordHint: 'Пароль',
+        authorize: 'авторизация',
     };
 
     export const management = {

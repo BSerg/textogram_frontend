@@ -4,7 +4,7 @@ import {Captions, Constants} from '../constants';
 
 import {UserAction, SAVE_USER, GET_ME, LOGIN, LOGOUT, UPDATE_USER} from '../actions/user/UserAction';
 import {NotificationAction, CHECK} from '../actions/NotificationAction';
-import {MediaQueryAction} from '../actions/MediaQueryAction';
+import {MediaQuerySerice} from '../services/MediaQueryService';
 
 import {ModalAction, OPEN_MODAL, CLOSE_MODAL} from '../actions/shared/ModalAction';
 import AvatarEditor from './shared/AvatarEditor';
@@ -357,8 +357,7 @@ class SocialLinks extends React.Component<ISectionPropsInterface, ISectionLinksS
     }
 
     addLink() {
-        // console.log(MediaQueryAction.getStore().isDesktop);
-        if (MediaQueryAction.getStore().isDesktop) {
+        if (MediaQuerySerice.getIsDesktop()) {
             this.setState({linkInputActive: true});
         }
         else {

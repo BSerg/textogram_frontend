@@ -175,7 +175,7 @@
   .main__menu_default {
     background-color: $color;
     div {
-      background-color: $color;
+      //background-color: $color;
     }
     .menu__controls {
       padding: 23px $padding;
@@ -215,7 +215,7 @@
           margin-bottom: 5px;
           outline: none;
 
-          background-color: $color;
+          background-color: transparent;
           color: #FFFFFF;
           width: 100%;
           font-size: $font_size6;
@@ -359,6 +359,64 @@
       .desktop {
         display: flex;
       }
+    }
+
+    .menu__authorization {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      padding: 0 $padding;
+
+      background-color: #282828;
+      height: 100%;
+
+      .menu__authorization_caption {
+        cursor: pointer;
+        color: #FFFFFF;
+        font-size: 12px;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        padding-right: $padding;
+      }
+
+
+
+      .menu__authorization_caption, .login_block {
+        //padding: 0 $padding / 2;
+      }
+    }
+
+    .main__menu_default  {
+      .menu__login {
+        padding: 0 $padding * 2 0 $padding;
+        position: relative;
+        form {
+          display: flex;
+          flex-direction: row;
+
+          .login_element {
+            padding: $padding / 2;
+
+            input:-webkit-autofill {
+              -webkit-box-shadow: 0 0 0 1000px #282828 inset;
+              -webkit-text-fill-color: #FFFFFF !important;
+              outline: none;
+            }
+          }
+        }
+
+        .menu__authorization_close {
+          position: absolute;
+          top: 5px;
+          right: 10px;
+          cursor: pointer;
+          svg {
+            fill: $color5;
+          }
+        }
+      }
+
     }
 
     //.main__menu_default {

@@ -10,9 +10,9 @@ class MediaQueryActionClass extends Action {
     }
 }
 
-export const MediaQueryAction = new MediaQueryActionClass();
+export const _MediaQueryAction = new MediaQueryActionClass();
 
-MediaQueryAction.register(RESIZE, (store) => {
+_MediaQueryAction.register(RESIZE, (store) => {
     // console.log('resoyz');
     // console.log(window.innerWidth);
     store.isDesktop = window.innerWidth >= Constants.desktopWidth;

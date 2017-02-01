@@ -13,7 +13,6 @@ import Drafts from './components/Drafts';
 import TwitterAuth from './components/TwitterAuth';
 
 import {UserAction, GET_ME} from './actions/user/UserAction';
-import {MediaQueryAction, RESIZE} from './actions/MediaQueryAction';
 
 import 'core-js/shim';
 
@@ -21,16 +20,9 @@ class App extends React.Component<any, any> {
 
     constructor(props: any) {
         super(props);
-        this.resizeHandler = this.resizeHandler.bind(this);
-    }
-
-    resizeHandler() {
-        MediaQueryAction.do(RESIZE, null);
     }
 
     componentDidMount() {
-        MediaQueryAction.do(RESIZE, null);
-        window.addEventListener('resize', this.resizeHandler);
 
         window.vkAsyncInit = function() {
             VK.init({
