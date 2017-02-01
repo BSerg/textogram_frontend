@@ -11,6 +11,13 @@
   z-index: 10000;
   background-color: rgba(0, 0, 0, 0.5);
 
+  .main_menu_container {
+    width: 100%;
+    max-width: 600px;
+    margin: auto;
+    background-color: $color;
+  }
+
   .menu__close {
     padding-right: $padding;
     cursor: pointer;
@@ -23,7 +30,6 @@
 
   .menu__content {
     width: 100%;
-    max-width: 600px;
     box-sizing: border-box;
     position: relative;
     margin: auto;
@@ -93,7 +99,6 @@
   }
 
   .menu__links {
-    background-color: $color;
     padding: $padding 0;
     .menu__link {
       font-size: $font-size-small;
@@ -173,10 +178,7 @@
   }
 
   .main__menu_default {
-    background-color: $color;
-    div {
-      //background-color: $color;
-    }
+
     .menu__controls {
       padding: 23px $padding;
     }
@@ -247,7 +249,6 @@
       text-transform: uppercase;
       padding: 0 $padding $padding $padding;
       text-align: center;
-      //display: flex;
       flex-direction: row;
       justify-content: center;
       letter-spacing: 1px;
@@ -274,15 +275,19 @@
 
 @media (min-width: 1024px) {
   #main_menu {
-    .menu__content {
-      width: 100%;
+    .main_menu_container {
       max-width: unset;
+    }
+
+    .menu__content {
+      max-width: 1600px;
       display: flex;
       flex-direction: row;
-      background-color: $color;
+      background-color: transparent;
       padding: 0 $padding;
       align-items: center;
       height: 100px;
+      justify-content: space-around;
 
       .menu__user {
         padding: 0;
@@ -323,7 +328,6 @@
 
       .menu__controls {
         position: relative;
-        flex-grow: 1;
         justify-content: flex-end;
       }
 
@@ -339,8 +343,6 @@
           max-width: 200px;
         }
       }
-
-
 
       .menu__login_title, .menu__about, .menu__register {
         width: auto;
@@ -379,12 +381,6 @@
         text-transform: uppercase;
         padding-right: $padding;
       }
-
-
-
-      .menu__authorization_caption, .login_block {
-        //padding: 0 $padding / 2;
-      }
     }
 
     .main__menu_default  {
@@ -418,18 +414,5 @@
       }
 
     }
-
-    //.main__menu_default {
-    //  .menu__login_title, .menu__about, .menu__register {
-    //    &.mobile {
-    //      display: none;
-    //    }
-    //    &.desktop {
-    //      display: flex;
-    //    }
-    //  }
-    //
-    //}
-
   }
 }

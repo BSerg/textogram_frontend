@@ -45,7 +45,7 @@ class DefaultMenu extends React.Component<DefaultMenuPropsInterface, IDefaultmen
         let patternPhone = new RegExp('^\\' + this.getInitialCode() + '\\d{1,10}$');
         this.state = {
             phone: this.getInitialCode(), password: '', patternInputPhone: patternInputPhone,
-            patternPhone: patternPhone, loginError: null, isAuthorization: true
+            patternPhone: patternPhone, loginError: null, isAuthorization: false
         };
         this.handleSubmit = this.handleSubmit.bind(this);
     }
@@ -78,6 +78,10 @@ class DefaultMenu extends React.Component<DefaultMenuPropsInterface, IDefaultmen
     passwordChange(e: any) {
         let password = e.target.value;
         this.setState({password: password, loginError: null});
+    }
+
+    toggleIsAuthorization() {
+        this.setState({isAuthorization: !this.state.isAuthorization});
     }
 
     handleUrlClick(url: string) {
@@ -193,11 +197,13 @@ class DefaultMenu extends React.Component<DefaultMenuPropsInterface, IDefaultmen
                                     <button style={{position: 'absolute', opacity: 0}} type="submit">1</button>
                                 </form>
 
-                                <div className="menu__authorization_close"><CloseIcon /></div>
+                                <div className="menu__authorization_close" onClick={this.toggleIsAuthorization.bind(this)}>
+                                    <CloseIcon />
+                                </div>
 
 
                             </div>) : (
-                            <div className="menu__authorization">
+                            <div className="menu__authorization" onClick={this.toggleIsAuthorization.bind(this)}>
                                 <div className="menu__authorization_caption">{Captions.main_menu.authorize}</div>
                                 <LoginBlock />
                             </div>))
@@ -366,6 +372,10 @@ export default class Menu extends React.Component<any, IMenuStateInterface> {
         this.setState({open: Boolean(MenuAction.getStore().open)});
     }
 
+    stopClosePropagation(e: any) {
+        e.stopPropagation();
+    }
+
     componentDidMount() {
 
         MediaQuerySerice.listen((isDesktop: boolean) => {
@@ -393,9 +403,11 @@ export default class Menu extends React.Component<any, IMenuStateInterface> {
         if (!this.state.open) return null;
         return (
             <div id="main_menu" onClick={this.toggleMenu}>
+                <div onClick={this.stopClosePropagation.bind(this)} className="main_menu_container">
                 { this.state.user ?
                     <UserMenuWithRouter user={this.state.user} isDesktop={this.state.isDesktop} /> :
                         <DefaultMenuWithRouter isDesktop={this.state.isDesktop} /> }
+                </div>
 
             </div>);
     }
