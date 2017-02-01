@@ -5,7 +5,10 @@ import BaseContentBlock from "./BaseContentBlock";
 import {IContentData, ContentAction, DELETE_CONTENT, UPDATE_CONTENT} from "../../actions/editor/ContentAction";
 import {Validator} from "./utils";
 import {IPhoto} from "../../actions/editor/PhotoContentBlockAction";
-import {ContentBlockAction, ACTIVATE_CONTENT_BLOCK} from "../../actions/editor/ContentBlockAction";
+import {
+    ContentBlockAction, ACTIVATE_CONTENT_BLOCK,
+    DEACTIVATE_CONTENT_BLOCK
+} from "../../actions/editor/ContentBlockAction";
 import {PopupPanelAction, OPEN_POPUP} from "../../actions/shared/PopupPanelAction";
 import ContentBlockPopup from "./ContentBlockPopup";
 import "../../styles/editor/dialog_content_block.scss";
@@ -81,6 +84,7 @@ export default class DialogContentBlock extends React.Component<IDialogContentBl
 
     handleDelete() {
         ContentAction.do(DELETE_CONTENT, {id: this.state.content.id});
+        ContentBlockAction.do(DEACTIVATE_CONTENT_BLOCK, null);
     }
 
     nextRecipient() {
