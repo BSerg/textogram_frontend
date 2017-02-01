@@ -108,7 +108,6 @@ class DefaultMenu extends React.Component<DefaultMenuPropsInterface, IDefaultmen
     }
 
     render() {
-        console.log(this.props.isDesktop);
         return (
             <div className="menu__content main__menu_default" onClick={this.stopClosePropagation.bind(this)}>
 
@@ -317,24 +316,35 @@ class UserMenu extends React.Component<IUserMenuProps, any> {
     render() {
         return (
             <div className="menu__content" onClick={this.stopClosePropagation.bind(this)}>
-                <div className="menu__close desktop" onClick={this.closeMenu.bind(this)}>
-                    <CloseIcon />
-                </div>
+                {
+                    this.props.isDesktop ? (
+                        <div className="menu__close" onClick={this.closeMenu.bind(this)}>
+                            <CloseIcon />
+                        </div>
+                    ) : null
+                }
+
                 <div className="menu__user" onClick={this.goToProfile.bind(this)}>
                     <div className="menu__user_avatar">
                         <img src={ this.props.user.avatar } />
                     </div>
                     <div className="menu__user_username"><span>{this.props.user.first_name}</span> <span>{this.props.user.last_name}</span></div>
                 </div>
-                <NotificationBlockWithRouter className="mobile" />
+                { !this.props.isDesktop ? (<NotificationBlockWithRouter />) : null }
+
                 <div className="menu__links">
-                    <div className="menu__link mobile" onClick={this.handleUrlClick.bind(this, '/manage/')}>{ Captions.main_menu.manage_profile }</div>
+                    {
+                        !this.props.isDesktop ? (
+                            <div className="menu__link" onClick={this.handleUrlClick.bind(this, '/manage/')}>
+                                { Captions.main_menu.manage_profile }
+                            </div>) : null
+                    }
                     <div className="menu__link" onClick={this.createArticle.bind(this)}>{ Captions.main_menu.create_article }</div>
                     <div className="menu__link" onClick={this.handleUrlClick.bind(this, '/drafts/')}>{ Captions.main_menu.drafts }</div>
                 </div>
-                <NotificationBlockWithRouter className="desktop" showZero={true} />
+                { this.props.isDesktop ? (<NotificationBlockWithRouter showZero={true} />) : null}
                 <div className="menu__controls">
-                    <div onClick={this.handleUrlClick.bind(this, '/manage/')} className="desktop"><SettingsIcon /></div>
+                    { this.props.isDesktop ? (<div onClick={this.handleUrlClick.bind(this, '/manage/')}><SettingsIcon /></div>) : null}
                     <div onClick={this.handleUrlClick.bind(this, '/info/')} ><InfoIcon /></div>
                     <div onClick={this.logout.bind(this)}><ExitIcon /></div>
                 </div>

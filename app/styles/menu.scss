@@ -239,6 +239,7 @@
 
         .forgot_password {
           text-decoration: underline;
+          cursor: pointer;
         }
       }
     }
@@ -263,14 +264,6 @@
   .menu__link, .menu__register, .menu__about, .menu__controls, .menu__user  {
     cursor: pointer;
   }
-
-  .mobile {
-    display: flex;
-  }
-  .desktop {
-    display: none;
-  }
-
 }
 
 @media (min-width: 1024px) {
@@ -355,12 +348,6 @@
         letter-spacing: 1px;
       }
 
-      .mobile {
-        display: none;
-      }
-      .desktop {
-        display: flex;
-      }
     }
 
     .menu__authorization {
@@ -380,6 +367,12 @@
         letter-spacing: 1px;
         text-transform: uppercase;
         padding-right: $padding;
+      }
+
+      .login_block {
+        div {
+          background-color: #000000;
+        }
       }
     }
 
