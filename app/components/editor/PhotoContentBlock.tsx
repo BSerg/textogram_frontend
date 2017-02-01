@@ -2,7 +2,10 @@ import * as React from "react";
 import {Captions, BlockContentTypes, Constants} from "../../constants";
 import ContentEditable from "../shared/ContentEditable";
 import BaseContentBlock from "./BaseContentBlock";
-import {ContentBlockAction, ACTIVATE_CONTENT_BLOCK} from "../../actions/editor/ContentBlockAction";
+import {
+    ContentBlockAction, ACTIVATE_CONTENT_BLOCK,
+    DEACTIVATE_CONTENT_BLOCK
+} from "../../actions/editor/ContentBlockAction";
 import {ModalAction, OPEN_MODAL, CLOSE_MODAL} from "../../actions/shared/ModalAction";
 import {DELETE_CONTENT, ContentAction, IContentData, UPDATE_CONTENT} from "../../actions/editor/ContentAction";
 import ContentBlockPopup from "./ContentBlockPopup";
@@ -219,6 +222,7 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
 
     handleDelete() {
         ContentAction.do(DELETE_CONTENT, {id: this.state.content.id});
+        ContentBlockAction.do(DEACTIVATE_CONTENT_BLOCK, null);
     }
 
     handleBlockActive() {
