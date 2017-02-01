@@ -1,0 +1,36 @@
+@import "contstants";
+@import "mixins";
+
+.article {
+  width: 100%;
+
+
+  .article__title {
+    width: 100%;
+    padding: 100px 0;
+    background-size: cover!important;
+    text-align: center;
+
+    h1 {
+      font-size: 29px;
+      font-weight: $font-weight-bold;
+      color: white;
+    }
+
+    .article__date {
+      color: white;
+    }
+  }
+
+  .content {
+
+    & > p, h2, blockquote, .lead, .phrase, .columns {
+      padding: 0 $padding;
+      margin-bottom: $margin;
+    }
+
+    iframe {
+      width: 100%;
+    }
+  }
+}

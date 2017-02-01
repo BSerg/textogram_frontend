@@ -1,16 +1,68 @@
 import * as React from 'react';
+import {IContentData} from "../actions/editor/ContentAction";
+import {api} from "../api";
+import Error from "./Error";
 
-export default class Article extends React.Component<any, any> {
+import '../styles/article.scss';
+
+
+interface IArticle {
+    title: string
+    cover: {id: number, image: string} | null
+    blocks: IContentData[]
+    html: string
+    published_at: string
+}
+
+interface IArticleState {
+    article?: IArticle | null
+    error?: any
+}
+
+export default class Article extends React.Component<any, IArticleState> {
     constructor(props: any) {
         super(props);
+        this.state = {
+            article: null
+        }
+    }
+
+    componentDidMount() {
+        api.get(`/articles/${this.props.params.articleSlug}/`).then((response: any) => {
+            this.setState({article: response.data});
+        }).catch((err: any) => {
+            console.log(err);
+            if (err.response) {
+                switch (err.response.status) {
+                    case 404:
+                        this.setState({error: <Error code={404} msg="Article not found"/>})
+                        break;
+                    default:
+                        this.setState({error: <Error/>})
+                }
+            }
+        });
     }
 
     render() {
+        let coverStyle = {};
+        if (this.state.article && this.state.article.cover) {
+            coverStyle = {
+                background: `url('${this.state.article.cover}') no-repeat center center`
+            }
+        }
         return (
-            <div className="article">
-                THIS IS THE ARTICLE!
-                <div style={{height: '1000px', backgroundColor: 'gray'}}></div>
-            </div>
+            !this.state.error ?
+                this.state.article ?
+                    <div className="article">
+                        <div className="article__title" style={coverStyle}>
+                            <h1>{this.state.article.title}</h1>
+                            <div className="article__date">{this.state.article.published_at}</div>
+                        </div>
+                        <div className="content" dangerouslySetInnerHTML={{__html: this.state.article.html}}/>
+                    </div>
+                    : <div className="loading">LOADING...</div>
+                : this.state.error
         )
     }
 }
