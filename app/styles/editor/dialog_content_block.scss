@@ -26,13 +26,16 @@ $avatar_size: 32px;
 
 .content_block_dialog__remark {
   position: relative;
-  margin: $margin 0;
+
+  &:not(:last-child) {
+    margin-bottom: 30px;
+  }
 
   .content_block_dialog__participant,
   .content_block_dialog__faceless_participant {
     @include border_radius($avatar_size);
     position: absolute;
-    top: -5px;
+    top: -2px;
     left: 0;
     display: inline-block;
     width: $avatar_size;

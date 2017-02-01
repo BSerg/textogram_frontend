@@ -48,6 +48,7 @@ export namespace Captions {
         choose: 'Выбрать',
         help_dialogue: 'Добавьте реплики, нажав на "+" в панели инструментов',
         help_url_modal: 'Введите ссылку',
+        help_photo: 'Для создания галереи, добавьте изображения, нажав на «плюс»',
     };
 
     export const profile = {

@@ -345,8 +345,10 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
                                           content={photo}
                                           onDelete={this.deletePhoto.bind(this)}
                                           onOpenModal={this.openModal.bind(this)}/>
-                        }) :
-                        <div className="content_block_photo__empty_label">{Captions.editor.add_photo_help}</div>
+                        }) : null
+                    }
+                    {this.state.isActive ?
+                        <div className="content_block_photo__empty_label">{Captions.editor.help_photo}</div> : null
                     }
                 </div>
                 <div style={{clear: "both"}}/>

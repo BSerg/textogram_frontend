@@ -57,14 +57,21 @@
 }
 
 .content_block_photo__empty_label {
+  padding-top: $padding - 10px;
+  clear: both;
+  font-size: 12px;
+  line-height: 20px;
+  letter-spacing: 1px;
   text-align: center;
-  color: $color3;
+  color: $color5;
 }
 
 .photo_modal {
+  position: relative;
+  display: flex;
+  flex-direction: column;
   width: 100%;
   height:100%;
-  position: relative;
 
   .photo_modal__header {
     height: 50px;
@@ -85,13 +92,13 @@
   }
 
   .photo_modal__image {
+    flex: auto;
     width: 100%;
-    height: calc(100% - 100px);
     background-size: contain!important;
   }
 
   .photo_modal__caption {
-    height: 50px;
+    height: 70px;
     display: flex;
     align-items: center;
     justify-content: center;
