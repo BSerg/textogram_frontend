@@ -484,7 +484,7 @@ class Account extends React.Component<ISectionPropsInterface, any> {
                             <div className="profile__phone_data">
                                 <div className="data_value">{ phoneRepresentation }</div>
                                 <div className="data_change" onClick={this.setPhonePassword.bind(this)}>
-                                    {Captions.management.change}
+                                    <span>{Captions.management.change}</span><EditIcon />
                                 </div>
                             </div>
                         </div>
@@ -492,7 +492,9 @@ class Account extends React.Component<ISectionPropsInterface, any> {
                             <div className="profile__phone_caption">{Captions.management.captionPassword}</div>
                             <div className="profile__phone_data">
                                 <div className="data_value">******</div>
-                                <div className="data_change" onClick={this.setPhonePassword.bind(this)}>{Captions.management.change}</div>
+                                <div className="data_change" onClick={this.setPhonePassword.bind(this)}>
+                                    <span>{Captions.management.change}</span><EditIcon />
+                                </div>
                             </div>
                         </div>
                     </div>) :

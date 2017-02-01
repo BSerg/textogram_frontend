@@ -201,6 +201,13 @@
           text-transform: uppercase;
           cursor: pointer;
           text-decoration: underline;
+
+          svg {
+            fill: $color;
+            width: 25px;
+            height: 25px;
+            display: none;
+          }
         }
       }
     }
@@ -531,18 +538,37 @@
       .profile__phone {
         flex-direction: row;
         align-items: center;
-        //width: 100%;
-        //max-width: 600px;
+        max-width: 500px;
+        margin: 0 0 0 40px;
+        padding: $padding 0;
 
-        .profile__phone_caption, .profile__phone_data {
-          flex-grow: 1;
+        &:first-child {
+          margin-top: $margin;
+        }
+
+        .profile__phone_caption {
+          width: 50%;
         }
 
         .profile__phone_caption {
           padding: 0;
+          font-size: $font-size-small;
         }
+
         .profile__phone_data {
-          width: auto;
+          width: 35%;
+          .data_value {
+            font-size: $font-size6;
+          }
+
+          .data_change {
+            svg {
+              display: block;
+            }
+            span {
+              display: none;
+            }
+          }
         }
       }
 
