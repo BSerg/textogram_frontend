@@ -4,6 +4,7 @@ import {api} from "../api";
 import Error from "./Error";
 
 import '../styles/article.scss';
+import {UserAction} from "../actions/user/UserAction";
 
 
 interface IArticle {
@@ -74,7 +75,7 @@ export default class Article extends React.Component<any, IArticleState> {
 
     componentDidMount() {
         api.get(`/articles/${this.props.params.articleSlug}/`).then((response: any) => {
-            this.setState({article: response.data}, () => {
+            this.setState({article: response.data, isSelf: UserAction.getStore().user.id == response.data.owner.id}, () => {
                 window.setTimeout(() => {
                     this.processArticle();
                 }, 50);
@@ -113,6 +114,9 @@ export default class Article extends React.Component<any, IArticleState> {
                             <div className="article__date">{this.state.article.published_at}</div>
                         </div>
                         <div className="content" dangerouslySetInnerHTML={{__html: this.state.article.html}}/>
+                        <div className="article__tools">
+
+                        </div>
                     </div>
                     : <div className="loading">LOADING...</div>
                 : this.state.error
