@@ -56,14 +56,17 @@
   }
 }
 
-.content_block_photo__empty_label {
-  padding-top: $padding - 10px;
+.content_block_photo__empty_label, .content_block_photo__help {
   clear: both;
   font-size: 12px;
   line-height: 20px;
   letter-spacing: 1px;
   text-align: center;
   color: $color5;
+}
+
+.content_block_photo__help {
+  padding-top: $padding - 10px;
 }
 
 .photo_modal {

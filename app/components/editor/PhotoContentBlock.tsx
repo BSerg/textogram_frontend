@@ -1,9 +1,9 @@
 import * as React from "react";
 import {Captions, BlockContentTypes, Constants} from "../../constants";
-import ContentEditable from "../shared/ContentEditable";
 import BaseContentBlock from "./BaseContentBlock";
 import {
-    ContentBlockAction, ACTIVATE_CONTENT_BLOCK,
+    ContentBlockAction,
+    ACTIVATE_CONTENT_BLOCK,
     DEACTIVATE_CONTENT_BLOCK
 } from "../../actions/editor/ContentBlockAction";
 import {ModalAction, OPEN_MODAL, CLOSE_MODAL} from "../../actions/shared/ModalAction";
@@ -11,8 +11,8 @@ import {DELETE_CONTENT, ContentAction, IContentData, UPDATE_CONTENT} from "../..
 import ContentBlockPopup from "./ContentBlockPopup";
 import {PopupPanelAction, OPEN_POPUP} from "../../actions/shared/PopupPanelAction";
 import {UploadImageAction, UPLOAD_IMAGE} from "../../actions/editor/UploadImageAction";
-import "../../styles/editor/photo_content_block.scss";
 import ProgressBar from "../shared/ProgressBar";
+import "../../styles/editor/photo_content_block.scss";
 import Sortable = require('sortablejs');
 
 const AddButton = require('babel!svg-react!../../assets/images/redactor_icon_popup_add.svg?name=AddButton');
@@ -312,10 +312,12 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
     }
 
     componentDidMount() {
-        if (!this.state.content.photos.length) {
-            this.refs.inputUpload.click();
-        }
         ContentBlockAction.onChange(ACTIVATE_CONTENT_BLOCK, this.handleBlockActive);
+        if (!this.state.content.photos.length) {
+            this.handleFocus();
+            this.refs.inputUpload.click();
+
+        }
     }
 
     componentWillUnmount() {
@@ -347,9 +349,13 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
                                           onOpenModal={this.openModal.bind(this)}/>
                         }) : null
                     }
-                    {this.state.isActive ?
-                        <div className="content_block_photo__empty_label">{Captions.editor.help_photo}</div> : null
+                    {this.state.isActive && this.state.content.photos.length ?
+                        <div className="content_block_photo__help">{Captions.editor.help_photo}</div> : null
                     }
+                    {!this.state.content.photos.length ?
+                        <div className="content_block_photo__empty_label">{Captions.editor.add_photo_help}</div> : null
+                    }
+
                 </div>
                 <div style={{clear: "both"}}/>
                 <ProgressBar className={this.state.loadingImage ? 'active' : ''} label={Captions.editor.loading_image}/>

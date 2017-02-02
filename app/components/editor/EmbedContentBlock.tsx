@@ -1,6 +1,9 @@
 import * as React from "react";
 import {BlockContentTypes, Captions} from "../../constants";
-import {ContentBlockAction, ACTIVATE_CONTENT_BLOCK} from "../../actions/editor/ContentBlockAction";
+import {
+    ContentBlockAction, ACTIVATE_CONTENT_BLOCK,
+    DEACTIVATE_CONTENT_BLOCK
+} from "../../actions/editor/ContentBlockAction";
 import {IContentData, DELETE_CONTENT, ContentAction} from "../../actions/editor/ContentAction";
 import BaseContentBlock from "./BaseContentBlock";
 import ContentBlockPopup from "./ContentBlockPopup";
@@ -62,8 +65,9 @@ export default class EmbedContentBlock extends React.Component<IEmbedContentBloc
         }
     }
 
-    deleteContent() {
+    handleContent() {
         ContentAction.do(DELETE_CONTENT, {id: this.state.content.id});
+        ContentBlockAction.do(DEACTIVATE_CONTENT_BLOCK, null);
     }
 
     private getPopupContent() {
@@ -71,7 +75,7 @@ export default class EmbedContentBlock extends React.Component<IEmbedContentBloc
             ModalAction.do(OPEN_MODAL, {content: <EmbedModal content={this.state.content}/>})
         }}/>;
         return <ContentBlockPopup extraContent={extraContent}
-                                  onDelete={this.deleteContent.bind(this)}/>;
+                                  onDelete={this.handleContent.bind(this)}/>;
     }
 
     processEmbedElement(embed: HTMLElement) {
