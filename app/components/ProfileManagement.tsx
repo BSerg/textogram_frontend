@@ -544,7 +544,7 @@ export default class ProfileManagement extends React.Component<any, IProfileMana
     constructor() {
         super();
         this.state = this.getStateData();
-        this.state.currentSection = 1;
+        this.state.currentSection = 0;
         this.checkUser = this.checkUser.bind(this);
         this.avatarClick = this.avatarClick.bind(this);
         this.uploadAvatar = this.uploadAvatar.bind(this);
