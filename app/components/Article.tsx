@@ -7,6 +7,8 @@ import '../styles/article.scss';
 
 
 interface IArticle {
+    id: number
+    slug: string
     title: string
     cover: {id: number, image: string} | null
     blocks: IContentData[]
@@ -31,9 +33,51 @@ export default class Article extends React.Component<any, IArticleState> {
         }
     }
 
+    processArticle() {
+        let videoEmbeds = document.getElementsByClassName('embed video');
+        for (let i in videoEmbeds) {
+            let video = videoEmbeds[i] as HTMLDivElement;
+            if (video) {
+                try {
+                    video.style.height = video.offsetWidth * 450 / 800 + 'px';
+                    let iframe = video.getElementsByTagName('iframe')[0];
+                    if (iframe) {
+                        iframe.addEventListener('load', () => {
+                            iframe.style.height = iframe.offsetWidth * 450 / 800 + 'px';
+                            video.style.visibility = "visible";
+                        });
+                    }
+                } catch (err) {
+
+                }
+            }
+        }
+        try {
+            let posts = document.getElementsByClassName('embed post');
+            for (let i in posts) {
+                // TWITTER LOAD EMBED
+                twttr.widgets && twttr.widgets.load(posts[i]);
+            }
+        } catch (err) {
+            console.log('TWITTER EMBED LOADING ERROR', err);
+        }
+        try {
+            // INSTAGRAM LOAD EMBED
+            instgrm.Embeds.process();
+        } catch (err) {
+            console.log('INSTAGRAM EMBED LOADING ERROR', err);
+        }
+
+
+    }
+
     componentDidMount() {
         api.get(`/articles/${this.props.params.articleSlug}/`).then((response: any) => {
-            this.setState({article: response.data});
+            this.setState({article: response.data}, () => {
+                window.setTimeout(() => {
+                    this.processArticle();
+                }, 50);
+            });
         }).catch((err: any) => {
             console.log(err);
             if (err.response) {
@@ -58,7 +102,7 @@ export default class Article extends React.Component<any, IArticleState> {
         return (
             !this.state.error ?
                 this.state.article ?
-                    <div className="article">
+                    <div id={"article" + this.state.article.id} className="article">
                         <div className="article__title" style={coverStyle}>
                             <div className="article__author">
                                 <span className="article__first_name">{this.state.article.owner.first_name}</span>

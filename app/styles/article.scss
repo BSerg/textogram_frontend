@@ -54,7 +54,7 @@
 
   .content {
 
-    & > p, h2, blockquote, ul, .lead, .phrase, .columns {
+    & > p, h2, blockquote, ul, .lead, .phrase, .columns, .embed {
       padding: $padding/2 $padding;
     }
 
@@ -180,6 +180,12 @@
         width: calc(75% - 30px);
         height: 4px;
         background-color: $color;
+      }
+    }
+
+    .embed {
+      &.video {
+        visibility: 0;
       }
     }
   }
