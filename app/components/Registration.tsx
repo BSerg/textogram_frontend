@@ -33,8 +33,7 @@ interface IRegistrationStateInterface {
     currentStep?: number,
     patternInputPhone?: any,
     patternPhone?: any,
-    passwordVisible?: boolean
-
+    passwordVisible?: boolean,
 }
 
 class RegistrationClass extends React.Component<IRegistrationPropsInterface, IRegistrationStateInterface> {
@@ -47,6 +46,13 @@ class RegistrationClass extends React.Component<IRegistrationPropsInterface, IRe
     STEP_SEND_PHONE: number = 1;
     STEP_SEND_CODE: number = 2;
     STEP_SEND_REGISTRATION_DATA: number = 3;
+
+    STEPS: {step: number, caption: string}[] =
+        [
+            {step: this.STEP_SEND_PHONE, caption: Captions.registration.stepPhoneRegistration},
+            {step: this.STEP_SEND_CODE, caption: Captions.registration.stepCodeRegistration},
+            {step: this.STEP_SEND_REGISTRATION_DATA, caption: Captions.registration.stepPasswordRegistration},
+        ];
 
     PATTERN_INPUT_PHONE = /^\+7\d{0,10}$/;
     PATTERN_PHONE = /^\+7\d{10}$/;
@@ -110,12 +116,9 @@ class RegistrationClass extends React.Component<IRegistrationPropsInterface, IRe
         }
         let url;
 
-        if (this.props.isForgotPassword) url = 'reset_password/';
+        if (this.props.isForgotPassword) url = 'recover_password/';
         else if (this.props.isSetPhone) url = 'set_phone/';
         else url = 'registration/';
-
-
-        // let url = this.props.isForgotPassword ? 'reset_password/' : 'registration/';
 
         api.post(url, data).then((response: any) => {
             if (this.state.currentStep == this.STEP_SEND_PHONE) {
@@ -188,15 +191,15 @@ class RegistrationClass extends React.Component<IRegistrationPropsInterface, IRe
         if (this.state.currentStep != this.STEP_SEND_PHONE && this.state.currentStep != this.STEP_SEND_CODE && this.state.currentStep != this.STEP_SEND_REGISTRATION_DATA)
             return null;
 
-        let saveCaption;
-        if (this.props.isForgotPassword) saveCaption = Captions.registration.reset;
-        else if (this.props.isSetPhone) saveCaption = Captions.registration.save;
-        else saveCaption = Captions.registration.register;
-
         return (
             <div className="registration">
                 <div className="registration__controls top">
                     <div onClick={this.cancel}><CloseIcon /></div>
+                </div>
+                <div className="registration__steps">
+                    { this.STEPS.map((step, index) => {
+                        return (<div className={step.step <= this.state.currentStep ? "active" : ""} key={step.step}>{step.caption}</div>)
+                    }) }
                 </div>
                 <div className="registration__content">
 

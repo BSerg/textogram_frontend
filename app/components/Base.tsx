@@ -47,7 +47,6 @@ export default class Base extends React.Component<any, any> {
                 </div>
                 <MenuButton/>
                 <Menu />
-                <Modal/>
                 <PopupPanel/>
                 <Notification/>
                 <Modal/>

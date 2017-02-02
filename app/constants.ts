@@ -118,6 +118,13 @@ export namespace Captions {
         phoneDescriptionAlt: "Введите ваш номер телефона:",
         codeDescription: "Код подтверждения из смс:",
 
+        stepPhoneRegistration: "ШАГ 1 - номер телефона" ,
+        stepCodeRegistration: "ШАГ 2 - код подтверждения",
+        stepPasswordRegistration: "ШАГ 3 - пароль",
+        stepCodeReset: "ШАГ 1 - код подтверждения",
+        stepPasswordReset: "ШАГ 2 - пароль",
+
+
     };
 }
 

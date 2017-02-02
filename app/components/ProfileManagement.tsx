@@ -9,6 +9,7 @@ import {MediaQuerySerice} from '../services/MediaQueryService';
 import {ModalAction, OPEN_MODAL, CLOSE_MODAL} from '../actions/shared/ModalAction';
 import AvatarEditor from './shared/AvatarEditor';
 import Registration from './Registration';
+import ResetPassword from './ResetPassword';
 
 
 import Error from './Error';
@@ -465,8 +466,8 @@ class Account extends React.Component<ISectionPropsInterface, any> {
 
     }
 
-    setPassword() {
-
+    resetPassword() {
+        ModalAction.do(OPEN_MODAL, {content: <ResetPassword />});
     }
 
     getPhoneRepresentation(phone: string) {
@@ -492,7 +493,7 @@ class Account extends React.Component<ISectionPropsInterface, any> {
                             <div className="profile__phone_caption">{Captions.management.captionPassword}</div>
                             <div className="profile__phone_data">
                                 <div className="data_value">******</div>
-                                <div className="data_change" onClick={this.setPhonePassword.bind(this)}>
+                                <div className="data_change" onClick={this.resetPassword.bind(this)}>
                                     <span>{Captions.management.change}</span><EditIcon />
                                 </div>
                             </div>
