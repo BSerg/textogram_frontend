@@ -23,6 +23,7 @@ interface IArticle {
 interface IArticleState {
     article?: IArticle | null
     error?: any
+    isSelf?: boolean
 }
 
 export default class Article extends React.Component<any, IArticleState> {
@@ -103,7 +104,7 @@ export default class Article extends React.Component<any, IArticleState> {
             !this.state.error ?
                 this.state.article ?
                     <div id={"article" + this.state.article.id} className="article">
-                        <div className="article__title" style={coverStyle}>
+                        <div className={"article__title" + (this.state.article.cover ? ' inverted' : '')} style={coverStyle}>
                             <div className="article__author">
                                 <span className="article__first_name">{this.state.article.owner.first_name}</span>
                                 {this.state.article.owner.last_name}

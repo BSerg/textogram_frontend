@@ -12,7 +12,10 @@
     padding: 80px 30px;
     background-size: cover!important;
     text-align: center;
-    color: white;
+
+    &.inverted {
+      color: white;
+    }
 
     .article__author {
       position: absolute;
