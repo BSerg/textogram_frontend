@@ -3,6 +3,8 @@ import {ModalAction, CLOSE_MODAL} from '../actions/shared/ModalAction';
 import {api} from '../api';
 import {Captions} from '../constants';
 const CloseIcon = require('babel!svg-react!../assets/images/close.svg?name=CloseIcon');
+const VisibilityIcon = require('babel!svg-react!../assets/images/profile_visibility_icon.svg?name=VisibilityIcon');
+const VisibilityOffIcon = require('babel!svg-react!../assets/images/profile_visibility_off_icon.svg?name=VisibilityOffIcon');
 
 interface ResetPasswordStateInterface {
     currentStep?: number,
@@ -31,7 +33,7 @@ export default class ResetPassword extends React.Component<any, ResetPasswordSta
 
     constructor() {
         super();
-        this.state = {codeRequested: false, currentStep: this.STEP_SEND_CODE};
+        this.state = {codeRequested: false, currentStep: this.STEP_SEND_CODE, code: "", password: ""};
     }
 
     cancel() {
@@ -49,7 +51,8 @@ export default class ResetPassword extends React.Component<any, ResetPasswordSta
             data.password = this.state.password;
         }
 
-        if ((this.state.currentStep == this.STEP_SEND_CODE && this.state.codeError) || (this.state.currentStep == this.STEP_SEND_PASSWORD && this.state.passwordError)) {
+        if ((this.state.currentStep == this.STEP_SEND_CODE && (this.state.codeError || !this.state.code))
+            || (this.state.currentStep == this.STEP_SEND_PASSWORD && (this.state.passwordError || !this.state.password))) {
             return;
         }
 
@@ -59,6 +62,13 @@ export default class ResetPassword extends React.Component<any, ResetPasswordSta
             }
             else if (this.state.currentStep == this.STEP_SEND_PASSWORD) {
                 ModalAction.do(CLOSE_MODAL, null);
+            }
+        }).catch(() => {
+            if (this.state.currentStep == this.STEP_SEND_CODE) {
+                this.setState({codeError: 'error'});
+            }
+            else if (this.state.currentStep == this.STEP_SEND_PASSWORD) {
+                this.setState({passwordError: 'error'});
             }
         })
 
@@ -80,9 +90,12 @@ export default class ResetPassword extends React.Component<any, ResetPasswordSta
         this.sendData();
     }
 
+    togglePasswordVisibility() {
+        this.setState({passwordVisible: !this.state.passwordVisible});
+    }
+
     componentDidMount() {
         api.post('reset_password/').then((response: any) => {
-            console.log(response.data);
             this.setState({codeRequested: true});
         }).catch(() => {
             ModalAction.do(CLOSE_MODAL, null);
@@ -102,18 +115,61 @@ export default class ResetPassword extends React.Component<any, ResetPasswordSta
                     }) }
                 </div>
 
-                {
-                    this.state.currentStep == this.STEP_SEND_CODE ? (
-                        <div className="registration__form">
-                            <form onSubmit={this.submitForm.bind(this)}>
-                                <input type="text" name="code" value={this.state.code}
-                                       className={ this.state.codeError ? 'error': '' }
-                                       onChange={this.codeChange.bind(this)} />
-                                <button style={{position: 'absolute', opacity: 0}} type="submit">1</button>
-                            </form>
-                        </div>
-                    ) : null
-                }
+                <div className="registration__content">
+
+                    {
+                        this.state.currentStep == this.STEP_SEND_CODE ? (
+                            <div className="registration__form">
+                                <form onSubmit={this.submitForm.bind(this)}>
+                                    <input type="text" name="code" value={this.state.code}
+                                           className={ this.state.codeError ? 'error': '' }
+                                           placeholder={Captions.registration.codeDescription}
+                                           onChange={this.codeChange.bind(this)} />
+                                    <button style={{position: 'absolute', opacity: 0}} type="submit">1</button>
+                                </form>
+                            </div>
+                        ) : null
+                    }
+
+                    {
+                        this.state.currentStep == this.STEP_SEND_PASSWORD ? (
+                            <div className="registration__form">
+                                <form onSubmit={this.submitForm.bind(this)} autoComplete="false" >
+
+                                    <div>
+                                        <input type={this.state.passwordVisible ? "text" :"password"}
+                                               className={ this.state.passwordError ? 'error': '' }
+                                               name="p" value={this.state.password}
+                                               placeholder={Captions.registration.passwordPrompt}
+                                               onChange={this.passwordChange.bind(this)} autoComplete="new-password" />
+
+                                        <div onClick={this.togglePasswordVisibility.bind(this)}
+                                             className={"password_visibility_icon" + (this.state.passwordVisible ? ' visible' : '')}>
+                                            { this.state.passwordVisible ? <VisibilityIcon /> : <VisibilityOffIcon /> }
+                                        </div>
+                                    </div>
+                                    <button style={{position: 'absolute', opacity: 0}} type="submit">1</button>
+                                </form>
+                            </div>
+                        ) : null
+                    }
+                </div>
+
+
+                <div className="registration__controls bottom">
+                    { this.state.currentStep == this.STEP_SEND_CODE ?
+                        <div onClick={this.sendData.bind(this)} className={"registration__controls__button" + (!this.state.codeError && this.state.code ? ' active': '')}>
+                           {Captions.registration.next}
+                        </div> : null }
+
+                    {
+                        (this.state.currentStep == this.STEP_SEND_PASSWORD) ? (
+                            <div className={"registration__controls__button submit" + (!this.state.passwordError && this.state.password ? ' active': '') }
+                                 onClick={this.sendData.bind(this)}>{ Captions.registration.finish }</div>) : null
+                    }
+                </div>
+
+
             </div>)
     }
 }

@@ -111,6 +111,7 @@ export namespace Captions {
         usernamePrompt: "Имя и фамилия или псевдоним",
         passwordPrompt: "Придумайте пароль",
         passwordAgainPrompt: "Повторите пароль",
+        passwordSave: "Изменить пароль",
         next: "далее",
         finish: "завершить",
         changeNumber: "Изменить номер",
@@ -123,6 +124,7 @@ export namespace Captions {
         stepPasswordRegistration: "ШАГ 3 - пароль",
         stepCodeReset: "ШАГ 1 - код подтверждения",
         stepPasswordReset: "ШАГ 2 - пароль",
+
 
 
     };
