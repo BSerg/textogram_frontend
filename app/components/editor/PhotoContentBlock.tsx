@@ -21,8 +21,9 @@ const DeleteButton = require('babel!svg-react!../../assets/images/close.svg?name
 const BackButton = require('babel!svg-react!../../assets/images/back.svg?name=BackButton');
 
 interface IPhoto {
-    id: number,
+    id: number
     image: string
+    preview?: string
     caption?: string
 }
 
@@ -64,7 +65,7 @@ export class Photo extends React.Component<IPhotoProps, any> {
         }
         let style = this.props.style || {};
         Object.assign(style, {
-            background: `url('${this.props.content.image}') no-repeat center center`,
+            background: `url('${this.props.content.preview || this.props.content.image}') no-repeat center center`,
             backgroundSize: 'cover'
         });
         return (
