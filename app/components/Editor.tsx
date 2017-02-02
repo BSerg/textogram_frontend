@@ -43,6 +43,7 @@ interface IEditorState {
     error?: any,
     autoSave?: boolean
     showLastBlockHandler?: boolean
+    isSavingArticle?: boolean
 }
 
 
@@ -299,6 +300,11 @@ export default class Editor extends React.Component<any, IEditorState> {
                                      onClick={this.state.isValid && this.resetContent.bind(this, true)}>
                                     Обновить публикацию
                                 </div> : null),
+                            (this.state.article.status == ArticleStatuses.SHARED ?
+                                <div className={"editor__publish" + (!this.state.isValid ? ' disabled': '')}
+                                     onClick={this.state.isValid && this.resetContent.bind(this, true)}>
+                                    Сохранить
+                                </div> : null)
 
                         ]
                         : null

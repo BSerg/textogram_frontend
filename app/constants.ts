@@ -1,7 +1,8 @@
 export enum ArticleStatuses {
     DRAFT = 1,
     PUBLISHED = 2,
-    DELETED = 3
+    DELETED = 3,
+    SHARED = 4
 }
 
 export namespace Captions {
