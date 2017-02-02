@@ -185,9 +185,14 @@ export default class ColumnContentBlock extends React.Component<IColumnContentBl
         return (
             <BaseContentBlock id={this.state.content.id} className={className}>
                 <div className="content_block_column__column content_block_column__column_left">
-                    <div className={imageClassName}
-                         style={imageStyle}
-                         onClick={this.handleClickImage.bind(this)}/>
+                    {this.state.content.image ?
+                        <img className={imageClassName}
+                             src={this.state.content.image.preview || this.state.content.image.image}
+                             onClick={this.handleClickImage.bind(this)}/> :
+                        <div className="content_block_column__image empty"
+                             style={imageStyle}
+                             onClick={this.handleClickImage.bind(this)}/>
+                    }
                 </div>
                 <ContentEditable className="content_block_column__column content_block_column__column_right"
                                  onFocus={this.handleFocus.bind(this)}
