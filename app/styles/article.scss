@@ -206,3 +206,25 @@
     }
   }
 }
+
+.article__tools {
+  position: fixed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 50px;
+  background-color: $color;
+
+  svg {
+    width: 30px;
+    height: 30px;
+    fill: white;
+
+    &:not(:last-child) {
+      margin-right: $margin;
+    }
+  }
+}

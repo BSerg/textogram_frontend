@@ -4,8 +4,10 @@ import {api} from "../api";
 import Error from "./Error";
 
 import '../styles/article.scss';
-import {UserAction} from "../actions/user/UserAction";
+import {UserAction, LOGIN, LOGOUT, UPDATE_USER, SAVE_USER} from "../actions/user/UserAction";
 
+const EditButton = require('babel!svg-react!../assets/images/edit.svg?name=EditButton');
+const DeleteButton = require('babel!svg-react!../assets/images/redactor_icon_delete.svg?name=DeleteButton');
 
 interface IArticle {
     id: number
@@ -16,6 +18,7 @@ interface IArticle {
     html: string
     published_at: string
     owner: {
+        id: number,
         first_name: string,
         last_name: string
     }
@@ -31,8 +34,20 @@ export default class Article extends React.Component<any, IArticleState> {
     constructor(props: any) {
         super(props);
         this.state = {
-            article: null
+            article: null,
+            isSelf: false
         }
+    }
+
+    handleUser() {
+        let user = UserAction.getStore().user;
+        if (user && this.state.article) {
+            this.setState({isSelf: user.id == this.state.article.owner.id});
+        }
+    }
+
+    editArticle() {
+        this.state.article && this.props.router.push(`/articles/${this.state.article.id}/edit`);
     }
 
     processArticle() {
@@ -74,8 +89,10 @@ export default class Article extends React.Component<any, IArticleState> {
     }
 
     componentDidMount() {
+        UserAction.onChange([LOGIN, LOGOUT, UPDATE_USER, SAVE_USER], this.handleUser);
         api.get(`/articles/${this.props.params.articleSlug}/`).then((response: any) => {
-            this.setState({article: response.data, isSelf: UserAction.getStore().user.id == response.data.owner.id}, () => {
+            let isSelf = UserAction.getStore().user ? UserAction.getStore().user.id == response.data.owner.id : false;
+            this.setState({article: response.data, isSelf: isSelf}, () => {
                 window.setTimeout(() => {
                     this.processArticle();
                 }, 50);
@@ -92,6 +109,10 @@ export default class Article extends React.Component<any, IArticleState> {
                 }
             }
         });
+    }
+
+    componentWillUnmount() {
+        UserAction.unbind([LOGIN, LOGOUT, UPDATE_USER, SAVE_USER], this.handleUser);
     }
 
     render() {
@@ -114,9 +135,12 @@ export default class Article extends React.Component<any, IArticleState> {
                             <div className="article__date">{this.state.article.published_at}</div>
                         </div>
                         <div className="content" dangerouslySetInnerHTML={{__html: this.state.article.html}}/>
-                        <div className="article__tools">
-
-                        </div>
+                        {this.state.isSelf ?
+                            <div className="article__tools">
+                                {/*<DeleteButton/>*/}
+                                <EditButton onClick={this.editArticle.bind(this)}/>
+                            </div> : null
+                        }
                     </div>
                     : <div className="loading">LOADING...</div>
                 : this.state.error
