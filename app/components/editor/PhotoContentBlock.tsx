@@ -316,7 +316,6 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
         if (!this.state.content.photos.length) {
             this.handleFocus();
             this.refs.inputUpload.click();
-
         }
     }
 
