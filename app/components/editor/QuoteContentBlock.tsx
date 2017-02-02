@@ -4,8 +4,8 @@ import ContentEditable from "../shared/ContentEditable";
 import BaseContentBlock from "./BaseContentBlock";
 import {ContentBlockAction, ACTIVATE_CONTENT_BLOCK} from "../../actions/editor/ContentBlockAction";
 import {ContentAction, UPDATE_CONTENT, IContentData} from "../../actions/editor/ContentAction";
-import {UploadImageAction, UPLOAD_IMAGE} from "../../actions/editor/UploadImageAction";
-import ProgressBar from "../shared/ProgressBar";
+import {UploadImageAction, UPLOAD_IMAGE, UPDATE_PROGRESS} from "../../actions/editor/UploadImageAction";
+import ProgressBar, {PROGRESS_BAR_TYPE} from "../shared/ProgressBar";
 import {Validator} from "./utils";
 import {SHOW_NOTIFICATION, NotificationAction} from "../../actions/shared/NotificationAction";
 import * as toMarkdown from "to-markdown";
@@ -16,7 +16,7 @@ interface IQuoteContent {
     id: string
     type: BlockContentTypes
     value: string
-    image: {id: number, image: string} | null
+    image: {id: number, image: string, preview?: string} | null
     __meta?: any
 }
 
@@ -32,6 +32,7 @@ interface IQuoteContentBlockState {
     doNotUpdateComponent?: boolean
     isActive?: boolean
     loadingImage?: boolean
+    loadingProgress?: {progress: number, total: number} | null
 }
 
 export default class QuoteContentBlock extends React.Component<IQuoteContentBlockProps, IQuoteContentBlockState> {
@@ -98,8 +99,20 @@ export default class QuoteContentBlock extends React.Component<IQuoteContentBloc
         this.refs.inputUpload.click();
     }
 
+    handleUploadProgress(fileName: string) {
+        let store = UploadImageAction.getStore();
+        let progress = store.progress[fileName];
+        if (progress) {
+            this.setState({loadingProgress: progress});
+        }
+    }
+
     updateImage() {
         let file = this.refs.inputUpload.files[0];
+        if (!file) {
+            this.refs.inputUpload.value = "";
+            return;
+        }
         if (file.size > Constants.maxImageSize) {
             alert(`Image size is more than ${Constants.maxImageSize/1024/1024}Mb`);
             return;
@@ -107,17 +120,20 @@ export default class QuoteContentBlock extends React.Component<IQuoteContentBloc
         this.setState({loadingImage: true, menuOpened: false});
         let tempURL = window.URL.createObjectURL(file);
         this.state.content.image = {id: null, image: tempURL};
+        const handlerUploadProgress = this.handleUploadProgress.bind(this, file.name);
         this.setState({content: this.state.content}, () => {
+            UploadImageAction.onChange(UPDATE_PROGRESS, handlerUploadProgress);
             UploadImageAction.doAsync(UPLOAD_IMAGE, {articleId: this.props.articleId, image: file}).then(() => {
+                UploadImageAction.unbind(UPDATE_PROGRESS, handlerUploadProgress);
                 let store = UploadImageAction.getStore();
                 this.state.content.image = store.image;
-                this.setState({content: this.state.content, loadingImage: false}, () => {
+                this.setState({content: this.state.content, loadingImage: false, loadingProgress: null}, () => {
                     ContentAction.do(UPDATE_CONTENT, {contentBlock: this.state.content});
                     this.closePhotoMenu();
                 });
             }).catch((err) => {
-                console.log(err);
-                this.setState({loadingImage: false});
+                UploadImageAction.unbind(UPDATE_PROGRESS, handlerUploadProgress);
+                this.setState({loadingImage: false, loadingProgress: null});
             })
         });
     }
@@ -169,7 +185,7 @@ export default class QuoteContentBlock extends React.Component<IQuoteContentBloc
         let imageStyle: any = {};
         if (this.state.content.image) {
             imageStyle = {
-                background: `url('${this.state.content.image.image}') no-repeat center center`,
+                background: `url('${this.state.content.image.preview ||this.state.content.image.image}') no-repeat center center`,
                 backgroundSize: 'cover'
             };
             if (this.state.content.image.id == null) {
@@ -206,7 +222,14 @@ export default class QuoteContentBlock extends React.Component<IQuoteContentBloc
                                  content={marked(this.state.content.value)}
                                  enableTextFormat={true}
                                  placeholder={Captions.editor.enter_quote}/>
-                <ProgressBar className={this.state.loadingImage ? 'active' : ''} label={Captions.editor.loading_image}/>
+                {this.state.loadingProgress ?
+                    <ProgressBar type={PROGRESS_BAR_TYPE.DETERMINATE}
+                                 value={this.state.loadingProgress.progress}
+                                 total={this.state.loadingProgress.total}
+                                 className="active"
+                                 label={Captions.editor.loading_image}/>
+                    : null
+                }
                 <input ref="inputUpload"
                        type="file"
                        accept="image/jpeg,image/png,image/gif"

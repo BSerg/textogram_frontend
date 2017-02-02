@@ -1,8 +1,6 @@
-import * as React from 'react';
-import Action from '../Action';
-import {ContentAction, DELETE_CONTENT} from './ContentAction';
-import {PopupPanelAction, OPEN_POPUP, CLOSE_POPUP} from '../shared/PopupPanelAction';
-import {api} from '../../api';
+import * as React from "react";
+import Action from "../Action";
+import {api} from "../../api";
 
 export const ADD_IMAGE = 'add_image';
 export const UPDATE_IMAGE = 'update_image';
