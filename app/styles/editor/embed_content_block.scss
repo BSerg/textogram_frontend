@@ -30,7 +30,7 @@
     }
 
     .content_block_embed__foreground {
-      background-color: $color3;
+      background-color: $color4;
     }
   }
 
@@ -40,5 +40,9 @@
     .content_block_embed__html {
       width: 100%;
     }
+  }
+
+  .progress_bar {
+    margin: 0 $margin;
   }
 }

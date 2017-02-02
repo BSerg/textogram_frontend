@@ -49,6 +49,9 @@ export namespace Captions {
         help_dialogue: 'Добавьте реплики, нажав на «плюс» в панели инструментов',
         help_url_modal: 'Введите ссылку',
         help_photo: 'Для создания галереи, добавьте изображения, нажав на «плюс»',
+        loading_video: 'Загрузка видео',
+        loading_audio: 'Загрузка аудио',
+        loading_post: 'Загрузка поста',
     };
 
     export const profile = {
