@@ -22,7 +22,9 @@
     right: 10px;
     width: 24px;
     height: 24px;
-    fill: white;
+    background: rgba($color, 0.8) url('../../assets/images/close_white.svg') no-repeat center center;
+    background-size: 10px;
+    @include border_radius(14px);
   }
 
   &:not(.active) .content_block_photo__photo {

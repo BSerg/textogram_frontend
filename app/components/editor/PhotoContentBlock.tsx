@@ -70,7 +70,8 @@ export class Photo extends React.Component<IPhotoProps, any> {
         });
         return (
             <div className={className} style={style} onClick={this.handleOpenModal.bind(this)}>
-                <DeleteButton onClick={this.handleDelete.bind(this)} className="content_block_photo__delete"/>
+                <div onClick={this.handleDelete.bind(this)} className="content_block_photo__delete"></div>
+                {/*<DeleteButton onClick={this.handleDelete.bind(this)} className="content_block_photo__delete"/>*/}
             </div>
         )
     }
