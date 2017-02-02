@@ -407,8 +407,7 @@ class SocialLinks extends React.Component<ISectionPropsInterface, ISectionLinksS
     }
 
     render() {
-        console.log(this.state.links.length);
-        console.log(this.state.links);
+
         return (
             <div className="profile__section">
                 {
