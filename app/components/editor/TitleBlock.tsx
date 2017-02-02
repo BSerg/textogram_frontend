@@ -89,18 +89,11 @@ export default class TitleBlock extends React.Component<TitleBlockPropsInterface
         });
     }
 
-    handleScroll() {
-        let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-        this.refs.componentRootElement.style.backgroundPositionY = 'calc(50% + ' + 0.2 * scrollTop + 'px)';
-    }
-
     componentDidMount() {
-        document.addEventListener('scroll', this.handleScroll.bind(this));
         this.updateValidState();
     }
 
     componentWillUnmount() {
-        document.removeEventListener('scroll', this.handleScroll.bind(this));
     }
 
     render() {

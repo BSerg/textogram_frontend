@@ -26,10 +26,7 @@ $avatar_size: 32px;
 
 .content_block_dialog__remark {
   position: relative;
-
-  &:not(:last-child) {
-    margin-bottom: 30px;
-  }
+  margin: $margin*2 0;
 
   .content_block_dialog__participant,
   .content_block_dialog__faceless_participant {

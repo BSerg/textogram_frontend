@@ -1,18 +1,19 @@
 import * as React from "react";
 import {Captions, BlockContentTypes, Constants} from "../../constants";
-import ContentEditable from "../shared/ContentEditable";
 import BaseContentBlock from "./BaseContentBlock";
 import {
-    ContentBlockAction, ACTIVATE_CONTENT_BLOCK,
+    ContentBlockAction,
+    ACTIVATE_CONTENT_BLOCK,
     DEACTIVATE_CONTENT_BLOCK
 } from "../../actions/editor/ContentBlockAction";
 import {ModalAction, OPEN_MODAL, CLOSE_MODAL} from "../../actions/shared/ModalAction";
 import {DELETE_CONTENT, ContentAction, IContentData, UPDATE_CONTENT} from "../../actions/editor/ContentAction";
 import ContentBlockPopup from "./ContentBlockPopup";
 import {PopupPanelAction, OPEN_POPUP} from "../../actions/shared/PopupPanelAction";
-import {UploadImageAction, UPLOAD_IMAGE} from "../../actions/editor/UploadImageAction";
-import "../../styles/editor/photo_content_block.scss";
+import {UploadImageAction, UPLOAD_IMAGE, UPDATE_PROGRESS} from "../../actions/editor/UploadImageAction";
 import ProgressBar from "../shared/ProgressBar";
+import {PROGRESS_BAR_TYPE} from "../shared/ProgressBar";
+import "../../styles/editor/photo_content_block.scss";
 import Sortable = require('sortablejs');
 
 const AddButton = require('babel!svg-react!../../assets/images/redactor_icon_popup_add.svg?name=AddButton');
@@ -20,8 +21,9 @@ const DeleteButton = require('babel!svg-react!../../assets/images/close.svg?name
 const BackButton = require('babel!svg-react!../../assets/images/back.svg?name=BackButton');
 
 interface IPhoto {
-    id: number,
+    id: number
     image: string
+    preview?: string
     caption?: string
 }
 
@@ -37,19 +39,6 @@ export interface IPhotoContent {
     id: string
     type: BlockContentTypes
     photos: Array<IPhoto>
-}
-
-interface IPhotoContentBlockProps {
-    articleId: number
-    content: IContentData
-    maxPhotoCount?: number
-    className?: string
-}
-
-interface IPhotoContentBlockState {
-    isActive?: boolean
-    content?: IPhotoContent
-    loadingImage?: boolean
 }
 
 export class Photo extends React.Component<IPhotoProps, any> {
@@ -76,12 +65,13 @@ export class Photo extends React.Component<IPhotoProps, any> {
         }
         let style = this.props.style || {};
         Object.assign(style, {
-            background: `url('${this.props.content.image}') no-repeat center center`,
+            background: `url('${this.props.content.preview || this.props.content.image}') no-repeat center center`,
             backgroundSize: 'cover'
         });
         return (
             <div className={className} style={style} onClick={this.handleOpenModal.bind(this)}>
-                <DeleteButton onClick={this.handleDelete.bind(this)} className="content_block_photo__delete"/>
+                <div onClick={this.handleDelete.bind(this)} className="content_block_photo__delete"></div>
+                {/*<DeleteButton onClick={this.handleDelete.bind(this)} className="content_block_photo__delete"/>*/}
             </div>
         )
     }
@@ -180,6 +170,21 @@ export class PhotoModalContent extends React.Component<IPhotoModalContentProps, 
 }
 
 
+interface IPhotoContentBlockProps {
+    articleId: number
+    content: IContentData
+    maxPhotoCount?: number
+    className?: string
+}
+
+interface IPhotoContentBlockState {
+    isActive?: boolean
+    content?: IPhotoContent
+    loadingImage?: boolean
+    imageUploadProgress?: {progress: number, total: number} | null
+}
+
+
 export default class PhotoContentBlock extends React.Component<IPhotoContentBlockProps, IPhotoContentBlockState> {
     refs: {
         inputUpload: HTMLInputElement,
@@ -190,7 +195,8 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
         this.state = {
             content: this.props.content as IPhotoContent,
             isActive: false,
-            loadingImage: false
+            loadingImage: false,
+            imageUploadProgress: null
         };
         this.handleBlockActive = this.handleBlockActive.bind(this);
     }
@@ -235,6 +241,16 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
         });
     }
 
+    handleUploadProgress(fileName: string) {
+        let store = UploadImageAction.getStore();
+        let progress = store.progress[fileName];
+        if (progress) {
+            this.setState({imageUploadProgress: progress}, () => {
+                PopupPanelAction.do(OPEN_POPUP, {content: this.getPopupContent()});
+            });
+        }
+    }
+
     openModal(id: number) {
         if (this.state.isActive) {
             console.log('OPEN MODAL ON PHOTO #' + id);
@@ -257,6 +273,10 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
 
     addPhoto() {
         let file = this.refs.inputUpload.files[0];
+        if (!file) {
+            this.refs.inputUpload.value = '';
+            return;
+        }
         if (file.size > Constants.maxImageSize) {
             alert(`Image size is more than ${Constants.maxImageSize/1024/1024}Mb`);
             return;
@@ -265,7 +285,10 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
         this.state.content.photos.push({id: null, image: tempURL});
         this.setState({loadingImage: true, content: this.state.content}, () => {
             PopupPanelAction.do(OPEN_POPUP, {content: this.getPopupContent()});
+            const progressHandler = this.handleUploadProgress.bind(this, file.name);
+            UploadImageAction.onChange(UPDATE_PROGRESS, progressHandler);
             UploadImageAction.doAsync(UPLOAD_IMAGE, {articleId: this.props.articleId, image: file}).then(() => {
+                UploadImageAction.unbind(UPDATE_PROGRESS, progressHandler);
                 let store = UploadImageAction.getStore();
                 this.state.content.photos.pop();
                 this.state.content.photos.push(store.image);
@@ -274,6 +297,7 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
                     ContentAction.do(UPDATE_CONTENT, {contentBlock: this.state.content});
                 });
             }).catch((err) => {
+                UploadImageAction.unbind(UPDATE_PROGRESS, progressHandler);
                 console.log(err);
                 this.setState({loadingImage: false});
             });
@@ -297,25 +321,28 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
     }
 
     private openFileDialog() {
+        this.refs.inputUpload.value = '';
         this.refs.inputUpload.click();
     }
 
     private getPopupContent() {
         let extraContent;
-        if (this.state.content.photos.length < this.props.maxPhotoCount) {
-            extraContent = <AddButton onClick={this.openFileDialog.bind(this)}/>;
-        } else {
+        if (this.state.content.photos.length >= this.props.maxPhotoCount ||
+            (this.state.imageUploadProgress && this.state.imageUploadProgress.progress != this.state.imageUploadProgress.total)) {
             extraContent = <AddButton className="disabled"/>;
+        } else {
+            extraContent = <AddButton onClick={this.openFileDialog.bind(this)}/>;
         }
         return <ContentBlockPopup extraContent={extraContent}
                                   onDelete={this.handleDelete.bind(this)}/>;
     }
 
     componentDidMount() {
+        ContentBlockAction.onChange(ACTIVATE_CONTENT_BLOCK, this.handleBlockActive);
         if (!this.state.content.photos.length) {
+            this.handleFocus();
             this.refs.inputUpload.click();
         }
-        ContentBlockAction.onChange(ACTIVATE_CONTENT_BLOCK, this.handleBlockActive);
     }
 
     componentWillUnmount() {
@@ -347,12 +374,23 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
                                           onOpenModal={this.openModal.bind(this)}/>
                         }) : null
                     }
-                    {this.state.isActive ?
-                        <div className="content_block_photo__empty_label">{Captions.editor.help_photo}</div> : null
+                    {this.state.isActive && this.state.content.photos.length ?
+                        <div className="content_block_photo__help">{Captions.editor.help_photo}</div> : null
                     }
+                    {!this.state.content.photos.length ?
+                        <div className="content_block_photo__empty_label">{Captions.editor.add_photo_help}</div> : null
+                    }
+
                 </div>
                 <div style={{clear: "both"}}/>
-                <ProgressBar className={this.state.loadingImage ? 'active' : ''} label={Captions.editor.loading_image}/>
+                {this.state.imageUploadProgress ?
+                    <ProgressBar type={PROGRESS_BAR_TYPE.DETERMINATE}
+                                 value={this.state.imageUploadProgress.progress}
+                                 total={this.state.imageUploadProgress.total}
+                                 className={this.state.loadingImage ? 'active' : ''}
+                                 label={Captions.editor.loading_image}/>
+                        : null
+                }
                 <input id={"inputUpload" + this.props.content.id}
                        style={{display: "none"}}
                        ref="inputUpload"

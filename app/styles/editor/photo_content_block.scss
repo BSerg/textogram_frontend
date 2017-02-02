@@ -22,7 +22,9 @@
     right: 10px;
     width: 24px;
     height: 24px;
-    fill: white;
+    background: rgba($color, 0.8) url('../../assets/images/close_white.svg') no-repeat center center;
+    background-size: 10px;
+    @include border_radius(14px);
   }
 
   &:not(.active) .content_block_photo__photo {
@@ -56,14 +58,17 @@
   }
 }
 
-.content_block_photo__empty_label {
-  padding-top: $padding - 10px;
+.content_block_photo__empty_label, .content_block_photo__help {
   clear: both;
   font-size: 12px;
   line-height: 20px;
   letter-spacing: 1px;
   text-align: center;
   color: $color5;
+}
+
+.content_block_photo__help {
+  padding-top: $padding - 10px;
 }
 
 .photo_modal {

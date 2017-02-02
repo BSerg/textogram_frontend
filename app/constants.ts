@@ -1,7 +1,8 @@
 export enum ArticleStatuses {
     DRAFT = 1,
     PUBLISHED = 2,
-    DELETED = 3
+    DELETED = 3,
+    SHARED = 4
 }
 
 export namespace Captions {
@@ -10,7 +11,7 @@ export namespace Captions {
         remove_cover_ru: 'Удалить обложку',
         enter_title_ru: 'Введите заголовок',
         add_content_help: 'Выберите тип контента, нажав на "плюс"',
-        add_photo_help: 'Добавьте фото, нажав на "+" в панели инструментов',
+        add_photo_help: 'Добавьте фото, нажав на «плюс» в панели инструментов',
         enter_text: 'Введите текст',
         enter_header: 'Введите заголовок',
         enter_lead: 'Введите лид',
@@ -46,9 +47,12 @@ export namespace Captions {
         loading_image: 'Загрузка изображения',
         dialog_participants: 'Участники диалога',
         choose: 'Выбрать',
-        help_dialogue: 'Добавьте реплики, нажав на "+" в панели инструментов',
+        help_dialogue: 'Добавьте реплики, нажав на «плюс» в панели инструментов',
         help_url_modal: 'Введите ссылку',
         help_photo: 'Для создания галереи, добавьте изображения, нажав на «плюс»',
+        loading_video: 'Загрузка видео',
+        loading_audio: 'Загрузка аудио',
+        loading_post: 'Загрузка поста',
     };
 
     export const profile = {

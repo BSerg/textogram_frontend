@@ -1,6 +1,9 @@
 import * as React from "react";
 import {BlockContentTypes, Captions} from "../../constants";
-import {ContentBlockAction, ACTIVATE_CONTENT_BLOCK} from "../../actions/editor/ContentBlockAction";
+import {
+    ContentBlockAction, ACTIVATE_CONTENT_BLOCK,
+    DEACTIVATE_CONTENT_BLOCK
+} from "../../actions/editor/ContentBlockAction";
 import {IContentData, DELETE_CONTENT, ContentAction} from "../../actions/editor/ContentAction";
 import BaseContentBlock from "./BaseContentBlock";
 import ContentBlockPopup from "./ContentBlockPopup";
@@ -9,6 +12,7 @@ import {ModalAction, OPEN_MODAL} from "../../actions/shared/ModalAction";
 import EmbedModal from "./EmbedModal";
 import {api} from "../../api";
 import "../../styles/editor/embed_content_block.scss";
+import ProgressBar from "../shared/ProgressBar";
 
 const EditButton = require('babel!svg-react!../../assets/images/edit.svg?name=EditButton');
 
@@ -62,8 +66,9 @@ export default class EmbedContentBlock extends React.Component<IEmbedContentBloc
         }
     }
 
-    deleteContent() {
+    handleContent() {
         ContentAction.do(DELETE_CONTENT, {id: this.state.content.id});
+        ContentBlockAction.do(DEACTIVATE_CONTENT_BLOCK, null);
     }
 
     private getPopupContent() {
@@ -71,7 +76,7 @@ export default class EmbedContentBlock extends React.Component<IEmbedContentBloc
             ModalAction.do(OPEN_MODAL, {content: <EmbedModal content={this.state.content}/>})
         }}/>;
         return <ContentBlockPopup extraContent={extraContent}
-                                  onDelete={this.deleteContent.bind(this)}/>;
+                                  onDelete={this.handleContent.bind(this)}/>;
     }
 
     processEmbedElement(embed: HTMLElement) {
@@ -127,19 +132,22 @@ export default class EmbedContentBlock extends React.Component<IEmbedContentBloc
     }
 
     render() {
-        let className = 'content_block_embed';
+        let progressLabel, className = 'content_block_embed';
         if (this.state.loaded) {
             className += ' loaded';
         }
         switch (this.state.content.type) {
             case BlockContentTypes.VIDEO:
                 className += ' content_block_embed__video';
+                progressLabel = Captions.editor.loading_video;
                 break;
             case BlockContentTypes.AUDIO:
                 className += ' content_block_embed__audio';
+                progressLabel = Captions.editor.loading_audio;
                 break;
             case BlockContentTypes.POST:
                 className += ' content_block_embed__post';
+                progressLabel = Captions.editor.loading_post;
                 break;
         }
         return (
@@ -153,7 +161,10 @@ export default class EmbedContentBlock extends React.Component<IEmbedContentBloc
                 }
                 {!this.state.isActive ?
                     <div className="content_block_embed__foreground" onClick={this.handleFocus.bind(this)}>
-                        {!this.state.loaded ? Captions.editor.loading : null}
+                        {!this.state.loaded ?
+                            <ProgressBar label={progressLabel}/>
+                            : null
+                        }
                     </div> : null
                 }
             </BaseContentBlock>
