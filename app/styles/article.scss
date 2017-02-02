@@ -54,7 +54,7 @@
 
   .content {
 
-    & > p, h2, blockquote, .lead, .phrase, .columns {
+    & > p, h2, blockquote, ul, .lead, .phrase, .columns {
       padding: $padding/2 $padding;
     }
 
@@ -72,6 +72,17 @@
 
     & > p {
       line-height: 29px;
+    }
+
+    ul {
+      list-style: disc outside;
+      font-size: 18px;
+      line-height: 29px;
+
+      li {
+        margin-left: 15px;
+        padding-left: 5px;
+      }
     }
 
     blockquote {
