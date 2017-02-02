@@ -257,6 +257,10 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
 
     addPhoto() {
         let file = this.refs.inputUpload.files[0];
+        if (!file) {
+            this.refs.inputUpload.value = '';
+            return;
+        }
         if (file.size > Constants.maxImageSize) {
             alert(`Image size is more than ${Constants.maxImageSize/1024/1024}Mb`);
             return;
@@ -297,6 +301,7 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
     }
 
     private openFileDialog() {
+        this.refs.inputUpload.value = '';
         this.refs.inputUpload.click();
     }
 
