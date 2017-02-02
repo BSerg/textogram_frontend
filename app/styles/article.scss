@@ -3,34 +3,173 @@
 
 .article {
   width: 100%;
-
+  font-family: $family_noto;
+  font-size: $font-size;
 
   .article__title {
-    width: 100%;
-    padding: 100px 0;
+    position: relative;
+    width: calc(100% - 60px);
+    padding: 80px 30px;
     background-size: cover!important;
     text-align: center;
+    color: white;
+
+    .article__author {
+      position: absolute;
+      width: calc(100% - 60px);
+      height: 20px;
+      top: 30px;
+      text-align: center;
+      font-size: 14px;
+      font-family: $family_open_sans;
+      line-height: 20px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+
+      .article__first_name {
+        font-weight: $font-weight-bold;
+        margin-right: 10px;
+      }
+
+
+    }
 
     h1 {
-      font-size: 29px;
+      font-family: $family_arimo;
+      font-size: 28px;
       font-weight: $font-weight-bold;
-      color: white;
+      line-height: 32px;
     }
 
     .article__date {
-      color: white;
+      position: absolute;
+      bottom: 30px;
+      font-size: 10px;
+      font-weight: $font-weight-bold;
+      line-height: 12px;
+      letter-spacing: 1px;
+      text-align: center;
     }
   }
 
   .content {
 
     & > p, h2, blockquote, .lead, .phrase, .columns {
-      padding: 0 $padding;
-      margin-bottom: $margin;
+      padding: $padding/2 $padding;
     }
 
     iframe {
       width: 100%;
+    }
+
+    h2 {
+      font-family: $family_arimo;
+      font-size: 24px;
+      font-weight: $font-weight-bold;
+      line-height: 35px;
+      margin-top: 20px;
+    }
+
+    & > p {
+      line-height: 29px;
+    }
+
+    blockquote {
+      position: relative;
+      font-family: $family_arimo;
+      font-size: 17px;
+      line-height: 26px;
+
+      & > p:before {
+        content: '';
+        display: inline-block;
+        background: url('../assets/images/pub_quote.svg') no-repeat center center;
+        background-size: 36px;
+        width: 30px;
+        height: 30px;
+        margin-right: 10px;
+        margin-bottom: -5px;
+      }
+
+      &.personal {
+        margin-top: 35px + $padding;
+        padding-top: 40px;
+
+        img {
+          position: absolute;
+          width: 70px;
+          height: 70px;
+          top: -35px;
+          left: calc(50% - 35px);
+          @include border_radius(70px);
+          object-fit: cover;
+        }
+      }
+    }
+
+    .lead {
+      font-family: $family_arimo;
+      font-size: 19px;
+      font-weight: $font-weight-bold;
+      line-height: 27px;
+    }
+
+    .columns {
+      display: flex;
+      width: calc(100% - 60px);
+      position: relative;
+      font-size: 16px;
+      line-height: 27px;
+      padding-top: 45px;
+
+      &:after {
+        content: '';
+        display: block;
+        position: absolute;
+        top: 30px;
+        width: calc(100% - 60px);
+        height: 3px;
+        background-color: $color;
+      }
+
+      .column {
+        height: 100%;
+      }
+
+      .column:first-child {
+        width: 38%;
+
+        img {
+          width: 100%;
+          margin-top: 7.5px;
+        }
+      }
+
+      .column:not(:first-child) {
+        width: calc(62% - #{$margin});
+        margin-left: $margin;
+      }
+    }
+
+    .phrase {
+      position: relative;
+      font-family: $family_arimo;
+      font-size: 20px;
+      font-weight: $font-weight-bold;
+      line-height: 30px;
+      text-align: right;
+      padding-top: 45px;
+      padding-left: 25%;
+
+      &:after {
+        content: '';
+        position: absolute;
+        top: 30px;
+        left: 25%;
+        width: calc(75% - 30px);
+        height: 4px;
+        background-color: $color;
+      }
     }
   }
 }

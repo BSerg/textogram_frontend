@@ -12,6 +12,10 @@ interface IArticle {
     blocks: IContentData[]
     html: string
     published_at: string
+    owner: {
+        first_name: string,
+        last_name: string
+    }
 }
 
 interface IArticleState {
@@ -56,6 +60,10 @@ export default class Article extends React.Component<any, IArticleState> {
                 this.state.article ?
                     <div className="article">
                         <div className="article__title" style={coverStyle}>
+                            <div className="article__author">
+                                <span className="article__first_name">{this.state.article.owner.first_name}</span>
+                                {this.state.article.owner.last_name}
+                            </div>
                             <h1>{this.state.article.title}</h1>
                             <div className="article__date">{this.state.article.published_at}</div>
                         </div>

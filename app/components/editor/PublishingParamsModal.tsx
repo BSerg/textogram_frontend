@@ -10,6 +10,7 @@ const BackButton = require('babel!svg-react!../../assets/images/back.svg?name=Ba
 interface IProps {
     article: any
     updateMode?: boolean
+    onPublish?: (article: any) => any
 }
 
 interface IState {
@@ -45,7 +46,9 @@ export default class PublishingParamsModal extends React.Component<IProps, IStat
     private _publish() {
         api.post(`/articles/editor/${this.props.article.id}/publish/`).then((response: any) => {
             console.log(response);
+            this.back();
             alert('Поздравляем, статья опубликована');
+            this.props.onPublish && this.props.onPublish(response.data);
         });
     }
 

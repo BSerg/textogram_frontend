@@ -138,13 +138,20 @@ export default class Editor extends React.Component<any, IEditorState> {
     }
 
     openPublishParamsModal() {
-        ModalAction.do(OPEN_MODAL, {content: <PublishingParamsModal article={this.state.article}/>});
+        ModalAction.do(
+            OPEN_MODAL,
+            {
+                content: <PublishingParamsModal article={this.state.article}
+                                                onPublish={(article: any) => {this.setState({article: article})}}/>
+            }
+        );
     }
 
     publish() {
         console.log('PUBLISH');
         api.post(`/articles/editor/${this.state.article.id}/publish/`).then((response: any) => {
             console.log(response);
+            this.setState({article: response.data});
         });
     }
 
