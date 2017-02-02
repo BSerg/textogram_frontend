@@ -13,12 +13,14 @@ export enum PROGRESS_BAR_TYPE {
 interface IProgressBarProps {
     type?: PROGRESS_BAR_TYPE
     value?: number
+    total?: number
     label: string
     className?: string
 }
 
 interface IProgressBarState {
     value: number
+    total: number
 }
 
 
@@ -26,13 +28,15 @@ export default class ProgressBar extends React.Component<IProgressBarProps, IPro
     constructor(props: any) {
         super(props);
         this.state = {
-            value: this.props.value
+            value: this.props.value,
+            total: this.props.total
         }
     }
 
     static defaultProps = {
         type: PROGRESS_BAR_TYPE.INDETERMINATE,
-        value: 0
+        value: 0,
+        total: 0,
     };
 
     componentDidMount() {
@@ -43,6 +47,7 @@ export default class ProgressBar extends React.Component<IProgressBarProps, IPro
     }
 
     render() {
+        let barStyle = {};
         let className = 'progress_bar';
         this.props.className && (className += ' ' + this.props.className);
         switch (this.props.type) {
@@ -51,13 +56,16 @@ export default class ProgressBar extends React.Component<IProgressBarProps, IPro
                 break;
             case PROGRESS_BAR_TYPE.DETERMINATE:
                 className += ' determinate';
+                let progress = this.props.total ? this.props.value * 100 / this.props.total : 0;
+                barStyle = {width: progress + '%'};
                 break;
         }
+
         return (
             <div className={className}>
                 <div className="progress_bar__bar_container">
                     <div className="progress_bar__bar">
-                        <div className="progress_bar__item"/>
+                        <div className="progress_bar__item" style={barStyle}/>
                     </div>
                     <CloseIcon className="progress_bar__cancel"/>
                 </div>

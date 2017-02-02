@@ -10,8 +10,9 @@ import {ModalAction, OPEN_MODAL, CLOSE_MODAL} from "../../actions/shared/ModalAc
 import {DELETE_CONTENT, ContentAction, IContentData, UPDATE_CONTENT} from "../../actions/editor/ContentAction";
 import ContentBlockPopup from "./ContentBlockPopup";
 import {PopupPanelAction, OPEN_POPUP} from "../../actions/shared/PopupPanelAction";
-import {UploadImageAction, UPLOAD_IMAGE} from "../../actions/editor/UploadImageAction";
+import {UploadImageAction, UPLOAD_IMAGE, UPDATE_PROGRESS} from "../../actions/editor/UploadImageAction";
 import ProgressBar from "../shared/ProgressBar";
+import {PROGRESS_BAR_TYPE} from "../shared/ProgressBar";
 import "../../styles/editor/photo_content_block.scss";
 import Sortable = require('sortablejs');
 
@@ -37,19 +38,6 @@ export interface IPhotoContent {
     id: string
     type: BlockContentTypes
     photos: Array<IPhoto>
-}
-
-interface IPhotoContentBlockProps {
-    articleId: number
-    content: IContentData
-    maxPhotoCount?: number
-    className?: string
-}
-
-interface IPhotoContentBlockState {
-    isActive?: boolean
-    content?: IPhotoContent
-    loadingImage?: boolean
 }
 
 export class Photo extends React.Component<IPhotoProps, any> {
@@ -180,6 +168,21 @@ export class PhotoModalContent extends React.Component<IPhotoModalContentProps, 
 }
 
 
+interface IPhotoContentBlockProps {
+    articleId: number
+    content: IContentData
+    maxPhotoCount?: number
+    className?: string
+}
+
+interface IPhotoContentBlockState {
+    isActive?: boolean
+    content?: IPhotoContent
+    loadingImage?: boolean
+    imageUploadProgress?: {progress: number, total: number} | null
+}
+
+
 export default class PhotoContentBlock extends React.Component<IPhotoContentBlockProps, IPhotoContentBlockState> {
     refs: {
         inputUpload: HTMLInputElement,
@@ -190,7 +193,8 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
         this.state = {
             content: this.props.content as IPhotoContent,
             isActive: false,
-            loadingImage: false
+            loadingImage: false,
+            imageUploadProgress: null
         };
         this.handleBlockActive = this.handleBlockActive.bind(this);
     }
@@ -235,6 +239,16 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
         });
     }
 
+    handleUploadProgress(fileName: string) {
+        let store = UploadImageAction.getStore();
+        let progress = store.progress[fileName];
+        if (progress) {
+            this.setState({imageUploadProgress: progress}, () => {
+                PopupPanelAction.do(OPEN_POPUP, {content: this.getPopupContent()});
+            });
+        }
+    }
+
     openModal(id: number) {
         if (this.state.isActive) {
             console.log('OPEN MODAL ON PHOTO #' + id);
@@ -269,7 +283,10 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
         this.state.content.photos.push({id: null, image: tempURL});
         this.setState({loadingImage: true, content: this.state.content}, () => {
             PopupPanelAction.do(OPEN_POPUP, {content: this.getPopupContent()});
+            const progressHandler = this.handleUploadProgress.bind(this, file.name);
+            UploadImageAction.onChange(UPDATE_PROGRESS, progressHandler);
             UploadImageAction.doAsync(UPLOAD_IMAGE, {articleId: this.props.articleId, image: file}).then(() => {
+                UploadImageAction.unbind(UPDATE_PROGRESS, progressHandler);
                 let store = UploadImageAction.getStore();
                 this.state.content.photos.pop();
                 this.state.content.photos.push(store.image);
@@ -278,6 +295,7 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
                     ContentAction.do(UPDATE_CONTENT, {contentBlock: this.state.content});
                 });
             }).catch((err) => {
+                UploadImageAction.unbind(UPDATE_PROGRESS, progressHandler);
                 console.log(err);
                 this.setState({loadingImage: false});
             });
@@ -307,10 +325,11 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
 
     private getPopupContent() {
         let extraContent;
-        if (this.state.content.photos.length < this.props.maxPhotoCount) {
-            extraContent = <AddButton onClick={this.openFileDialog.bind(this)}/>;
-        } else {
+        if (this.state.content.photos.length >= this.props.maxPhotoCount ||
+            (this.state.imageUploadProgress && this.state.imageUploadProgress.progress != this.state.imageUploadProgress.total)) {
             extraContent = <AddButton className="disabled"/>;
+        } else {
+            extraContent = <AddButton onClick={this.openFileDialog.bind(this)}/>;
         }
         return <ContentBlockPopup extraContent={extraContent}
                                   onDelete={this.handleDelete.bind(this)}/>;
@@ -362,7 +381,14 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
 
                 </div>
                 <div style={{clear: "both"}}/>
-                <ProgressBar className={this.state.loadingImage ? 'active' : ''} label={Captions.editor.loading_image}/>
+                {this.state.imageUploadProgress ?
+                    <ProgressBar type={PROGRESS_BAR_TYPE.DETERMINATE}
+                                 value={this.state.imageUploadProgress.progress}
+                                 total={this.state.imageUploadProgress.total}
+                                 className={this.state.loadingImage ? 'active' : ''}
+                                 label={Captions.editor.loading_image}/>
+                        : null
+                }
                 <input id={"inputUpload" + this.props.content.id}
                        style={{display: "none"}}
                        ref="inputUpload"
