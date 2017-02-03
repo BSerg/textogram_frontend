@@ -5,9 +5,15 @@ import Error from "./Error";
 
 import '../styles/article.scss';
 import {UserAction, LOGIN, LOGOUT, UPDATE_USER, SAVE_USER} from "../actions/user/UserAction";
+import {ModalAction, OPEN_MODAL, CLOSE_MODAL} from "../actions/shared/ModalAction";
 
 const EditButton = require('babel!svg-react!../assets/images/edit.svg?name=EditButton');
 const DeleteButton = require('babel!svg-react!../assets/images/redactor_icon_delete.svg?name=DeleteButton');
+const BackButton = require('babel!svg-react!../assets/images/back.svg?name=BackButton');
+
+
+interface IPhoto {id: number, image: string, preview?: string, caption?: string}
+
 
 interface IArticle {
     id: number
@@ -21,7 +27,8 @@ interface IArticle {
         id: number,
         first_name: string,
         last_name: string
-    }
+    },
+    images: IPhoto[]
 }
 
 interface IArticleState {
@@ -50,7 +57,7 @@ export default class Article extends React.Component<any, IArticleState> {
         this.state.article && this.props.router.push(`/articles/${this.state.article.id}/edit`);
     }
 
-    processArticle() {
+    processEmbed() {
         let videoEmbeds = document.getElementsByClassName('embed video');
         for (let i in videoEmbeds) {
             let video = videoEmbeds[i] as HTMLDivElement;
@@ -84,8 +91,32 @@ export default class Article extends React.Component<any, IArticleState> {
         } catch (err) {
             console.log('INSTAGRAM EMBED LOADING ERROR', err);
         }
+    }
 
+    openGalleryModal(currentPhotoIndex: any, photos: any[]) {
+        console.log('OPEN PHOTO #' + currentPhotoIndex + ' in ' + photos.length + ' photos');
+        ModalAction.do(OPEN_MODAL, {content: <GalleryModal currentPhotoIndex={currentPhotoIndex} photos={photos}/>});
+    }
 
+    processPhoto() {
+        let galleries = document.getElementsByClassName('photos');
+        for (let i in galleries) {
+            try {
+                let gallery = galleries[i];
+                let photos = gallery.getElementsByClassName('photo');
+                let photoData: IPhoto[] = [];
+                for (let i in photos) {
+                    let photo = photos[i];
+                    this.state.article.images.forEach((image) => {
+                        if (image.id == parseInt(photo.getAttribute('data-id'))) {
+                            image.caption = photo.getAttribute('data-caption');
+                            photoData.push(image);
+                        }
+                    });
+                    photo.addEventListener('click', this.openGalleryModal.bind(this, i, photoData));
+                }
+            } catch (err) {}
+        }
     }
 
     componentDidMount() {
@@ -94,7 +125,8 @@ export default class Article extends React.Component<any, IArticleState> {
             let isSelf = UserAction.getStore().user ? UserAction.getStore().user.id == response.data.owner.id : false;
             this.setState({article: response.data, isSelf: isSelf}, () => {
                 window.setTimeout(() => {
-                    this.processArticle();
+                    this.processPhoto();
+                    this.processEmbed();
                 }, 50);
             });
         }).catch((err: any) => {
@@ -145,5 +177,56 @@ export default class Article extends React.Component<any, IArticleState> {
                     : <div className="loading">LOADING...</div>
                 : this.state.error
         )
+    }
+}
+
+
+interface IGalleryModalProps {
+    photos: IPhoto[],
+    currentPhotoIndex: number
+}
+
+interface IGalleryModalState {
+    currentPhotoIndex: number
+}
+
+
+class GalleryModal extends React.Component<IGalleryModalProps, any> {
+    constructor(props: any) {
+        super(props);
+        this.state = {
+            currentPhotoIndex: this.props.currentPhotoIndex
+        }
+    }
+
+    back() {
+        ModalAction.do(CLOSE_MODAL, null);
+    }
+
+    nextPhoto() {
+        this.state.currentPhotoIndex++;
+        if (this.state.currentPhotoIndex >= this.props.photos.length) {
+            this.state.currentPhotoIndex = 0;
+        }
+        this.setState({currentPhotoIndex: this.state.currentPhotoIndex});
+    }
+
+    render() {
+        let photo = this.props.photos[this.state.currentPhotoIndex];
+        let imageStyle = {
+            background: `url('${photo.image}') no-repeat center center`
+        };
+        return (
+            <div className="gallery_modal">
+                <div className="gallery_modal__header">
+                    <BackButton className="gallery_modal__back" onClick={this.back.bind(this)}/>
+                    <div className="gallery_modal__counter">
+                        {parseInt(this.state.currentPhotoIndex) + 1}/{this.props.photos.length}
+                    </div>
+                </div>
+                <div className="gallery_modal__image" style={imageStyle} onClick={this.nextPhoto.bind(this)}/>
+                {photo.caption ? <div className="gallery_modal__caption">{photo.caption}</div> : null}
+            </div>
+        );
     }
 }

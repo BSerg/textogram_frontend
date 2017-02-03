@@ -87,7 +87,6 @@ interface IPhotoModalContentProps {
 interface IPhotoModalContentState {
     photos?: IPhoto[]
     currentPhotoIndex?: number
-    doNotUpdateComponent?: boolean
 }
 
 export class PhotoModalContent extends React.Component<IPhotoModalContentProps, IPhotoModalContentState> {
@@ -110,7 +109,7 @@ export class PhotoModalContent extends React.Component<IPhotoModalContentProps, 
     handleCaption() {
         let contentText = this.refs.inputCaption.value;
         this.state.photos[this.state.currentPhotoIndex].caption = contentText;
-        this.setState({photos: this.state.photos, doNotUpdateComponent: true}, () => {
+        this.setState({photos: this.state.photos}, () => {
             ContentAction.do(UPDATE_CONTENT, {contentBlock: {
                 id: this.props.contentBlockId,
                 type: BlockContentTypes.PHOTO,
@@ -133,14 +132,6 @@ export class PhotoModalContent extends React.Component<IPhotoModalContentProps, 
         this.setState({currentPhotoIndex: this.state.currentPhotoIndex});
     }
 
-    shouldComponentUpdate(nextProps: any, nextState: any) {
-        if (nextState.updateComponent) {
-            delete nextState.updateComponent;
-            return false;
-        }
-        return true;
-    }
-
     render() {
         let imageStyle = {
             background: `url('${this.state.photos[this.state.currentPhotoIndex].image}') no-repeat center center`
@@ -159,7 +150,7 @@ export class PhotoModalContent extends React.Component<IPhotoModalContentProps, 
                         <input ref="inputCaption"
                                type="text"
                                placeholder={Captions.editor.enter_caption}
-                               value={this.state.photos[this.state.currentPhotoIndex].caption}
+                               value={this.state.photos[this.state.currentPhotoIndex].caption || ''}
                                onChange={this.handleCaption.bind(this)}
                                autoComplete="off"/>
                     </form>
