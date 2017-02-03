@@ -174,7 +174,7 @@ export default class Article extends React.Component<any, IArticleState> {
                             </div> : null
                         }
                     </div>
-                    : <div className="article__loading"><span>ARTICLE</span> IS LOADING...</div>
+                    : <div className="article__loading"><span>СТАТЬЯ</span> ЗАГРУЖАЕТСЯ...</div>
                 : this.state.error
         )
     }
