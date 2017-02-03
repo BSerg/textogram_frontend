@@ -15,6 +15,16 @@
 
     &.inverted {
       color: white;
+
+      &:before {
+        content: '';
+        background-color: rgba(0, 0, 0, 0.5);
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+      }
     }
 
     .article__author {
@@ -38,6 +48,7 @@
     }
 
     h1 {
+      position: relative;
       font-family: $family_arimo;
       font-size: 28px;
       font-weight: $font-weight-bold;
