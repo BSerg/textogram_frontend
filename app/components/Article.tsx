@@ -168,10 +168,13 @@ export default class Article extends React.Component<any, IArticleState> {
                         </div>
                         <div className="content" dangerouslySetInnerHTML={{__html: this.state.article.html}}/>
                         {this.state.isSelf ?
-                            <div className="article__tools">
-                                {/*<DeleteButton/>*/}
-                                <EditButton onClick={this.editArticle.bind(this)}/>
-                            </div> : null
+                            [
+                                <div style={{height: "50px"}}></div>,
+                                <div className="article__tools">
+                                    {/*<DeleteButton/>*/}
+                                    <EditButton onClick={this.editArticle.bind(this)}/>
+                                </div>
+                            ] : null
                         }
                     </div>
                     : <div className="article__loading"><span>СТАТЬЯ</span> ЗАГРУЖАЕТСЯ...</div>
