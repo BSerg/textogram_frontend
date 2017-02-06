@@ -4,32 +4,45 @@
 .block_handler_modal {
   position: relative;
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   justify-content: space-between;
   background-color: $color;
-  width: calc(100% - 60px);
-  height: calc(100% - 75px);
-  padding: 75px $padding 0 $padding;
-}
+  width: 100%;
+  height: 100%;
 
-.block_handler_modal__close {
-  position: absolute;
-  top: 25px;
-  left: calc(50% - 25px/2);
-  fill: white;
-  width: 25px;
-  height: 25px;
-}
+  .block_handler_modal__header {
+    height: 75px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-.block_handler_modal__item {
-  float: left;
-  $size: calc((100% - #{$padding} * 2) / 3);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-around;
-  width: $size;
-  margin-bottom: $margin * 2;
+    .block_handler_modal__close {
+      fill: white;
+      width: 25px;
+      height: 25px;
+    }
+  }
+
+  .block_handler_modal__content {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    flex: auto;
+    padding: $padding;
+
+    .block_handler_modal__item {
+      float: left;
+      $size: calc((100% - #{$padding} * 2) / 3);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-around;
+      width: $size;
+      margin-bottom: $margin * 2;
+    }
+  }
 }
 
 .block_handler_modal__caption {

@@ -39,18 +39,22 @@ export class BlockHandlerModal extends React.Component<IBlockHandlerModal, any> 
         ];
         return (
             <div className="block_handler_modal">
-                <CloseIcon className="block_handler_modal__close" onClick={this.closeModal.bind(this)}/>
-                {items.map((item) => {
-                    return (
-                        <div className="block_handler_modal__item">
-                            <BlockHandlerButton type={item.type}
-                                                articleId={this.props.articleId}
-                                                blockPosition={this.props.blockPosition}
-                                                onClick={this.closeModal.bind(this)}/>
-                            <div className="block_handler_modal__caption">{item.caption}</div>
-                        </div>
-                    )
-                })}
+                <div className="block_handler_modal__header">
+                    <CloseIcon className="block_handler_modal__close" onClick={this.closeModal.bind(this)}/>
+                </div>
+                <div className="block_handler_modal__content">
+                    {items.map((item) => {
+                        return (
+                            <div className="block_handler_modal__item">
+                                <BlockHandlerButton type={item.type}
+                                                    articleId={this.props.articleId}
+                                                    blockPosition={this.props.blockPosition}
+                                                    onClick={this.closeModal.bind(this)}/>
+                                <div className="block_handler_modal__caption">{item.caption}</div>
+                            </div>
+                        )
+                    })}
+                </div>
             </div>
         )
     }
