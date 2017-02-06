@@ -173,6 +173,7 @@ interface IPhotoContentBlockState {
     content?: IPhotoContent
     loadingImage?: boolean
     imageUploadProgress?: {progress: number, total: number} | null
+    sortable?: any
 }
 
 
@@ -187,7 +188,8 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
             content: this.props.content as IPhotoContent,
             isActive: false,
             loadingImage: false,
-            imageUploadProgress: null
+            imageUploadProgress: null,
+            sortable: null,
         };
         this.handleBlockActive = this.handleBlockActive.bind(this);
     }
@@ -197,20 +199,28 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
     };
 
     initSortable() {
-        let sortable = new Sortable(this.refs.photosContainer, {
-            sort: true,
-            delay: 0,
-            animation: 150,
-        });
-        sortable.options.onEnd = (e: any) => {
-            console.log(e, this.state);
-            let movedPhoto = this.state.content.photos.splice(e.oldIndex, 1)[0];
-            this.state.content.photos.splice(e.newIndex, 0, movedPhoto);
-            this.setState({content: this.state.content}, () => {
-                ContentAction.do(UPDATE_CONTENT, {contentBlock: this.state.content});
+        if (this.state.sortable) {
+            this.state.sortable.option("disabled", false);
+        } else {
+            this.state.sortable = new Sortable(this.refs.photosContainer, {
+                sort: true,
+                delay: 0,
+                animation: 150,
+                draggable: ".content_block_photo__photo",
             });
+            this.state.sortable.option.onEnd = (e: any) => {
+                console.log(e, this.state);
+                let movedPhoto = this.state.content.photos.splice(e.oldIndex, 1)[0];
+                this.state.content.photos.splice(e.newIndex, 0, movedPhoto);
+                this.setState({content: this.state.content}, () => {
+                    ContentAction.do(UPDATE_CONTENT, {contentBlock: this.state.content});
+                });
+            }
         }
+    }
 
+    disableSortable() {
+        if (this.state.sortable) this.state.sortable.option("disabled", true);
     }
 
     handleFocus() {
@@ -228,6 +238,8 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
             if (this.state.isActive) {
                 this.initSortable();
                 PopupPanelAction.do(OPEN_POPUP, {content: this.getPopupContent()});
+            } else {
+                this.disableSortable();
             }
         });
     }
