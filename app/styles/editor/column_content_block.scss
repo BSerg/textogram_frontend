@@ -67,6 +67,7 @@
     display: block;
     position: absolute;
     top: $padding;
+    left: $padding;
     width: calc(100% - #{$padding}*2);
     height: 3px;
     background-color: $color;

@@ -87,7 +87,7 @@ export default class ContentEditable extends React.Component<ContentEditableProp
             case 'ol':
                 return `<ol><li class="empty_tag" data-placeholder="${this.props.placeholder}"><br/></li></ol>`;
             default:
-                return '';
+                return '<br/>';
         }
     }
     extractContent() {
@@ -233,6 +233,9 @@ export default class ContentEditable extends React.Component<ContentEditableProp
     }
     render() {
         let className = 'content_editable';
+        if (this.props.elementType == 'inline') {
+            className += ' inline';
+        }
         if (this.props.className) {
             className += ' ' + this.props.className;
         }
