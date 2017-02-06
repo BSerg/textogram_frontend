@@ -12,14 +12,17 @@ import ArticlePreview from './shared/ArticlePreview';
 import Error from './Error';
 import {UserAction, GET_ME, LOGIN, LOGOUT} from "../actions/user/UserAction";
 
-const VKIcon = require('babel!svg-react!../assets/images/profile_social_icon_vk.svg?name=VKIcon');
-const FBIcon = require('babel!svg-react!../assets/images/profile_social_icon_fb.svg?name=FBIcon');
-
+import {Captions} from '../constants';
 import SocialIcon from './shared/SocialIcon';
 
-import {Captions} from '../constants';
+import {ModalAction, OPEN_MODAL, CLOSE_MODAL} from '../actions/shared/ModalAction';
+
+const VKIcon = require('babel!svg-react!../assets/images/profile_social_icon_vk.svg?name=VKIcon');
+const FBIcon = require('babel!svg-react!../assets/images/profile_social_icon_fb.svg?name=FBIcon');
 const ConfirmIcon = require('babel!svg-react!../assets/images/redactor_icon_confirm.svg?name=ConfirmIcon');
 const SubscriptionIcon = require('babel!svg-react!../assets/images/profile_subscription_icon.svg?name=SubscriptionIcon');
+const EditIcon = require('babel!svg-react!../assets/images/edit.svg?name=EditIcon');
+const CloseIcon = require('babel!svg-react!../assets/images/close.svg?name=CloseIcon');
 
 
 interface IUserArticlesPropsInterface {
@@ -98,10 +101,98 @@ class UserArticles extends React.Component<IUserArticlesPropsInterface, IUserArt
 
             {
                 items.map((article, index) => {
-                    return (<ArticlePreview isFeed={isFeed} key={index} item={article} />)
+                    return (<ArticlePreview isFeed={isFeed} key={index} item={article} isOwner={this.props.isSelf} />)
                 })
             }
         </div>)
+    }
+}
+
+interface ISubscribersPropsInterface {
+    userId: number | string;
+}
+
+interface ISubscribersStateInterface {
+    items?: any[];
+    itemsFiltered?: any[],
+    filterString?: string;
+}
+
+class UserSubscribers extends React.Component<ISubscribersPropsInterface, ISubscribersStateInterface> {
+
+    constructor() {
+        super();
+        this.state = {items: [], itemsFiltered: [], filterString: ""};
+    }
+
+
+    load() {
+        api.get('/users/', {params: {subscribed_to: this.props.userId}}).then((response: any) => {
+            let items = this.updateItems(response.data);
+            let objectsFiltered = this.updateItems(response.data);
+            this.setState({items: items, itemsFiltered: objectsFiltered});
+        }).catch((error: any) => { });
+    }
+
+    updateItems(items: any[]): any[] {
+
+        return items.map((item: any) => {
+            item.userName = (item.first_name + ' ' + item.last_name).toLowerCase();
+            return item;
+        });
+    }
+
+    filterItems(e: any) {
+        let filterString = e.target.value.toLowerCase();
+        if (filterString == "") {
+            this.setState({itemsFiltered: this.updateItems(this.state.items)});
+        }
+        else {
+            let objectsFiltered: any[] = [];
+
+            this.state.items.forEach((item: any, index) => {
+                if (item.userName.indexOf(filterString) != -1) objectsFiltered.push(item);
+            });
+
+            this.setState({itemsFiltered: objectsFiltered, filterString: filterString});
+        }
+    }
+
+    close() {
+        ModalAction.do(CLOSE_MODAL, null);
+    }
+
+    componentDidMount() {
+        this.load();
+    }
+
+    render() {
+        return (
+            <div className="profile__subscribers">
+                <div onClick={this.close.bind(this)} className="close"><CloseIcon /></div>
+                {this.state.itemsFiltered.map((item: any, index) => {
+                    return (
+                        <div className="profile__subscriber" key={index}>
+                            <div className="avatar" onClick={this.close.bind(this)}><Link to={"/profile/" + item.id}><img src={item.avatar} /></Link></div>
+
+                            <div className="name" onClick={this.close.bind(this)}>
+                                <Link to={"/profile/" + item.id}>
+                                    <span>{item.first_name} </span> <span>{item.last_name}</span>
+                                </Link>
+                            </div>
+
+                            {
+                                item.is_subscribed ? (<div className="confirm_icon" ><ConfirmIcon /></div>) : null
+                            }
+
+                        </div>)
+                })}
+
+                <div className="filter_input">
+                    <input onChange={this.filterItems.bind(this)} type="text" placeholder={Captions.management.fastSearch} />
+                </div>
+
+            </div>)
     }
 }
 
@@ -150,6 +241,10 @@ export default class Profile extends React.Component<any, IProfileState> {
         }).catch((error) => {})
     }
 
+    showSubscribers() {
+        ModalAction.do(OPEN_MODAL, {content: <UserSubscribers userId={this.state.user.id}/>})
+    }
+
     setIsSubscribed(is_subscribed: boolean) {
         let user = this.state.user;
         user.is_subscribed = is_subscribed;
@@ -186,7 +281,6 @@ export default class Profile extends React.Component<any, IProfileState> {
 
                  <div id="profile_content">
 
-                     <Header key="header"/>
                      <div className="profile__avatar" key="avatar">
                          <img src={this.state.user.avatar}/>
                      </div>
@@ -196,7 +290,7 @@ export default class Profile extends React.Component<any, IProfileState> {
                      </div>
 
                      <div key="subscription" className="profile__subscription">
-                         <div className="profile__subscription_info">
+                         <div className="profile__subscription_info" onClick={this.showSubscribers.bind(this)}>
                              <SubscriptionIcon />
                              <span>{ this.state.user.subscribers }</span>
                          </div>

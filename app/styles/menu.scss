@@ -35,6 +35,21 @@
     margin: auto;
   }
 
+  .menu__info {
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    padding: $padding - 10px $padding/2;
+    $svg-size: 35px;
+
+    svg {
+      width: $svg-size;
+      height: $svg-size;
+      fill: #FFFFFF;
+    }
+  }
+
   .menu__controls {
     position: absolute;
     top: 0;
@@ -62,7 +77,7 @@
 
     padding: $padding 0 $padding/2 0;
 
-    $avatar-size: 78px;
+    $avatar-size: 60px;
 
     .menu__user_avatar img {
       width: $avatar-size;
@@ -99,20 +114,23 @@
   }
 
   .menu__links {
-    padding: $padding 0;
+    //padding: $padding 0;
     .menu__link {
       font-size: $font-size-small;
       letter-spacing: 1px;
-      padding: $padding * 2/3 0;
+      padding: $padding 0;
+      border-bottom: 1px solid black;
+    }
+    .menu__link:last-child {
+      border: none;
     }
   }
 
   .menu__notifications {
 
     flex-wrap: nowrap;
-    background-color: $color5_1;
     padding: $padding - 5px $padding;
-    border-top: 3px solid $color;
+    border-bottom: 1px solid black;
     justify-content: flex-start;
     cursor: pointer;
 
@@ -313,6 +331,7 @@
           font-size: 12px;
           padding: 0 $padding/2;
           text-align: center;
+          border: none;
         }
         div {
           padding: 0;

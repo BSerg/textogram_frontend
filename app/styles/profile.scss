@@ -1,7 +1,7 @@
 @import "contstants";
 @import "mixins";
 
-$avatar-side-size: 78px;
+$avatar-side-size: 60px;
 
 #profile_content {
 
@@ -27,13 +27,8 @@ $avatar-side-size: 78px;
 
   .profile__avatar {
 
-    position: relative;
-    height: $profile-avatar-side-size / 2;
-
-    img {
-      position: absolute;
-      top: -$avatar-side-size/2;
-    }
+    padding: $padding/2 0;
+    margin: $margin 0;
   }
 
   .profile__username {
@@ -149,8 +144,111 @@ $avatar-side-size: 78px;
       border-top: 1px solid $color3;
     }
   }
-
 }
+
+
+
+.profile__subscribers {
+
+  background-color: $color4;
+  height: 100%;
+  max-height: 100%;
+  overflow-y: scroll;
+  padding-bottom: 50px;
+  box-sizing: border-box;
+
+  .profile__subscriber {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 5px $padding /2;
+
+    $avatar-size: 34px;
+    .avatar {
+      img {
+        width: $avatar-size;
+        height: $avatar-size;
+        @include border_radius($avatar-size);
+      }
+    }
+
+    .name {
+      overflow: hidden;
+      flex-grow: 1;
+      font-size: $font-size-small;
+      text-transform: uppercase;
+      word-spacing: 10px;
+      justify-content: flex-start;
+      padding: 0 $padding/2;
+      letter-spacing: 1px;
+      span:first-child {
+        font-weight: $font-weight-bold;
+        padding-right: $padding/3;
+      }
+      a {
+        color: $color;
+      }
+    }
+
+    .confirm_icon svg {
+      width: 20px;
+      height: 20px;
+      fill: $color3;
+      stroke: $color3;
+    }
+  }
+
+  .profile__subscriber:last-child {
+    padding-bottom: 50px;
+  }
+
+
+  .filter_input {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    $input_height: 50px;
+
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: $input_height;
+    padding: 0;
+    background-color: $color;
+
+    input {
+      background-color: transparent;
+      outline: none;
+      height: $input_height;
+      text-align: center;
+      padding: 0;
+      margin: 0;
+      border:none;
+      font-size: $font_size6;
+      color: #FFFFFF;
+      font-weight: 300;
+      font-family: $family_open_sans;
+    }
+  }
+
+  .close {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding: 10px;
+
+    svg {
+      width: 18px;
+      height: 18px;
+      fill: $color5;
+    }
+  }
+}
+
 
 .drafts__content {
   padding: 0 $padding;

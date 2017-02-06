@@ -333,19 +333,14 @@ class UserMenu extends React.Component<IUserMenuProps, any> {
                 { !this.props.isDesktop ? (<NotificationBlockWithRouter />) : null }
 
                 <div className="menu__links">
-                    {
-                        !this.props.isDesktop ? (
-                            <div className="menu__link" onClick={this.handleUrlClick.bind(this, '/manage/')}>
-                                { Captions.main_menu.manage_profile }
-                            </div>) : null
-                    }
                     <div className="menu__link" onClick={this.createArticle.bind(this)}>{ Captions.main_menu.create_article }</div>
                     <div className="menu__link" onClick={this.handleUrlClick.bind(this, '/drafts/')}>{ Captions.main_menu.drafts }</div>
                 </div>
                 { this.props.isDesktop ? (<NotificationBlockWithRouter showZero={true} />) : null}
+                {!this.props.isDesktop ? (<div onClick={this.handleUrlClick.bind(this, '/info/')} className="menu__info" ><InfoIcon /></div>) : null}
                 <div className="menu__controls">
-                    { this.props.isDesktop ? (<div onClick={this.handleUrlClick.bind(this, '/manage/')}><SettingsIcon /></div>) : null}
-                    <div onClick={this.handleUrlClick.bind(this, '/info/')} ><InfoIcon /></div>
+                    <div onClick={this.handleUrlClick.bind(this, '/manage/')}><SettingsIcon /></div>
+                    {this.props.isDesktop ? (<div onClick={this.handleUrlClick.bind(this, '/info/')} ><InfoIcon /></div>) : null}
                     <div onClick={this.logout.bind(this)}><ExitIcon /></div>
                 </div>
             </div>)

@@ -357,6 +357,9 @@
     flex-direction: row;
     justify-content: flex-start;
     padding: $padding/3 $padding;
+    align-items: center;
+
+    text-decoration: none;
 
     $avatar-size: 34px;
 
@@ -382,6 +385,9 @@
       span:first-child {
         font-weight: $font-weight-bold;
         padding-right: $padding/3;
+      }
+      a {
+        color: $color;
       }
     }
   }

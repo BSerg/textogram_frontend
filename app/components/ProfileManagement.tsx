@@ -1,5 +1,6 @@
 import * as React from 'react';
 import * as moment from 'moment';
+import {Link} from 'react-router';
 import {Captions, Constants} from '../constants';
 
 import {UserAction, SAVE_USER, GET_ME, LOGIN, LOGOUT, UPDATE_USER} from '../actions/user/UserAction';
@@ -119,10 +120,14 @@ class Subscriptions extends React.Component<ISectionPropsInterface, ISubscriptio
                 {this.state.objectsFiltered.map((subscription, index) => {
                     return (
                         <div className="profile__subscription" key={index}>
-                            <div className="avatar"><img src={subscription.author.avatar} /></div>
+                            <div className="avatar"><Link to={"/profile/" + subscription.author.id}><img src={subscription.author.avatar} /></Link></div>
+
                             <div className="name">
-                                <span>{subscription.author.first_name} </span> <span>{subscription.author.last_name}</span>
+                                <Link to={"/profile/" + subscription.author.id}>
+                                    <span>{subscription.author.first_name} </span> <span>{subscription.author.last_name}</span>
+                                </Link>
                             </div>
+
                             <div className="close_icon" onClick={this.removeSubscription.bind(this, subscription.author.id)}><CloseIcon /></div>
                         </div>)
                 })}
