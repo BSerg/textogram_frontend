@@ -31,7 +31,7 @@ UploadImageAction.registerAsync(UPLOAD_IMAGE, (store, data: {articleId: number, 
 
         xhr.onload = () => {
             if (xhr.status == 201) {
-                let data = JSON.parse(xhr.responseText);
+                let data = JSON.parse(xhr.response);
                 store.image = data;
                 store.images[data.image.name] = data;
                 resolve(data)
@@ -46,6 +46,7 @@ UploadImageAction.registerAsync(UPLOAD_IMAGE, (store, data: {articleId: number, 
 
         xhr.open("POST", process.env.API_URL + '/articles/editor/images/', true);
         xhr.setRequestHeader('Authorization', 'Token ' + localStorage.getItem('authToken'));
+        xhr.setRequestHeader('Accept', 'application/json');
         xhr.send(formData);
 
     })

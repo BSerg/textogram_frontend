@@ -30,6 +30,7 @@
   color: $color3;
   position: absolute;
   top: 30px;
+  width: calc(100% - #{$padding} * 2);
 }
 
 .title_block__cover {
