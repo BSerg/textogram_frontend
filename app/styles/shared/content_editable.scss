@@ -2,6 +2,7 @@
 
 [contenteditable] {
   outline: none;
+  word-wrap: break-word; //Firefox fix
 }
 
 .content_editable {

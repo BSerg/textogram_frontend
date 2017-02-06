@@ -129,23 +129,20 @@ export default class ContentEditable extends React.Component<ContentEditableProp
     updateEmptyState() {
         if (!this.state.contentText.trim()) {
             this.refs.editableElement.classList.add('empty');
+            this.refs.editableElement.innerHTML = this.getElementEmptyContentByType();
+                let el = this.refs.editableElement.childNodes[0];
+                if (el instanceof Node) {
+                    this.setCursorTo(el);
+                }
         } else {
             this.refs.editableElement.classList.remove('empty');
+            this.cleanElement();
         }
     }
     handleInput (e?: Event) {
         clearTimeout(this.handleChangeDelayProcess);
         this.setState(this.extractContent(), () => {
             this.updateEmptyState();
-            if (!this.state.contentText.trim()) {
-                this.refs.editableElement.innerHTML = this.getElementEmptyContentByType();
-                let el = this.refs.editableElement.childNodes[0];
-                if (el instanceof Node) {
-                    this.setCursorTo(el);
-                }
-            } else {
-                this.cleanElement();
-            }
             if (this.props.onChange) {
                 this.handleChangeDelayProcess = window.setTimeout(() => {
                     this.props.onChange(this.state.content, this.state.contentText);
