@@ -18,3 +18,11 @@ html {
     margin: 0 auto;
   }
 }
+
+::-moz-selection {
+  color: white; background: $color;
+}
+
+::selection {
+  color: white; background: $color;
+}
