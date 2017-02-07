@@ -24,6 +24,10 @@ $avatar_size: 32px;
   position: relative;
   margin: $margin*2 0;
 
+  &.hide {
+    display: none;
+  }
+
   .content_block_dialog__participant,
   .content_block_dialog__faceless_participant {
     @include border_radius($avatar_size);
