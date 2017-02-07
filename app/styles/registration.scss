@@ -23,6 +23,7 @@
     letter-spacing: 2px;
     color: #FFFFFF;
     padding: $padding;
+    cursor: pointer;
 
     box-sizing: border-box;
 
@@ -40,6 +41,31 @@
     }
   }
 
+  .registration__steps {
+    padding: $padding;
+    width: 100%;
+
+    display: none;
+    flex-direction: row;
+    font-size: $font-size-small;
+    letter-spacing: 1px;
+    color: $color5;
+
+
+    div {
+      border-top: 1px solid $color5;
+      flex-grow: 1;
+      line-height: 30px;
+      text-align: center;
+    }
+
+    div.active {
+      color: #FFFFFF;
+      border-top: 2px solid #FFFFFF;
+    }
+
+  }
+
   .registration__content {
     display: flex;
     flex-direction: column;
@@ -48,7 +74,7 @@
     width: 100%;
 
     .registration__description {
-      color: $color6_1;
+      color: #FFFFFF;
       font-size: 12px;
 
       text-align: center;
@@ -159,9 +185,51 @@
     &.active {
       color: #FFFFFF;
     }
-    &.active.submit {
-      background-color: #000000;
-    }
+    //&.active.submit {
+    //  background-color: #000000;
+    //}
   }
 
+}
+
+@media (min-width: 1024px) {
+  .registration {
+    max-height: 400px;
+    width: 580px;
+    background-color: $color;
+    padding: 0 $padding;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    .registration__steps {
+      display: flex;
+    }
+
+    .registration__controls {
+
+    }
+
+    .registration__controls.top {
+      width: auto;
+
+      left: unset;
+      right: -$padding * 2;
+      padding: 0;
+    }
+
+    .registration__controls.bottom {
+      position: relative;
+    }
+
+    .registration__content {
+      width: 100%;
+
+      .registration__description, .registration__form {
+        width: 70%;
+      }
+    }
+
+  }
 }

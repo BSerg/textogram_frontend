@@ -8,12 +8,14 @@ import '../../styles/shared/article_preview.scss';
 const ViewsIcon = require('babel!svg-react!../../assets/images/views_icon.svg?name=ViewsIcon');
 const LockIcon = require('babel!svg-react!../../assets/images/lock.svg?name=LockIcon');
 const CloseIcon = require('babel!svg-react!../../assets/images/close.svg?name=CloseIcon');
+const EditIcon = require('babel!svg-react!../../assets/images/edit.svg?name=EditIcon');
 
 
 interface IArticlePreviewPropsInterface {
     item: any,
     onDelete?: (id: number) => {},
     isFeed?: boolean,
+    isOwner?: boolean,
 }
 
 
@@ -53,36 +55,39 @@ class ArticlePreviewClass extends React.Component<IArticlePreviewPropsInterface,
 
         return (
             <div className="article_preview">
-                <Link to={this.props.item.is_draft ? ("/articles/" + this.props.item.id + "/edit/") :
-                            ("/articles/" + this.props.item.slug + "/")}>
+                    <div className="title">
+                        <Link to={this.props.item.is_draft ? ("/articles/" + this.props.item.id + "/edit/") :
+                            ("/articles/" + this.props.item.slug + "/")}><div>{ this.props.item.title || date }</div></Link>
 
-                    {
-                        (!this.props.item.title && ! this.props.item.cover && !this.props.item.lead) ?
-                        <div className="title">{ date }</div>: null
-                    }
-                    {
-                        this.props.item.title ? (
-                            <div className="title">
-                                { this.props.isFeed ? (<div className="title__avatar">
-                                    <img src={this.props.item.owner.avatar}/>
-                                </div>) : null }
-                                <div>{ this.props.item.title }</div>
+                        { this.props.isFeed ? (
+                            <Link to={"/profile/" + this.props.item.owner.id} ><div className="title__avatar">
+                                <img src={this.props.item.owner.avatar}/>
+                            </div></Link>) : (this.props.isOwner ? (
+                                <Link to={"/articles/" + this.props.item.id + "/edit/"}>
+                                    <div className="title__edit"><EditIcon /></div>
+                                </Link>) : null) }
+                    </div>
 
-                            </div>) : null
-                    }
                     {
                         this.props.item.lead ? (
-                            <div className="lead">{ this.props.item.lead }</div>
+                            <Link to={this.props.item.is_draft ? ("/articles/" + this.props.item.id + "/edit/") :
+                                ("/articles/" + this.props.item.slug + "/")}>
+
+                                <div className="lead">{ this.props.item.lead }</div>
+                            </Link>
                         ) : null
                     }
                     {
                         this.props.item.cover ? (
                             <div className="cover">
-                                <img  src={this.props.item.cover} />
+                                <Link to={this.props.item.is_draft ? ("/articles/" + this.props.item.id + "/edit/") :
+                                    ("/articles/" + this.props.item.slug + "/")}>
+                                    <img  src={this.props.item.cover} />
+                                </Link>
                             </div>
                         ) : null
                     }
-                </Link>
+
                 <div className="bottom">
                     { (this.props.item.owner && !this.props.item.is_draft) ?
                         <Link to={ "/profile/" + this.props.item.owner.id }><div className="owner">
