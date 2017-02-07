@@ -9,11 +9,7 @@ $avatar_size: 32px;
   font-weight: $font-weight;
   line-height: 31px;
 
-  .content_editable.empty {
-    padding-left: $avatar_size + $margin;
-  }
-
-  .content_editable.empty:empty:after, .content_editable.empty .empty_tag:last-child:after {
+  .content_editable.empty.inline:after {
     padding-left: $avatar_size + $margin;
   }
 
