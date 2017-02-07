@@ -66,15 +66,17 @@ export namespace Captions {
         manage_profile: 'управление профилем',
         create_article: 'создать публикацию',
         drafts: 'черновики',
-        notification_default_text: 'Новые уведомления',
+        notificationDefaultText: 'Новые уведомления',
+        notificationZeroText: 'Нет непрочитанных  уведомлений',
         title: 'TEXTIUS',
         forgotPassword: 'забли пароль?',
-        register: 'зарегистрироваться',
+        register: 'регистрация',
         about: 'Что такое TEXTIUS?',
         inputPhonePlaceholder: '+7 ',
         inputPasswordPlaceholder: 'Введите пароль',
-        loginHint: 'логин',
-        passwordHint: 'пароль',
+        loginHint: 'Логин',
+        passwordHint: 'Пароль',
+        authorize: 'авторизация',
     };
 
     export const management = {
@@ -97,6 +99,7 @@ export namespace Captions {
 
         linkAddPlaceholder: 'Вставьте ссылку',
         linkAddText: 'Ссылка на профиль соцсети или сайт',
+        linkAddTextDesktop: "Вставьте ссылку на профиль в соцсети и нажмите Enter",
         linkAddError: 'Некорректная ссылка',
 
         drafts: "Черновики",
@@ -113,6 +116,7 @@ export namespace Captions {
         usernamePrompt: "Имя и фамилия или псевдоним",
         passwordPrompt: "Придумайте пароль",
         passwordAgainPrompt: "Повторите пароль",
+        passwordSave: "Изменить пароль",
         next: "далее",
         finish: "завершить",
         changeNumber: "Изменить номер",
@@ -120,12 +124,21 @@ export namespace Captions {
         phoneDescriptionAlt: "Введите ваш номер телефона:",
         codeDescription: "Код подтверждения из смс:",
 
+        stepPhoneRegistration: "ШАГ 1 - номер телефона" ,
+        stepCodeRegistration: "ШАГ 2 - код подтверждения",
+        stepPasswordRegistration: "ШАГ 3 - пароль",
+        stepCodeReset: "ШАГ 1 - код подтверждения",
+        stepPasswordReset: "ШАГ 2 - пароль",
+
+
+
     };
 }
 
 export namespace Constants {
     export const maxImageSize = 5 * 1024 * 1024;
     export const notificationIntervalTime = 20000;
+    export const desktopWidth = 1024;
 }
 
 export enum BlockContentTypes {

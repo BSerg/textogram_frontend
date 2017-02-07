@@ -31,3 +31,16 @@
     margin: 0 auto;
   }
 }
+
+
+@media (min-width: 1024px) {
+
+  .modal__content {
+    background-color: transparent;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+  }
+}

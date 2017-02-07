@@ -1,12 +1,16 @@
 import * as React from 'react';
 import * as moment from 'moment';
+import {Link} from 'react-router';
 import {Captions, Constants} from '../constants';
 
 import {UserAction, SAVE_USER, GET_ME, LOGIN, LOGOUT, UPDATE_USER} from '../actions/user/UserAction';
 import {NotificationAction, CHECK} from '../actions/NotificationAction';
+import {MediaQuerySerice} from '../services/MediaQueryService';
+
 import {ModalAction, OPEN_MODAL, CLOSE_MODAL} from '../actions/shared/ModalAction';
 import AvatarEditor from './shared/AvatarEditor';
 import Registration from './Registration';
+import ResetPassword from './ResetPassword';
 
 
 import Error from './Error';
@@ -110,20 +114,23 @@ class Subscriptions extends React.Component<ISectionPropsInterface, ISubscriptio
     render() {
         return (
             <div className="profile__subscriptions">
-                {this.state.objectsFiltered.map((subscription, index) => {
-                    return (
-                        <div className="profile__subscription" key={index}>
-                            <div className="avatar"><img src={subscription.author.avatar} /></div>
-                            <div className="name">
-                                <span>{subscription.author.first_name} </span> <span>{subscription.author.last_name}</span>
-                            </div>
-                            <div className="close_icon" onClick={this.removeSubscription.bind(this, subscription.author.id)}><CloseIcon /></div>
-                        </div>)
-                })}
-
                 <div className="filter_input">
                     <input onChange={this.filterSubscriptions.bind(this)} type="text" placeholder={Captions.management.fastSearch} />
                 </div>
+                {this.state.objectsFiltered.map((subscription, index) => {
+                    return (
+                        <div className="profile__subscription" key={index}>
+                            <div className="avatar"><Link to={"/profile/" + subscription.author.id}><img src={subscription.author.avatar} /></Link></div>
+
+                            <div className="name">
+                                <Link to={"/profile/" + subscription.author.id}>
+                                    <span>{subscription.author.first_name} </span> <span>{subscription.author.last_name}</span>
+                                </Link>
+                            </div>
+
+                            <div className="close_icon" onClick={this.removeSubscription.bind(this, subscription.author.id)}><CloseIcon /></div>
+                        </div>)
+                })}
             </div>);
     }
 }
@@ -261,8 +268,10 @@ class AddLinkModal extends React.Component<any, any> {
 }
 
 interface ISectionLinksStateInterface {
-    links: any[];
+    links?: any[];
     authLink?: any;
+    linkInputActive?: boolean;
+    linkInputError?: boolean;
 }
 
 class SocialLinks extends React.Component<ISectionPropsInterface, ISectionLinksStateInterface> {
@@ -270,23 +279,64 @@ class SocialLinks extends React.Component<ISectionPropsInterface, ISectionLinksS
 
     constructor(props: any) {
         super(props);
-        this.state = {links: [], authLink: null};
+        this.state = {links: [], authLink: null, linkInputActive: false, linkInputError: false};
     }
 
     setLinks(props: any) {
         let links: any[] = (props.user && props.user.social_links) ? props.user.social_links : [];
+
+        links = links.map((link) => {
+            return this.processLink(link);
+        });
+
         let authLink = (links[0] && links[0].is_auth) ? links[0] : null;
 
         this.setState({links: authLink ? links.slice(1, links.length) : links, authLink: authLink});
     }
 
-    componentWillReceiveProps(nextProps: any) {
-        this.setLinks(nextProps);
+    processLink(link: any|null) {
+        if (!link) {
+            return;
+        }
+        let representationName: string;
+
+        switch (link.social) {
+
+            case 'vk': {
+                representationName = link.url.replace('https://vk.com/', '');
+                break;
+            }
+            case 'twitter': {
+                representationName = '@' + link.url.replace('https://twitter.com/', '');
+                break;
+            }
+
+            case 'google': {
+                representationName = link.url.replace('https://plus.google.com/u/0/', '');
+                break;
+            }
+
+            case 'fb': {
+                representationName = link.url.replace('https://www.facebook.com/', '');
+                break;
+            }
+            case 'facebook': {
+                representationName = link.url.replace('https://www.facebook.com/', '');
+                break;
+            }
+            case 'instagram': {
+                representationName = link.url.replace('https://www.instagram.com/', '');
+                break;
+            }
+            default: {
+                representationName = link.url;
+            }
+        }
+        representationName = representationName.replace(/\/$/, "");
+        link.representationName = representationName;
+        return link;
     }
 
-    componentDidMount() {
-        this.setLinks(this.props);
-    }
 
     removeLink(id: number) {
         api.delete('/social_links/' + id + '/').then((response) => {
@@ -313,10 +363,56 @@ class SocialLinks extends React.Component<ISectionPropsInterface, ISectionLinksS
     }
 
     addLink() {
-        ModalAction.do(OPEN_MODAL, {content: <AddLinkModal />});
+        if (MediaQuerySerice.getIsDesktop()) {
+            this.setState({linkInputActive: true});
+        }
+        else {
+            ModalAction.do(OPEN_MODAL, {content: <AddLinkModal />});
+        }
+    }
+
+    linkInputEnter() {
+        this.setState({linkInputError: false});
+    }
+
+    linkInputSubmit(e: any) {
+        e.preventDefault();
+        let url = e.target.url.value || "";
+        if (url == "") return;
+        api.post('/social_links/', {url: url, user: UserAction.getStore().user.id}).then((response: any) => {
+            let socialLink = response.data;
+            let social_links = UserAction.getStore().user.social_links || [];
+            let contains = false;
+            social_links.map((lnk: any) => {
+                if (lnk.id == socialLink.id) contains = true;
+            });
+            if (!contains)  {
+                social_links.push(socialLink);
+                let user = UserAction.getStore().user;
+                user.social_links = social_links;
+                UserAction.do(SAVE_USER, user);
+            }
+
+            this.setState({linkInputActive: false});
+
+        }).catch((error) => {this.setState({linkInputError: true})});
+
+    }
+
+    setLinkInputInactive() {
+        this.setState({linkInputActive: false});
+    }
+
+    componentWillReceiveProps(nextProps: any) {
+        this.setLinks(nextProps);
+    }
+
+    componentDidMount() {
+        this.setLinks(this.props);
     }
 
     render() {
+
         return (
             <div className="profile__section">
                 {
@@ -325,31 +421,40 @@ class SocialLinks extends React.Component<ISectionPropsInterface, ISectionLinksS
                             <div className="link_text">{Captions.management.authAccount}</div>
                             <div className="profile__link">
                                 <div><SocialIcon social={this.state.authLink.social} /></div>
-                                <div className="url">{ this.state.authLink.url }</div>
+                                <div className="url">{ this.state.authLink.representationName }</div>
                                 <div className="eye" onClick={this.toggleHidden.bind(this, this.state.authLink.id)}>{ this.state.authLink.is_hidden ? <VisibilityOffIcon /> : <VisibilityIcon />}</div>
                             </div>
                         </div>
                     ) : null
                 }
                 {
-                    (this.state.authLink && this.state.links.length) ? (<div className="link_text">{Captions.management.additionalLinks}</div>) : null
+                    (this.state.links.length) ? (
+                        <div className="profile__additional_links">
+                            { this.state.authLink ? (<div className="link_text">{Captions.management.additionalLinks}</div>) : null }
+                            <div>
+                                {
+                                    this.state.links.map((link, index) => {
+                                        return (
+                                            <div className="profile__link" key={index}>
+                                                <div><SocialIcon social={link.social} /></div>
+                                                <div className="url">{ link.representationName }</div>
+                                                <div className="close_icon" onClick={this.removeLink.bind(this, link.id)}><CloseIcon /></div>
+                                            </div>)
+                                    })
+                                }
+                            </div>
+                        </div>
+                        ) : (<div className="link_add_text">{Captions.management.addLinks}</div>)
                 }
-                {
-                    this.state.links.map((link, index) => {
-                        return (
-                            <div className="profile__link" key={index} onClick={this.removeLink.bind(this, link.id)}>
-                                <div><SocialIcon social={link.social} /></div>
-                                <div className="url">{ link.url }</div>
-                                <div className="close_icon"><CloseIcon /></div>
-                            </div>)
-                    })
-                }
-                {
-                    (!this.state.links.length) ? (
-                        <div className="link_add_text">{Captions.management.addLinks}</div>
-                    ) : null
-                }
-                <div className="profile__add_link">
+
+                <div className={"profile__link_input" + (this.state.linkInputActive ? " active" : "")}>
+                    <form onSubmit={this.linkInputSubmit.bind(this)}>
+                        <input name="url" className={ this.state.linkInputError ? "error" : "" }
+                               onChange={this.linkInputEnter.bind(this)} type="text" placeholder={Captions.management.linkAddTextDesktop}/>
+                    </form>
+                    <div className="close" onClick={this.setLinkInputInactive.bind(this)}><CloseIcon /></div>
+                </div>
+                <div className={"profile__add_link" + (this.state.linkInputActive ? "": " active") }>
                     <div className="line"></div>
                     <div className="button" onClick={this.addLink.bind(this)}>+</div>
                 </div>
@@ -365,8 +470,8 @@ class Account extends React.Component<ISectionPropsInterface, any> {
 
     }
 
-    setPassword() {
-
+    resetPassword() {
+        ModalAction.do(OPEN_MODAL, {content: <ResetPassword />});
     }
 
     getPhoneRepresentation(phone: string) {
@@ -384,7 +489,7 @@ class Account extends React.Component<ISectionPropsInterface, any> {
                             <div className="profile__phone_data">
                                 <div className="data_value">{ phoneRepresentation }</div>
                                 <div className="data_change" onClick={this.setPhonePassword.bind(this)}>
-                                    {Captions.management.change}
+                                    <span>{Captions.management.change}</span><EditIcon />
                                 </div>
                             </div>
                         </div>
@@ -392,13 +497,15 @@ class Account extends React.Component<ISectionPropsInterface, any> {
                             <div className="profile__phone_caption">{Captions.management.captionPassword}</div>
                             <div className="profile__phone_data">
                                 <div className="data_value">******</div>
-                                <div className="data_change" onClick={this.setPhonePassword.bind(this)}>{Captions.management.change}</div>
+                                <div className="data_change" onClick={this.resetPassword.bind(this)}>
+                                    <span>{Captions.management.change}</span><EditIcon />
+                                </div>
                             </div>
                         </div>
                     </div>) :
                     (<div>
                         <div className="link_add_text">{Captions.management.setPhone}</div>
-                        <div className="profile__add_link">
+                        <div className="profile__add_link phone">
                             <div className="line"></div>
                             <div className="button" onClick={this.setPhonePassword.bind(this)}>+</div>
                         </div>
@@ -414,7 +521,6 @@ interface IProfileManagementState {
     currentSection?: number,
     userNameEdit?: boolean,
     userNameError?: boolean
-    // userNameError
 }
 
 export default class ProfileManagement extends React.Component<any, IProfileManagementState> {
@@ -448,7 +554,6 @@ export default class ProfileManagement extends React.Component<any, IProfileMana
         this.avatarClick = this.avatarClick.bind(this);
         this.uploadAvatar = this.uploadAvatar.bind(this);
         this.toggleEditUserName = this.toggleEditUserName.bind(this);
-        // this.userNameChange = this.userNameChange.bind(this);
     }
 
     setSection(index: number) {
@@ -584,8 +689,10 @@ export default class ProfileManagement extends React.Component<any, IProfileMana
                         </form>
                     ) : (
                         <div>
-                            <span>{ this.state.user.first_name }</span>
-                            <span>{ this.state.user.last_name }</span>
+                            <div className="name">
+                                <span>{ this.state.user.first_name }</span>
+                                <span>{ this.state.user.last_name }</span>
+                            </div>
                             <span onClick={this.toggleEditUserName}><EditIcon /></span>
                         </div>
                     ) }
