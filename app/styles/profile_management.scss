@@ -388,6 +388,7 @@
       }
       a {
         color: $color;
+        text-decoration: none;
       }
     }
   }
@@ -491,8 +492,8 @@
 
 @media (min-width: 1024px) {
   .content {
-    display: flex;
-    justify-content: center;
+    //display: flex;
+    //justify-content: center;
     width: unset;
   }
 
