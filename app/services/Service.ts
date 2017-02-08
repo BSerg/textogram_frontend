@@ -3,20 +3,19 @@ import * as events from 'events';
 
 export default class Service extends events.EventEmitter {
 
-    private eventName: string;
-    private task: () => any;
+    eventName: string;
 
-    constructor(eventName: string, task: () => any) {
+    constructor(eventName: string) {
         super();
         this.eventName = eventName;
-        this.task = task;
-
-
-        // this.store = initStore;
-        // this.setMaxListeners(0);
     }
 
-    // register(action: string, callback: (store: any, data: any) => any) {
-    //
-    // }
+    listen(callback: (data: any) => any) {
+        this.on(this.eventName, callback);
+    }
+
+    unbind(callback: (data: any) => any) {
+        this.removeListener(this.eventName, callback);
+    }
+
 }

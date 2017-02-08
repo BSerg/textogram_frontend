@@ -1,14 +1,12 @@
-import * as events from 'events';
-import {Constants} from '../constants';
+import {Constants} from "../constants";
+import Service from "./Service";
 
-class MediaQueryServiceClass extends events.EventEmitter{
-
-    private eventName: string = 'mediaQueryEvent';
+class MediaQueryServiceClass extends Service{
 
     private isDesktop: boolean;
 
     constructor() {
-        super();
+        super('mediaQueryEvent');
         this.isDesktop = window.innerWidth >= Constants.desktopWidth;
         this.resizeHandler = this.resizeHandler.bind(this);
 
@@ -24,8 +22,12 @@ class MediaQueryServiceClass extends events.EventEmitter{
 
     }
 
-    listen(callback: ( isDesktop: boolean ) => any) {
-        this.on(this.eventName, callback);
+    listen(callback: (isDesktop: boolean) => any) {
+        super.listen(callback);
+    }
+
+    unbind(callback: (isDesktop: boolean) => any) {
+        super.unbind(callback);
     }
 
     getIsDesktop(): boolean {
