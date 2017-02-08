@@ -210,7 +210,7 @@ export default class Editor extends React.Component<any, IEditorState> {
                                 title={this.state.article.content.title}
                                 cover={this.state.article.content.cover}/>,
                             this.state.article.content.blocks.map((contentBlock: IContentData, index: number) => {
-                                let blockHandlerButtons, block;
+                                let blockHandlerButtons, block, isLast = index == this.state.article.content.blocks.length - 1;
 
                                 if (index == 0) {
                                     blockHandlerButtons = [BlockContentTypes.ADD]
@@ -221,26 +221,32 @@ export default class Editor extends React.Component<any, IEditorState> {
                                 switch (contentBlock.type) {
                                     case BlockContentTypes.TEXT:
                                         block = <TextContentBlock key={"content" + contentBlock.id}
+                                                                  className={isLast ? 'last' : ''}
                                                                   content={contentBlock}/>;
                                         break;
                                     case BlockContentTypes.LEAD:
                                         block = <LeadContentBlock key={"content" + contentBlock.id}
+                                                                  className={isLast ? 'last' : ''}
                                                                   content={contentBlock}/>;
                                         break;
                                     case BlockContentTypes.HEADER:
                                         block = <HeaderContentBlock key={"content" + contentBlock.id}
+                                                                    className={isLast ? 'last' : ''}
                                                                     content={contentBlock}/>;
                                         break;
                                     case BlockContentTypes.PHRASE:
                                         block = <PhraseContentBlock key={"content" + contentBlock.id}
+                                                                    className={isLast ? 'last' : ''}
                                                                     content={contentBlock}/>;
                                         break;
                                     case BlockContentTypes.LIST:
                                         block = <ListContentBlock key={"content" + contentBlock.id}
+                                                                  className={isLast ? 'last' : ''}
                                                                   content={contentBlock}/>;
                                         break;
                                     case BlockContentTypes.PHOTO:
                                         block = <PhotoContentBlock key={"content" + contentBlock.id}
+                                                                   className={isLast ? 'last' : ''}
                                                                    articleId={this.state.article.id}
                                                                    content={contentBlock}/>;
                                         break;
@@ -251,25 +257,29 @@ export default class Editor extends React.Component<any, IEditorState> {
                                         break;
                                     case BlockContentTypes.VIDEO:
                                         block = <EmbedContentBlock key={"content" + contentBlock.id}
+                                                                   className={isLast ? 'last' : ''}
                                                                    content={contentBlock}/>;
                                         break;
                                     case BlockContentTypes.AUDIO:
                                         block = <EmbedContentBlock key={"content" + contentBlock.id}
+                                                                   className={isLast ? 'last' : ''}
                                                                    content={contentBlock}/>;
                                         break;
                                     case BlockContentTypes.POST:
                                         let hash = btoa((contentBlock as any).value);
                                         block = <EmbedContentBlock key={"content-" + contentBlock.id + '-' + hash}
+                                                                   className={isLast ? 'last' : ''}
                                                                    content={contentBlock}/>;
                                         break;
                                     case BlockContentTypes.COLUMNS:
                                         block = <ColumnContentBlock key={"content-" + contentBlock.id}
+                                                                    className={isLast ? 'last' : ''}
                                                                     articleId={this.state.article.id}
                                                                     content={contentBlock}/>;
                                         break;
                                     case BlockContentTypes.DIALOG:
-                                        console.log(contentBlock)
                                         block = <DialogContentBlock key={"content-" + contentBlock.id}
+                                                                    className={isLast ? 'last' : ''}
                                                                     articleId={this.state.article.id}
                                                                     content={contentBlock}/>;
                                         break;

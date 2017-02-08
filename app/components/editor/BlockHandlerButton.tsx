@@ -1,11 +1,8 @@
 import * as React from "react";
 import {BlockContentTypes, ListBlockContentTypes} from "../../constants";
 import {BlockHandlerAction, OPEN_BLOCK_HANDLER_MODAL} from "../../actions/editor/BlockHandlerAction";
-import {api} from "../../api";
 import "../../styles/editor/block_handler_button.scss";
 import {ContentAction, CREATE_CONTENT, SWAP_CONTENT, IContentData} from "../../actions/editor/ContentAction";
-import ListContentBlock from "./ListContentBlock";
-import {UploadImageAction, UPLOAD_IMAGE} from "../../actions/editor/UploadImageAction";
 import {ModalAction, OPEN_MODAL} from "../../actions/shared/ModalAction";
 import EmbedModal from "./EmbedModal";
 import {IParticipant} from "./DialogContentBlock";

@@ -13,10 +13,6 @@
   margin-bottom: -$padding/2;
   z-index: 1;
 
-  &.last {
-    margin-top: $margin*2;
-  }
-
   &:not(.last) {
     opacity: 0;
   }
@@ -39,14 +35,14 @@
     @include scale(0, 0);
   }
 
-  &:hover {
+  &.active {
     display: flex;
     opacity: 1;
 
-    &:not(.last) {
-      margin-top: 0;
-      margin-bottom: 0;
-    }
+    //&:not(.last) {
+    //  margin-top: 0;
+    //  margin-bottom: 0;
+    //}
 
     .block_handler_button {
       @include transition();

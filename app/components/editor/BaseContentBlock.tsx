@@ -1,14 +1,17 @@
-import * as React from 'react';
-import {Captions, Constants} from '../../constants';
-import ContentEditable from '../shared/ContentEditable';
+import * as React from "react";
 import {
-    ContentBlockAction, ACTIVATE_CONTENT_BLOCK, DELETE_CONTENT_BLOCK,
+    ContentBlockAction,
+    ACTIVATE_CONTENT_BLOCK,
     DEACTIVATE_CONTENT_BLOCK
-} from '../../actions/editor/ContentBlockAction';
-import {ContentAction, DELETE_CONTENT} from '../../actions/editor/ContentAction';
-import {PopupPanelAction, OPEN_POPUP, CLOSE_POPUP} from '../../actions/shared/PopupPanelAction';
-import ContentBlockPopup from './ContentBlockPopup'
-import '../../styles/editor/base_content_block.scss';
+} from "../../actions/editor/ContentBlockAction";
+import {ContentAction, DELETE_CONTENT} from "../../actions/editor/ContentAction";
+import {PopupPanelAction, OPEN_POPUP} from "../../actions/shared/PopupPanelAction";
+import ContentBlockPopup from "./ContentBlockPopup";
+import "../../styles/editor/base_content_block.scss";
+import {
+    BlockHandlerAction, ACTIVATE_BLOCK_HANDLER,
+    DEACTIVATE_BLOCK_HANDLER
+} from "../../actions/editor/BlockHandlerAction";
 
 interface IBaseContnentBlockProps {
     className?: string
@@ -21,7 +24,9 @@ interface IBaseContnentBlockProps {
 }
 
 interface IBaseContnentBlockState {
-    isActive: boolean
+    isActive?: boolean
+    expandTop?: boolean
+    expandBottom?: boolean
 }
 
 
@@ -29,13 +34,16 @@ export default class BaseContentBlock extends React.Component<IBaseContnentBlock
     constructor(props: any) {
         super(props);
         this.state = {
-            isActive: false
-        }
-        this.handleActivate = this.handleActivate.bind(this)
+            isActive: false,
+            expandTop: false,
+            expandBottom: false
+        };
+        this.handleActivate = this.handleActivate.bind(this);
+        this.handleBlockHandlerActivate = this.handleBlockHandlerActivate.bind(this);
     }
 
     static defaultProps = {
-        disablePopup: false
+        disablePopup: false,
     };
 
     handleActivate() {
@@ -59,6 +67,29 @@ export default class BaseContentBlock extends React.Component<IBaseContnentBlock
         }
     }
 
+    handleBlockHandlerActivate() {
+        let blocks = ContentAction.getStore().content.blocks;
+        let position = -1;
+        blocks.forEach((block: any, index: number) => {
+            if (block.id == this.props.id) {
+                position = index;
+            }
+        });
+        if (position != -1) {
+            let store = BlockHandlerAction.getStore();
+            if (store.id == -1) {
+                this.setState({expandTop: false, expandBottom: false});
+            } else {
+                if (this.state.expandTop != (store.id == position)) {
+                    this.setState({expandTop: store.id == position})
+                }
+                if (this.state.expandBottom != ((store.id - 1) == position)) {
+                    this.setState({expandBottom: (store.id - 1) == position})
+                }
+            }
+        }
+    }
+
     handleClick() {
         this.props.onClick && this.props.onClick();
     }
@@ -70,20 +101,20 @@ export default class BaseContentBlock extends React.Component<IBaseContnentBlock
 
     componentDidMount() {
         ContentBlockAction.onChange(ACTIVATE_CONTENT_BLOCK, this.handleActivate);
+        BlockHandlerAction.onChange([ACTIVATE_BLOCK_HANDLER, DEACTIVATE_BLOCK_HANDLER], this.handleBlockHandlerActivate);
     }
 
     componentWillUnmount() {
         ContentBlockAction.unbind(ACTIVATE_CONTENT_BLOCK, this.handleActivate);
+        BlockHandlerAction.unbind([ACTIVATE_BLOCK_HANDLER, DEACTIVATE_BLOCK_HANDLER], this.handleBlockHandlerActivate);
     }
 
     render() {
         let className = 'base_content_block';
-        if (this.state.isActive) {
-            className += ' active';
-        }
-        if (this.props.className) {
-            className += ' ' + this.props.className;
-        }
+        if (this.state.isActive) className += ' active';
+        if (this.props.className) className += ' ' + this.props.className;
+        if (this.state.expandTop) className += ' expand_top';
+        if (this.state.expandBottom) className += ' expand_bottom';
         return (
             <div id={this.props.id.toString()} className={className} onClick={this.handleClick.bind(this)}>
                 {this.props.children}
