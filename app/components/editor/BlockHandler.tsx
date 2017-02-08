@@ -23,6 +23,8 @@ interface IBlockHandlerState {
 
 
 export default class BlockHandler extends React.Component<IBlockHandlerProps, IBlockHandlerState> {
+    private hideTimeout: number;
+
     constructor(props: any) {
         super(props);
         this.state = {
@@ -44,13 +46,14 @@ export default class BlockHandler extends React.Component<IBlockHandlerProps, IB
     }
 
     handleMouseOver() {
-        console.log('HELLO BH #' + this.props.blockPosition);
+        window.clearTimeout(this.hideTimeout);
         BlockHandlerAction.do(ACTIVATE_BLOCK_HANDLER, {id: this.props.blockPosition});
     }
 
     handleMouseLeave() {
-        console.log('LEAVE BH #' + this.props.blockPosition);
-        BlockHandlerAction.do(DEACTIVATE_BLOCK_HANDLER, {id: this.props.blockPosition});
+        this.hideTimeout = window.setTimeout(() => {
+            BlockHandlerAction.do(DEACTIVATE_BLOCK_HANDLER, {id: this.props.blockPosition});
+        }, 500);
     }
 
     componentDidMount() {

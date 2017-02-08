@@ -87,4 +87,20 @@
       display: block;
     }
   }
+
+  @include desktop {
+    font-size: 18px;
+    line-height: 29px;
+
+    .content_block_column__column {
+      &.content_block_column__column_left {
+        width: 38%;
+        margin-right: 30px;
+      }
+
+      &.content_block_column__column_right {
+        width: calc(62% - 30px);
+      }
+    }
+  }
 }

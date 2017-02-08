@@ -34,3 +34,12 @@ $small-size: 45px;
     }
   }
 }
+
+@include desktop {
+  .block_handler_button {
+    cursor: pointer;
+    &:hover {
+      background-color: darken($color, 10%);
+    }
+  }
+}

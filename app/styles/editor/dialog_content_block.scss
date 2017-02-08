@@ -18,6 +18,12 @@ $avatar_size: 32px;
       font-weight: $font-weight-bold;
     }
   }
+
+  @include desktop {
+    .content_editable.empty.inline:after {
+      padding-left: 0;
+    }
+  }
 }
 
 .content_block_dialog__remark {
@@ -64,6 +70,29 @@ $avatar_size: 32px;
   &.interviewer {
     .content_block_dialog__text {
       font-weight: $font-weight-bold;
+    }
+  }
+
+  @include desktop {
+    display: flex;
+    flex-direction: row;
+
+    .content_block_dialog__participant,
+    .content_block_dialog__faceless_participant {
+      position: relative;
+      min-width: 38px;
+      width: 38px;
+      height: 38px;
+      cursor: pointer;
+    }
+
+    .content_block_dialog__text {
+      width: 100%;
+      margin-left: $margin;
+
+      &:before {
+        display: none;
+      }
     }
   }
 

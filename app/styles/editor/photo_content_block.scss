@@ -1,10 +1,13 @@
 @import "../contstants";
 @import "../mixins";
 
+$space: 10px;
+$desktop_space: 20px;
+
+
 .content_block_photo {
   padding: $padding;
   position: relative;
-  $space: 10px;
 
   .content_block_photo__photo {
     @include transition();
@@ -54,6 +57,47 @@
 
     &.active {
       display: block;
+    }
+  }
+
+  @include desktop {
+    .content_block_photo__photo {
+      width: calc(50% - #{$desktop_space});
+      height: 200px;
+      margin-right: $desktop_space;
+      margin-bottom: $desktop_space;
+    }
+
+    .content_block_photo__delete {
+      width: 34px;
+      height: 34px;
+      background-size: 20px;
+      @include border_radius(20px);
+      cursor: pointer;
+      &:hover {
+        background-color: darken($color, 10%);
+      }
+    }
+
+    &:not(.active) .content_block_photo__photo {
+      width: calc(100% - #{$desktop_space});
+      height: 200px;
+
+      &.photo0 {
+        height: 400px;
+      }
+
+      &.photo1, &.photo2, &.photo3, &.photo4, &.photo5 {
+        width: calc(50% - #{$desktop_space});
+      }
+
+      &.photo1 {
+        height: 400px + $desktop_space;
+      }
+
+      .content_block_photo__delete {
+        display: none;
+      }
     }
   }
 }

@@ -20,4 +20,14 @@
     height: 4px;
     background-color: $color;
   }
+
+  @include desktop {
+    font-size: 26px;
+    line-height: 39px;
+    padding-left: $padding;
+
+    .content_editable {
+      margin-left: 25%;
+    }
+  }
 }

@@ -1,9 +1,5 @@
 @import "contstants";
-
-//.editor, .editor__wrapper {
-//  min-height: 100%;
-//  height: 100%;
-//}
+@import "mixins";
 
 .editor__wrapper {
   display: flex;
@@ -48,5 +44,11 @@
 
   &.disabled {
     opacity: 0.3;
+  }
+}
+
+@include desktop {
+  .add_content_help {
+    margin-top: 50px;
   }
 }

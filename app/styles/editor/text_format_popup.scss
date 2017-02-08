@@ -37,4 +37,9 @@ $size: 35px;
     width: 12px;
     height: 12px;
   }
+
+  @include desktop {
+    font-size: 18px;
+    line-height: 29px;
+  }
 }

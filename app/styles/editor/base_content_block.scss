@@ -51,3 +51,12 @@
   color: $color3;
   letter-spacing: 1px;
 }
+
+@include desktop {
+  .base_content_block {
+    width: 600px;
+    padding: 25px $padding;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}

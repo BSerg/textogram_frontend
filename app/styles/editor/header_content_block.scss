@@ -6,6 +6,10 @@
   font-size: 24px;
   font-weight: $font-weight-bold;
   line-height: 35px;
-  //margin-top: $margin * 1.5;
   padding-top: $padding;
+
+  @include desktop {
+    font-size: 34px;
+    line-height: 46px;
+  }
 }
