@@ -308,17 +308,20 @@ export default class Editor extends React.Component<any, IEditorState> {
                                 }
                             </div>,
                             (this.state.article.status == ArticleStatuses.DRAFT ?
-                                <div className={"editor__publish" + (!this.state.isValid ? ' disabled': '')}
+                                <div key="publish_button"
+                                     className={"editor__publish" + (!this.state.isValid ? ' disabled': '')}
                                      onClick={this.state.isValid && this.openPublishParamsModal.bind(this)}>
                                     Опубликовать
                                 </div> : null),
                             (this.state.article.status == ArticleStatuses.PUBLISHED ?
-                                <div className={"editor__publish" + (!this.state.isValid ? ' disabled': '')}
+                                <div key="update_publish_button"
+                                     className={"editor__publish" + (!this.state.isValid ? ' disabled': '')}
                                      onClick={this.state.isValid && this.resetContent.bind(this, true)}>
                                     Обновить публикацию
                                 </div> : null),
                             (this.state.article.status == ArticleStatuses.SHARED ?
-                                <div className={"editor__publish" + (!this.state.isValid ? ' disabled': '')}
+                                <div key="save_button"
+                                     className={"editor__publish" + (!this.state.isValid ? ' disabled': '')}
                                      onClick={this.state.isValid && this.resetContent.bind(this, true)}>
                                     Сохранить
                                 </div> : null)
