@@ -120,7 +120,7 @@ export default class DialogContentBlock extends React.Component<IDialogContentBl
     }
 
     openPopupPanel() {
-        let extraContent = <AddButton onClick={this.addRemark.bind(this, this.state.content.remarks.length)}/>;
+        let extraContent = <div onClick={this.addRemark.bind(this, this.state.content.remarks.length)}><AddButton/></div>;
         PopupPanelAction.do(
             OPEN_POPUP,
             {content: <ContentBlockPopup extraContent={extraContent}

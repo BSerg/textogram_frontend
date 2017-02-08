@@ -39,9 +39,13 @@ export default class ContentBlockPopup extends React.Component<IContentBlockPopu
     render() {
         return (
             <div className="content_block_popup">
-                <DeleteButton onClick={this.handleDelete.bind(this)}/>
+                <div onClick={this.handleDelete.bind(this)}>
+                    <DeleteButton/>
+                </div>
                 {this.props.extraContent ? this.props.extraContent : null}
-                <ConfirmButton onClick={this.handleConfirm.bind(this)}/>
+                <div onClick={this.handleConfirm.bind(this)}>
+                    <ConfirmButton/>
+                </div>
             </div>
         )
     }

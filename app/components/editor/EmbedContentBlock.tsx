@@ -72,9 +72,11 @@ export default class EmbedContentBlock extends React.Component<IEmbedContentBloc
     }
 
     private getPopupContent() {
-        let extraContent = <EditButton onClick={() => {
-            ModalAction.do(OPEN_MODAL, {content: <EmbedModal content={this.state.content}/>})
-        }}/>;
+        let extraContent = (
+            <div onClick={() => {ModalAction.do(OPEN_MODAL, {content: <EmbedModal content={this.state.content}/>})}}>
+                <EditButton/>
+            </div>
+        );
         return <ContentBlockPopup extraContent={extraContent}
                                   onDelete={this.handleContent.bind(this)}/>;
     }

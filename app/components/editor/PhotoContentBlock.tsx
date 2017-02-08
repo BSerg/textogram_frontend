@@ -332,9 +332,9 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
         let extraContent;
         if (this.state.content.photos.length >= this.props.maxPhotoCount ||
             (this.state.imageUploadProgress && this.state.imageUploadProgress.progress != this.state.imageUploadProgress.total)) {
-            extraContent = <AddButton className="disabled"/>;
+            extraContent = <div><AddButton className="disabled"/></div>;
         } else {
-            extraContent = <AddButton onClick={this.openFileDialog.bind(this)}/>;
+            extraContent = <div onClick={this.openFileDialog.bind(this)}><AddButton/></div>;
         }
         return <ContentBlockPopup extraContent={extraContent}
                                   onDelete={this.handleDelete.bind(this)}/>;
