@@ -102,6 +102,7 @@ export default class BaseContentBlock extends React.Component<IBaseContnentBlock
     componentDidMount() {
         ContentBlockAction.onChange(ACTIVATE_CONTENT_BLOCK, this.handleActivate);
         BlockHandlerAction.onChange([ACTIVATE_BLOCK_HANDLER, DEACTIVATE_BLOCK_HANDLER], this.handleBlockHandlerActivate);
+        this.handleBlockHandlerActivate();
     }
 
     componentWillUnmount() {
