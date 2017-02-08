@@ -126,7 +126,12 @@
     height: $height;
     @include border_radius($border-radius);
   }
+}
 
+$desktop-width: 1024px;
 
-
+@mixin desktop {
+  @media (min-width: #{$desktop-width}) {
+    @content;
+  }
 }

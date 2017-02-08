@@ -9,8 +9,6 @@
   background-color: transparent;
   text-align: center;
   padding: 80px $padding;
-  //padding: $padding*2 $padding;
-  //min-height: 200px - $padding * 2;
 }
 
 .title_block__title {
@@ -55,4 +53,29 @@
   }
   //background-color: rgba(0, 0, 0, 0.5);
   color: white;
+}
+
+@include desktop {
+  .title_block {
+    background-color: $color4;
+    padding: 120px 0;
+  }
+
+  .title_block__title {
+    max-width: 600px;
+    font-size: 40px;
+    line-height: 51px;
+  }
+
+  .title_block__cover_handler {
+    top: 50px;
+    font-size: 12px;
+    line-height: 14px;
+    color: $color5;
+    cursor: pointer;
+
+    &:hover {
+      color: darken($color5, 10%);
+    }
+  }
 }
