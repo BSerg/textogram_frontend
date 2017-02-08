@@ -20,7 +20,6 @@ import {
     UPDATE_TITLE_CONTENT,
     SWAP_CONTENT
 } from "../actions/editor/ContentAction";
-import {NotificationAction, SHOW_NOTIFICATION, CLOSE_NOTIFICATION} from '../actions/shared/NotificationAction';
 import {Captions, BlockContentTypes, ArticleStatuses, Validation} from "../constants";
 import {ModalAction, OPEN_MODAL} from "../actions/shared/ModalAction";
 import PublishingParamsModal from "./editor/PublishingParamsModal";
@@ -31,7 +30,8 @@ import {api} from "../api";
 import "../styles/editor.scss";
 import DialogContentBlock from "./editor/DialogContentBlock";
 import {
-    ContentBlockAction, ACTIVATE_CONTENT_BLOCK,
+    ContentBlockAction,
+    ACTIVATE_CONTENT_BLOCK,
     DEACTIVATE_CONTENT_BLOCK
 } from "../actions/editor/ContentBlockAction";
 import {PopupPanelAction, CLOSE_POPUP} from "../actions/shared/PopupPanelAction";
@@ -44,6 +44,7 @@ interface IEditorState {
     autoSave?: boolean
     showLastBlockHandler?: boolean
     isSavingArticle?: boolean
+    isDesktop?: boolean
 }
 
 
