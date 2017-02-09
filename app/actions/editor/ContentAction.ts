@@ -2,6 +2,7 @@ import * as React from "react";
 import Action from "../Action";
 import {api} from "../../api";
 import {BlockContentTypes} from "../../constants";
+import {NotificationAction, SHOW_NOTIFICATION} from "../shared/NotificationAction";
 const uuid4 = require('uuid/v4');
 
 export const SWAP_CONTENT = 'swap_content';
@@ -36,8 +37,11 @@ class ContentActionClass extends Action {
                     api.patch(`/articles/editor/${data.articleId}/`, {content: store.content}).then((response: any) => {
                         console.log(response);
                         resolve(response.data.content);
+                        NotificationAction.do(SHOW_NOTIFICATION, {content: 'SAVED!'})
                     }).catch((err: any) => {
+                        console.log(err);
                         reject(err);
+                        NotificationAction.do(SHOW_NOTIFICATION, {content: 'ERROR!'})
                     });
                 }, 1000);
             } else {

@@ -31,7 +31,7 @@ export default class Notification extends React.Component<INotificationProps, IN
 
     static defaultProps = {
         autoClose: true,
-        autoCloseDelay: 5000
+        autoCloseDelay: 3000
     };
 
     handleOpen() {

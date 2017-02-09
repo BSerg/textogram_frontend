@@ -32,6 +32,7 @@
 
   @include desktop {
     width: 300px;
-    left: calc(50% - 150px);
+    left: 30px;
+    bottom: 30px;
   }
 }

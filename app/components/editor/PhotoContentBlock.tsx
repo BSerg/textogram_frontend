@@ -16,6 +16,7 @@ import {PROGRESS_BAR_TYPE} from "../shared/ProgressBar";
 import "../../styles/editor/photo_content_block.scss";
 import Sortable = require('sortablejs');
 import {DesktopBlockToolsAction, UPDATE_TOOLS} from "../../actions/editor/DesktopBlockToolsAction";
+import {NotificationAction, SHOW_NOTIFICATION} from "../../actions/shared/NotificationAction";
 
 const AddButton = require('babel!svg-react!../../assets/images/redactor_icon_popup_add.svg?name=AddButton');
 const DeleteButton = require('babel!svg-react!../../assets/images/close.svg?name=DeleteButton');
@@ -214,20 +215,23 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
         if (this.state.sortable) {
             this.state.sortable.option("disabled", false);
         } else {
-            this.state.sortable = new Sortable(this.refs.photosContainer, {
+            let that = this;
+            let sortable: any = new Sortable(this.refs.photosContainer, {
                 sort: true,
                 delay: 0,
                 animation: 150,
                 draggable: ".content_block_photo__photo",
+                onEnd: (e: any) => {
+                    if (e.oldIndex != e.newIndex) {
+                        let movedPhoto = that.state.content.photos.splice(e.oldIndex, 1)[0];
+                        that.state.content.photos.splice(e.newIndex, 0, movedPhoto);
+                        that.setState({content: that.state.content}, () => {
+                            ContentAction.do(UPDATE_CONTENT, {contentBlock: that.state.content});
+                        });
+                    }
+                }
             });
-            this.state.sortable.option.onEnd = (e: any) => {
-                console.log(e, this.state);
-                let movedPhoto = this.state.content.photos.splice(e.oldIndex, 1)[0];
-                this.state.content.photos.splice(e.newIndex, 0, movedPhoto);
-                this.setState({content: this.state.content}, () => {
-                    ContentAction.do(UPDATE_CONTENT, {contentBlock: this.state.content});
-                });
-            }
+            this.setState({sortable: sortable});
         }
     }
 
@@ -294,7 +298,7 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
             return;
         }
         if (file.size > Constants.maxImageSize) {
-            alert(`Image size is more than ${Constants.maxImageSize/1024/1024}Mb`);
+            NotificationAction.do(SHOW_NOTIFICATION, {content: `Размер изображения больше ${Constants.maxImageSize/1024/1024}Mb`});
             return;
         }
         let tempURL = window.URL.createObjectURL(file);
