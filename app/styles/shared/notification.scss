@@ -30,9 +30,13 @@
     display: none;
   }
 
-  @include desktop {
-    width: 300px;
-    left: 30px;
-    bottom: 30px;
+  &.error {
+    background-color: #FF3333;
   }
+
+  //@include desktop {
+  //  width: 300px;
+  //  left: 30px;
+  //  bottom: 30px;
+  //}
 }

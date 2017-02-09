@@ -41,14 +41,28 @@
   font-size: 10px;
   z-index: 10;
   margin: $margin;
+  cursor: pointer;
 
   &.disabled {
     opacity: 0.3;
+  }
+
+  &:hover {
+    background-color: $color;
+    color: white;
   }
 }
 
 @include desktop {
   .add_content_help {
     margin-top: 50px;
+  }
+
+  .editor__publish {
+    width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 15px;
+    height: 64px;
   }
 }

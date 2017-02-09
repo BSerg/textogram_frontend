@@ -40,7 +40,7 @@ class ContentActionClass extends Action {
                     }).catch((err: any) => {
                         console.log(err);
                         reject(err);
-                        NotificationAction.do(SHOW_NOTIFICATION, {content: Captions.editor.saving_error})
+                        NotificationAction.do(SHOW_NOTIFICATION, {content: Captions.editor.saving_error, type: 'error'})
                     });
                 }, 1000);
             } else {

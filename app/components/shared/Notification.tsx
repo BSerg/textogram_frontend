@@ -4,6 +4,7 @@ import '../../styles/shared/notification.scss';
 
 const CloseIcon = require('babel!svg-react!../../assets/images/close.svg?name=CloseIcon');
 
+type NotificationType = 'normal' | 'error';
 
 interface INotificationProps {
     autoClose?: boolean
@@ -14,6 +15,7 @@ interface INotificationState {
     opened?: boolean
     content?: any
     contentHistory?: any[]
+    type?: NotificationType
 }
 
 export default class Notification extends React.Component<INotificationProps, INotificationState> {
@@ -25,7 +27,8 @@ export default class Notification extends React.Component<INotificationProps, IN
         this.state = {
             opened: false,
             content: null,
-            contentHistory: []
+            contentHistory: [],
+            type: 'normal'
         }
     }
 
@@ -39,8 +42,14 @@ export default class Notification extends React.Component<INotificationProps, IN
         window.clearTimeout(this.closeTimeout);
         let store: any = NotificationAction.getStore();
         let content = store.content;
+        let type = store.type || this.state.type;
         this.state.contentHistory.push(content);
-        this.setState({opened: true, content: content, contentHistory: this.state.contentHistory}, () => {
+        this.setState({
+            opened: true,
+            content: content,
+            contentHistory: this.state.contentHistory,
+            type: type
+        }, () => {
             if (this.props.autoClose) {
                 this.closeTimeout = window.setTimeout(() => {
                     this.handleClose();
@@ -67,6 +76,9 @@ export default class Notification extends React.Component<INotificationProps, IN
         let className = 'notification';
         if (this.state.opened) {
             className += ' opened';
+        }
+        if (this.state.type == 'error') {
+            className += ' error'
         }
         return (
             <div className={className}>
