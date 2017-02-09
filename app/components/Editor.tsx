@@ -331,7 +331,7 @@ export default class Editor extends React.Component<any, IEditorState> {
                                     ]
                                 }
                             }),
-                            this.state.showLastBlockHandler ?
+                            this.state.showLastBlockHandler || this.state.isDesktop ?
                                 this.state.isDesktop && this.state.inlineBlock && this.state.inlineBlock.position == this.state.article.content.blocks.length ?
                                     <InlineBlock>{this.state.inlineBlock.content}</InlineBlock>
                                     : <BlockHandler key="handlerLast"
