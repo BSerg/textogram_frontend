@@ -11,6 +11,7 @@ import {SHOW_NOTIFICATION, NotificationAction} from "../../actions/shared/Notifi
 import * as toMarkdown from "to-markdown";
 import * as marked from "marked";
 import "../../styles/editor/quote_content_block.scss";
+import {MediaQuerySerice} from "../../services/MediaQueryService";
 
 interface IQuoteContent {
     id: string
@@ -33,6 +34,7 @@ interface IQuoteContentBlockState {
     isActive?: boolean
     loadingImage?: boolean
     loadingProgress?: {progress: number, total: number} | null
+    isDesktop?: boolean
 }
 
 export default class QuoteContentBlock extends React.Component<IQuoteContentBlockProps, IQuoteContentBlockState> {
@@ -46,8 +48,10 @@ export default class QuoteContentBlock extends React.Component<IQuoteContentBloc
             content: this.props.content as IQuoteContent,
             menuOpened: false,
             loadingImage: false,
+            isDesktop: MediaQuerySerice.getIsDesktop()
         };
         this.handleActivate = this.handleActivate.bind(this);
+        this.handleMediaQuery = this.handleMediaQuery.bind(this);
     }
 
     private isValid(content: IQuoteContent): boolean {
@@ -79,7 +83,6 @@ export default class QuoteContentBlock extends React.Component<IQuoteContentBloc
     }
 
     handleChange(content: string, contentText: string) {
-        console.log(content, contentText);
         this.state.content.value = toMarkdown(content);
         let validationInfo = this.validate(this.state.content);
         if (!validationInfo.isValid) {
@@ -160,6 +163,12 @@ export default class QuoteContentBlock extends React.Component<IQuoteContentBloc
         this.setState({menuOpened: false});
     }
 
+    handleMediaQuery(isDesktop: boolean) {
+        if (this.state.isDesktop != isDesktop) {
+            this.setState({isDesktop: isDesktop});
+        }
+    }
+
     shouldComponentUpdate(nextProps: any, nextState: any) {
         if (nextState.updateComponent) {
             delete nextState.updateComponent;
@@ -170,11 +179,13 @@ export default class QuoteContentBlock extends React.Component<IQuoteContentBloc
 
     componentDidMount() {
         ContentBlockAction.onChange(ACTIVATE_CONTENT_BLOCK, this.handleActivate);
+        MediaQuerySerice.listen(this.handleMediaQuery);
         this.updateValidationState();
     }
 
     componentWillUnmount() {
         ContentBlockAction.unbind(ACTIVATE_CONTENT_BLOCK, this.handleActivate);
+        MediaQuerySerice.unbind(this.handleMediaQuery);
     }
 
     render() {
@@ -195,24 +206,32 @@ export default class QuoteContentBlock extends React.Component<IQuoteContentBloc
         return (
             <BaseContentBlock id={this.props.content.id} className={className}>
                 {this.state.content.image ?
-                    [
-                        <div onClick={this.openPhotoMenu.bind(this)}
-                             key="photo"
+                    this.state.isDesktop ?
+                        <div key="photo"
+                             onClick={this.state.isActive && this.deleteImage.bind(this)}
                              className="content_block_quote__photo"
-                             style={imageStyle}/>,
-                        (
-                            this.state.menuOpened ?
-                                <div key="photoMenu" className="content_block_quote__menu">
-                                    <div onClick={this.openFileDialog.bind(this)} className="content_block_quote__menu_item">
-                                        {Captions.editor.enter_quote_replace}
-                                    </div>
-                                    <div onClick={this.deleteImage.bind(this)} className="content_block_quote__menu_item">
-                                        {Captions.editor.enter_quote_delete}
-                                    </div>
-                                </div> : null
-                        )
-                    ] :
-                    <div className="content_block_quote__empty_photo" onClick={this.openFileDialog.bind(this)}/>
+                             style={imageStyle}>
+                            {this.state.isActive ?
+                                <div className="content_block_quote__foreground"></div> : null
+                            }
+                        </div> :
+                        [
+                            <div onClick={this.openPhotoMenu.bind(this)}
+                                 key="photo"
+                                 className="content_block_quote__photo"
+                                 style={imageStyle}/>,
+                            (
+                                this.state.menuOpened ?
+                                    <div key="photoMenu" className="content_block_quote__menu">
+                                        <div onClick={this.openFileDialog.bind(this)} className="content_block_quote__menu_item">
+                                            {Captions.editor.enter_quote_replace}
+                                        </div>
+                                        <div onClick={this.deleteImage.bind(this)} className="content_block_quote__menu_item">
+                                            {Captions.editor.enter_quote_delete}
+                                        </div>
+                                    </div> : null
+                            )
+                        ] : <div className="content_block_quote__empty_photo" onClick={this.openFileDialog.bind(this)}/>
                 }
                 <ContentEditable allowLineBreak={false}
                                  onFocus={this.handleFocus.bind(this)}

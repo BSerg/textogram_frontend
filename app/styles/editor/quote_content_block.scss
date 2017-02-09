@@ -12,7 +12,6 @@ $photo_size: 70px;
   font-size: 17px;
   font-weight: $font-weight;
   line-height: 26px;
-  //padding-top: $photo_size + $padding;
 
   b, strong {
     font-weight: $font-weight-bold;
@@ -126,6 +125,33 @@ $photo_size: 70px;
 
   &.invalid {
 
+  }
+
+  @include desktop {
+    flex-direction: row;
+    align-items: center;
+
+    .content_block_quote__photo,
+    .content_block_quote__empty_photo {
+      min-width: $photo_size;
+      margin-top: unset!important;
+      margin-right: 30px;
+      cursor: pointer;
+
+      .content_block_quote__foreground {
+        @include transition();
+        opacity: 0;
+        background: rgba(0, 0, 0, 0.75) url('../../assets/images/close_white.svg') no-repeat center center;
+        background-size: 20px;
+        width: $photo_size;
+        height: $photo_size;
+        @include border_radius($photo_size);
+      }
+
+      &:hover .content_block_quote__foreground {
+        opacity: 1;
+      }
+    }
   }
 }
 
