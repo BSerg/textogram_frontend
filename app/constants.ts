@@ -69,7 +69,7 @@ export namespace Captions {
         notificationDefaultText: 'Новые уведомления',
         notificationZeroText: 'Нет непрочитанных  уведомлений',
         title: 'TEXTIUS',
-        forgotPassword: 'забли пароль?',
+        forgotPassword: 'забыли пароль?',
         register: 'регистрация',
         about: 'Что такое TEXTIUS?',
         inputPhonePlaceholder: '+7 ',
