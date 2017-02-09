@@ -53,6 +53,7 @@ export namespace Captions {
         loading_video: 'Загрузка видео',
         loading_audio: 'Загрузка аудио',
         loading_post: 'Загрузка поста',
+        saving_error: 'Произошла ошибка при сохранении статьи!'
     };
 
     export const profile = {

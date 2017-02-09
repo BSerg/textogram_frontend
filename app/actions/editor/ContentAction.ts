@@ -1,7 +1,7 @@
 import * as React from "react";
 import Action from "../Action";
 import {api} from "../../api";
-import {BlockContentTypes} from "../../constants";
+import {BlockContentTypes, Captions} from "../../constants";
 import {NotificationAction, SHOW_NOTIFICATION} from "../shared/NotificationAction";
 const uuid4 = require('uuid/v4');
 
@@ -37,11 +37,10 @@ class ContentActionClass extends Action {
                     api.patch(`/articles/editor/${data.articleId}/`, {content: store.content}).then((response: any) => {
                         console.log(response);
                         resolve(response.data.content);
-                        NotificationAction.do(SHOW_NOTIFICATION, {content: 'SAVED!'})
                     }).catch((err: any) => {
                         console.log(err);
                         reject(err);
-                        NotificationAction.do(SHOW_NOTIFICATION, {content: 'ERROR!'})
+                        NotificationAction.do(SHOW_NOTIFICATION, {content: Captions.editor.saving_error})
                     });
                 }, 1000);
             } else {
