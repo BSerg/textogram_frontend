@@ -21,12 +21,17 @@
     position: absolute;
     top: $margin;
     right: $margin;
-    width: 20px;
-    height: 20px;
+    width: 15px;
+    height: 15px;
     fill: white;
   }
 
   &:not(.opened) {
     display: none;
+  }
+
+  @include desktop {
+    width: 300px;
+    left: calc(50% - 150px);
   }
 }
