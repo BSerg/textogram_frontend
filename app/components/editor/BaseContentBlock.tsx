@@ -12,6 +12,10 @@ import {
     BlockHandlerAction, ACTIVATE_BLOCK_HANDLER,
     DEACTIVATE_BLOCK_HANDLER
 } from "../../actions/editor/BlockHandlerAction";
+import {MediaQuerySerice} from "../../services/MediaQueryService";
+import {DesktopBlockToolsAction, UPDATE_TOOLS} from "../../actions/editor/DesktopBlockToolsAction";
+
+const DeleteButton = require('babel!svg-react!../../assets/images/redactor_icon_delete.svg?name=DeleteButton');
 
 interface IBaseContnentBlockProps {
     className?: string
@@ -27,6 +31,8 @@ interface IBaseContnentBlockState {
     isActive?: boolean
     expandTop?: boolean
     expandBottom?: boolean
+    isDesktop?: boolean
+    desktopTools?: any | null
 }
 
 
@@ -36,10 +42,14 @@ export default class BaseContentBlock extends React.Component<IBaseContnentBlock
         this.state = {
             isActive: false,
             expandTop: false,
-            expandBottom: false
+            expandBottom: false,
+            isDesktop: MediaQuerySerice.getIsDesktop(),
+            desktopTools: null
         };
         this.handleActivate = this.handleActivate.bind(this);
         this.handleBlockHandlerActivate = this.handleBlockHandlerActivate.bind(this);
+        this.handleMediaQuery = this.handleMediaQuery.bind(this);
+        this.handleUpdateTools = this.handleUpdateTools.bind(this);
     }
 
     static defaultProps = {
@@ -56,18 +66,20 @@ export default class BaseContentBlock extends React.Component<IBaseContnentBlock
                     this.props.onBlur();
                 }
                 if (this.state.isActive && !this.props.disableDefaultPopup) {
-                    PopupPanelAction.do(
-                        OPEN_POPUP,
-                        {
-                            content: this.props.popupContent || <ContentBlockPopup onDelete={this.handleDelete.bind(this)}/>
-                        }
-                    );
+                    if (!this.state.isDesktop) {
+                        PopupPanelAction.do(
+                            OPEN_POPUP,
+                            {
+                                content: this.props.popupContent || <ContentBlockPopup onDelete={this.handleDelete.bind(this)}/>
+                            }
+                        );
+                    }
                 }
             });
         }
     }
 
-    handleBlockHandlerActivate() {
+    getPosition() {
         let blocks = ContentAction.getStore().content.blocks;
         let position = -1;
         blocks.forEach((block: any, index: number) => {
@@ -75,6 +87,11 @@ export default class BaseContentBlock extends React.Component<IBaseContnentBlock
                 position = index;
             }
         });
+        return position;
+    }
+
+    handleBlockHandlerActivate() {
+        let position = this.getPosition();
         if (position != -1) {
             let store = BlockHandlerAction.getStore();
             if (store.id == -1) {
@@ -99,15 +116,39 @@ export default class BaseContentBlock extends React.Component<IBaseContnentBlock
         ContentBlockAction.do(DEACTIVATE_CONTENT_BLOCK, null);
     }
 
+    handleDeleteWithConfirm() {
+        let result = confirm('Удалить?');
+        if (result) {
+            this.handleDelete();
+        }
+    }
+
+    handleMediaQuery(isDesktop: boolean) {
+        if (this.state.isDesktop != isDesktop) {
+            this.setState({isDesktop: isDesktop});
+        }
+    }
+
+    handleUpdateTools() {
+        let store = DesktopBlockToolsAction.getStore();
+        if (store.position == this.getPosition()) {
+            this.setState({desktopTools: store.tools});
+        }
+    }
+
     componentDidMount() {
         ContentBlockAction.onChange(ACTIVATE_CONTENT_BLOCK, this.handleActivate);
         BlockHandlerAction.onChange([ACTIVATE_BLOCK_HANDLER, DEACTIVATE_BLOCK_HANDLER], this.handleBlockHandlerActivate);
+        MediaQuerySerice.listen(this.handleMediaQuery);
+        DesktopBlockToolsAction.onChange(UPDATE_TOOLS, this.handleUpdateTools);
         this.handleBlockHandlerActivate();
     }
 
     componentWillUnmount() {
         ContentBlockAction.unbind(ACTIVATE_CONTENT_BLOCK, this.handleActivate);
         BlockHandlerAction.unbind([ACTIVATE_BLOCK_HANDLER, DEACTIVATE_BLOCK_HANDLER], this.handleBlockHandlerActivate);
+        MediaQuerySerice.unbind(this.handleMediaQuery);
+        DesktopBlockToolsAction.unbind(UPDATE_TOOLS, this.handleUpdateTools);
     }
 
     render() {
@@ -119,6 +160,15 @@ export default class BaseContentBlock extends React.Component<IBaseContnentBlock
         return (
             <div id={this.props.id.toString()} className={className} onClick={this.handleClick.bind(this)}>
                 {this.props.children}
+                {this.state.isDesktop && this.state.isActive ?
+                    <div className="base_content_block__tools">
+                        <div className="base_content_block__delete"
+                             onClick={this.handleDeleteWithConfirm.bind(this)}><DeleteButton/></div>
+                        <div className="base_content_block__extra">
+                            {this.state.desktopTools}
+                        </div>
+                    </div> : null
+                }
             </div>
         )
     }

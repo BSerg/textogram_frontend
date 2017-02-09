@@ -11,14 +11,18 @@ import {NotificationAction, CHECK} from '../actions/NotificationAction';
 import {Constants} from '../constants';
 
 import '../styles/base.scss';
+import {MediaQuerySerice} from "../services/MediaQueryService";
 
 export default class Base extends React.Component<any, any> {
     private intervalId: number;
 
     constructor(props: any) {
         super(props);
+        this.state = {
+            isDesktop: MediaQuerySerice.getIsDesktop()
+        }
+        this.handleMediaQuery = this.handleMediaQuery.bind(this);
     }
-
 
     startNotifications() {
         if (!UserAction.getStore().user || this.intervalId != null) return;
@@ -33,10 +37,20 @@ export default class Base extends React.Component<any, any> {
         this.intervalId = null;
     }
 
+    handleMediaQuery(isDesktop: boolean) {
+        if (isDesktop != this.state.isDesktop) {
+            this.setState({isDesktop: isDesktop});
+        }
+    }
+
     componentDidMount() {
-        UserAction.onChange(GET_ME, this.startNotifications.bind(this));
-        UserAction.onChange(LOGIN, this.startNotifications.bind(this));
-        UserAction.onChange(LOGOUT, this.stopNotifications.bind(this));
+        UserAction.onChange([GET_ME, LOGIN, LOGOUT], this.startNotifications.bind(this));
+        MediaQuerySerice.listen(this.handleMediaQuery);
+    }
+
+    componentWillUnmount() {
+        UserAction.unbind([GET_ME, LOGIN, LOGOUT], this.startNotifications.bind(this));
+        MediaQuerySerice.unbind(this.handleMediaQuery);
     }
 
     render() {
@@ -47,7 +61,7 @@ export default class Base extends React.Component<any, any> {
                 </div>
                 <MenuButton/>
                 <Menu />
-                <PopupPanel/>
+                {!this.state.isDesktop ? <PopupPanel/> : null}
                 <Notification/>
                 <Modal/>
             </div>

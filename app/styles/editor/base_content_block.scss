@@ -41,6 +41,10 @@
   &.expand_bottom {
     padding-bottom: 40px;
   }
+
+  .base_content_block__tools {
+    display: none;
+  }
 }
 
 .help {
@@ -54,9 +58,37 @@
 
 @include desktop {
   .base_content_block {
+    position: relative;
     width: 600px;
+    min-height: 50px;
     padding: 25px $padding;
     margin-left: auto;
     margin-right: auto;
+
+    &.active {
+      background-color: white;
+    }
+
+    .base_content_block__tools {
+      border-right: 2px solid $color3;
+      display: block;
+      position: absolute;
+      top: $padding;
+      left: -30px;
+      width: 30px;
+      height: calc(100% - #{$padding} * 2);
+
+      svg {
+        fill: $color3;
+        width: 30px;
+        height: 30px;
+      }
+
+      .base_content_block__extra {
+        position: absolute;
+        width: 30px;
+        bottom: 0;
+      }
+    }
   }
 }

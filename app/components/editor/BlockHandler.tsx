@@ -39,7 +39,6 @@ export default class BlockHandler extends React.Component<IBlockHandlerProps, IB
 
     handleActive() {
         let store = BlockHandlerAction.getStore();
-        console.log(store);
         if (this.state.isActive != (store.id == this.props.blockPosition)) {
             this.setState({isActive: store.id == this.props.blockPosition});
         }

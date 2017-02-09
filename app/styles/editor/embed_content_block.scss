@@ -24,6 +24,10 @@
     bottom: 0;
   }
 
+  &.hide {
+    display: none;
+  }
+
   &:not(.loaded) {
     .content_block_embed__html {
       visibility: hidden;

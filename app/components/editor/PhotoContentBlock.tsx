@@ -15,6 +15,7 @@ import ProgressBar from "../shared/ProgressBar";
 import {PROGRESS_BAR_TYPE} from "../shared/ProgressBar";
 import "../../styles/editor/photo_content_block.scss";
 import Sortable = require('sortablejs');
+import {DesktopBlockToolsAction, UPDATE_TOOLS} from "../../actions/editor/DesktopBlockToolsAction";
 
 const AddButton = require('babel!svg-react!../../assets/images/redactor_icon_popup_add.svg?name=AddButton');
 const DeleteButton = require('babel!svg-react!../../assets/images/close.svg?name=DeleteButton');
@@ -198,6 +199,17 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
         maxPhotoCount: 6
     };
 
+    getPosition() {
+        let blocks = ContentAction.getStore().content.blocks;
+        let index = -1;
+        blocks.forEach((block: any, i: number) => {
+            if (block.id == this.state.content.id) {
+                index = i;
+            }
+        });
+        return index;
+    }
+
     initSortable() {
         if (this.state.sortable) {
             this.state.sortable.option("disabled", false);
@@ -238,6 +250,7 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
             if (this.state.isActive) {
                 this.initSortable();
                 PopupPanelAction.do(OPEN_POPUP, {content: this.getPopupContent()});
+                DesktopBlockToolsAction.do(UPDATE_TOOLS, {position: this.getPosition(), tools: this.getDesktopToolsContent()});
             } else {
                 this.disableSortable();
             }
@@ -297,6 +310,7 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
                 this.state.content.photos.push(store.image);
                 this.setState({content: this.state.content, loadingImage: false}, () => {
                     PopupPanelAction.do(OPEN_POPUP, {content: this.getPopupContent()});
+                    DesktopBlockToolsAction.do(UPDATE_TOOLS, {position: this.getPosition(), tools: this.getDesktopToolsContent()});
                     ContentAction.do(UPDATE_CONTENT, {contentBlock: this.state.content});
                 });
             }).catch((err) => {
@@ -319,6 +333,7 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
         this.state.content.photos = photos;
         this.setState({content: this.state.content}, () => {
             PopupPanelAction.do(OPEN_POPUP, {content: this.getPopupContent()});
+            DesktopBlockToolsAction.do(UPDATE_TOOLS, {position: this.getPosition(), tools: this.getDesktopToolsContent()})
             ContentAction.do(UPDATE_CONTENT, {contentBlock: this.state.content});
         });
     }
@@ -338,6 +353,15 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
         }
         return <ContentBlockPopup extraContent={extraContent}
                                   onDelete={this.handleDelete.bind(this)}/>;
+    }
+
+    private getDesktopToolsContent() {
+        if (this.state.content.photos.length >= this.props.maxPhotoCount ||
+            (this.state.imageUploadProgress && this.state.imageUploadProgress.progress != this.state.imageUploadProgress.total)) {
+            return <div><AddButton className="disabled"/></div>
+        } else {
+            return <div onClick={this.openFileDialog.bind(this)}><AddButton/></div>
+        }
     }
 
     componentDidMount() {

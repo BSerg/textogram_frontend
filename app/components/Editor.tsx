@@ -172,7 +172,6 @@ export default class Editor extends React.Component<any, IEditorState> {
 
     handleOpenInlineBlock() {
         let store = InlineBlockAction.getStore();
-        console.log('OOOOOO', store);
         this.setState({inlineBlock: store});
     }
 

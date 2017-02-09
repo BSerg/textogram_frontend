@@ -13,6 +13,7 @@ import {PopupPanelAction, OPEN_POPUP} from "../../actions/shared/PopupPanelActio
 import ContentBlockPopup from "./ContentBlockPopup";
 import "../../styles/editor/dialog_content_block.scss";
 import {UploadImageAction, UPLOAD_IMAGE} from "../../actions/editor/UploadImageAction";
+import {DesktopBlockToolsAction, UPDATE_TOOLS} from "../../actions/editor/DesktopBlockToolsAction";
 
 const AddButton = require('babel!svg-react!../../assets/images/redactor_icon_popup_add.svg?name=AddButton');
 
@@ -50,6 +51,7 @@ interface IDialogContentBlockProps {
 interface IDialogContentBlockState {
     content?: IDialogContent
     isValid?: boolean
+    isActive?: boolean
 }
 
 
@@ -60,13 +62,26 @@ export default class DialogContentBlock extends React.Component<IDialogContentBl
         super(props);
         this.state = {
             content: this.processContent(this.props.content),
-            isValid: true
+            isValid: true,
+            isActive: false
         };
+        this.handleActive = this.handleActive.bind(this);
     }
 
     refs: {
         inputUpload: HTMLInputElement
     };
+
+    getPosition() {
+        let blocks = ContentAction.getStore().content.blocks;
+        let index = -1;
+        blocks.forEach((block: any, i: number) => {
+            if (block.id == this.state.content.id) {
+                index = i;
+            }
+        });
+        return index;
+    }
 
     private isValid(content: IDialogContent): boolean {
         return Validator.isValid(content, Validation.TEXT);
@@ -110,6 +125,7 @@ export default class DialogContentBlock extends React.Component<IDialogContentBl
     }
 
     addRemark(position?: number) {
+        console.log('HELLO NEW REMARK')
         this.state.content.remarks.push({
             participant_id: this.nextRecipient(),
             value: ""
@@ -125,6 +141,12 @@ export default class DialogContentBlock extends React.Component<IDialogContentBl
             OPEN_POPUP,
             {content: <ContentBlockPopup extraContent={extraContent}
                                          onDelete={this.handleDelete.bind(this)}/>}
+        )
+    }
+
+    private getDesktopToolsContent() {
+        return (
+            <div onClick={this.addRemark.bind(this, this.state.content.remarks.length)}><AddButton/></div>
         )
     }
 
@@ -177,6 +199,25 @@ export default class DialogContentBlock extends React.Component<IDialogContentBl
                 }
             });
         }
+    }
+
+    handleActive() {
+        let store = ContentBlockAction.getStore();
+        if (this.state.isActive != (store.id == this.state.content.id)) {
+            this.setState({isActive: store.id == this.state.content.id}, () => {
+                if (this.state.isActive) {
+                    DesktopBlockToolsAction.do(UPDATE_TOOLS, {position: this.getPosition(), tools: this.getDesktopToolsContent()});
+                }
+            });
+        }
+    }
+
+    componentDidMount() {
+        ContentBlockAction.onChange(ACTIVATE_CONTENT_BLOCK, this.handleActive);
+    }
+
+    componentWiilUnmount() {
+        ContentBlockAction.unbind(ACTIVATE_CONTENT_BLOCK, this.handleActive);
     }
 
     render() {

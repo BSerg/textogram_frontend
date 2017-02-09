@@ -4,7 +4,7 @@ import {
     ContentBlockAction, ACTIVATE_CONTENT_BLOCK,
     DEACTIVATE_CONTENT_BLOCK
 } from "../../actions/editor/ContentBlockAction";
-import {IContentData, DELETE_CONTENT, ContentAction} from "../../actions/editor/ContentAction";
+import {IContentData, DELETE_CONTENT, ContentAction, UPDATE_CONTENT} from "../../actions/editor/ContentAction";
 import BaseContentBlock from "./BaseContentBlock";
 import ContentBlockPopup from "./ContentBlockPopup";
 import {PopupPanelAction, OPEN_POPUP} from "../../actions/shared/PopupPanelAction";
@@ -13,6 +13,10 @@ import EmbedModal from "./EmbedModal";
 import {api} from "../../api";
 import "../../styles/editor/embed_content_block.scss";
 import ProgressBar from "../shared/ProgressBar";
+import InlineBlock from "./InlineBlock";
+import {InlineBlockAction, OPEN_INLINE_BLOCK, CLOSE_INLINE_BLOCK} from "../../actions/editor/InlineBlockAction";
+import EmbedInline from "./EmbedInline";
+import {DesktopBlockToolsAction, UPDATE_TOOLS} from "../../actions/editor/DesktopBlockToolsAction";
 
 const EditButton = require('babel!svg-react!../../assets/images/edit.svg?name=EditButton');
 
@@ -32,7 +36,8 @@ interface IEmbedContentBlockProps {
 interface IEmbedContentBlockState {
     content?: IEmbedContent,
     isActive?: boolean,
-    loaded?: boolean
+    loaded?: boolean,
+    hide?: boolean
 }
 
 export default class EmbedContentBlock extends React.Component<IEmbedContentBlockProps, IEmbedContentBlockState> {
@@ -41,15 +46,28 @@ export default class EmbedContentBlock extends React.Component<IEmbedContentBloc
         this.state = {
             content: this.props.content as IEmbedContent,
             isActive: false,
-            loaded: false
+            loaded: false,
+            hide: false
         };
         this.handleActive = this.handleActive.bind(this);
+        this.handleCloseInline = this.handleCloseInline.bind(this);
     }
 
     refs: {
         urlInput: HTMLInputElement,
         embed: HTMLElement
     };
+
+    getPosition() {
+        let blocks = ContentAction.getStore().content.blocks;
+        let index = -1;
+        blocks.forEach((block: any, i: number) => {
+            if (block.id == this.state.content.id) {
+                index = i;
+            }
+        });
+        return index;
+    }
 
     handleFocus() {
         ContentBlockAction.do(ACTIVATE_CONTENT_BLOCK, {id: this.props.content.id});
@@ -61,24 +79,56 @@ export default class EmbedContentBlock extends React.Component<IEmbedContentBloc
             this.setState({isActive: store.id == this.state.content.id}, () => {
                 if (this.state.isActive) {
                     PopupPanelAction.do(OPEN_POPUP, {content: this.getPopupContent()});
+                    DesktopBlockToolsAction.do(UPDATE_TOOLS, {position: this.getPosition(), tools: this.getDesktopToolsContent()});
                 }
             });
         }
     }
 
-    handleContent() {
+    handleDeleteContent() {
         ContentAction.do(DELETE_CONTENT, {id: this.state.content.id});
         ContentBlockAction.do(DEACTIVATE_CONTENT_BLOCK, null);
     }
 
+    handleDeleteContentWithConfirm() {
+        if (confirm('Удалить?')) {
+            this.handleDeleteContent();
+        }
+    }
+
+    onUpdateUrl() {
+        this.forceUpdate();
+    }
+
     private getPopupContent() {
         let extraContent = (
-            <div onClick={() => {ModalAction.do(OPEN_MODAL, {content: <EmbedModal content={this.state.content}/>})}}>
+            <div onClick={() => {
+                ModalAction.do(
+                    OPEN_MODAL,
+                    {content: <EmbedModal onSubmit={this.onUpdateUrl.bind(this)} content={this.state.content}/>}
+                )}
+            }>
                 <EditButton/>
             </div>
         );
         return <ContentBlockPopup extraContent={extraContent}
-                                  onDelete={this.handleContent.bind(this)}/>;
+                                  onDelete={this.handleDeleteContent.bind(this)}/>;
+    }
+
+    private getDesktopToolsContent() {
+        return (
+            <div onClick={() => {
+                this.setState({hide: true}, () => {
+                    InlineBlockAction.do(
+                        OPEN_INLINE_BLOCK,
+                        {
+                            position: this.getPosition(),
+                            content: <EmbedInline onSubmit={this.onUpdateUrl.bind(this)} content={this.state.content}/>
+                        }
+                    )
+                });
+            }}><EditButton/></div>
+        )
     }
 
     processEmbedElement(embed: HTMLElement) {
@@ -105,20 +155,26 @@ export default class EmbedContentBlock extends React.Component<IEmbedContentBloc
         });
     }
 
-    componentDidMount() {
-        if (!this.state.content.__meta) {
-            let params: {url: string, type?: string} = {url: this.state.content.value};
-            if (this.state.content.type == BlockContentTypes.VIDEO) {
+    handleCloseInline() {
+        if (this.state.hide) {
+            this.setState({hide: false});
+        }
+    }
+
+    private update(content: any) {
+        if (!content.__meta) {
+            let params: {url: string, type?: string} = {url: content.value};
+            if (content.type == BlockContentTypes.VIDEO) {
                 params.type = 'video';
             }
             api.post('/utils/embed/', params).then((response: any) => {
                 console.log(response);
                 if (response.data.embed) {
-                    this.state.content.__meta = {embed: response.data.embed};
-                    this.setState({content: this.state.content}, () => {
+                    content.__meta = {embed: response.data.embed};
+                    this.setState({content: content}, () => {
                         window.setTimeout(() => {
                             // TWITTER EMBED
-                            twttr.widgets && twttr.widgets.load(document.getElementById(this.props.content.id));
+                            twttr.widgets && twttr.widgets.load(document.getElementById(content.id));
                             // INSTAGRAM LOAD EMBED
                             instgrm.Embeds.process();
                         });
@@ -126,17 +182,31 @@ export default class EmbedContentBlock extends React.Component<IEmbedContentBloc
                 }
             })
         }
+        return content;
+    }
+
+    componentWillUpdate(nextState: any) {
+        this.update(nextState.content);
+    }
+
+    componentDidMount() {
         ContentBlockAction.onChange(ACTIVATE_CONTENT_BLOCK, this.handleActive);
+        InlineBlockAction.onChange(CLOSE_INLINE_BLOCK, this.handleCloseInline);
+        this.update(this.state.content);
     }
 
     componentWillUnmount() {
         ContentBlockAction.unbind(ACTIVATE_CONTENT_BLOCK, this.handleActive);
+        InlineBlockAction.unbind(CLOSE_INLINE_BLOCK, this.handleCloseInline);
     }
 
     render() {
         let progressLabel, className = 'content_block_embed';
         if (this.state.loaded) {
             className += ' loaded';
+        }
+        if (this.state.hide) {
+            className += ' hide';
         }
         switch (this.state.content.type) {
             case BlockContentTypes.VIDEO:

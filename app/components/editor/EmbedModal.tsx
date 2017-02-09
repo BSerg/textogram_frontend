@@ -19,7 +19,7 @@ const BackButton = require('babel!svg-react!../../assets/images/back.svg?name=Ba
 interface IEmbedModalProps {
     content: IContentData
     blockPosition?: number
-    onSubmit?: () => {}
+    onSubmit?: () => any
     className?: string
 
 }
@@ -63,6 +63,7 @@ export default class EmbedModal extends React.Component<IEmbedModalProps, IEmbed
             ContentAction.doAsync(UPDATE_CONTENT, {contentBlock: this.state.content});
         }
         ModalAction.do(CLOSE_MODAL, null);
+        this.props.onSubmit && this.props.onSubmit();
     }
 
     handleDeleteContent() {

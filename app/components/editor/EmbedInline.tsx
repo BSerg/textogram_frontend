@@ -11,7 +11,7 @@ const CloseButton = require('babel!svg-react!../../assets/images/close.svg?name=
 interface IEmbedInlineProps {
     content: IContentData
     blockPosition?: number
-    onSubmit?: () => {}
+    onSubmit?: () => any
     className?: string
 }
 
@@ -49,11 +49,12 @@ export default class EmbedInline extends React.Component<IEmbedInlineProps, IEmb
         e.stopPropagation();
         if (this.state.isError || !this.refs.urlInput.value) return;
         if (!this.state.content.id) {
-            ContentAction.doAsync(CREATE_CONTENT, {contentBlock: this.state.content, position: this.props.blockPosition});
+            ContentAction.do(CREATE_CONTENT, {contentBlock: this.state.content, position: this.props.blockPosition});
         } else {
-            ContentAction.doAsync(UPDATE_CONTENT, {contentBlock: this.state.content});
+            ContentAction.do(UPDATE_CONTENT, {contentBlock: this.state.content});
         }
         InlineBlockAction.do(CLOSE_INLINE_BLOCK, null);
+        this.props.onSubmit && this.props.onSubmit();
     }
 
     validate(url: string): boolean {
