@@ -1,0 +1,39 @@
+@import "../contstants";
+@import "../mixins";
+
+.block_handler_inline {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  flex: auto;
+  padding: $padding $padding 0 $padding;
+
+  .block_handler_inline__item {
+    $size: calc((100% - #{$padding} * 2) / 6);
+    float: left;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: $size;
+    margin-bottom: $margin * 2;
+    text-transform: uppercase;
+    text-align: center;
+    font-size: 8px;
+    font-family: $family_open_sans;
+    line-height: 10px;
+    letter-spacing: 1px;
+
+    .block_handler_button.small {
+      margin: unset;
+    }
+  }
+
+  .block_handler_inline__caption {
+    margin-top: 10px;
+  }
+
+
+}

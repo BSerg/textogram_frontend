@@ -35,6 +35,9 @@ import {
     DEACTIVATE_CONTENT_BLOCK
 } from "../actions/editor/ContentBlockAction";
 import {PopupPanelAction, CLOSE_POPUP} from "../actions/shared/PopupPanelAction";
+import {InlineBlockAction, OPEN_INLINE_BLOCK, CLOSE_INLINE_BLOCK} from "../actions/editor/InlineBlockAction";
+import InlineBlock from "./editor/InlineBlock";
+import {MediaQuerySerice} from "../services/MediaQueryService";
 
 
 interface IEditorState {
@@ -45,6 +48,7 @@ interface IEditorState {
     showLastBlockHandler?: boolean
     isSavingArticle?: boolean
     isDesktop?: boolean
+    inlineBlock?: {position: number, content: any}
 }
 
 
@@ -58,12 +62,17 @@ export default class Editor extends React.Component<any, IEditorState> {
             isValid: true,
             error: null,
             autoSave: true,
-            showLastBlockHandler: true
+            showLastBlockHandler: true,
+            inlineBlock: null,
+            isDesktop: MediaQuerySerice.getIsDesktop()
         };
         this.resetContent = this.resetContent.bind(this);
         this.updateContent = this.updateContent.bind(this);
         this.forceUpdateContent = this.updateContent.bind(this, true);
         this.handleActiveBlock = this.handleActiveBlock.bind(this);
+        this.handleOpenInlineBlock = this.handleOpenInlineBlock.bind(this);
+        this.handleCloseInlineBlock = this.handleCloseInlineBlock.bind(this);
+        this.handleMediaQuery = this.handleMediaQuery.bind(this);
     }
 
     processContentBlock(block: IContentData) {
@@ -161,6 +170,22 @@ export default class Editor extends React.Component<any, IEditorState> {
         this.setState({showLastBlockHandler: store.id == -1});
     }
 
+    handleOpenInlineBlock() {
+        let store = InlineBlockAction.getStore();
+        console.log('OOOOOO', store);
+        this.setState({inlineBlock: store});
+    }
+
+    handleCloseInlineBlock() {
+        this.setState({inlineBlock: null});
+    }
+
+    handleMediaQuery(isDesktop: boolean) {
+        if (isDesktop != this.state.isDesktop) {
+            this.setState({isDesktop: isDesktop});
+        }
+    }
+
     componentDidMount() {
         api.get(`/articles/editor/${this.props.params.articleId}/`).then((response: any) => {
             this.setState({
@@ -189,6 +214,9 @@ export default class Editor extends React.Component<any, IEditorState> {
             this.forceUpdateContent
         );
         ContentBlockAction.onChange([ACTIVATE_CONTENT_BLOCK, DEACTIVATE_CONTENT_BLOCK], this.handleActiveBlock);
+        InlineBlockAction.onChange(OPEN_INLINE_BLOCK, this.handleOpenInlineBlock);
+        InlineBlockAction.onChange(CLOSE_INLINE_BLOCK, this.handleCloseInlineBlock);
+        MediaQuerySerice.listen(this.handleMediaQuery);
     }
 
     componentWillUnmount() {
@@ -199,6 +227,9 @@ export default class Editor extends React.Component<any, IEditorState> {
         );
         ContentBlockAction.unbind([ACTIVATE_CONTENT_BLOCK, DEACTIVATE_CONTENT_BLOCK], this.handleActiveBlock);
         PopupPanelAction.do(CLOSE_POPUP, null);
+        InlineBlockAction.unbind(OPEN_INLINE_BLOCK, this.handleOpenInlineBlock);
+        InlineBlockAction.unbind(CLOSE_INLINE_BLOCK, this.handleCloseInlineBlock);
+        MediaQuerySerice.unbind(this.handleMediaQuery);
     }
 
     render() {
@@ -286,13 +317,20 @@ export default class Editor extends React.Component<any, IEditorState> {
                                         break;
                                 }
 
-                                return [
-                                    <BlockHandler key={"handler" + index}
-                                                  articleId={this.state.article.id}
-                                                  blockPosition={index}
-                                                  items={blockHandlerButtons}/>,
-                                    block
-                                ]
+                                if (this.state.isDesktop && this.state.inlineBlock && this.state.inlineBlock.position == index) {
+                                    return [
+                                        <InlineBlock>{this.state.inlineBlock.content}</InlineBlock>,
+                                        block
+                                    ]
+                                } else {
+                                    return [
+                                        <BlockHandler key={"handler" + index}
+                                                      articleId={this.state.article.id}
+                                                      blockPosition={index}
+                                                      items={blockHandlerButtons}/>,
+                                        block
+                                    ]
+                                }
                             }),
                             this.state.showLastBlockHandler ?
                                 <BlockHandler key="handlerLast"
@@ -326,9 +364,7 @@ export default class Editor extends React.Component<any, IEditorState> {
                                      onClick={this.state.isValid && this.resetContent.bind(this, true)}>
                                     Сохранить
                                 </div> : null)
-
-                        ]
-                        : null
+                        ] : null
                     }
                 </div>
             </div>

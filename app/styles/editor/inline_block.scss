@@ -1,0 +1,32 @@
+@import "../contstants";
+@import "../mixins";
+
+
+.inline_block {
+  position: relative;
+  width: 600px;
+  margin: 0 auto;
+  border-top: 1px solid $color3;
+  border-bottom: 1px solid $color3;
+
+  .inline_block__close {
+    $size: 20px;
+    position: absolute;
+    display: inline-block;
+    top: $margin;
+    right: $margin;
+    cursor: pointer;
+
+    svg {
+      fill: $color3;
+      width: $size;
+      height: $size;
+    }
+
+    &:hover {
+      svg {
+        fill: darken($color3, 10%);
+      }
+    }
+  }
+}

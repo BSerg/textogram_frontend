@@ -6,6 +6,10 @@ import {ContentAction, CREATE_CONTENT, SWAP_CONTENT, IContentData} from "../../a
 import {ModalAction, OPEN_MODAL} from "../../actions/shared/ModalAction";
 import EmbedModal from "./EmbedModal";
 import {IParticipant} from "./DialogContentBlock";
+import {MediaQuerySerice} from "../../services/MediaQueryService";
+import {InlineBlockAction, OPEN_INLINE_BLOCK} from "../../actions/editor/InlineBlockAction";
+import {BlockHandlerInline} from "./BlockHandlerInline";
+import EmbedInline from "./EmbedInline";
 
 const AddIcon = require('babel!svg-react!../../assets/images/redactor_icon_add.svg?name=AddIcon');
 const SwapIcon = require('babel!svg-react!../../assets/images/redactor_icon_swing.svg?name=SwapIcon');
@@ -41,7 +45,8 @@ export default class BlockHandlerButton extends React.Component<IContentButtonPr
 
     constructor(props: any) {
         super(props);
-        this.state = this.getButtonProps();
+        this.state = Object.assign({}, this.getButtonProps(), {isDesktop: MediaQuerySerice.getIsDesktop()});
+        this.handleMediaQuery = this.handleMediaQuery.bind(this);
     }
 
     static defaultProps = {
@@ -54,10 +59,20 @@ export default class BlockHandlerButton extends React.Component<IContentButtonPr
                 return {
                     icon: <AddIcon/>,
                     onClick: () => {
-                        BlockHandlerAction.do(
-                            OPEN_BLOCK_HANDLER_MODAL,
-                            {articleId: this.props.articleId, blockPosition: this.props.blockPosition}
-                        )
+                        if (this.state.isDesktop) {
+                            InlineBlockAction.do(
+                                OPEN_INLINE_BLOCK,
+                                {
+                                    position: this.props.blockPosition,
+                                    content: <BlockHandlerInline articleId={this.props.articleId}
+                                                              blockPosition={this.props.blockPosition}/>}
+                            )
+                        } else {
+                            BlockHandlerAction.do(
+                                OPEN_BLOCK_HANDLER_MODAL,
+                                {articleId: this.props.articleId, blockPosition: this.props.blockPosition}
+                            )
+                        }
                     }
                 };
             case BlockContentTypes.SWAP_BLOCKS:
@@ -130,11 +145,23 @@ export default class BlockHandlerButton extends React.Component<IContentButtonPr
                             value: "",
                         };
                         window.setTimeout(() => {
-                            ModalAction.do(
-                                OPEN_MODAL,
-                                {content: <EmbedModal blockPosition={this.props.blockPosition}
-                                                      content={content}/>}
-                            );
+                            if (this.state.isDesktop) {
+                                InlineBlockAction.do(
+                                    OPEN_INLINE_BLOCK,
+                                    {
+                                        position: this.props.blockPosition,
+                                        content: <EmbedInline blockPosition={this.props.blockPosition}
+                                                              content={content}/>
+                                    }
+                                )
+
+                            } else {
+                                ModalAction.do(
+                                    OPEN_MODAL,
+                                    {content: <EmbedModal blockPosition={this.props.blockPosition}
+                                                          content={content}/>}
+                                );
+                            }
                         }, 0);
                     }
                 };
@@ -160,13 +187,25 @@ export default class BlockHandlerButton extends React.Component<IContentButtonPr
                             value: "",
                         };
                         window.setTimeout(() => {
-                            ModalAction.do(
-                                OPEN_MODAL,
-                                {content: <EmbedModal blockPosition={this.props.blockPosition}
-                                                      content={content}/>}
-                            );
+                            if (this.state.isDesktop) {
+                                InlineBlockAction.do(
+                                    OPEN_INLINE_BLOCK,
+                                    {
+                                        position: this.props.blockPosition,
+                                        content: <EmbedInline blockPosition={this.props.blockPosition}
+                                                              content={content}/>
+                                    }
+                                )
+
+                            } else {
+                                ModalAction.do(
+                                    OPEN_MODAL,
+                                    {content: <EmbedModal blockPosition={this.props.blockPosition}
+                                                          content={content}/>}
+                                );
+                            }
                         }, 0);
-                        }
+                    }
                 };
             case BlockContentTypes.QUOTE:
                 return {
@@ -274,11 +313,23 @@ export default class BlockHandlerButton extends React.Component<IContentButtonPr
                             value: "",
                         };
                         window.setTimeout(() => {
-                            ModalAction.do(
-                                OPEN_MODAL,
-                                {content: <EmbedModal blockPosition={this.props.blockPosition}
-                                                      content={content}/>}
-                            );
+                            if (this.state.isDesktop) {
+                                InlineBlockAction.do(
+                                    OPEN_INLINE_BLOCK,
+                                    {
+                                        position: this.props.blockPosition,
+                                        content: <EmbedInline blockPosition={this.props.blockPosition}
+                                                              content={content}/>
+                                    }
+                                )
+
+                            } else {
+                                ModalAction.do(
+                                    OPEN_MODAL,
+                                    {content: <EmbedModal blockPosition={this.props.blockPosition}
+                                                          content={content}/>}
+                                );
+                            }
                         }, 0);
                     }
                 };
@@ -288,6 +339,20 @@ export default class BlockHandlerButton extends React.Component<IContentButtonPr
     handleClick() {
         this.state.onClick();
         if (this.props.onClick) this.props.onClick();
+    }
+
+    handleMediaQuery(isDesktop: boolean) {
+        if (this.state.isDesktop != isDesktop) {
+            this.setState({isDesktop: isDesktop});
+        }
+    }
+
+    componentDidMount() {
+        MediaQuerySerice.listen(this.handleMediaQuery);
+    }
+
+    componentWillUnmount() {
+        MediaQuerySerice.unbind(this.handleMediaQuery);
     }
 
     render() {

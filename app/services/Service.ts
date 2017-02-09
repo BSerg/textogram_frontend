@@ -8,6 +8,7 @@ export default class Service extends events.EventEmitter {
     constructor(eventName: string) {
         super();
         this.eventName = eventName;
+        this.setMaxListeners(0);
     }
 
     listen(callback: (data: any) => any) {

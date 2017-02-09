@@ -1,0 +1,41 @@
+@import "../contstants";
+@import "../mixins";
+
+.embed_inline {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 250px;
+
+  form {
+    width: calc(100% - #{$padding}*2);
+  }
+
+  .embed_inline__input {
+    width: 100%;
+    background-color: transparent;
+    border: none;
+    text-align: center;
+    outline: none;
+    font-size: 15px;
+    line-height: 18px;
+    letter-spacing: 1px;
+    color: $color;
+    font-family: $family_open_sans;
+    margin-bottom: 15px;
+  }
+
+  .embed_inline__help, .embed_inline__error {
+    font-size: 10px;
+    line-height: 12px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    text-align: center;
+    color: $color3;
+  }
+
+  .embed_inline__error {
+    color: #FF3333;
+  }
+}
