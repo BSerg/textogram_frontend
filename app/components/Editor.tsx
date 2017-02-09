@@ -333,13 +333,16 @@ export default class Editor extends React.Component<any, IEditorState> {
                                 }
                             }),
                             this.state.showLastBlockHandler ?
-                                <BlockHandler key="handlerLast"
-                                              articleId={this.state.article.id}
-                                              blockPosition={this.state.article.content.blocks.length}
-                                              isLast={true}
-                                              items={[
-                                                  BlockContentTypes.ADD,
-                                              ]}/> : null
+                                this.state.isDesktop && this.state.inlineBlock && this.state.inlineBlock.position == this.state.article.content.blocks.length ?
+                                    <InlineBlock>{this.state.inlineBlock.content}</InlineBlock>
+                                    : <BlockHandler key="handlerLast"
+                                                  articleId={this.state.article.id}
+                                                  blockPosition={this.state.article.content.blocks.length}
+                                                  isLast={true}
+                                                  items={[
+                                                      BlockContentTypes.ADD,
+                                                  ]}/>
+                                    : null
                             ,
                             <div key="add_content_help" className="add_content_help">
                                 {!this.state.article.content.blocks.length || !this.state.article.content.blocks.length ?
