@@ -30,6 +30,7 @@ interface ContentEditableProps {
     onBlur?: () => any
     onKeyDown?: (e: KeyboardEvent) => any
     enableTextFormat?: boolean
+    forceUpdateContent?: boolean
 }
 
 interface ISelection {
@@ -74,7 +75,7 @@ export default class ContentEditable extends React.Component<ContentEditableProp
         alignContent: 'left',
         focusOnMount: false,
         forceUpdateContent: false,
-        enableTextFormat: false
+        enableTextFormat: false,
     };
     private getElementEmptyContentByType () {
         switch (this.props.elementType) {
@@ -229,8 +230,9 @@ export default class ContentEditable extends React.Component<ContentEditableProp
     }
 
     shouldComponentUpdate(nextProps: any, nextState: any) {
-        return false;
+        return nextProps.forceUpdateContent;
     }
+
     render() {
         let className = 'content_editable';
         if (this.props.elementType == 'inline') {

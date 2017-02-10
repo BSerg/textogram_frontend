@@ -185,8 +185,8 @@ export default class Editor extends React.Component<any, IEditorState> {
         }
     }
 
-    componentDidMount() {
-        api.get(`/articles/editor/${this.props.params.articleId}/`).then((response: any) => {
+    loadArticle(articleId: number) {
+        api.get(`/articles/editor/${articleId}/`).then((response: any) => {
             this.setState({
                 article: response.data,
                 autoSave: response.data.status == ArticleStatuses.DRAFT,
@@ -206,7 +206,15 @@ export default class Editor extends React.Component<any, IEditorState> {
                 }
             }
         });
+    }
 
+    componentWillReceiveProps(nextProps: any) {
+        if (this.props.params.articleId != nextProps.params.articleId) {
+            this.loadArticle(nextProps.params.articleId);
+        }
+    }
+
+    componentDidMount() {
         ContentAction.onChange(UPDATE_CONTENT, this.updateContent);
         ContentAction.onChange(
             [CREATE_CONTENT, DELETE_CONTENT, UPDATE_COVER_CONTENT, UPDATE_TITLE_CONTENT, SWAP_CONTENT],
@@ -216,6 +224,8 @@ export default class Editor extends React.Component<any, IEditorState> {
         InlineBlockAction.onChange(OPEN_INLINE_BLOCK, this.handleOpenInlineBlock);
         InlineBlockAction.onChange(CLOSE_INLINE_BLOCK, this.handleCloseInlineBlock);
         MediaQuerySerice.listen(this.handleMediaQuery);
+
+        this.loadArticle(this.props.params.articleId);
     }
 
     componentWillUnmount() {
@@ -237,7 +247,7 @@ export default class Editor extends React.Component<any, IEditorState> {
                 <div className="editor__wrapper">
                     {this.state.article && !this.state.error ?
                         [
-                            <TitleBlock key="titleBlock" articleSlug={this.props.params.articleId}
+                            <TitleBlock key={"titleBlock" + this.state.article.id} articleSlug={this.props.params.articleId}
                                 title={this.state.article.content.title}
                                 cover={this.state.article.content.cover}/>,
                             this.state.article.content.blocks.map((contentBlock: IContentData, index: number) => {

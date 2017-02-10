@@ -93,9 +93,6 @@ export default class TitleBlock extends React.Component<TitleBlockPropsInterface
         this.updateValidState();
     }
 
-    componentWillUnmount() {
-    }
-
     render() {
         let className = 'title_block',
             style = {};
