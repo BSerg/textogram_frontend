@@ -34,7 +34,7 @@ import {
     ACTIVATE_CONTENT_BLOCK,
     DEACTIVATE_CONTENT_BLOCK
 } from "../actions/editor/ContentBlockAction";
-import {PopupPanelAction, CLOSE_POPUP, OPEN_POPUP} from "../actions/shared/PopupPanelAction";
+import {PopupPanelAction, CLOSE_POPUP, OPEN_POPUP, BACK_POPUP} from "../actions/shared/PopupPanelAction";
 import {InlineBlockAction, OPEN_INLINE_BLOCK, CLOSE_INLINE_BLOCK} from "../actions/editor/InlineBlockAction";
 import InlineBlock from "./editor/InlineBlock";
 import {MediaQuerySerice} from "../services/MediaQueryService";
@@ -123,7 +123,7 @@ export default class Editor extends React.Component<any, IEditorState> {
     }
 
     resetContent(save: boolean = false) {
-        ContentAction.do(
+        return ContentAction.doAsync(
             RESET_CONTENT,
             {articleId: this.state.article.id, autoSave: save, content: this.state.article.content}
         )
@@ -172,6 +172,18 @@ export default class Editor extends React.Component<any, IEditorState> {
                 NotificationAction.do(SHOW_NOTIFICATION, {content: 'Поздравляем, ваш материал опубликован.'})
             });
         });
+    }
+
+    _updateArticle() {
+        PopupPanelAction.do(BACK_POPUP, null);
+        this.resetContent(true).then(() => {
+            NotificationAction.do(SHOW_NOTIFICATION, {content: 'Публикация обновлена'});
+        });
+    }
+
+    updateArticle() {
+        let content = <PopupPrompt confirmLabel="Обновить" onConfirm={this._updateArticle.bind(this)}/>;
+        PopupPanelAction.do(OPEN_POPUP, {content: content});
     }
 
     handleActiveBlock() {
@@ -376,7 +388,7 @@ export default class Editor extends React.Component<any, IEditorState> {
                             (this.state.article.status == ArticleStatuses.PUBLISHED ?
                                 <div key="update_publish_button"
                                      className={"editor__publish" + (!this.state.isValid ? ' disabled': '')}
-                                     onClick={this.state.isValid && this.resetContent.bind(this, true)}>
+                                     onClick={this.state.isValid && this.updateArticle.bind(this, true)}>
                                     Обновить публикацию
                                 </div> : null),
                             (this.state.article.status == ArticleStatuses.SHARED ?
