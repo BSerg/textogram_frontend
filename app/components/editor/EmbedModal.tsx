@@ -10,10 +10,14 @@ import {
 import {ModalAction, CLOSE_MODAL} from "../../actions/shared/ModalAction";
 import {IEmbedContent} from "./EmbedContentBlock";
 import "../../styles/editor/embed_modal.scss";
+import {PopupPanelAction, OPEN_POPUP, CLOSE_POPUP} from "../../actions/shared/PopupPanelAction";
+import PopupPrompt from "../shared/PopupPrompt";
+import {ContentBlockAction, DEACTIVATE_CONTENT_BLOCK} from "../../actions/editor/ContentBlockAction";
 
 const DeleteButton = require('babel!svg-react!../../assets/images/redactor_icon_delete.svg?name=DeleteButton');
 const ConfirmButton = require('babel!svg-react!../../assets/images/redactor_icon_confirm.svg?name=ConfirmButton');
 const BackButton = require('babel!svg-react!../../assets/images/back.svg?name=BackButton');
+const CloseButton = require('babel!svg-react!../../assets/images/close.svg?name=CloseButton');
 
 
 interface IEmbedModalProps {
@@ -66,11 +70,20 @@ export default class EmbedModal extends React.Component<IEmbedModalProps, IEmbed
         this.props.onSubmit && this.props.onSubmit();
     }
 
+    deleteBlock() {
+        ContentAction.do(DELETE_CONTENT, {id: this.state.content.id});
+        ContentBlockAction.do(DEACTIVATE_CONTENT_BLOCK, null);
+        PopupPanelAction.do(CLOSE_POPUP, null);
+    }
+
     handleDeleteContent() {
         console.log('DELETE EMBED', this.state.content.id);
         if (this.state.content.id) {
-            ContentAction.do(DELETE_CONTENT, {id: this.state.content.id});
             ModalAction.do(CLOSE_MODAL, null);
+            let content = <PopupPrompt confirmLabel="Удалить"
+                                       confirmClass="warning"
+                                       onConfirm={this.deleteBlock.bind(this)}/>;
+            PopupPanelAction.do(OPEN_POPUP, {content: content});
         }
     }
 
@@ -122,7 +135,7 @@ export default class EmbedModal extends React.Component<IEmbedModalProps, IEmbed
         return (
             <div className={className}>
                 <div className="embed_modal__header">
-                    <BackButton className="embed_modal__back" onClick={this.back.bind(this)}/>
+                    <CloseButton className="embed_modal__back" onClick={this.back.bind(this)}/>
                 </div>
                 <div className={"embed_modal__content" + (this.state.isError ? ' error' : '')}>
                     <form onSubmit={this.updateContent.bind(this)}>

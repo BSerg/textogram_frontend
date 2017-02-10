@@ -7,7 +7,7 @@ import {
 import {IContentData, DELETE_CONTENT, ContentAction, UPDATE_CONTENT} from "../../actions/editor/ContentAction";
 import BaseContentBlock from "./BaseContentBlock";
 import ContentBlockPopup from "./ContentBlockPopup";
-import {PopupPanelAction, OPEN_POPUP} from "../../actions/shared/PopupPanelAction";
+import {PopupPanelAction, OPEN_POPUP, CLOSE_POPUP} from "../../actions/shared/PopupPanelAction";
 import {ModalAction, OPEN_MODAL} from "../../actions/shared/ModalAction";
 import EmbedModal from "./EmbedModal";
 import {api} from "../../api";
@@ -17,6 +17,7 @@ import InlineBlock from "./InlineBlock";
 import {InlineBlockAction, OPEN_INLINE_BLOCK, CLOSE_INLINE_BLOCK} from "../../actions/editor/InlineBlockAction";
 import EmbedInline from "./EmbedInline";
 import {DesktopBlockToolsAction, UPDATE_TOOLS} from "../../actions/editor/DesktopBlockToolsAction";
+import PopupPrompt from "../shared/PopupPrompt";
 
 const EditButton = require('babel!svg-react!../../assets/images/edit.svg?name=EditButton');
 
@@ -85,15 +86,20 @@ export default class EmbedContentBlock extends React.Component<IEmbedContentBloc
         }
     }
 
-    handleDeleteContent() {
+    deleteBlock() {
         ContentAction.do(DELETE_CONTENT, {id: this.state.content.id});
         ContentBlockAction.do(DEACTIVATE_CONTENT_BLOCK, null);
+        PopupPanelAction.do(CLOSE_POPUP, null);
     }
 
-    handleDeleteContentWithConfirm() {
-        if (confirm('Удалить?')) {
-            this.handleDeleteContent();
-        }
+    handleDeleteContent() {
+        let content = <PopupPrompt confirmLabel="Удалить"
+                                   confirmClass="warning"
+                                   onConfirm={this.deleteBlock.bind(this)}/>;
+        PopupPanelAction.do(
+            OPEN_POPUP,
+            {content: content}
+        );
     }
 
     onUpdateUrl() {
