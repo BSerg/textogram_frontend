@@ -9,7 +9,7 @@ import {
 import {ModalAction, OPEN_MODAL, CLOSE_MODAL} from "../../actions/shared/ModalAction";
 import {DELETE_CONTENT, ContentAction, IContentData, UPDATE_CONTENT} from "../../actions/editor/ContentAction";
 import ContentBlockPopup from "./ContentBlockPopup";
-import {PopupPanelAction, OPEN_POPUP} from "../../actions/shared/PopupPanelAction";
+import {PopupPanelAction, OPEN_POPUP, CLOSE_POPUP} from "../../actions/shared/PopupPanelAction";
 import {UploadImageAction, UPLOAD_IMAGE, UPDATE_PROGRESS} from "../../actions/editor/UploadImageAction";
 import ProgressBar from "../shared/ProgressBar";
 import {PROGRESS_BAR_TYPE} from "../shared/ProgressBar";
@@ -17,6 +17,7 @@ import "../../styles/editor/photo_content_block.scss";
 import Sortable = require('sortablejs');
 import {DesktopBlockToolsAction, UPDATE_TOOLS} from "../../actions/editor/DesktopBlockToolsAction";
 import {NotificationAction, SHOW_NOTIFICATION} from "../../actions/shared/NotificationAction";
+import PopupPrompt from "../shared/PopupPrompt";
 
 const AddButton = require('babel!svg-react!../../assets/images/redactor_icon_popup_add.svg?name=AddButton');
 const DeleteButton = require('babel!svg-react!../../assets/images/close.svg?name=DeleteButton');
@@ -243,9 +244,20 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
         ContentBlockAction.do(ACTIVATE_CONTENT_BLOCK, {id: this.props.content.id});
     }
 
-    handleDelete() {
+    deleteBlock() {
         ContentAction.do(DELETE_CONTENT, {id: this.state.content.id});
         ContentBlockAction.do(DEACTIVATE_CONTENT_BLOCK, null);
+        PopupPanelAction.do(CLOSE_POPUP, null);
+    }
+
+    handleDelete() {
+        let content = <PopupPrompt confirmLabel="Удалить"
+                                   confirmClass="warning"
+                                   onConfirm={this.deleteBlock.bind(this)}/>;
+        PopupPanelAction.do(
+            OPEN_POPUP,
+            {content: content}
+        );
     }
 
     handleBlockActive() {
