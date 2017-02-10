@@ -4,9 +4,10 @@
 .title_block {
   position: relative;
   display: flex;
-  align-content: center;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
-  background-color: transparent;
+  background-color: $color4;
   text-align: center;
   padding: 80px $padding;
 }
@@ -18,17 +19,33 @@
   font-size: 28px;
   font-weight: $font-weight-bold;
   line-height: $line-height1;
+  text-align: center;
+}
+
+.title_block__cover_handler_wrapper {
+  width: calc(100% - #{$padding}*2);
+  text-align: center;
+  position: absolute;
+  top: 25px;
 }
 
 .title_block__cover_handler {
+  display: inline-block;
+  height: 30px;
   font-size: 10px;
-  line-height: 12px;
+  line-height: 30px;
   letter-spacing: 1px;
   text-transform: uppercase;
+  color: $color5;
+  @include border_radius(10px);
+  border: 1px solid $color5;
+  padding: 0 7px;
+}
+
+.title_block.inverse .title_block__cover_handler {
+  background-color: rgba(0, 0, 0, 0.5);
   color: $color3;
-  position: absolute;
-  top: 30px;
-  width: calc(100% - #{$padding} * 2);
+  border-color: transparent;
 }
 
 .title_block__cover {
@@ -68,14 +85,24 @@
   }
 
   .title_block__cover_handler {
+    @include border_radius(10px);
     top: 50px;
+    height: 40px;
     font-size: 12px;
-    line-height: 14px;
-    color: $color5;
+    line-height: 40px;
+    color: $color3;
     cursor: pointer;
+    border: 1px solid $color3;
+    padding: 0 20px;
 
     &:hover {
-      color: darken($color5, 10%);
+      color: $color5;
+      border-color: $color5;
     }
+  }
+
+  .title_block.inverse .title_block__cover_handler:hover {
+    color: white;
+    background-color: $color;
   }
 }

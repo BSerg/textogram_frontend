@@ -67,7 +67,7 @@
 
   .content {
 
-    & > p, h2, blockquote, ul, .lead, .phrase, .columns, .embed, .photos, .dialogue {
+    & > p, h2, blockquote, ul, .lead, .phrase, .columns, .embed, .photos, .dialogue, .single_photo {
       padding: $padding/2 $padding;
     }
 
@@ -216,6 +216,20 @@
       }
     }
 
+    .single_photo {
+      img {
+        width: 100%;
+        height: auto;
+      }
+
+      .caption {
+        text-align: center;
+        color: $color5;
+        font-size: 12px;
+        line-height: 24px;
+      }
+    }
+
     .photos {
       padding: $padding;
 
@@ -281,6 +295,11 @@
           }
         }
       }
+    }
+
+    @include desktop {
+      width: 600px;
+      margin: 0 auto;
     }
   }
 }
