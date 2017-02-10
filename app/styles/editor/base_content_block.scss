@@ -70,7 +70,7 @@
     }
 
     .base_content_block__tools {
-      border-right: 2px solid $color3;
+      border-right: 1px solid $color3;
       display: block;
       position: absolute;
       top: $padding;
@@ -86,9 +86,22 @@
       }
 
       .base_content_block__extra {
+        display: inline-block;
         position: absolute;
         width: 30px;
+        min-height: 30px;
         bottom: 0;
+        padding: 0;
+
+        & > div {
+          height: 30px;
+        }
+      }
+    }
+
+    &.last {
+      .base_content_block__tools {
+        height: calc(100% - #{$padding * 2  + 25px});
       }
     }
   }
