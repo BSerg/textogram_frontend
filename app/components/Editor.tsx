@@ -38,6 +38,7 @@ import {PopupPanelAction, CLOSE_POPUP} from "../actions/shared/PopupPanelAction"
 import {InlineBlockAction, OPEN_INLINE_BLOCK, CLOSE_INLINE_BLOCK} from "../actions/editor/InlineBlockAction";
 import InlineBlock from "./editor/InlineBlock";
 import {MediaQuerySerice} from "../services/MediaQueryService";
+import {NotificationAction, SHOW_NOTIFICATION} from "../actions/shared/NotificationAction";
 
 
 interface IEditorState {
@@ -161,7 +162,9 @@ export default class Editor extends React.Component<any, IEditorState> {
         console.log('PUBLISH');
         api.post(`/articles/editor/${this.state.article.id}/publish/`).then((response: any) => {
             console.log(response);
-            this.setState({article: response.data});
+            this.setState({article: response.data}, () => {
+                NotificationAction.do(SHOW_NOTIFICATION, {content: 'Поздравляем, ваш материал опубликован.'})
+            });
         });
     }
 
@@ -361,7 +364,7 @@ export default class Editor extends React.Component<any, IEditorState> {
                             (this.state.article.status == ArticleStatuses.DRAFT ?
                                 <div key="publish_button"
                                      className={"editor__publish" + (!this.state.isValid ? ' disabled': '')}
-                                     onClick={this.state.isValid && this.openPublishParamsModal.bind(this)}>
+                                     onClick={this.state.isValid && this.publish.bind(this)}>
                                     Опубликовать
                                 </div> : null),
                             (this.state.article.status == ArticleStatuses.PUBLISHED ?
