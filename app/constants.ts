@@ -56,6 +56,11 @@ export namespace Captions {
         saving_error: 'Что-то пошло не так. Мы не можем сохранить эту публикацию.'
     };
 
+    export const shared = {
+        confirmLabel: 'OK',
+        cancelLabel: 'Отмена',
+    };
+
     export const profile = {
         subscribe: 'Подписаться',
         subscribed: 'Вы подписаны',

@@ -34,11 +34,12 @@ import {
     ACTIVATE_CONTENT_BLOCK,
     DEACTIVATE_CONTENT_BLOCK
 } from "../actions/editor/ContentBlockAction";
-import {PopupPanelAction, CLOSE_POPUP} from "../actions/shared/PopupPanelAction";
+import {PopupPanelAction, CLOSE_POPUP, OPEN_POPUP} from "../actions/shared/PopupPanelAction";
 import {InlineBlockAction, OPEN_INLINE_BLOCK, CLOSE_INLINE_BLOCK} from "../actions/editor/InlineBlockAction";
 import InlineBlock from "./editor/InlineBlock";
 import {MediaQuerySerice} from "../services/MediaQueryService";
 import {NotificationAction, SHOW_NOTIFICATION} from "../actions/shared/NotificationAction";
+import PopupPrompt from "./shared/PopupPrompt";
 
 
 interface IEditorState {
@@ -156,6 +157,11 @@ export default class Editor extends React.Component<any, IEditorState> {
                                                 onPublish={(article: any) => {this.setState({article: article})}}/>
             }
         );
+    }
+
+    prePublish() {
+        let content = <PopupPrompt confirmLabel="Опубликовать" onConfirm={this.publish.bind(this)}/>;
+        PopupPanelAction.do(OPEN_POPUP, {content: content});
     }
 
     publish() {
@@ -364,7 +370,7 @@ export default class Editor extends React.Component<any, IEditorState> {
                             (this.state.article.status == ArticleStatuses.DRAFT ?
                                 <div key="publish_button"
                                      className={"editor__publish" + (!this.state.isValid ? ' disabled': '')}
-                                     onClick={this.state.isValid && this.publish.bind(this)}>
+                                     onClick={this.state.isValid && this.prePublish.bind(this)}>
                                     Опубликовать
                                 </div> : null),
                             (this.state.article.status == ArticleStatuses.PUBLISHED ?
