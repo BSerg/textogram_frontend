@@ -20,7 +20,7 @@ export namespace Captions {
         enter_quote: 'Цитата',
         enter_quote_replace: 'Заменить',
         enter_quote_delete: 'Удалить',
-        enter_caption: 'Описание',
+        enter_caption: 'Добавьте описание',
         enter_embed_url: 'Вставьте ссылку',
         content_text: 'Текст',
         content_header: 'Заголовок',

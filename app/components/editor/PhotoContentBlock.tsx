@@ -363,7 +363,7 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
     }
 
     componentDidMount() {
-        ContentBlockAction.onChange(ACTIVATE_CONTENT_BLOCK, this.handleBlockActive);
+        ContentBlockAction.onChange([ACTIVATE_CONTENT_BLOCK, DEACTIVATE_CONTENT_BLOCK], this.handleBlockActive);
         if (!this.state.content.photos.length) {
             this.handleFocus();
             this.refs.inputUpload.click();
@@ -371,7 +371,7 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
     }
 
     componentWillUnmount() {
-        ContentBlockAction.unbind(ACTIVATE_CONTENT_BLOCK, this.handleBlockActive);
+        ContentBlockAction.unbind([ACTIVATE_CONTENT_BLOCK, DEACTIVATE_CONTENT_BLOCK], this.handleBlockActive);
     }
 
     render() {
