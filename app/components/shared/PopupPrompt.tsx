@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import {Captions} from '../../constants';
-import {PopupPanelAction, CLOSE_POPUP} from "../../actions/shared/PopupPanelAction";
+import {PopupPanelAction, CLOSE_POPUP, BACK_POPUP} from "../../actions/shared/PopupPanelAction";
 
 import '../../styles/shared/popup_prompt.scss';
 
@@ -26,13 +26,12 @@ export default class PopupPrompt extends React.Component<IProps, any> {
     };
 
     handleConfirm() {
-        this.props.onConfirm && this.props.onConfirm();
-        PopupPanelAction.do(CLOSE_POPUP, null);
+        this.props.onConfirm ? this.props.onConfirm() : PopupPanelAction.do(BACK_POPUP, null);
     }
 
     handleCancel() {
-        this.props.onCancel&& this.props.onCancel();
-        PopupPanelAction.do(CLOSE_POPUP, null);
+        this.props.onCancel ? this.props.onCancel() : PopupPanelAction.do(BACK_POPUP, null);
+
     }
 
     render() {

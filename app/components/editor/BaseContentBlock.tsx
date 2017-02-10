@@ -5,7 +5,7 @@ import {
     DEACTIVATE_CONTENT_BLOCK
 } from "../../actions/editor/ContentBlockAction";
 import {ContentAction, DELETE_CONTENT} from "../../actions/editor/ContentAction";
-import {PopupPanelAction, OPEN_POPUP} from "../../actions/shared/PopupPanelAction";
+import {PopupPanelAction, OPEN_POPUP, CLOSE_POPUP} from "../../actions/shared/PopupPanelAction";
 import ContentBlockPopup from "./ContentBlockPopup";
 import "../../styles/editor/base_content_block.scss";
 import {
@@ -14,6 +14,7 @@ import {
 } from "../../actions/editor/BlockHandlerAction";
 import {MediaQuerySerice} from "../../services/MediaQueryService";
 import {DesktopBlockToolsAction, UPDATE_TOOLS} from "../../actions/editor/DesktopBlockToolsAction";
+import PopupPrompt from "../shared/PopupPrompt";
 
 const DeleteButton = require('babel!svg-react!../../assets/images/redactor_icon_delete.svg?name=DeleteButton');
 
@@ -71,7 +72,7 @@ export default class BaseContentBlock extends React.Component<IBaseContnentBlock
                         PopupPanelAction.do(
                             OPEN_POPUP,
                             {
-                                content: this.props.popupContent || <ContentBlockPopup onDelete={this.handleDelete.bind(this)}/>
+                                content: this.props.popupContent || <ContentBlockPopup onDelete={this.handleDeleteWithConfirm.bind(this)}/>
                             }
                         );
                     }
@@ -115,12 +116,22 @@ export default class BaseContentBlock extends React.Component<IBaseContnentBlock
     handleDelete() {
         ContentAction.do(DELETE_CONTENT, {id: this.props.id});
         ContentBlockAction.do(DEACTIVATE_CONTENT_BLOCK, null);
+        PopupPanelAction.do(CLOSE_POPUP, null);
     }
 
     handleDeleteWithConfirm() {
-        let result = confirm('Удалить?');
-        if (result) {
-            this.handleDelete();
+        if (this.state.isDesktop) {
+            let result = confirm('Удалить?');
+            if (result) {
+                this.handleDelete();
+            }
+        } else {
+            PopupPanelAction.do(
+                OPEN_POPUP,
+                {content: <PopupPrompt confirmLabel="Удалить"
+                                       confirmClass="warning"
+                                       onConfirm={this.handleDelete.bind(this)}/>}
+            );
         }
     }
 

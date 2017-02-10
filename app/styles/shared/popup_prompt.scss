@@ -23,5 +23,9 @@
     &:not(:last-child) {
       border-right: 1px solid darken($color, 5%);
     }
+
+    &.warning {
+      background-color: #FF3333;
+    }
   }
 }

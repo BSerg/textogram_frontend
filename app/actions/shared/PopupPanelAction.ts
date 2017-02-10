@@ -44,8 +44,8 @@ PopupPanelAction.register(REPLACE_POPUP, (store, data?: {content: any}) => {
 
 
 PopupPanelAction.register(BACK_POPUP, (store, data?: any) => {
-    if (store.contentHistory.length) {
-        store.content = store.contentHistory.pop();
+    if (store.contentStack.length) {
+        store.content = store.contentStack.pop();
     } else {
         store.content = null;
     }

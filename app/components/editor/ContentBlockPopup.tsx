@@ -1,6 +1,9 @@
 import * as React from 'react';
 import {PopupPanelAction, OPEN_POPUP, CLOSE_POPUP} from '../../actions/shared/PopupPanelAction';
-import {ContentBlockAction, ACTIVATE_CONTENT_BLOCK} from '../../actions/editor/ContentBlockAction';
+import {
+    ContentBlockAction, ACTIVATE_CONTENT_BLOCK,
+    DEACTIVATE_CONTENT_BLOCK
+} from '../../actions/editor/ContentBlockAction';
 
 import '../../styles/editor/content_block_popup.scss';
 
@@ -19,21 +22,12 @@ export default class ContentBlockPopup extends React.Component<IContentBlockPopu
     }
 
     handleDelete(e: any) {
-        e.preventDefault();
-        e.stopPropagation();
-        let _confirm = confirm('Удалить?');
-        if (_confirm) {
-            this.props.onDelete && this.props.onDelete();
-            PopupPanelAction.do(CLOSE_POPUP, null);
-        }
+        this.props.onDelete ? this.props.onDelete() : PopupPanelAction.do(CLOSE_POPUP, null);
     }
 
     handleConfirm(e: any) {
-        e.preventDefault();
-        e.stopPropagation();
-        this.props.onConfirm && this.props.onConfirm();
-        ContentBlockAction.do(ACTIVATE_CONTENT_BLOCK, {id: -1});
-        PopupPanelAction.do(CLOSE_POPUP, null);
+        ContentBlockAction.do(DEACTIVATE_CONTENT_BLOCK, null);
+        this.props.onConfirm ? this.props.onConfirm() : PopupPanelAction.do(CLOSE_POPUP, null);
     }
 
     render() {
