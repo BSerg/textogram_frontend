@@ -36,6 +36,9 @@ export default class MenuButton extends React.Component<MenuButtonPropsInterface
 
     checkScroll() {
         let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        if (scrollTop == 0) {
+            this.setState({hidden: false});
+        }
         if (scrollTop > this.lastScrollPosition){
             this.scrollDelta = 0;
             if (this.scrollDirection != 'down') {
