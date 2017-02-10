@@ -1,5 +1,7 @@
 import * as React from "react";
 import Action from "../Action";
+import {Constants} from '../../constants';
+import {NotificationAction, SHOW_NOTIFICATION} from "../shared/NotificationAction";
 
 
 export const UPLOAD_IMAGE = 'upload_image';
@@ -17,6 +19,13 @@ UploadImageAction.register(UPDATE_PROGRESS, (store, data: {name: string, progres
 UploadImageAction.registerAsync(UPLOAD_IMAGE, (store, data: {articleId: number, image: File}) => {
     console.log(data);
     return new Promise((resolve, reject) => {
+        if (data.image.size > Constants.maxImageSize) {
+            NotificationAction.do(
+                SHOW_NOTIFICATION,
+                {content: `Изображение не может превышать ${Constants.maxImageSize/1024/1024}Mb`}
+            );
+            reject('Error. Image exceeds max size limit');
+        }
         let formData = new FormData();
         formData.append('article', data.articleId);
         formData.append('image', data.image);

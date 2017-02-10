@@ -273,7 +273,6 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
 
     openModal(id: number) {
         if (this.state.isActive) {
-            console.log('OPEN MODAL ON PHOTO #' + id);
             let currentPhotoIndex = 0;
             this.state.content.photos.forEach((photo, index) => {
                 if (photo.id == id) {
@@ -297,10 +296,6 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
             this.refs.inputUpload.value = '';
             return;
         }
-        if (file.size > Constants.maxImageSize) {
-            NotificationAction.do(SHOW_NOTIFICATION, {content: `Размер изображения больше ${Constants.maxImageSize/1024/1024}Mb`});
-            return;
-        }
         let tempURL = window.URL.createObjectURL(file);
         this.state.content.photos.push({id: null, image: tempURL});
         this.setState({loadingImage: true, content: this.state.content}, () => {
@@ -318,8 +313,8 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
                     ContentAction.do(UPDATE_CONTENT, {contentBlock: this.state.content});
                 });
             }).catch((err) => {
-                UploadImageAction.unbind(UPDATE_PROGRESS, progressHandler);
                 console.log(err);
+                UploadImageAction.unbind(UPDATE_PROGRESS, progressHandler);
                 this.setState({loadingImage: false});
             });
         });
@@ -327,7 +322,6 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
     }
 
     deletePhoto(id: number) {
-        console.log('DELETE PHOTO #' + id);
         let photos: IPhoto[] = [];
         this.state.content.photos.forEach((photo) => {
             if (photo.id != id) {
