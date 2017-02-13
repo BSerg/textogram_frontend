@@ -49,6 +49,9 @@ interface ContentEditableState {
 export default class ContentEditable extends React.Component<ContentEditableProps, ContentEditableState> {
     private handleChangeDelayProcess: number;
     private formatPopupId: string;
+    private selectionModifyingProcess: boolean;
+    private selection: Selection;
+    private range: Range;
 
     refs: {
         [key: string]: (Element);
@@ -57,6 +60,7 @@ export default class ContentEditable extends React.Component<ContentEditableProp
     constructor(props: any) {
         super(props);
         this.formatPopupId = null;
+        this.selectionModifyingProcess = false;
         this.state = {
             content: '',
             contentText: '',
@@ -182,30 +186,38 @@ export default class ContentEditable extends React.Component<ContentEditableProp
             selection.addRange(this.state.selectionState.range);
         }
     }
+    private detectURL() {
+        return this.range.commonAncestorContainer.parentElement.tagName == 'A';
+    }
     handleSelect(e: Event) {
         if (!this.props.enableTextFormat) return;
-        let selection = window.getSelection();
-        if (!selection.isCollapsed) {
-            let range = selection.getRangeAt(0);
+        this.selection = window.getSelection();
+        this.range = this.selection.getRangeAt(0);
+        if (!this.selection.isCollapsed) {
             let content = <TextFormatPopup
+                key={'selectContent' + Math.random().toString().substr(2, 7)}
                 isBold={document.queryCommandState("bold")}
                 isItalic={document.queryCommandState("italic")}
-                isURL={document.queryCommandState("CreateLink")}
+                isURL={this.detectURL()}
                 onBold={() => {document.execCommand('bold')}}
                 onItalic={() => {document.execCommand('italic')}}
                 onURL={() => {
-                    ModalAction.do(
-                        OPEN_MODAL,
-                        {content: <URLModal onURL={(url) => {
-                            ModalAction.do(CLOSE_MODAL, null);
-                            window.setTimeout(() => {
-                                let _selection = window.getSelection();
-                                _selection.removeAllRanges();
-                                _selection.addRange(range);
-                                document.execCommand('createLink', false, url);
-                            }, 50);
-                        }}/>}
-                    );
+                    if (this.detectURL()) {
+                        document.execCommand("unlink", false, false);
+                    } else {
+                        ModalAction.do(
+                            OPEN_MODAL,
+                            {content: <URLModal key={Math.random().toString().substr(2, 7)} onURL={(url) => {
+                                ModalAction.do(CLOSE_MODAL, null);
+                                window.setTimeout(() => {
+                                    let _selection = window.getSelection();
+                                    _selection.removeAllRanges();
+                                    _selection.addRange(this.range);
+                                    document.execCommand('createLink', false, url);
+                                }, 0);
+                            }}/>}
+                        );
+                    }
                 }}
                 onClose={() => {
                     PopupPanelAction.do(CLOSE_POPUP, {id: 'text_formatting'});
