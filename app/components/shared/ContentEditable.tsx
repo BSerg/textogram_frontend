@@ -244,7 +244,7 @@ export default class ContentEditable extends React.Component<ContentEditableProp
         this.selection = window.getSelection();
         this.range = this.selection.getRangeAt(0);
         if (!this.selection.isCollapsed) {
-            let tools = <SelectionToolsPanel
+            let tools = <SelectionToolsPanel key={Math.random().toString().substr(2, 7)}
                 isBold={document.queryCommandState("bold")}
                 isItalic={document.queryCommandState("italic")}
                 isURL={this.detectURL()}
@@ -258,8 +258,8 @@ export default class ContentEditable extends React.Component<ContentEditableProp
                         _selection.removeAllRanges();
                         _selection.addRange(this.range);
                         document.execCommand('createLink', false, url);
-                        this.handleSelectDesktop();
                     }
+                    this.handleSelectDesktop();
                 }}/>;
 
             let sRect = this.range.getBoundingClientRect();
