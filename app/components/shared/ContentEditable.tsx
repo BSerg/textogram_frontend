@@ -72,6 +72,7 @@ export default class ContentEditable extends React.Component<ContentEditableProp
             textFormatPopupId: null,
             isDesktop: MediaQuerySerice.getIsDesktop()
         };
+        this.handleMediaQuery = this.handleMediaQuery.bind(this);
     }
     static defaultProps = {
         id: 'contentEditable' + Math.random().toString().substr(2, 7),

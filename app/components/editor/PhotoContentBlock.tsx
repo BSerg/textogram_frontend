@@ -17,6 +17,7 @@ import PopupPrompt from "../shared/PopupPrompt";
 import {PhotoModal} from "./PhotoModal";
 import Sortable = require('sortablejs');
 import "../../styles/editor/photo_content_block.scss";
+import {MediaQuerySerice} from "../../services/MediaQueryService";
 
 const AddButton = require('babel!svg-react!../../assets/images/redactor_icon_popup_add.svg?name=AddButton');
 const DeleteButton = require('babel!svg-react!../../assets/images/close.svg?name=DeleteButton');
@@ -93,6 +94,7 @@ interface IPhotoContentBlockState {
     loadingImage?: boolean
     imageUploadProgress?: {progress: number, total: number} | null
     sortable?: any
+    isDesktop?: boolean
 }
 
 
@@ -109,8 +111,10 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
             loadingImage: false,
             imageUploadProgress: null,
             sortable: null,
+            isDesktop: MediaQuerySerice.getIsDesktop()
         };
         this.handleBlockActive = this.handleBlockActive.bind(this);
+        this.handleMediaQuery = this.handleMediaQuery.bind(this);
     }
 
     static defaultProps = {
@@ -290,16 +294,24 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
         }
     }
 
+    handleMediaQuery(isDesktop: boolean) {
+        if (isDesktop != this.state.isDesktop) {
+            this.setState({isDesktop: isDesktop});
+        }
+    }
+
     componentDidMount() {
         ContentBlockAction.onChange([ACTIVATE_CONTENT_BLOCK, DEACTIVATE_CONTENT_BLOCK], this.handleBlockActive);
         if (!this.state.content.photos.length) {
             this.handleFocus();
             this.refs.inputUpload.click();
         }
+        MediaQuerySerice.listen(this.handleMediaQuery);
     }
 
     componentWillUnmount() {
         ContentBlockAction.unbind([ACTIVATE_CONTENT_BLOCK, DEACTIVATE_CONTENT_BLOCK], this.handleBlockActive);
+        MediaQuerySerice.listen(this.handleMediaQuery);
     }
 
     render() {
@@ -327,7 +339,7 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
                                           onOpenModal={this.openModal.bind(this)}/>
                         }) : null
                     }
-                    {this.state.isActive && this.state.content.photos.length ?
+                    {!this.state.isDesktop && this.state.isActive && this.state.content.photos.length ?
                         <div className="content_block_photo__help">{Captions.editor.help_photo}</div> : null
                     }
                     {!this.state.content.photos.length ?
