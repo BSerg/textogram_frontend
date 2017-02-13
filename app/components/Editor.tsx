@@ -175,15 +175,25 @@ export default class Editor extends React.Component<any, IEditorState> {
     }
 
     _updateArticle() {
-        PopupPanelAction.do(BACK_POPUP, null);
+        if (this.state.isDesktop) {
+
+        } else {
+            PopupPanelAction.do(BACK_POPUP, null);
+        }
         this.resetContent(true).then(() => {
             NotificationAction.do(SHOW_NOTIFICATION, {content: 'Публикация обновлена'});
         });
     }
 
     updateArticle() {
-        let content = <PopupPrompt confirmLabel="Обновить" onConfirm={this._updateArticle.bind(this)}/>;
-        PopupPanelAction.do(OPEN_POPUP, {content: content});
+        if (this.state.isDesktop) {
+            if (confirm('Обновить?')) {
+                this._updateArticle();
+            }
+        } else {
+            let content = <PopupPrompt confirmLabel="Обновить" onConfirm={this._updateArticle.bind(this)}/>;
+            PopupPanelAction.do(OPEN_POPUP, {content: content});
+        }
     }
 
     handleActiveBlock() {

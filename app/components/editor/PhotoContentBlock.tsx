@@ -1,23 +1,22 @@
 import * as React from "react";
-import {Captions, BlockContentTypes, Constants} from "../../constants";
+import {Captions, BlockContentTypes} from "../../constants";
 import BaseContentBlock from "./BaseContentBlock";
 import {
     ContentBlockAction,
     ACTIVATE_CONTENT_BLOCK,
     DEACTIVATE_CONTENT_BLOCK
 } from "../../actions/editor/ContentBlockAction";
-import {ModalAction, OPEN_MODAL, CLOSE_MODAL} from "../../actions/shared/ModalAction";
+import {ModalAction, OPEN_MODAL} from "../../actions/shared/ModalAction";
 import {DELETE_CONTENT, ContentAction, IContentData, UPDATE_CONTENT} from "../../actions/editor/ContentAction";
 import ContentBlockPopup from "./ContentBlockPopup";
 import {PopupPanelAction, OPEN_POPUP, CLOSE_POPUP} from "../../actions/shared/PopupPanelAction";
 import {UploadImageAction, UPLOAD_IMAGE, UPDATE_PROGRESS} from "../../actions/editor/UploadImageAction";
-import ProgressBar from "../shared/ProgressBar";
-import {PROGRESS_BAR_TYPE} from "../shared/ProgressBar";
-import "../../styles/editor/photo_content_block.scss";
-import Sortable = require('sortablejs');
+import ProgressBar, {PROGRESS_BAR_TYPE} from "../shared/ProgressBar";
 import {DesktopBlockToolsAction, UPDATE_TOOLS} from "../../actions/editor/DesktopBlockToolsAction";
-import {NotificationAction, SHOW_NOTIFICATION} from "../../actions/shared/NotificationAction";
 import PopupPrompt from "../shared/PopupPrompt";
+import {PhotoModal} from "./PhotoModal";
+import Sortable = require('sortablejs');
+import "../../styles/editor/photo_content_block.scss";
 
 const AddButton = require('babel!svg-react!../../assets/images/redactor_icon_popup_add.svg?name=AddButton');
 const DeleteButton = require('babel!svg-react!../../assets/images/close.svg?name=DeleteButton');
@@ -77,89 +76,6 @@ export class Photo extends React.Component<IPhotoProps, any> {
                 {/*<DeleteButton onClick={this.handleDelete.bind(this)} className="content_block_photo__delete"/>*/}
             </div>
         )
-    }
-}
-
-
-interface IPhotoModalContentProps {
-    contentBlockId: string
-    photos: IPhoto[]
-    initPhotoIndex: number
-}
-
-interface IPhotoModalContentState {
-    photos?: IPhoto[]
-    currentPhotoIndex?: number
-}
-
-export class PhotoModalContent extends React.Component<IPhotoModalContentProps, IPhotoModalContentState> {
-    constructor(props: any) {
-        super(props);
-        this.state = {
-            photos: this.props.photos,
-            currentPhotoIndex: this.props.initPhotoIndex
-        }
-    }
-
-    refs: {
-        inputCaption: HTMLInputElement
-    };
-
-    back() {
-        ModalAction.do(CLOSE_MODAL, null);
-    }
-
-    handleCaption() {
-        let contentText = this.refs.inputCaption.value;
-        this.state.photos[this.state.currentPhotoIndex].caption = contentText;
-        this.setState({photos: this.state.photos}, () => {
-            ContentAction.do(UPDATE_CONTENT, {contentBlock: {
-                id: this.props.contentBlockId,
-                type: BlockContentTypes.PHOTO,
-                photos: this.state.photos
-            }})
-        });
-    }
-
-    handleSubmit(e: Event) {
-        e.preventDefault();
-        e.stopPropagation();
-        this.refs.inputCaption.blur();
-    }
-
-    nextPhoto() {
-        this.state.currentPhotoIndex++;
-        if (this.state.currentPhotoIndex >= this.state.photos.length) {
-            this.state.currentPhotoIndex = 0;
-        }
-        this.setState({currentPhotoIndex: this.state.currentPhotoIndex});
-    }
-
-    render() {
-        let imageStyle = {
-            background: `url('${this.state.photos[this.state.currentPhotoIndex].image}') no-repeat center center`
-        };
-        return (
-            <div className="photo_modal">
-                <div className="photo_modal__header">
-                    <BackButton className="photo_modal__back" onClick={this.back.bind(this)}/>
-                    <div className="photo_modal__counter">
-                        {this.state.currentPhotoIndex + 1}/{this.state.photos.length}
-                    </div>
-                </div>
-                <div className="photo_modal__image" style={imageStyle} onClick={this.nextPhoto.bind(this)}/>
-                <div className="photo_modal__caption">
-                    <form onSubmit={this.handleSubmit.bind(this)}>
-                        <input ref="inputCaption"
-                               type="text"
-                               placeholder={Captions.editor.enter_caption}
-                               value={this.state.photos[this.state.currentPhotoIndex].caption || ''}
-                               onChange={this.handleCaption.bind(this)}
-                               autoComplete="off"/>
-                    </form>
-                </div>
-            </div>
-        );
     }
 }
 
@@ -293,7 +209,7 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
             });
             ModalAction.do(
                 OPEN_MODAL,
-                {content: <PhotoModalContent contentBlockId={this.state.content.id}
+                {content: <PhotoModal contentBlockId={this.state.content.id}
                                              photos={this.state.content.photos}
                                              initPhotoIndex={currentPhotoIndex}/>}
             )

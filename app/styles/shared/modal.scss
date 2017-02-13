@@ -24,17 +24,7 @@
   background-color: $color;
 }
 
-@media (min-width: 600px) {
-  .modal__content {
-    width: 600px;
-    min-height: 50%;
-    margin: 0 auto;
-  }
-}
-
-
-@media (min-width: 1024px) {
-
+@include desktop {
   .modal__content {
     background-color: transparent;
     display: flex;
