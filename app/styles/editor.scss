@@ -45,9 +45,10 @@
 
   &.disabled {
     opacity: 0.3;
+    cursor: default;
   }
 
-  &:hover {
+  &:not(.disabled):hover {
     background-color: $color;
     color: white;
   }

@@ -160,8 +160,15 @@ export default class Editor extends React.Component<any, IEditorState> {
     }
 
     prePublish() {
-        let content = <PopupPrompt confirmLabel="Опубликовать" onConfirm={this.publish.bind(this)}/>;
-        PopupPanelAction.do(OPEN_POPUP, {content: content});
+        if (this.state.isDesktop) {
+            if (confirm('Опубликовать материал?')) {
+                this.publish();
+            }
+        } else {
+            let content = <PopupPrompt confirmLabel="Опубликовать" onConfirm={this.publish.bind(this)}/>;
+            PopupPanelAction.do(OPEN_POPUP, {content: content});
+        }
+
     }
 
     publish() {

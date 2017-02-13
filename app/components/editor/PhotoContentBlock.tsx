@@ -339,6 +339,9 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
                                           onOpenModal={this.openModal.bind(this)}/>
                         }) : null
                     }
+                    {!this.state.isActive && this.state.content.photos.length == 1 && this.state.content.photos[0].caption ?
+                        <div className="content_block_photo__caption">{this.state.content.photos[0].caption}</div> : null
+                    }
                     {!this.state.isDesktop && this.state.isActive && this.state.content.photos.length ?
                         <div className="content_block_photo__help">{Captions.editor.help_photo}</div> : null
                     }
