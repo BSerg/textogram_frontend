@@ -165,9 +165,7 @@ export default class Editor extends React.Component<any, IEditorState> {
     }
 
     publish() {
-        console.log('PUBLISH');
         api.post(`/articles/editor/${this.state.article.id}/publish/`).then((response: any) => {
-            console.log(response);
             this.setState({article: response.data}, () => {
                 NotificationAction.do(SHOW_NOTIFICATION, {content: 'Поздравляем, ваш материал опубликован.'})
             });
@@ -410,6 +408,7 @@ export default class Editor extends React.Component<any, IEditorState> {
                         ] : null
                     }
                 </div>
+                <div id="selection_tools"></div>
             </div>
         )
     }

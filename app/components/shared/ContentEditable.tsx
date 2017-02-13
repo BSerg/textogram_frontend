@@ -1,4 +1,5 @@
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import {
     PopupPanelAction, OPEN_POPUP, BACK_POPUP, REPLACE_POPUP,
     CLOSE_POPUP
@@ -9,6 +10,8 @@ import '../../styles/shared/content_editable.scss';
 import TextFormatPopup from "../editor/TextFormatPopup";
 import {ModalAction, OPEN_MODAL, CLOSE_MODAL} from "../../actions/shared/ModalAction";
 import URLModal from "../editor/URLModal";
+import {MediaQuerySerice} from "../../services/MediaQueryService";
+import SelectionToolsPanel from "../editor/SelectionToolsPanel";
 
 type ElementType = 'inline' | 'p' | 'div' | 'ul' | 'ol';
 type AlignContent = 'left' | 'center' | 'right';
@@ -44,6 +47,7 @@ interface ContentEditableState {
     textFormatMode?: boolean
     selectionState?: ISelection | null
     textFormatPopupId?: string
+    isDesktop?: boolean
 }
 
 export default class ContentEditable extends React.Component<ContentEditableProps, ContentEditableState> {
@@ -65,7 +69,8 @@ export default class ContentEditable extends React.Component<ContentEditableProp
             content: '',
             contentText: '',
             textFormatMode: false,
-            textFormatPopupId: null
+            textFormatPopupId: null,
+            isDesktop: MediaQuerySerice.getIsDesktop()
         };
     }
     static defaultProps = {
@@ -187,7 +192,13 @@ export default class ContentEditable extends React.Component<ContentEditableProp
         }
     }
     private detectURL() {
-        return this.range.commonAncestorContainer.parentElement.tagName == 'A';
+        let parent = this.range.commonAncestorContainer.parentElement;
+        return parent.tagName == 'A' || parent.parentElement.tagName == 'A';
+    }
+    private getDetectedURL() {
+        let parent = this.range.commonAncestorContainer.parentElement;
+        if (parent.tagName == 'A') return parent;
+        else if (parent.parentElement.tagName == 'A') return parent.parentElement;
     }
     handleSelect(e: Event) {
         if (!this.props.enableTextFormat) return;
@@ -227,7 +238,46 @@ export default class ContentEditable extends React.Component<ContentEditableProp
             PopupPanelAction.do(CLOSE_POPUP, {id: 'text_formatting'});
         }
     }
+
+    handleSelectDesktop() {
+        if (!this.props.enableTextFormat) return;
+        this.selection = window.getSelection();
+        this.range = this.selection.getRangeAt(0);
+        if (!this.selection.isCollapsed) {
+            let tools = <SelectionToolsPanel
+                isBold={document.queryCommandState("bold")}
+                isItalic={document.queryCommandState("italic")}
+                isURL={this.detectURL()}
+                onBold={() => {document.execCommand('bold')}}
+                onItalic={() => {document.execCommand('italic')}}
+                onURL={(url: string) => {
+                    if (this.detectURL()) {
+                        document.execCommand("unlink", false, false);
+                    } else {
+                        let _selection = window.getSelection();
+                        _selection.removeAllRanges();
+                        _selection.addRange(this.range);
+                        document.execCommand('createLink', false, url);
+                        this.handleSelectDesktop();
+                    }
+                }}/>;
+
+            let sRect = this.range.getBoundingClientRect();
+            let sTools = document.getElementById('selection_tools');
+            sTools.style.top = sRect.top + window.pageYOffset + 30 + 'px';
+            sTools.style.left = sRect.left + window.pageXOffset + sRect.width / 2 - 75 + 'px';
+            ReactDOM.render(tools, sTools);
+        } else {
+            document.getElementById('selection_tools').innerHTML = '';
+        }
+    }
+
+    handleMediaQuery(isDestop: boolean) {
+        this.setState({isDesktop: isDestop});
+    }
+
     componentDidMount() {
+        MediaQuerySerice.listen(this.handleMediaQuery);
         this.setState(this.extractContent(), () => {
             this.updateEmptyState();
         });
@@ -238,6 +288,7 @@ export default class ContentEditable extends React.Component<ContentEditableProp
         }
     }
     componentWillUnmount() {
+        MediaQuerySerice.unbind(this.handleMediaQuery);
         PopupPanelAction.do(CLOSE_POPUP, {id: 'text_formatting'});
     }
 
@@ -268,7 +319,7 @@ export default class ContentEditable extends React.Component<ContentEditableProp
                  onFocus={this.handleFocus.bind(this)}
                  onBlur={this.handleBlur.bind(this)}
                  onKeyDown={this.handleKeyDown.bind(this)}
-                 onSelect={this.handleSelect.bind(this)}
+                 onSelect={this.state.isDesktop ? this.handleSelectDesktop.bind(this) : this.handleSelect.bind(this)}
                  dangerouslySetInnerHTML={{__html: this.props.content || this.getElementEmptyContentByType()}}>
             </div>
         )
