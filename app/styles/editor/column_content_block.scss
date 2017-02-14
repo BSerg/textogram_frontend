@@ -102,5 +102,13 @@
         width: calc(62% - 30px);
       }
     }
+
+    .content_block_column__image {
+      cursor: pointer;
+
+      &.empty {
+        height: 200px;
+      }
+    }
   }
 }

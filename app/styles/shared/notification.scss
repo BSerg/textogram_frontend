@@ -34,9 +34,12 @@
     background-color: #FF3333;
   }
 
-  //@include desktop {
-  //  width: 300px;
-  //  left: 30px;
-  //  bottom: 30px;
-  //}
+  @include desktop {
+    .notification__close {
+      top: calc(50% - 10px);
+      right: 30px;
+      width: 20px;
+      height: 20px;
+    }
+  }
 }
