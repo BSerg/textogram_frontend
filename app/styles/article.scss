@@ -13,20 +13,6 @@
     background-size: cover!important;
     text-align: center;
 
-    &.inverted {
-      color: white;
-
-      &:before {
-        content: '';
-        background-color: rgba(0, 0, 0, 0.5);
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        right: 0;
-      }
-    }
-
     .article__author {
       position: absolute;
       width: calc(100% - 60px);
@@ -60,6 +46,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      color: white;
     }
 
     .article__date, .article__views {
@@ -68,7 +55,6 @@
       font-size: 12px;
       font-family: $family_open_sans;
       line-height: 14px;
-      color: #FFFFFF;
       &:not(:last-child) {
         margin-right: 20px;
       }
@@ -85,6 +71,28 @@
         stroke: white;
         stroke-width: 4px;
         margin-right: 10px;
+      }
+    }
+
+    &.inverted {
+      color: white;
+
+      &:before {
+        content: '';
+        background-color: rgba(0, 0, 0, 0.5);
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+      }
+    }
+
+    .article__stats {
+      color: $color;
+
+      svg {
+        stroke: $color;
       }
     }
   }
