@@ -1,15 +1,16 @@
-import * as React from 'react';
+import * as React from "react";
 import {IContentData} from "../actions/editor/ContentAction";
 import {api} from "../api";
 import Error from "./Error";
-
-import '../styles/article.scss';
 import {UserAction, LOGIN, LOGOUT, UPDATE_USER, SAVE_USER} from "../actions/user/UserAction";
 import {ModalAction, OPEN_MODAL, CLOSE_MODAL} from "../actions/shared/ModalAction";
+import * as moment from 'moment';
+import "../styles/article.scss";
 
 const EditButton = require('babel!svg-react!../assets/images/edit.svg?name=EditButton');
 const DeleteButton = require('babel!svg-react!../assets/images/redactor_icon_delete.svg?name=DeleteButton');
 const BackButton = require('babel!svg-react!../assets/images/back.svg?name=BackButton');
+const ViewIcon = require('babel!svg-react!../assets/images/views_white.svg?name=ViewIcon');
 
 
 interface IPhoto {id: number, image: string, preview?: string, caption?: string}
@@ -23,6 +24,8 @@ interface IArticle {
     blocks: IContentData[]
     html: string
     published_at: string
+    date?: string
+    views: number
     owner: {
         id: number,
         first_name: string,
@@ -55,6 +58,16 @@ export default class Article extends React.Component<any, IArticleState> {
 
     editArticle() {
         this.state.article && this.props.router.push(`/articles/${this.state.article.id}/edit`);
+    }
+
+    processArticle(article: IArticle) {
+        article.date = moment(article.published_at).locale('ru').calendar(null, {
+            sameDay: 'DD MMMM YYYY',
+            lastDay: 'DD MMMM YYYY',
+            sameElse: 'DD MMMM YYYY',
+            lastWeek: 'DD MMMM YYYY'
+        });
+        return article;
     }
 
     processEmbed() {
@@ -123,7 +136,7 @@ export default class Article extends React.Component<any, IArticleState> {
         UserAction.onChange([LOGIN, LOGOUT, UPDATE_USER, SAVE_USER], this.handleUser);
         api.get(`/articles/${this.props.params.articleSlug}/`).then((response: any) => {
             let isSelf = UserAction.getStore().user ? UserAction.getStore().user.id == response.data.owner.id : false;
-            this.setState({article: response.data, isSelf: isSelf}, () => {
+            this.setState({article: this.processArticle(response.data), isSelf: isSelf}, () => {
                 window.setTimeout(() => {
                     this.processPhoto();
                     this.processEmbed();
@@ -164,7 +177,12 @@ export default class Article extends React.Component<any, IArticleState> {
                                 {this.state.article.owner.last_name}
                             </div>
                             <h1>{this.state.article.title}</h1>
-                            <div className="article__date">{this.state.article.published_at}</div>
+                            <div className="article__stats">
+                                <div className="article__date">{this.state.article.date}</div>
+                                <div className="article__views">
+                                    <ViewIcon/> {this.state.article.views}
+                                </div>
+                            </div>
                         </div>
                         <div className="content" dangerouslySetInnerHTML={{__html: this.state.article.html}}/>
                         {this.state.isSelf ?

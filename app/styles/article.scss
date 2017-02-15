@@ -33,9 +33,9 @@
       height: 20px;
       top: 30px;
       text-align: center;
-      font-size: 14px;
+      font-size: 12px;
+      line-height: 14px;
       font-family: $family_open_sans;
-      line-height: 20px;
       letter-spacing: 1px;
       text-transform: uppercase;
 
@@ -48,20 +48,44 @@
     h1 {
       position: relative;
       font-family: $family_arimo;
-      font-size: 28px;
+      font-size: 33px;
       font-weight: $font-weight-bold;
-      line-height: 32px;
+      line-height: 43px;
     }
 
-    .article__date {
+    .article__stats {
       position: absolute;
+      width: calc(100% - 60px);
       bottom: 30px;
-      font-size: 10px;
-      font-weight: $font-weight-bold;
-      line-height: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .article__date, .article__views {
       letter-spacing: 1px;
       text-align: center;
-      visibility: hidden;
+      font-size: 12px;
+      font-family: $family_open_sans;
+      line-height: 14px;
+      color: #FFFFFF;
+      &:not(:last-child) {
+        margin-right: 20px;
+      }
+    }
+
+    .article__views {
+      display: flex;
+      align-items: center;
+
+      svg {
+        width: 18px;
+        height: 18px;
+        fill: transparent;
+        stroke: white;
+        stroke-width: 4px;
+        margin-right: 10px;
+      }
     }
   }
 

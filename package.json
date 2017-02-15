@@ -13,6 +13,7 @@
   "license": "ISC",
   "dependencies": {
     "axios": "^0.15.3",
+    "clientjs": "^0.1.11",
     "core-js": "^2.4.1",
     "flux": "^3.1.2",
     "html5-reset": "^2.1.3",
