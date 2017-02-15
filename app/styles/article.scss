@@ -8,10 +8,11 @@
 
   .article__title {
     position: relative;
-    width: calc(100% - 60px);
-    padding: 80px 30px;
+    width: 100%;
+    padding: 80px 0;
     background-size: cover!important;
     text-align: center;
+    background-color: $color4;
 
     .article__author {
       display: block;
@@ -103,9 +104,20 @@
         color: white
       }
     }
+
+    @include desktop {
+      padding: 120px 0;
+
+      h1 {
+        width: 600px;
+        font-size: 40px;
+        line-height: 51px;
+        margin: 0 auto;
+      }
+    }
   }
 
-  .content {
+  .article__content {
 
     & > p, h2, blockquote, ul, .lead, .phrase, .columns, .embed, .photos, .dialogue, .single_photo {
       padding: $padding/2 $padding;
@@ -193,7 +205,6 @@
 
     .columns {
       display: flex;
-      width: calc(100% - 60px);
       position: relative;
       font-size: 16px;
       line-height: 27px;
@@ -280,6 +291,7 @@
         float: left;
         margin-right: 10px;
         margin-bottom: 10px;
+        cursor: pointer;
 
         &.photo_0 {
           height: 200px;
@@ -291,6 +303,25 @@
 
         &.photo_1 {
           height: 200px + 10px;
+        }
+
+        @include desktop {
+          width: calc(100% - 20px);
+          height: 200px;
+          margin-right: 20px;
+          margin-bottom: 20px;
+
+          &.photo_0 {
+            height: 400px;
+          }
+
+          &.photo_1, &.photo_2, &.photo_3, &.photo_4, &.photo_5 {
+            width: calc(50% - 20px);
+          }
+
+          &.photo_1 {
+            height: 400px + 20px;
+          }
         }
       }
     }
@@ -340,6 +371,63 @@
     @include desktop {
       width: 600px;
       margin: 0 auto;
+
+      & > p, h2, blockquote, ul, .lead, .phrase, .columns, .embed, .photos, .dialogue, .single_photo {
+        width: 100%;
+        padding: $padding 0;
+      }
+
+      h2 {
+        font-size: 34px;
+        line-height: 46px;
+      }
+
+      ul {
+        font-family: $family_open_sans;
+        font-size: 20px;
+        font-weight: $font-weight-bold;
+        line-height: 34px;
+        padding-left: 50px;
+
+        li:not(:last-child) {
+          margin-bottom: 10px;
+        }
+      }
+
+      .lead {
+        font-size: 24px;
+        line-height: 36px;
+      }
+
+      .columns {
+        padding-top: 45px;
+        font-size: 18px;
+        line-height: 29px;
+
+        .column:not(:first-child) {
+          width: calc(62% - 30px);
+          margin-left: 30px;
+        }
+
+        &:after {
+          left: 0;
+          width: 100%;
+        }
+      }
+
+      .phrase {
+        width: 75%;
+        font-size: 26px;
+        line-height: 39px;
+        padding-top: 45px;
+        padding-left: 25%;
+
+        &:after {
+          width: 75%;
+        }
+      }
+
+
     }
   }
 }
@@ -410,7 +498,7 @@
   }
 
   @include desktop {
-    width: 600px - 60px;
+    width: 600px;
     margin-left: auto;
     margin-right: auto;
     margin-bottom: 30px;
@@ -480,6 +568,12 @@
     color: white;
     text-align: center;
     line-height: 20px;
+  }
+
+  @include desktop {
+    background-color: $color5;
+
+
   }
 }
 

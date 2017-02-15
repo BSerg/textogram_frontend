@@ -188,7 +188,7 @@ export default class Article extends React.Component<any, IArticleState> {
                                 </div>
                             </div>
                         </div>
-                        <div className="content" dangerouslySetInnerHTML={{__html: this.state.article.html}}/>
+                        <div className="article__content" dangerouslySetInnerHTML={{__html: this.state.article.html}}/>
                         <div className="article__share">
                             <Link to={`/profile/${this.state.article.owner.id}`} className="article__author">
                                 {this.state.article.owner.avatar ?
