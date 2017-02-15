@@ -377,7 +377,7 @@ export default class Menu extends React.Component<any, IMenuStateInterface> {
 
     constructor() {
         super();
-        this.state = {open: true, user: UserAction.getStore().user,  isDesktop: MediaQuerySerice.getIsDesktop()};
+        this.state = {open: false, user: UserAction.getStore().user,  isDesktop: MediaQuerySerice.getIsDesktop()};
         this.setUser = this.setUser.bind(this);
         this.setOpen = this.setOpen.bind(this);
     }

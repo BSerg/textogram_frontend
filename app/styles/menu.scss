@@ -296,6 +296,8 @@
 
 @media (min-width: 1024px) {
   #main_menu {
+    position: relative;
+
     .main_menu_container {
       max-width: unset;
     }

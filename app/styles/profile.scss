@@ -4,7 +4,8 @@
 $avatar-side-size: 60px;
 
 #profile_content {
-
+  display: flex;
+  flex-direction: column;
 
   //margin-top: $header-height + $avatar-side-size/2 + $margin;
 
@@ -49,22 +50,35 @@ $avatar-side-size: 60px;
 
     margin-bottom: $margin;
 
+    .profile__subscription_info {
+      background-color: $color4;
+      width: 180px;
+      height: 40px;
+      line-height: 40px;
+
+      &:hover {
+        background-color: $color3;
+      }
+    }
+
     .profile__subscription_subscribe, .profile__subscription_unsubscribe, .profile__subscription_info {
       display: flex;
       flex-direction: row;
 
       align-items: center;
+      justify-content: center;
 
-      color: $color6_1;
+      color: $color;
       text-transform: uppercase;
       font-size: $font-size-small;
       letter-spacing: 1px;
       margin: 0 $margin/2;
+      cursor: pointer;
 
       svg {
         width: 25px;
         height: 25px;
-        fill: $color6_1;
+        fill: $color;
       }
       span {
         margin: 0 5px;
@@ -128,11 +142,12 @@ $avatar-side-size: 60px;
         text-transform: uppercase;
         text-align: center;
         flex-grow: 1;
-        max-width: 160px;
+        max-width: 200px;
         padding: $padding/2;
         cursor: pointer;
         color: $color5;
         border-bottom: 1px solid $color5;
+        box-sizing: border-box;
 
         @include transition();
 
@@ -261,6 +276,50 @@ $avatar-side-size: 60px;
 
 @media (min-width: 1024px) {
   #profile_content {
+    flex-direction: row;
+    .profile_content_main {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 400px;
+      height: 600px;
+      background-color: #F7F7F7;
+
+    }
+
+    .profile__username {
+      margin-bottom: 30px;
+      span {
+        font-size: 20px;
+      }
+    }
+
+    .profile__avatar {
+      margin-top: 70px;
+
+      img {
+        width: 95px;
+        height: 95px;
+      }
+    }
+
+    .profile_content_filler {
+      width: 400px;
+      min-width: 400px;
+    }
+
+    .profile__articles {
+      width: 100%;
+      max-width: 800px;
+
+      //margin-left: 400px;
+
+    }
+
+    .profile__social_links {
+      margin-bottom: 40px;
+    }
+
     .header {
       display: none;
     }

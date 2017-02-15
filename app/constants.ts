@@ -59,7 +59,10 @@ export namespace Captions {
         subscribe: 'Подписаться',
         subscribed: 'Вы подписаны',
         menuSubscriptions: "Подписки",
-        menuArticles: "Публикации",
+        menuArticles: "Мои тексты",
+        menuDrafts: "Черновики",
+        subscribers: "Читают",
+        subscribersOwnProfile: "Вас читают",
     };
 
     export const main_menu = {

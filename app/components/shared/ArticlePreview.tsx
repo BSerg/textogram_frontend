@@ -14,6 +14,7 @@ const EditIcon = require('babel!svg-react!../../assets/images/edit.svg?name=Edit
 interface IArticlePreviewPropsInterface {
     item: any,
     onDelete?: (id: number) => {},
+    onClick?: (id: number|null) => {},
     isFeed?: boolean,
     isOwner?: boolean,
 }
@@ -54,7 +55,7 @@ class ArticlePreviewClass extends React.Component<IArticlePreviewPropsInterface,
         let views = this.getViewsString(this.props.item.views || 0);
 
         return (
-            <div className="article_preview">
+            <div className="article_preview" onClick={this.props.onClick.bind(this.props.item.id)}>
                     <div className="title">
                         <Link to={this.props.item.is_draft ? ("/articles/" + this.props.item.id + "/edit/") :
                             ("/articles/" + this.props.item.slug + "/")}><div>{ this.props.item.title || date }</div></Link>

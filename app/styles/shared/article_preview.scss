@@ -6,7 +6,7 @@
   display: flex;
   flex-direction: column;
   width: 100%;
-  max-width: 600px;
+  max-width: 570px;
   min-width: 250px;
   padding: $padding 0;
   box-sizing: border-box;
@@ -130,4 +130,26 @@
     }
 
   }
+}
+
+@media (min-width: 1024px) {
+  .article_preview {
+    .title {
+      .title__edit {
+        display: none;
+      }
+    }
+
+
+    .bottom {
+      justify-content: flex-start;
+      div, div:first-child{
+        margin-right: $margin;
+      }
+      .delete {
+
+      }
+    }
+  }
+
 }

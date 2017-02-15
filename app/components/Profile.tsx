@@ -32,36 +32,53 @@ interface IUserArticlesPropsInterface {
 
 interface IUserArticlesStateInterface {
     articles?: any[];
+    drafts?: any[];
     feed?: any[];
     selectedSection?: string;
+    selectedId?: number|null;
 }
 
 class UserArticles extends React.Component<IUserArticlesPropsInterface, IUserArticlesStateInterface> {
 
     SECTION_SUBSCRIPTIONS = 'subscriptions';
     SECTION_ARTICLES = 'articles';
+    SECTION_DRAFTS = 'drafts';
 
 
     constructor() {
         super();
-        this.state = {articles: [], feed: [], selectedSection: this.SECTION_ARTICLES};
+        this.state = {articles: [], feed: [], drafts: [], selectedSection: this.SECTION_ARTICLES, selectedId: null};
     }
 
-    loadArticles(userId: string|number) {
+    loadArticles(userId: string|number, drafts?: boolean) {
 
-        api.get('/articles/', {params: {user: userId}}).then((response: any) => {
-            if (userId=='me') this.setState(
-                { feed: this.state.feed.concat(response.data.results || []) }
-            );
-            else this.setState(
-                { articles: this.state.articles.concat(response.data.results || []) }
-            )
-        }).catch((error) => {});
+        if (drafts) {
+            api.get('/drafts/').then((response: any) => {
+                this.setState({drafts: this.state.drafts.concat(response.data)});
+            }).catch((error) => {})
+        }
+        else {
+            api.get('/articles/', {params: {user: userId}}).then((response: any) => {
+                if (userId == 'me') { this.setState(
+                    { feed: this.state.feed.concat(response.data.results || []) }
+                    );
+                }
+                else this.setState(
+                    { articles: this.state.articles.concat(response.data.results || []) }
+                )
+            }).catch((error) => {});
+        }
+    }
+
+    selectArticle(id: number|null) {
+        console.log(id);
     }
 
     setSection(sectionName: string) {
-        if (sectionName != this.SECTION_ARTICLES && sectionName != this.SECTION_SUBSCRIPTIONS) return;
-        if (sectionName == this.SECTION_SUBSCRIPTIONS && !this.props.isSelf) return;
+        if (sectionName != this.SECTION_ARTICLES && sectionName != this.SECTION_SUBSCRIPTIONS && sectionName != this.SECTION_DRAFTS) {
+            return;
+        }
+        if ((sectionName == this.SECTION_SUBSCRIPTIONS || sectionName == this.SECTION_DRAFTS)  && !this.props.isSelf) return;
         this.setState({selectedSection: sectionName});
     }
 
@@ -70,38 +87,56 @@ class UserArticles extends React.Component<IUserArticlesPropsInterface, IUserArt
             this.setState({articles: []}, () => { this.loadArticles(nextProps.user.id) });
         }
         if (nextProps.isSelf && !this.props.isSelf) {
-            this.setState({feed: [], selectedSection: this.SECTION_SUBSCRIPTIONS}, () => { this.loadArticles('me') });
+            this.setState({feed: [], drafts: []}, () => {
+                this.loadArticles('me') ;
+                this.loadArticles(nextProps.user.id, true);
+            });
         }
         if (!nextProps.isSelf) { this.setState({feed: [], selectedSection: this.SECTION_ARTICLES}) }
     }
 
     componentDidMount() {
         this.loadArticles(this.props.user.id);
-
-        if (this.props.isSelf) this.setState(
-            {selectedSection: this.SECTION_SUBSCRIPTIONS}, () => {this.loadArticles('me');});
+        if (this.props.isSelf) {
+            this.loadArticles('me');
+            this.loadArticles(this.props.user.id, true);
+        }
     }
 
     render() {
+        let items: any[];
+        if (this.state.selectedSection == this.SECTION_SUBSCRIPTIONS) {
+            items = this.state.feed;
+        }
+        else if (this.state.selectedSection == this.SECTION_DRAFTS) {
+            items = this.state.drafts;
+        }
+        else {
+            items = this.state.articles;
+        }
 
-        let items: any[] = (this.state.selectedSection == this.SECTION_ARTICLES) ? this.state.articles : this.state.feed;
         let isFeed = this.state.selectedSection == this.SECTION_SUBSCRIPTIONS;
 
         return (<div className="profile__articles">
 
             {this.props.isSelf ? (
                 <div className="profile__articles__menu">
-                    <div onClick={this.setSection.bind(this, this.SECTION_SUBSCRIPTIONS)}  className={(this.state.selectedSection == this.SECTION_SUBSCRIPTIONS) ? 'active': null}>
-                        {Captions.profile.menuSubscriptions}
-                    </div>
+
                     <div onClick={this.setSection.bind(this, this.SECTION_ARTICLES)} className={(this.state.selectedSection == this.SECTION_ARTICLES) ? 'active': null}>
                         {Captions.profile.menuArticles}
                     </div>
-                </div>) : null}
+                    <div onClick={this.setSection.bind(this, this.SECTION_DRAFTS)} className={(this.state.selectedSection == this.SECTION_DRAFTS) ? 'active': null}>
+                        {Captions.profile.menuDrafts}
+                    </div>
+                    <div onClick={this.setSection.bind(this, this.SECTION_SUBSCRIPTIONS)}  className={(this.state.selectedSection == this.SECTION_SUBSCRIPTIONS) ? 'active': null}>
+                        {Captions.profile.menuSubscriptions}
+                    </div>
+                </div>) : null
+            }
 
             {
                 items.map((article, index) => {
-                    return (<ArticlePreview isFeed={isFeed} key={index} item={article} isOwner={this.props.isSelf} />)
+                    return (<ArticlePreview onClick={this.selectArticle.bind(this, article.id)}  isFeed={isFeed} key={index} item={article} isOwner={this.props.isSelf} />)
                 })
             }
         </div>)
@@ -280,46 +315,49 @@ export default class Profile extends React.Component<any, IProfileState> {
             <div className="profile">
 
                  <div id="profile_content">
-
-                     <div className="profile__avatar" key="avatar">
-                         <img src={this.state.user.avatar}/>
-                     </div>
-
-                     <div key="username" className="profile__username">
-                            <span>{this.state.user.first_name}</span> <span> {this.state.user.last_name}</span>
-                     </div>
-
-                     <div key="subscription" className="profile__subscription">
-                         <div className="profile__subscription_info" onClick={this.showSubscribers.bind(this)}>
-                             <SubscriptionIcon />
-                             <span>{ this.state.user.subscribers }</span>
+                     <div className="profile_content_main">
+                         <div className="profile__avatar" key="avatar">
+                             <img src={this.state.user.avatar}/>
                          </div>
 
-                         {
-                             (!this.state.isSelf && UserAction.getStore().user) ?
-                                 <div>
-                                     { this.state.user.is_subscribed ?
-                                         <div className="profile__subscription_unsubscribe" onClick={this.unSubscribe.bind(this)}>
-                                             <ConfirmIcon />
-                                             <span>{Captions.profile.subscribed}</span>
-                                         </div> :
-                                         <div className="profile__subscription_subscribe" onClick={this.subscribe.bind(this)}>
-                                             <span>{Captions.profile.subscribe}</span>
-                                         </div> }
-                                 </div> : null
-                         }
-                     </div>
+                         <div key="username" className="profile__username">
+                                <span>{this.state.user.first_name}</span> <span> {this.state.user.last_name}</span>
+                         </div>
 
-                     <div className="profile__social_links" key="social_links">
-                         { this.state.user.social_links.map((social_link: any, index: number) => {
-                             return (
-                                 <div className="profile__social_icon" key={index}>
-                                     <Link to={social_link.url} target="_blank" >
-                                         <SocialIcon social={social_link.social} />
-                                     </Link>
-                                </div>)
-                         }) }
+                         <div className="profile__social_links" key="social_links">
+                             { this.state.user.social_links.map((social_link: any, index: number) => {
+                                 return (
+                                     <div className="profile__social_icon" key={index}>
+                                         <Link to={social_link.url} target="_blank" >
+                                             <SocialIcon social={social_link.social} />
+                                         </Link>
+                                    </div>)
+                             }) }
+                         </div>
+
+                         <div key="subscription" className="profile__subscription">
+                             <div className="profile__subscription_info" onClick={this.showSubscribers.bind(this)}>
+                                 <SubscriptionIcon />
+                                 <span>{ this.state.isSelf ? Captions.profile.subscribersOwnProfile : Captions.profile.subscribers }</span>
+                                 <span>{ this.state.user.subscribers }</span>
+                             </div>
+
+                             {
+                                 (!this.state.isSelf && UserAction.getStore().user) ?
+                                     <div>
+                                         { this.state.user.is_subscribed ?
+                                             <div className="profile__subscription_unsubscribe" onClick={this.unSubscribe.bind(this)}>
+                                                 <ConfirmIcon />
+                                                 <span>{Captions.profile.subscribed}</span>
+                                             </div> :
+                                             <div className="profile__subscription_subscribe" onClick={this.subscribe.bind(this)}>
+                                                 <span>{Captions.profile.subscribe}</span>
+                                             </div> }
+                                     </div> : null
+                             }
+                         </div>
                      </div>
+                     <div className="profile_content_filler"></div>
                      <UserArticles user={this.state.user} isSelf={this.state.isSelf} key="articles" />
 
                  </div>
