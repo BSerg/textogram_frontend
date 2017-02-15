@@ -7,6 +7,7 @@ import {UserAction, LOGIN, LOGOUT, UPDATE_USER, SAVE_USER} from "../actions/user
 import {ModalAction, OPEN_MODAL, CLOSE_MODAL} from "../actions/shared/ModalAction";
 import * as moment from 'moment';
 import "../styles/article.scss";
+import SocialIcon from "./shared/SocialIcon";
 
 const EditButton = require('babel!svg-react!../assets/images/edit.svg?name=EditButton');
 const DeleteButton = require('babel!svg-react!../assets/images/redactor_icon_delete.svg?name=DeleteButton');
@@ -30,9 +31,11 @@ interface IArticle {
     owner: {
         id: number,
         first_name: string,
-        last_name: string
+        last_name: string,
+        avatar: string
     },
     images: IPhoto[]
+    url: string
 }
 
 interface IArticleState {
@@ -186,15 +189,23 @@ export default class Article extends React.Component<any, IArticleState> {
                             </div>
                         </div>
                         <div className="content" dangerouslySetInnerHTML={{__html: this.state.article.html}}/>
-                        {this.state.isSelf ?
-                            [
-                                <div style={{height: "50px"}}></div>,
-                                <div className="article__tools">
-                                    {/*<DeleteButton/>*/}
-                                    <EditButton onClick={this.editArticle.bind(this)}/>
-                                </div>
-                            ] : null
-                        }
+                        <div className="article__share">
+                            <Link to={`/profile/${this.state.article.owner.id}`} className="article__author">
+                                {this.state.article.owner.avatar ?
+                                    <img className="article__avatar" src={this.state.article.owner.avatar}/> : null
+                                }
+                                 <span className="article__first_name">{this.state.article.owner.first_name}</span>
+                                {this.state.article.owner.last_name}
+                            </Link>
+                            <div className="article__shares">
+                                <a href={"http://vk.com/share.php?url=" + this.state.article.url}
+                                   className="article__share_btn"><SocialIcon social="vk"/></a>
+                                <a href={"https://www.facebook.com/sharer/sharer.php?u=" + this.state.article.url}
+                                   className="article__share_btn"><SocialIcon social="facebook"/></a>
+                                <a href={"https://twitter.com/home?status=" + this.state.article.url}
+                                   className="article__share_btn"><SocialIcon social="twitter"/></a>
+                            </div>
+                        </div>
                     </div>
                     : <div className="article__loading"><span>СТАТЬЯ</span> ЗАГРУЖАЕТСЯ...</div>
                 : this.state.error

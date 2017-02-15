@@ -344,6 +344,74 @@
   }
 }
 
+.article__share {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: $family_open_sans;
+  background-color: $color4;
+  padding: $padding 0;
+
+  .article__author {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    font-size: 12px;
+    line-height: 14px;
+    color: $color;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-decoration: none;
+
+    .article__avatar {
+      width: 35px;
+      height: 35px;
+      object-fit: cover;
+      @include border_radius(35px);
+      margin-right: 20px;
+    }
+
+    .article__first_name {
+      font-weight: $font-weight-bold;
+      margin-right: 10px;
+    }
+  }
+
+  .article__shares {
+    margin-top: 30px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+
+    .article__share_btn {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 64px;
+      background-color: $color3;
+      cursor: pointer;
+
+      &:hover {
+        background-color: $color5;
+      }
+
+      &:not(:last-child) {
+        margin-right: 1px;
+      }
+
+      svg {
+        width: 40px;
+        height: 40px;
+        fill: white;
+      }
+    }
+
+  }
+
+}
+
 .article__tools {
   position: fixed;
   display: flex;
