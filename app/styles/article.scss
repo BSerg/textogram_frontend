@@ -387,6 +387,7 @@
       h2 {
         font-size: 34px;
         line-height: 46px;
+        margin-top: 45px;
       }
 
       ul {
@@ -434,6 +435,20 @@
         }
       }
 
+      .dialogue {
+        margin: 45px 0;
+
+        .remark {
+          display: flex;
+          flex-direction: row;
+
+          span {
+            min-width: 32px;
+            display: block;
+            margin-right: 15px;
+          }
+        }
+      }
 
     }
   }
