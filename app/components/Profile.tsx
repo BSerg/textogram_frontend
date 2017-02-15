@@ -280,6 +280,12 @@ export default class Profile extends React.Component<any, IProfileState> {
         ModalAction.do(OPEN_MODAL, {content: <UserSubscribers userId={this.state.user.id}/>})
     }
 
+    createArticle() {
+        api.post('/articles/editor/').then((response: any) => {
+            this.props.router.push('/articles/' + response.data.id + '/edit/');
+        }).catch((error) => {});
+    }
+
     setIsSubscribed(is_subscribed: boolean) {
         let user = this.state.user;
         user.is_subscribed = is_subscribed;
@@ -346,16 +352,25 @@ export default class Profile extends React.Component<any, IProfileState> {
                                  (!this.state.isSelf && UserAction.getStore().user) ?
                                      <div>
                                          { this.state.user.is_subscribed ?
-                                             <div className="profile__subscription_unsubscribe" onClick={this.unSubscribe.bind(this)}>
+                                             <div className="profile__subscription_info profile__subscription_unsubscribe" onClick={this.unSubscribe.bind(this)}>
                                                  <ConfirmIcon />
                                                  <span>{Captions.profile.subscribed}</span>
                                              </div> :
-                                             <div className="profile__subscription_subscribe" onClick={this.subscribe.bind(this)}>
+                                             <div className="profile__subscription_info profile__subscription_subscribe" onClick={this.subscribe.bind(this)}>
                                                  <span>{Captions.profile.subscribe}</span>
                                              </div> }
                                      </div> : null
                              }
                          </div>
+
+                         {
+                             this.state.isSelf ? (<div className="profile__subscription">
+                                 <div className="profile__subscription_info" onClick={this.createArticle.bind(this)}>
+                                     <EditIcon />
+                                     <span>{ Captions.profile.newArticle }</span>
+                                 </div>
+                             </div>) : null
+                         }
                      </div>
                      <div className="profile_content_filler"></div>
                      <UserArticles user={this.state.user} isSelf={this.state.isSelf} key="articles" />

@@ -63,6 +63,12 @@ export namespace Captions {
         menuDrafts: "Черновики",
         subscribers: "Читают",
         subscribersOwnProfile: "Вас читают",
+        newArticle: "Новый текст",
+
+        articlePreviewEdit: "Редактировать",
+        articlePreviewSettings: "Настройки",
+        articlePreviewCopy: "Копировать",
+        articlePreviewDelete: "Удалить",
     };
 
     export const main_menu = {
