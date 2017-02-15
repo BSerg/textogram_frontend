@@ -14,6 +14,7 @@
     text-align: center;
 
     .article__author {
+      display: block;
       position: absolute;
       width: calc(100% - 60px);
       height: 20px;
@@ -24,6 +25,9 @@
       font-family: $family_open_sans;
       letter-spacing: 1px;
       text-transform: uppercase;
+      text-decoration: none;
+      color: $color;
+      cursor: pointer;
 
       .article__first_name {
         font-weight: $font-weight-bold;
@@ -46,7 +50,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      color: white;
+      color: $color;
     }
 
     .article__date, .article__views {
@@ -86,13 +90,17 @@
         left: 0;
         right: 0;
       }
-    }
 
-    .article__stats {
-      color: $color;
+      .article__stats {
+        color: white;
 
-      svg {
-        stroke: $color;
+        svg {
+          stroke: white;
+        }
+      }
+
+      .article__author {
+        color: white
       }
     }
   }

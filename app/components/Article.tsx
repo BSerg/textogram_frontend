@@ -1,4 +1,5 @@
 import * as React from "react";
+import {Link} from 'react-router';
 import {IContentData} from "../actions/editor/ContentAction";
 import {api} from "../api";
 import Error from "./Error";
@@ -172,10 +173,10 @@ export default class Article extends React.Component<any, IArticleState> {
                 this.state.article ?
                     <div id={"article" + this.state.article.id} className="article">
                         <div className={"article__title" + (this.state.article.cover ? ' inverted' : '')} style={coverStyle}>
-                            <div className="article__author">
+                            <Link to={`/profile/${this.state.article.owner.id}`} className="article__author">
                                 <span className="article__first_name">{this.state.article.owner.first_name}</span>
                                 {this.state.article.owner.last_name}
-                            </div>
+                            </Link>
                             <h1>{this.state.article.title}</h1>
                             <div className="article__stats">
                                 <div className="article__date">{this.state.article.date}</div>
