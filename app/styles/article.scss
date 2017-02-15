@@ -596,7 +596,106 @@
   @include desktop {
     background-color: $color5;
 
+    .gallery_modal__header {
+      height: 64px;
+      background-color: #282828;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: flex-end;
+      font-weight: $font-weight;
 
+      .gallery_modal__prev, .gallery_modal__next {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        font-family: $family_open_sans;
+        font-size: 10px;
+        letter-spacing: 1px;
+        color: white;
+        text-transform: uppercase;
+        line-height: 12px;
+        margin: 0 30px;
+        cursor: pointer;
+
+        svg {
+          fill: white;
+          width: 30px;
+          height: 30px;
+        }
+
+        &:hover {
+          color: $color3;
+
+          svg {
+            fill: $color3;
+          }
+        }
+      }
+
+      .gallery_modal__prev svg {
+        @include scale(-1, 1);
+      }
+
+      .gallery_modal__close {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 35px;
+        height: 35px;
+        margin-left: 30px;
+        margin-right: 30px;
+        cursor: pointer;
+
+        svg {
+          width: 20px;
+          height: 20px;
+          fill: white;
+        }
+
+        &:hover svg {
+          fill: $color3;
+        }
+      }
+
+
+    }
+    
+    .gallery_modal__viewport {
+      flex: auto;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+
+      .gallery_modal__image {
+        flex: unset;
+        background-size: contain!important;
+        width: 65%;
+        height: 75vh;
+      }
+
+      .gallery_modal__image_prev, .gallery_modal__image_next {
+        flex: unset;
+        height: 75vh;
+        width: 10%;
+        background-size: cover!important;
+        cursor: pointer;
+
+        &:hover {
+          width: 15%;
+        }
+      }
+
+      .gallery_modal__image_prev {
+        background-position: right!important;
+      }
+
+      .gallery_modal__image_next {
+        background-position: left!important;
+      }
+    }
   }
 }
 

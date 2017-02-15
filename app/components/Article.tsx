@@ -8,11 +8,15 @@ import {ModalAction, OPEN_MODAL, CLOSE_MODAL} from "../actions/shared/ModalActio
 import * as moment from 'moment';
 import "../styles/article.scss";
 import SocialIcon from "./shared/SocialIcon";
+import {MediaQuerySerice} from "../services/MediaQueryService";
 
 const EditButton = require('babel!svg-react!../assets/images/edit.svg?name=EditButton');
 const DeleteButton = require('babel!svg-react!../assets/images/redactor_icon_delete.svg?name=DeleteButton');
 const BackButton = require('babel!svg-react!../assets/images/back.svg?name=BackButton');
 const ViewIcon = require('babel!svg-react!../assets/images/views_white.svg?name=ViewIcon');
+const CloseIcon = require('babel!svg-react!../assets/images/close_white.svg?name=CloseIcon');
+const ArrowButton = require('babel!svg-react!../assets/images/arrow.svg?name=ArrowButton');
+
 
 
 interface IPhoto {id: number, image: string, preview?: string, caption?: string}
@@ -42,6 +46,7 @@ interface IArticleState {
     article?: IArticle | null
     error?: any
     isSelf?: boolean
+    isDesktop?: boolean
 }
 
 export default class Article extends React.Component<any, IArticleState> {
@@ -49,8 +54,10 @@ export default class Article extends React.Component<any, IArticleState> {
         super(props);
         this.state = {
             article: null,
-            isSelf: false
-        }
+            isSelf: false,
+            isDesktop: MediaQuerySerice.getIsDesktop()
+        };
+        this.handleMediaQuery = this.handleMediaQuery.bind(this);
     }
 
     handleUser() {
@@ -110,8 +117,7 @@ export default class Article extends React.Component<any, IArticleState> {
         }
     }
 
-    openGalleryModal(currentPhotoIndex: any, photos: any[]) {
-        console.log('OPEN PHOTO #' + currentPhotoIndex + ' in ' + photos.length + ' photos');
+    openGalleryModal(currentPhotoIndex: number, photos: any[]) {
         ModalAction.do(OPEN_MODAL, {content: <GalleryModal currentPhotoIndex={currentPhotoIndex} photos={photos}/>});
     }
 
@@ -130,13 +136,20 @@ export default class Article extends React.Component<any, IArticleState> {
                             photoData.push(image);
                         }
                     });
-                    photo.addEventListener('click', this.openGalleryModal.bind(this, i, photoData));
+                    photo.addEventListener('click', this.openGalleryModal.bind(this, parseInt(i), photoData));
                 }
             } catch (err) {}
         }
     }
 
+    handleMediaQuery(isDesktop: boolean) {
+        if (this.state.isDesktop != isDesktop) {
+            this.setState({isDesktop: isDesktop});
+        }
+    }
+
     componentDidMount() {
+        MediaQuerySerice.listen(this.handleMediaQuery);
         UserAction.onChange([LOGIN, LOGOUT, UPDATE_USER, SAVE_USER], this.handleUser);
         api.get(`/articles/${this.props.params.articleSlug}/`).then((response: any) => {
             let isSelf = UserAction.getStore().user ? UserAction.getStore().user.id == response.data.owner.id : false;
@@ -161,6 +174,7 @@ export default class Article extends React.Component<any, IArticleState> {
     }
 
     componentWillUnmount() {
+        MediaQuerySerice.unbind(this.handleMediaQuery);
         UserAction.unbind([LOGIN, LOGOUT, UPDATE_USER, SAVE_USER], this.handleUser);
     }
 
@@ -216,20 +230,23 @@ export default class Article extends React.Component<any, IArticleState> {
 
 interface IGalleryModalProps {
     photos: IPhoto[],
-    currentPhotoIndex: number
+    currentPhotoIndex: number,
 }
 
 interface IGalleryModalState {
-    currentPhotoIndex: number
+    currentPhotoIndex?: number,
+    isDesktop?: boolean
 }
 
 
-class GalleryModal extends React.Component<IGalleryModalProps, any> {
+class GalleryModal extends React.Component<IGalleryModalProps, IGalleryModalState> {
     constructor(props: any) {
         super(props);
         this.state = {
-            currentPhotoIndex: this.props.currentPhotoIndex
-        }
+            currentPhotoIndex: this.props.currentPhotoIndex,
+            isDesktop: MediaQuerySerice.getIsDesktop()
+        };
+        this.handleMediaQuery = this.handleMediaQuery.bind(this);
     }
 
     back() {
@@ -244,6 +261,57 @@ class GalleryModal extends React.Component<IGalleryModalProps, any> {
         this.setState({currentPhotoIndex: this.state.currentPhotoIndex});
     }
 
+    prevPhoto() {
+        this.state.currentPhotoIndex--;
+        if (this.state.currentPhotoIndex < 0) {
+            this.state.currentPhotoIndex = this.props.photos.length - 1;
+        }
+        this.setState({currentPhotoIndex: this.state.currentPhotoIndex});
+    }
+
+    getPrevPhotoIndex() {
+        if (this.props.photos.length < 2) {
+            return null;
+        } else if (this.props.photos.length == 2 && this.state.currentPhotoIndex == 1) {
+            return 0;
+        } else {
+            return this.state.currentPhotoIndex == 0 ? this.props.photos.length - 1 : this.state.currentPhotoIndex - 1;
+        }
+    }
+
+    getNextPhotoIndex() {
+        if (this.props.photos.length < 2) {
+            return null;
+        } else if (this.props.photos.length == 2 && this.state.currentPhotoIndex == 0) {
+            return 1;
+        } else {
+            return this.state.currentPhotoIndex == this.props.photos.length - 1 ? 0 : this.state.currentPhotoIndex + 1;
+        }
+    }
+
+    getImageStyle(index: number) {
+        console.log(index, this.props.photos);
+        if (index == null) {
+            return {background: 'transparent'};
+        } else {
+            return {background: `url('${this.props.photos[index].image}') no-repeat center center`};
+        }
+    }
+
+    handleMediaQuery(isDesktop: boolean) {
+        if (this.state.isDesktop != isDesktop) {
+            this.setState({isDesktop: isDesktop});
+        }
+    }
+
+    componentDidMount() {
+        MediaQuerySerice.listen(this.handleMediaQuery);
+    }
+
+    componentWillUnmount() {
+        MediaQuerySerice.unbind(this.handleMediaQuery);
+    }
+
     render() {
         let photo = this.props.photos[this.state.currentPhotoIndex];
         let imageStyle = {
@@ -251,13 +319,47 @@ class GalleryModal extends React.Component<IGalleryModalProps, any> {
         };
         return (
             <div className="gallery_modal">
-                <div className="gallery_modal__header">
-                    <BackButton className="gallery_modal__back" onClick={this.back.bind(this)}/>
-                    <div className="gallery_modal__counter">
-                        {parseInt(this.state.currentPhotoIndex) + 1}/{this.props.photos.length}
+                {this.state.isDesktop ?
+                    <div className="gallery_modal__header">
+                        <div className="gallery_modal__prev" onClick={this.prevPhoto.bind(this)}>
+                            <ArrowButton/> НАЗАД
+                        </div>
+                        <div className="gallery_modal__counter">
+                            {this.state.currentPhotoIndex + 1}/{this.props.photos.length}
+                        </div>
+                        <div className="gallery_modal__next" onClick={this.nextPhoto.bind(this)}>
+                            ДАЛЕЕ <ArrowButton/>
+                        </div>
+                        <div className="gallery_modal__close" onClick={this.back.bind(this)}><CloseIcon/></div>
+                    </div> :
+                    <div className="gallery_modal__header">
+                        <BackButton className="gallery_modal__back" onClick={this.back.bind(this)}/>
+                        <div className="gallery_modal__counter">
+                            {this.state.currentPhotoIndex + 1}/{this.props.photos.length}
+                        </div>
                     </div>
-                </div>
-                <div className="gallery_modal__image" style={imageStyle} onClick={this.nextPhoto.bind(this)}/>
+                }
+
+                {this.state.isDesktop ?
+                    <div className="gallery_modal__viewport">
+                        {this.getPrevPhotoIndex() != null ?
+                            <div className="gallery_modal__image_prev"
+                                 style={this.getImageStyle(this.getPrevPhotoIndex())}
+                                 onClick={this.prevPhoto.bind(this)}></div> :
+                            <div className="gallery_modal__image_prev empty"></div>
+                        }
+                        <div className="gallery_modal__image"
+                             style={this.getImageStyle(this.state.currentPhotoIndex)}
+                             onClick={this.nextPhoto.bind(this)}/>
+                        {this.getNextPhotoIndex() != null ?
+                            <div className="gallery_modal__image_next"
+                                 style={this.getImageStyle(this.getNextPhotoIndex())}
+                                 onClick={this.nextPhoto.bind(this)}></div> :
+                            <div className="gallery_modal__image_next empty"></div>
+                        }
+                    </div> :
+                    <div className="gallery_modal__image" style={imageStyle} onClick={this.nextPhoto.bind(this)}/>
+                }
                 {photo.caption ? <div className="gallery_modal__caption">{photo.caption}</div> : null}
             </div>
         );
