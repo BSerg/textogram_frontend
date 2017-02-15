@@ -407,9 +407,14 @@
         fill: white;
       }
     }
-
   }
 
+  @include desktop {
+    width: 600px - 60px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 30px;
+  }
 }
 
 .article__tools {
