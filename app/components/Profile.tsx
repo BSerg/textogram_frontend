@@ -16,6 +16,7 @@ import {Captions} from '../constants';
 import SocialIcon from './shared/SocialIcon';
 
 import {ModalAction, OPEN_MODAL, CLOSE_MODAL} from '../actions/shared/ModalAction';
+import {MediaQuerySerice} from '../services/MediaQueryService';
 
 const VKIcon = require('babel!svg-react!../assets/images/profile_social_icon_vk.svg?name=VKIcon');
 const FBIcon = require('babel!svg-react!../assets/images/profile_social_icon_fb.svg?name=FBIcon');
@@ -28,6 +29,7 @@ const CloseIcon = require('babel!svg-react!../assets/images/close.svg?name=Close
 interface IUserArticlesPropsInterface {
     user: any;
     isSelf: boolean;
+    hidden: boolean;
 }
 
 interface IUserArticlesStateInterface {
@@ -117,7 +119,7 @@ class UserArticles extends React.Component<IUserArticlesPropsInterface, IUserArt
 
         let isFeed = this.state.selectedSection == this.SECTION_SUBSCRIPTIONS;
 
-        return (<div className="profile__articles">
+        return (<div className={"profile__articles" + (this.props.hidden ? " hidden" : "") }>
 
             {this.props.isSelf ? (
                 <div className="profile__articles__menu">
@@ -136,7 +138,7 @@ class UserArticles extends React.Component<IUserArticlesPropsInterface, IUserArt
 
             {
                 items.map((article, index) => {
-                    return (<ArticlePreview onClick={this.selectArticle.bind(this, article.id)}  isFeed={isFeed} key={index} item={article} isOwner={this.props.isSelf} />)
+                    return (<ArticlePreview isFeed={isFeed} key={index} item={article} isOwner={this.props.isSelf} />)
                 })
             }
         </div>)
@@ -145,6 +147,8 @@ class UserArticles extends React.Component<IUserArticlesPropsInterface, IUserArt
 
 interface ISubscribersPropsInterface {
     userId: number | string;
+    closeSubscribers?: () => {};
+    isDesktop?: boolean;
 }
 
 interface ISubscribersStateInterface {
@@ -194,11 +198,18 @@ class UserSubscribers extends React.Component<ISubscribersPropsInterface, ISubsc
     }
 
     close() {
+        if (this.props.closeSubscribers) this.props.closeSubscribers();
         ModalAction.do(CLOSE_MODAL, null);
     }
 
     componentDidMount() {
         this.load();
+
+        MediaQuerySerice.listen((isDesktop: boolean) => {
+            if (isDesktop) {
+                ModalAction.do(CLOSE_MODAL, null);
+            }
+        });
     }
 
     render() {
@@ -217,7 +228,14 @@ class UserSubscribers extends React.Component<ISubscribersPropsInterface, ISubsc
                             </div>
 
                             {
-                                item.is_subscribed ? (<div className="confirm_icon" ><ConfirmIcon /></div>) : null
+                                item.is_subscribed && !this.props.isDesktop ? (<div className="confirm_icon" ><ConfirmIcon /></div>) : null
+                            }
+
+                            {
+                                this.props.isDesktop ? (<div className="subscription_info">
+                                    {item.is_subscribed ? (<span>{Captions.profile.subscribersYouAreSubscribed}</span>)
+                                        : (<span>{Captions.profile.subscribersNumber} {item.subscribers}</span>)}
+                                </div>) : null
                             }
 
                         </div>)
@@ -235,6 +253,8 @@ interface IProfileState {
     user?: any;
     error?: any;
     isSelf?: boolean;
+    isDesktop?: boolean;
+    showSubscribers?: boolean;
 }
 
 export default class Profile extends React.Component<any, IProfileState> {
@@ -242,7 +262,7 @@ export default class Profile extends React.Component<any, IProfileState> {
 
     constructor(props: any) {
         super(props);
-        this.state = {user: null, error: null, isSelf: false};
+        this.state = {user: null, error: null, isSelf: false, showSubscribers: false, isDesktop: MediaQuerySerice.getIsDesktop()};
         this.checkIsSelf = this.checkIsSelf.bind(this);
     }
 
@@ -254,7 +274,7 @@ export default class Profile extends React.Component<any, IProfileState> {
     getUserData(userId: string) {
         this.setState({error: null}, () => {
             api.get('/users/' + userId + '/').then((response: any) => {
-                this.setState({user: response.data}, () => {
+                this.setState({user: response.data, showSubscribers: false}, () => {
                     this.checkIsSelf();
 
                 });
@@ -276,8 +296,17 @@ export default class Profile extends React.Component<any, IProfileState> {
         }).catch((error) => {})
     }
 
+    closeSubscribers() {
+        this.setState({showSubscribers: false});
+    }
+
     showSubscribers() {
-        ModalAction.do(OPEN_MODAL, {content: <UserSubscribers userId={this.state.user.id}/>})
+        if (this.state.isDesktop) {
+            this.setState({showSubscribers: true});
+        }
+        else {
+            ModalAction.do(OPEN_MODAL, {content: <UserSubscribers userId={this.state.user.id} />});
+        }
     }
 
     createArticle() {
@@ -299,6 +328,12 @@ export default class Profile extends React.Component<any, IProfileState> {
     }
 
     componentDidMount() {
+        MediaQuerySerice.listen((isDesktop: boolean) => {
+            if (isDesktop != this.state.isDesktop) {
+                this.setState({isDesktop: isDesktop, showSubscribers: false});
+            }
+        });
+
         this.getUserData(this.props.params.userId);
         UserAction.onChange(GET_ME, this.checkIsSelf);
         UserAction.onChange(LOGIN, this.checkIsSelf);
@@ -323,7 +358,9 @@ export default class Profile extends React.Component<any, IProfileState> {
                  <div id="profile_content">
                      <div className="profile_content_main">
                          <div className="profile__avatar" key="avatar">
-                             <img src={this.state.user.avatar}/>
+                             { this.state.user.avatar ? (<img src={this.state.user.avatar}/>) : (
+                                 <div className="profile__avatar_dummy"></div>) }
+
                          </div>
 
                          <div key="username" className="profile__username">
@@ -365,16 +402,24 @@ export default class Profile extends React.Component<any, IProfileState> {
 
                          {
                              this.state.isSelf ? (<div className="profile__subscription">
-                                 <div className="profile__subscription_info" onClick={this.createArticle.bind(this)}>
-                                     <EditIcon />
-                                     <span>{ Captions.profile.newArticle }</span>
-                                 </div>
+                                 <Link to="/articles/new">
+                                     <div className="profile__subscription_info">
+                                         <EditIcon />
+                                         <span>{ Captions.profile.newArticle }</span>
+                                     </div>
+                                 </Link>
                              </div>) : null
                          }
                      </div>
                      <div className="profile_content_filler"></div>
-                     <UserArticles user={this.state.user} isSelf={this.state.isSelf} key="articles" />
 
+                     {
+                         (this.state.isDesktop && this.state.showSubscribers) ? (
+                             <UserSubscribers isDesktop={this.state.isDesktop} userId={this.state.user.id} closeSubscribers={this.closeSubscribers.bind(this)} />
+                         ) : null
+                     }
+
+                     <UserArticles hidden={this.state.isDesktop && this.state.showSubscribers} user={this.state.user} isSelf={this.state.isSelf} key="articles" />
                  </div>
              </div>
         )

@@ -24,7 +24,9 @@ export default class Drafts extends React.Component<any, IDraftsStateInterface> 
 
     loadDrafts() {
         api.get('/drafts/').then((response: any) => {
-            this.setState({items: response.data});
+            this.setState({items: response.data}, () => {
+                this.forceUpdate();
+            });
         }).catch((error) => {})
     }
 
@@ -74,11 +76,9 @@ export default class Drafts extends React.Component<any, IDraftsStateInterface> 
                 <Header>{Captions.management.drafts}</Header>
 
                 <div className="drafts__content">
-                    {
-                        this.state.items.map((item, index) => {
-                            return (<ArticlePreview item={item} onDelete={this.deleteArticle.bind(this, item.id)} key={index} />);
-                        })
-                    }
+                    { this.state.items.map((article, i) => {
+                        return <ArticlePreview key={article.id} isFeed={false} item={article} isOwner={true} />
+                    }) }
                 </div>
             </div>)
     }

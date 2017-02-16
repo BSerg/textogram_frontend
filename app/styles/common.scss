@@ -7,11 +7,16 @@
 
   margin-bottom: $margin;
 
-  img {
+  img, .profile__avatar_dummy {
     width: $profile-avatar-side-size;
     height: $profile-avatar-side-size;
+    min-width: $profile-avatar-side-size;
+    min-height: $profile-avatar-side-size;
+    @include border_radius(50%);
+  }
 
-    @include border_radius($profile-avatar-side-size);
+  .profile__avatar_dummy {
+    background-color: $color5;
   }
 
 }
@@ -28,4 +33,24 @@
   span:first-child {
     font-weight: $font-weight-bold;
   }
+}
+
+.drafts__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+@media (min-width: 1024px) {
+
+
+  .profile__avatar {
+    img, .profile__avatar_dummy {
+      width: 95px;
+      height: 95px;
+      min-width: 95px;
+      min-height: 95px;
+    }
+  }
+
 }

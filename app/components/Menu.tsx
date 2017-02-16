@@ -46,7 +46,7 @@ class DefaultMenu extends React.Component<DefaultMenuPropsInterface, IDefaultmen
         let patternPhone = new RegExp('^\\' + this.getInitialCode() + '\\d{1,10}$');
         this.state = {
             phone: this.getInitialCode(), password: '', patternInputPhone: patternInputPhone,
-            patternPhone: patternPhone, loginError: null, isAuthorization: true
+            patternPhone: patternPhone, loginError: null, isAuthorization: false
         };
         this.handleSubmit = this.handleSubmit.bind(this);
     }
@@ -128,7 +128,21 @@ class DefaultMenu extends React.Component<DefaultMenuPropsInterface, IDefaultmen
                         </div>
                     ) : null
                 }
-                <div className="menu__login_title" onClick={this.handleUrlClick.bind(this, '/')}>{Captions.main_menu.title}</div>
+                <div className="menu__user">
+                    {
+                            this.props.isDesktop ? (
+                                <div className="menu__user_avatar_dummy">
+                                </div>
+                            ) : null
+                        }
+
+
+                    <div className="menu__user_username" onClick={this.handleUrlClick.bind(this, '/')}>
+                        <span>{Captions.main_menu.title}</span>
+                    </div>
+
+                </div>
+
 
                 {
                     !this.props.isDesktop ? (

@@ -69,6 +69,9 @@ export namespace Captions {
         articlePreviewSettings: "Настройки",
         articlePreviewCopy: "Копировать",
         articlePreviewDelete: "Удалить",
+
+        subscribersYouAreSubscribed: "Вы читаете",
+        subscribersNumber: "Читают",
     };
 
     export const main_menu = {
