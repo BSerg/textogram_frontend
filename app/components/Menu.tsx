@@ -24,6 +24,7 @@ const NotificationIcon = require('babel!svg-react!../assets/images/notification_
 
 interface DefaultMenuPropsInterface {
     isDesktop: boolean;
+    router?: any;
 }
 
 
@@ -84,8 +85,10 @@ class DefaultMenu extends React.Component<DefaultMenuPropsInterface, IDefaultmen
         this.setState({isAuthorization: !this.state.isAuthorization});
     }
 
-    handleUrlClick(url: string) {
-
+    handleUrlClick(url: string, e: any) {
+        e.stopPropagation();
+        this.props.router.push(url);
+        MenuAction.do(TOGGLE, false);
     }
 
     registration(isForgotPassword: boolean = false) {
@@ -125,7 +128,21 @@ class DefaultMenu extends React.Component<DefaultMenuPropsInterface, IDefaultmen
                         </div>
                     ) : null
                 }
-                <div className="menu__login_title">{Captions.main_menu.title}</div>
+                <div className="menu__user">
+                    {
+                            this.props.isDesktop ? (
+                                <div className="menu__user_avatar_dummy">
+                                </div>
+                            ) : null
+                        }
+
+
+                    <div className="menu__user_username" onClick={this.handleUrlClick.bind(this, '/')}>
+                        <span>{Captions.main_menu.title}</span>
+                    </div>
+
+                </div>
+
 
                 {
                     !this.props.isDesktop ? (
@@ -159,13 +176,14 @@ class DefaultMenu extends React.Component<DefaultMenuPropsInterface, IDefaultmen
                     !this.props.isDesktop ? (<div style={{color: '#FFFFFF', justifyContent: 'center'}}><LoginBlock /></div>) : null
                 }
 
-                {
-                    this.props.isDesktop ? (
-                        <div className="menu__about">{Captions.main_menu.about}</div>
-                    ) : null
-                }
+                { this.props.isDesktop ? (<div className="menu__about" onClick={this.handleUrlClick.bind(this, '/info/')}>
+                        {Captions.main_menu.about}
+                    </div>) : null}
+                { this.props.isDesktop ? (<div className="menu__about" onClick={this.registration.bind(this, false)}>{Captions.main_menu.register}</div>) : null}
 
-                <div className="menu__register" onClick={this.registration.bind(this, false)}>{Captions.main_menu.register}</div>
+                {
+                    !this.props.isDesktop ? (<div className="menu__register" onClick={this.registration.bind(this, false)}>{Captions.main_menu.register}</div>) : null
+                }
 
                 {
                     !this.props.isDesktop ? (<div className="menu__about">{Captions.main_menu.about}</div>) : null
@@ -314,37 +332,50 @@ class UserMenu extends React.Component<IUserMenuProps, any> {
     }
 
     render() {
-        return (
+        return this.props.isDesktop ? (
             <div className="menu__content" onClick={this.stopClosePropagation.bind(this)}>
-                {
-                    this.props.isDesktop ? (
-                        <div className="menu__close" onClick={this.closeMenu.bind(this)}>
-                            <CloseIcon />
-                        </div>
-                    ) : null
-                }
-
+                <div className="menu__close" onClick={this.closeMenu.bind(this)}>
+                    <CloseIcon />
+                </div>
                 <div className="menu__user" onClick={this.goToProfile.bind(this)}>
                     <div className="menu__user_avatar">
                         <img src={ this.props.user.avatar } />
                     </div>
                     <div className="menu__user_username"><span>{this.props.user.first_name}</span> <span>{this.props.user.last_name}</span></div>
                 </div>
-                { !this.props.isDesktop ? (<NotificationBlockWithRouter />) : null }
 
-                <div className="menu__links">
-                    <div className="menu__link" onClick={this.createArticle.bind(this)}>{ Captions.main_menu.create_article }</div>
-                    <div className="menu__link" onClick={this.handleUrlClick.bind(this, '/drafts/')}>{ Captions.main_menu.drafts }</div>
-                </div>
-                { this.props.isDesktop ? (<NotificationBlockWithRouter showZero={true} />) : null}
-                {!this.props.isDesktop ? (<div onClick={this.handleUrlClick.bind(this, '/info/')} className="menu__info" ><InfoIcon /></div>) : null}
+                <div className="menu__links"><div className="menu__link" onClick={this.createArticle.bind(this)}>{ Captions.main_menu.create_article }</div></div>
+                <div className="menu__links"><div className="menu__link" onClick={this.handleUrlClick.bind(this, '/drafts/')}>{ Captions.main_menu.drafts }</div></div>
+
                 <div className="menu__controls">
+                    <NotificationBlockWithRouter showZero={true} />
                     <div onClick={this.handleUrlClick.bind(this, '/manage/')}><SettingsIcon /></div>
-                    {this.props.isDesktop ? (<div onClick={this.handleUrlClick.bind(this, '/info/')} ><InfoIcon /></div>) : null}
+                    <div onClick={this.handleUrlClick.bind(this, '/info/')} ><InfoIcon /></div>
                     <div onClick={this.logout.bind(this)}><ExitIcon /></div>
                 </div>
-            </div>)
+
+            </div>) : (
+                <div className="menu__content" onClick={this.stopClosePropagation.bind(this)}>
+                    <div className="menu__user" onClick={this.goToProfile.bind(this)}>
+                        <div className="menu__user_avatar">
+                            <img src={ this.props.user.avatar } />
+                        </div>
+                        <div className="menu__user_username"><span>{this.props.user.first_name}</span> <span>{this.props.user.last_name}</span></div>
+                    </div>
+                    <NotificationBlockWithRouter />
+                    <div className="menu__links">
+                        <div className="menu__link" onClick={this.createArticle.bind(this)}>{ Captions.main_menu.create_article }</div>
+                        <div className="menu__link" onClick={this.handleUrlClick.bind(this, '/drafts/')}>{ Captions.main_menu.drafts }</div>
+                    </div>
+                    <div onClick={this.handleUrlClick.bind(this, '/info/')} className="menu__info" ><InfoIcon /></div>
+                    <div className="menu__controls">
+                        <div onClick={this.handleUrlClick.bind(this, '/manage/')}><SettingsIcon /></div>
+                        <div onClick={this.logout.bind(this)}><ExitIcon /></div>
+                    </div>
+                </div>)
+
     }
+
 }
 
 let UserMenuWithRouter = withRouter(UserMenu);
