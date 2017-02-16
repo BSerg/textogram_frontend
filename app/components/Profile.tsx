@@ -118,6 +118,7 @@ class UserArticles extends React.Component<IUserArticlesPropsInterface, IUserArt
         }
 
         let isFeed = this.state.selectedSection == this.SECTION_SUBSCRIPTIONS;
+        let isOwner = this.props.isSelf && (this.state.selectedSection == this.SECTION_ARTICLES || this.state.selectedSection == this.SECTION_DRAFTS);
 
         return (<div className={"profile__articles" + (this.props.hidden ? " hidden" : "") }>
 
@@ -138,7 +139,7 @@ class UserArticles extends React.Component<IUserArticlesPropsInterface, IUserArt
 
             {
                 items.map((article, index) => {
-                    return (<ArticlePreview isFeed={isFeed} key={index} item={article} isOwner={this.props.isSelf} />)
+                    return (<ArticlePreview isFeed={isFeed} key={index} item={article} isOwner={isOwner} />)
                 })
             }
         </div>)
