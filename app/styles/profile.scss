@@ -169,7 +169,7 @@ $avatar-side-size: 60px;
 
         @include transition();
 
-        &.active {
+        &:hover, &.active {
           border-bottom: 3px solid #000000;
           color: $color;
         }
