@@ -552,7 +552,13 @@
         //flex-grow: 1;
         width: 100%;
         justify-content: center;
-        border-width: 1px;
+        border-bottom: 1px solid $color4;
+
+
+        &:last-child {
+          border: none;
+        }
+
         span {
           width: 120px;
           font-size: 11px;
@@ -736,10 +742,12 @@
     }
 
     .profile__subscriptions {
-      padding-top: 0;
+      padding: $padding;
       display: flex;
       flex-direction: column;
       align-items: center;
+      width: 100%;
+      max-width: 800px;
 
       .profile__subscription {
         width: 80%;
@@ -750,8 +758,9 @@
 
       .filter_input {
         position: relative;
-        background-color: $color4;
-        height: 85px;
+        background-color: transparent;
+        border-bottom: 1px solid $color4;
+        height: 70px;
         margin-bottom: $margin * 2;
         input {
           color: $color;
