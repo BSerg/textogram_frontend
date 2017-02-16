@@ -430,7 +430,7 @@ class SocialLinks extends React.Component<ISectionPropsInterface, ISectionLinksS
                 {
                     (this.state.links.length) ? (
                         <div className="profile__additional_links">
-                            { this.state.authLink ? (<div className="link_text">{Captions.management.additionalLinks}</div>) : null }
+                            <div className="link_text">{Captions.management.additionalLinks}</div>
                             <div>
                                 {
                                     this.state.links.map((link, index) => {
@@ -699,6 +699,7 @@ export default class ProfileManagement extends React.Component<any, IProfileMana
                             </div>
                         ) }
                     </div>
+
 
                     <div className="profile__menu">
                         { this.SECTIONS.map((section, index) => {

@@ -545,24 +545,38 @@
 
     .profile__menu {
 
-      display: none;
+      //display: none;
+      flex-direction: column;
 
-      //.profile__menu_section {
-      //  flex-grow: 1;
-      //  span {
-      //    font-size: 11px;
-      //    letter-spacing: 1px;
-      //    margin-left: 20px;
-      //    display: block;
-      //  }
-      //}
+      .profile__menu_section {
+        //flex-grow: 1;
+        width: 100%;
+        justify-content: center;
+        border-width: 1px;
+        span {
+          width: 120px;
+          font-size: 11px;
+          letter-spacing: 1px;
+          margin-left: 20px;
+          display: block;
+        }
+        &:hover {
+          background-color: $color4;
+        }
+
+        &.active, &.active:hover {
+          border: none;
+          background-color: #FFFFFF;
+        }
+      }
     }
 
     .profile__section {
 
       margin-top: $margin * 2;
       padding: 0 $padding;
-      width: unset;
+      //width: unset;
+      max-width: 800px;
 
       .profile__phone {
         flex-direction: row;
@@ -607,7 +621,7 @@
         flex-direction: column;
         align-items: flex-start;
         justify-content: space-around;
-        margin: $margin 15%;
+        //margin: $margin 15%;
 
 
         .time {
