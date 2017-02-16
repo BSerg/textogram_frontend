@@ -53,7 +53,8 @@ export namespace Captions {
         loading_video: 'Загрузка видео',
         loading_audio: 'Загрузка аудио',
         loading_post: 'Загрузка поста',
-        saving_error: 'Что-то пошло не так. Мы не можем сохранить эту публикацию.'
+        saving_error: 'Что-то пошло не так. Мы не можем сохранить эту публикацию.',
+        article_created: 'Статья сохранена в черновиках',
     };
 
     export const shared = {

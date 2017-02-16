@@ -42,10 +42,16 @@ import {NotificationAction, SHOW_NOTIFICATION} from "../actions/shared/Notificat
 import PopupPrompt from "./shared/PopupPrompt";
 
 
+interface IEditorProps {
+    newArticle?: boolean
+    params?: any
+}
+
 interface IEditorState {
-    article?: any,
-    isValid?: boolean,
-    error?: any,
+    newArticle?: boolean
+    article?: any
+    isValid?: boolean
+    error?: any
     autoSave?: boolean
     showLastBlockHandler?: boolean
     isSavingArticle?: boolean
@@ -54,12 +60,13 @@ interface IEditorState {
 }
 
 
-export default class Editor extends React.Component<any, IEditorState> {
+export default class Editor extends React.Component<IEditorProps, IEditorState> {
     forceUpdateContent: (forceUpdate?: boolean) => void;
 
     constructor(props: any) {
         super(props);
         this.state = {
+            newArticle: this.props.newArticle,
             article: null,
             isValid: true,
             error: null,
@@ -75,6 +82,17 @@ export default class Editor extends React.Component<any, IEditorState> {
         this.handleOpenInlineBlock = this.handleOpenInlineBlock.bind(this);
         this.handleCloseInlineBlock = this.handleCloseInlineBlock.bind(this);
         this.handleMediaQuery = this.handleMediaQuery.bind(this);
+    }
+
+    static defaultProps = {
+        newArticle: false
+    };
+
+    createArticle(article: any) {
+        return api.post('/articles/editor/', article).then((response: any) => {
+            NotificationAction.do(SHOW_NOTIFICATION, {content: Captions.editor.article_created});
+            return response.data;
+        });
     }
 
     processContentBlock(block: IContentData) {
@@ -131,11 +149,21 @@ export default class Editor extends React.Component<any, IEditorState> {
 
     updateContent(forceUpdate: boolean = false): void {
         let store: any = ContentAction.getStore();
-        this.state.article.content = store.content;
         let isValid = this.validateContent(store.content, Validation.ROOT);
-        if (isValid != this.state.isValid) {
-            forceUpdate = true;
+        if (this.state.newArticle) {
+            this.createArticle(Object.assign(this.state.article, {content: store.content})).then((article: any) => {
+                this.state.article = article;
+                this.state.autoSave = true;
+                this.state.newArticle = false;
+                // this.setState({article: article, autoSave: true, newArticle: false});
+            })
+        } else {
+            this.state.article.content = store.content;
+            if (isValid != this.state.isValid) {
+                forceUpdate = true;
+            }
         }
+
         if (forceUpdate) {
             this.setState({article: this.state.article, isValid: isValid}, () => {
                 window.setTimeout(() => {
@@ -261,7 +289,22 @@ export default class Editor extends React.Component<any, IEditorState> {
         InlineBlockAction.onChange(CLOSE_INLINE_BLOCK, this.handleCloseInlineBlock);
         MediaQuerySerice.listen(this.handleMediaQuery);
 
-        this.loadArticle(this.props.params.articleId);
+        if (this.state.newArticle) {
+            let newContent: any = {
+                title: '',
+                cover: null,
+                blocks: []
+            };
+            this.setState({
+                article: {id: null, status: ArticleStatuses.DRAFT, content: newContent},
+                autoSave: false,
+                isValid: this.validateContent(newContent, Validation.ROOT)
+            }, () => {
+                this.resetContent(false);
+            });
+        } else {
+            this.loadArticle(this.props.params.articleId);
+        }
     }
 
     componentWillUnmount() {
@@ -278,14 +321,16 @@ export default class Editor extends React.Component<any, IEditorState> {
     }
 
     render() {
+        let articleIsChanged = this.props.params && this.state.article && this.state.article.id != this.props.params.articleId;
         return (
             <div className="editor">
                 <div className="editor__wrapper">
                     {this.state.article && !this.state.error ?
                         [
-                            <TitleBlock key={"titleBlock" + this.state.article.id} articleSlug={this.props.params.articleId}
-                                title={this.state.article.content.title}
-                                cover={this.state.article.content.cover}/>,
+                            <TitleBlock key={"titleBlock" + (articleIsChanged ? this.state.article.id : '')}
+                                        articleSlug={this.state.article.id}
+                                        title={this.state.article.content.title}
+                                        cover={this.state.article.content.cover}/>,
                             this.state.article.content.blocks.map((contentBlock: IContentData, index: number) => {
                                 let blockHandlerButtons, block, isLast = index == this.state.article.content.blocks.length - 1;
 
@@ -418,5 +463,15 @@ export default class Editor extends React.Component<any, IEditorState> {
                 <div id="selection_tools"></div>
             </div>
         )
+    }
+}
+
+export class NewArticleEditor extends React.Component<any, any> {
+    constructor(props: any) {
+        super(props);
+    }
+
+    render() {
+        return <Editor newArticle={true}/>;
     }
 }

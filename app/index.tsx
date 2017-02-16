@@ -15,6 +15,7 @@ import TwitterAuth from './components/TwitterAuth';
 import {UserAction, GET_ME} from './actions/user/UserAction';
 
 import 'core-js/shim';
+import {NewArticleEditor} from "./components/Editor";
 
 class App extends React.Component<any, any> {
 
@@ -84,6 +85,7 @@ class App extends React.Component<any, any> {
 
                     <Route path="home/:id" component={IndexPage} />
                     <Route path="profile/:userId" component={Profile}/>
+                    <Route path="articles/new" component={NewArticleEditor}/>
                     <Route path="articles/:articleId/edit" component={Editor}/>
                     <Route path="articles/:articleSlug" component={Article}/>
                     <Route path="drafts" component={Drafts} />
