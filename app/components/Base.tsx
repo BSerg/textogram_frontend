@@ -56,11 +56,11 @@ export default class Base extends React.Component<any, any> {
     render() {
         return (
             <div className="container">
+                <Menu />
                 <div className="content">
                     {this.props.children}
                 </div>
                 <MenuButton/>
-                <Menu />
                 {!this.state.isDesktop ? <PopupPanel/> : null}
                 <Notification/>
                 <Modal/>

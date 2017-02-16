@@ -14,6 +14,7 @@ const EditIcon = require('babel!svg-react!../../assets/images/edit.svg?name=Edit
 interface IArticlePreviewPropsInterface {
     item: any,
     onDelete?: (id: number) => {},
+    onClick?: (id: number|null) => {},
     isFeed?: boolean,
     isOwner?: boolean,
 }
@@ -54,7 +55,7 @@ class ArticlePreviewClass extends React.Component<IArticlePreviewPropsInterface,
         let views = this.getViewsString(this.props.item.views || 0);
 
         return (
-            <div className="article_preview">
+            <div className={"article_preview" + (this.props.isOwner ? " article_preview_owner" : "") }>
                     <div className="title">
                         <Link to={this.props.item.is_draft ? ("/articles/" + this.props.item.id + "/edit/") :
                             ("/articles/" + this.props.item.slug + "/")}><div>{ this.props.item.title || date }</div></Link>
@@ -72,7 +73,6 @@ class ArticlePreviewClass extends React.Component<IArticlePreviewPropsInterface,
                         this.props.item.lead ? (
                             <Link to={this.props.item.is_draft ? ("/articles/" + this.props.item.id + "/edit/") :
                                 ("/articles/" + this.props.item.slug + "/")}>
-
                                 <div className="lead">{ this.props.item.lead }</div>
                             </Link>
                         ) : null
@@ -106,6 +106,18 @@ class ArticlePreviewClass extends React.Component<IArticlePreviewPropsInterface,
                     }
 
                 </div>
+
+                {
+                    this.props.isOwner ? (
+                        <div className="bottom_controls">
+                            <Link to={"/articles/" + this.props.item.id + "/edit/"}>
+                                <div>{Captions.profile.articlePreviewEdit}</div>
+                            </Link>
+                            <div>{Captions.profile.articlePreviewSettings}</div>
+                            <div>{Captions.profile.articlePreviewCopy}</div>
+                            <div className="delete">{Captions.profile.articlePreviewDelete}</div>
+                        </div>) : null
+                }
 
 
             </div>)

@@ -66,7 +66,19 @@ export namespace Captions {
         subscribe: 'Подписаться',
         subscribed: 'Вы подписаны',
         menuSubscriptions: "Подписки",
-        menuArticles: "Публикации",
+        menuArticles: "Мои тексты",
+        menuDrafts: "Черновики",
+        subscribers: "Читают",
+        subscribersOwnProfile: "Вас читают",
+        newArticle: "Новый текст",
+
+        articlePreviewEdit: "Редактировать",
+        articlePreviewSettings: "Настройки",
+        articlePreviewCopy: "Копировать",
+        articlePreviewDelete: "Удалить",
+
+        subscribersYouAreSubscribed: "Вы читаете",
+        subscribersNumber: "Читают",
     };
 
     export const main_menu = {
@@ -76,7 +88,7 @@ export namespace Captions {
         notificationDefaultText: 'Новые уведомления',
         notificationZeroText: 'Нет непрочитанных  уведомлений',
         title: 'TEXTIUS',
-        forgotPassword: 'забли пароль?',
+        forgotPassword: 'забыли пароль?',
         register: 'регистрация',
         about: 'Что такое TEXTIUS?',
         inputPhonePlaceholder: '+7 ',

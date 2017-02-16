@@ -4,7 +4,8 @@
 $avatar-side-size: 60px;
 
 #profile_content {
-
+  display: flex;
+  flex-direction: column;
 
   //margin-top: $header-height + $avatar-side-size/2 + $margin;
 
@@ -49,25 +50,52 @@ $avatar-side-size: 60px;
 
     margin-bottom: $margin;
 
+    a {
+      text-decoration: none;
+    }
+
+    .profile__subscription_info {
+      background-color: $color4;
+      width: 180px;
+      height: 40px;
+      line-height: 40px;
+      box-sizing: border-box;
+
+      &:hover {
+        background-color: $color3;
+      }
+    }
+
     .profile__subscription_subscribe, .profile__subscription_unsubscribe, .profile__subscription_info {
       display: flex;
       flex-direction: row;
 
       align-items: center;
+      justify-content: center;
 
-      color: $color6_1;
+      color: $color;
       text-transform: uppercase;
       font-size: $font-size-small;
       letter-spacing: 1px;
       margin: 0 $margin/2;
+      cursor: pointer;
 
       svg {
         width: 25px;
         height: 25px;
-        fill: $color6_1;
+        fill: $color;
       }
       span {
         margin: 0 5px;
+      }
+    }
+
+    .profile__subscription_info {
+      position: relative;
+
+      svg {
+        position: absolute;
+        left: 5px;
       }
     }
 
@@ -115,6 +143,10 @@ $avatar-side-size: 60px;
     flex-direction: column;
     align-items: center;
 
+    &.hidden {
+      display: none;
+    }
+
     .profile__articles__menu {
       display: inline-block;
       display: flex;
@@ -128,15 +160,16 @@ $avatar-side-size: 60px;
         text-transform: uppercase;
         text-align: center;
         flex-grow: 1;
-        max-width: 160px;
+        max-width: 200px;
         padding: $padding/2;
         cursor: pointer;
         color: $color5;
         border-bottom: 1px solid $color5;
+        box-sizing: border-box;
 
         @include transition();
 
-        &.active {
+        &:hover, &.active {
           border-bottom: 3px solid #000000;
           color: $color;
         }
@@ -161,6 +194,7 @@ $avatar-side-size: 60px;
   overflow-y: scroll;
   padding-bottom: 50px;
   box-sizing: border-box;
+  position: relative;
 
   .profile__subscriber {
     display: flex;
@@ -202,6 +236,12 @@ $avatar-side-size: 60px;
       fill: $color3;
       stroke: $color3;
     }
+
+    .subscription_info {
+      text-transform: uppercase;
+      font-size: 9px;
+      word-spacing: 5px;
+    }
   }
 
   .profile__subscriber:last-child {
@@ -216,7 +256,7 @@ $avatar-side-size: 60px;
     justify-content: center;
     $input_height: 50px;
 
-    position: fixed;
+    position: absolute;
     left: 0;
     bottom: 0;
     width: 100%;
@@ -246,6 +286,8 @@ $avatar-side-size: 60px;
     justify-content: center;
     padding: 10px;
 
+    cursor: pointer;
+
     svg {
       width: 18px;
       height: 18px;
@@ -261,8 +303,95 @@ $avatar-side-size: 60px;
 
 @media (min-width: 1024px) {
   #profile_content {
+    flex-direction: row;
+    .profile_content_main {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 400px;
+      height: 100%;
+      background-color: #F7F7F7;
+
+    }
+
+    .profile__username {
+      margin-bottom: 30px;
+      span {
+        font-size: 20px;
+      }
+    }
+
+    .profile__avatar {
+      margin-top: 70px;
+
+      //img, .profile__avatar_dummy {
+      //  width: 95px;
+      //  height: 95px;
+      //  min-width: 95px;
+      //  min-height: 95px;
+      //}
+    }
+
+    .profile_content_filler {
+      width: 400px;
+      min-width: 400px;
+    }
+
+    .profile__articles {
+      width: 100%;
+      max-width: 800px;
+
+      //margin-left: 400px;
+
+    }
+
+    .profile__social_links {
+      margin-bottom: 40px;
+
+      .profile__social_icon {
+        width: 35px;
+        height: 35px;
+        text-align: center;
+        margin: 0 10px;
+
+        svg {
+          width: 28px;
+          height: 28px;
+        }
+      }
+    }
+
+    .profile__subscription {
+      height: unset;
+      flex-direction: column;
+      margin-bottom: 0;
+
+      .profile__subscription_info {
+        margin-bottom: $margin;
+      }
+    }
+
     .header {
       display: none;
+    }
+  }
+
+  .profile__subscribers {
+    background-color: transparent;
+    //position: fixed;
+    height: 100%;
+    max-height: 100%;
+
+    max-width: 800px;
+    margin: 0 $margin;
+
+    .filter_input {
+      background-color: transparent;
+      border-top: 1px solid $color5;
+
+      input {
+        color: $color;
+      }
     }
   }
 }
