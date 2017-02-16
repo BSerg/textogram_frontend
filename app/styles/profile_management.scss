@@ -66,6 +66,7 @@
       border: none;
       font-size: 18px;
       text-align: center;
+      background-color: transparent;
 
       &.error {
         border-bottom: 1px solid $color-accent;
@@ -499,8 +500,24 @@
 
   #profile_management {
 
-    width: 800px;
-    margin: auto;
+    width: 100%;
+    //margin: auto;
+    display: flex;
+    flex-direction: row;
+
+    .profile__management_head {
+      background-color: #F7F7F7;
+      width: 400px;
+      height: 100%;
+      position: fixed;
+      top: 0;
+      left: 0;
+    }
+
+    .profile__management_filler {
+      width: 400px;
+      min-width: 400px;
+    }
 
     .header {
       display: none;
@@ -508,8 +525,8 @@
 
     .profile__avatar {
       img {
-        width: 122px;
-        height: 122px;
+        width: 100px;
+        height: 100px;
         border-radius: 50%;
       }
     }
@@ -528,19 +545,24 @@
 
     .profile__menu {
 
+      display: none;
 
-      .profile__menu_section {
-        flex-grow: 1;
-        span {
-          font-size: 11px;
-          letter-spacing: 1px;
-          margin-left: 20px;
-          display: block;
-        }
-      }
+      //.profile__menu_section {
+      //  flex-grow: 1;
+      //  span {
+      //    font-size: 11px;
+      //    letter-spacing: 1px;
+      //    margin-left: 20px;
+      //    display: block;
+      //  }
+      //}
     }
 
     .profile__section {
+
+      margin-top: $margin * 2;
+      padding: 0 $padding;
+      width: unset;
 
       .profile__phone {
         flex-direction: row;
@@ -600,15 +622,22 @@
         }
       }
 
+      .profile__auth_link {
+        border-bottom: 1px solid $color3;
+      }
+
       .profile__auth_link, .profile__additional_links {
         display: flex;
         flex-direction: row;
         justify-content: flex-start;
-        padding-left: 40px;
+        //padding-left: 40px;
+        padding: 0;
+        background-color: transparent;
 
         .link_text {
           font-size: $font-size-small;
-          width: 220px;
+          padding: $padding / 2;
+          width: 200px;
         }
         .url {
           font-size: $font_size6;
@@ -617,6 +646,7 @@
           text-overflow: ellipsis;
         }
         .profile__link {
+          padding: $padding / 2;
           svg {
             width: 25px;
             height: 25px;
@@ -627,7 +657,7 @@
           }
 
           .eye, .close_icon {
-            width: 100px;
+            width: 50px;
             text-align: center;
           }
         }
@@ -683,6 +713,7 @@
 
       .profile__add_link {
         display: none;
+        margin: $margin 0;
 
         &.active, &.phone {
           display: flex;

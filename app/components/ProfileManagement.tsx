@@ -677,38 +677,47 @@ export default class ProfileManagement extends React.Component<any, IProfileMana
         return (
             <div id="profile_management">
                 <Header>{Captions.management.title}</Header>
-                <div className="profile__avatar" onClick={this.avatarClick} >
-                    <input type="file" style={{display: 'none'}} ref="inputAvatar" onChange={this.uploadAvatar}/>
-                    <img src={this.state.user.avatar} />
-                </div>
-                <div className="profile__username">
-                    { this.state.userNameEdit ? (
-                        <form onSubmit={this.userNameSubmit.bind(this)}>
-                            <input className={ this.state.userNameError ? 'error': '' } type="text" value={this.state.userName} onChange={this.userNameChange.bind(this)} />
-                            <span onClick={this.userNameSave.bind(this)}><ConfirmIcon /></span>
-                        </form>
-                    ) : (
-                        <div>
-                            <div className="name">
-                                <span>{ this.state.user.first_name }</span>
-                                <span>{ this.state.user.last_name }</span>
+
+                <div className="profile__management_head">
+                    <div className="profile__avatar" onClick={this.avatarClick} >
+                        <input type="file" style={{display: 'none'}} ref="inputAvatar" onChange={this.uploadAvatar}/>
+                        <img src={this.state.user.avatar} />
+                    </div>
+                    <div className="profile__username">
+                        { this.state.userNameEdit ? (
+                            <form onSubmit={this.userNameSubmit.bind(this)}>
+                                <input className={ this.state.userNameError ? 'error': '' } type="text" value={this.state.userName} onChange={this.userNameChange.bind(this)} />
+                                <span onClick={this.userNameSave.bind(this)}><ConfirmIcon /></span>
+                            </form>
+                        ) : (
+                            <div>
+                                <div className="name">
+                                    <span>{ this.state.user.first_name }</span>
+                                    <span>{ this.state.user.last_name }</span>
+                                </div>
+                                <span onClick={this.toggleEditUserName}><EditIcon /></span>
                             </div>
-                            <span onClick={this.toggleEditUserName}><EditIcon /></span>
-                        </div>
-                    ) }
+                        ) }
+                    </div>
+
+                    <div className="profile__menu">
+                        { this.SECTIONS.map((section, index) => {
+                            return (
+                                <div className={"profile__menu_section" + (index == this.state.currentSection ? ' active' : '')}
+                                     key={"section" + index.toString() }
+                                     onClick={this.setSection.bind(this, index)}>
+                                    {section.icon ? (<section.icon />) : null}
+                                    <span>{ section.caption }</span>
+                                </div>)
+                        }) }
+                    </div>
                 </div>
 
-                <div className="profile__menu">
-                    { this.SECTIONS.map((section, index) => {
-                        return (
-                            <div className={"profile__menu_section" + (index == this.state.currentSection ? ' active' : '')}
-                                 key={"section" + index.toString() }
-                                 onClick={this.setSection.bind(this, index)}>
-                                {section.icon ? (<section.icon />) : null}
-                                <span>{ section.caption }</span>
-                            </div>)
-                    }) }
+                <div className="profile__management_filler">
+
                 </div>
+
+
                 { CurrentSection ? <CurrentSection user={ this.state.user } /> : null}
             </div>);
     }
