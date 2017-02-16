@@ -321,13 +321,12 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
     }
 
     render() {
-        let articleIsChanged = this.props.params && this.state.article && this.state.article.id != this.props.params.articleId;
         return (
             <div className="editor">
                 <div className="editor__wrapper">
                     {this.state.article && !this.state.error ?
                         [
-                            <TitleBlock key={"titleBlock" + (articleIsChanged ? this.state.article.id : '')}
+                            <TitleBlock key={"titleBlock" + (this.state.article & this.state.article.id ? this.state.article.id : '')}
                                         articleSlug={this.state.article.id}
                                         title={this.state.article.content.title}
                                         cover={this.state.article.content.cover}/>,
