@@ -12,6 +12,7 @@ import AvatarEditor from './shared/AvatarEditor';
 import Registration from './Registration';
 import ResetPassword from './ResetPassword';
 
+import AuthorList from './shared/AuthorList';
 
 import Error from './Error';
 import Header from './shared/Header';
@@ -56,30 +57,38 @@ class Subscriptions extends React.Component<ISectionPropsInterface, ISubscriptio
 
     removeSubscription(id: null | number = null) {
         if (id == null) return;
+        console.log(id);
+        console.log(this.state);
 
-        api.post('/users/' + id + '/un_subscribe/').then((response: any) => {
-            let indexToDelete: number;
-            let indexToDeleteFiltered: number;
-            this.state.objects.forEach((o: any, index: number) => {
-                if (o.author.id == id) indexToDelete = index;
-            });
-            this.state.objectsFiltered.forEach((of: any, index: number) => {
-                if (of.author.id == id) indexToDeleteFiltered = index;
-            });
-            let objects = this.state.objects;
-            let objectsFiltered = this.state.objectsFiltered;
-            if (indexToDelete != undefined) { objects.splice(indexToDelete, 1); }
-            if (indexToDeleteFiltered != undefined) { objectsFiltered.splice(indexToDeleteFiltered, 1); }
-
-            this.setState({objects: objects, objectsFiltered: objectsFiltered});
-        });
+        // api.post('/users/' + id + '/un_subscribe/').then((response: any) => {
+        //     let indexToDelete: number;
+        //     let indexToDeleteFiltered: number;
+        //     this.state.objects.forEach((o: any, index: number) => {
+        //         if (o.author.id == id) indexToDelete = index;
+        //     });
+        //     this.state.objectsFiltered.forEach((of: any, index: number) => {
+        //         if (of.author.id == id) indexToDeleteFiltered = index;
+        //     });
+        //     let objects = this.state.objects;
+        //     let objectsFiltered = this.state.objectsFiltered;
+        //     if (indexToDelete != undefined) { objects.splice(indexToDelete, 1); }
+        //     if (indexToDeleteFiltered != undefined) { objectsFiltered.splice(indexToDeleteFiltered, 1); }
+        //
+        //     this.setState({objects: objects, objectsFiltered: objectsFiltered});
+        // });
     }
 
     load() {
         api.get('/subscriptions/').then((response: any) => {
-            let objects = this.updateObjects(response.data);
-            let objectsFiltered = this.updateObjects(response.data);
-            this.setState({objects: objects, objectsFiltered: objectsFiltered});
+            // let objects = this.updateObjects(response.data);
+            // let objectsFiltered = this.updateObjects(response.data);
+
+            // this.setState({objects: objects, objectsFiltered: objectsFiltered});
+            let objects = this.updateObjects(response.data.map((o: any) => {
+                return o.author
+            }));
+
+            this.setState({objects: objects, objectsFiltered: objects});
         })
     }
 
@@ -102,7 +111,7 @@ class Subscriptions extends React.Component<ISectionPropsInterface, ISubscriptio
     updateObjects(objects: any[]): any[] {
 
         return objects.map((o: any) => {
-            o.userName = (o.author.first_name + ' ' + o.author.last_name).toLowerCase();
+            o.userName = (o.first_name + ' ' + o.last_name).toLowerCase();
             return o;
         });
     }
@@ -117,20 +126,7 @@ class Subscriptions extends React.Component<ISectionPropsInterface, ISubscriptio
                 <div className="filter_input">
                     <input onChange={this.filterSubscriptions.bind(this)} type="text" placeholder={Captions.management.fastSearch} />
                 </div>
-                {this.state.objectsFiltered.map((subscription, index) => {
-                    return (
-                        <div className="profile__subscription" key={index}>
-                            <div className="avatar"><Link to={"/profile/" + subscription.author.id}><img src={subscription.author.avatar} /></Link></div>
-
-                            <div className="name">
-                                <Link to={"/profile/" + subscription.author.id}>
-                                    <span>{subscription.author.first_name} </span> <span>{subscription.author.last_name}</span>
-                                </Link>
-                            </div>
-
-                            <div className="close_icon" onClick={this.removeSubscription.bind(this, subscription.author.id)}><CloseIcon /></div>
-                        </div>)
-                })}
+                <AuthorList items={this.state.objectsFiltered} />
             </div>);
     }
 }
@@ -549,7 +545,7 @@ export default class ProfileManagement extends React.Component<any, IProfileMana
     constructor() {
         super();
         this.state = this.getStateData();
-        this.state.currentSection = 0;
+        this.state.currentSection = 3;
         this.checkUser = this.checkUser.bind(this);
         this.avatarClick = this.avatarClick.bind(this);
         this.uploadAvatar = this.uploadAvatar.bind(this);

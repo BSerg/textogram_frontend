@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {withRouter} from 'react-router';
+import {Link, withRouter} from 'react-router';
 import {api} from '../api';
 
 import {MenuAction, TOGGLE} from '../actions/MenuAction';
@@ -28,7 +28,7 @@ interface DefaultMenuPropsInterface {
 }
 
 
-interface IDefaultmenuStateInterface {
+interface IDefaultMenuStateInterface {
     phone?: string;
     password?: string;
     patternInputPhone?: any;
@@ -38,7 +38,7 @@ interface IDefaultmenuStateInterface {
 
 }
 
-class DefaultMenu extends React.Component<DefaultMenuPropsInterface, IDefaultmenuStateInterface> {
+class DefaultMenu extends React.Component<DefaultMenuPropsInterface, IDefaultMenuStateInterface> {
 
     constructor() {
         super();
@@ -328,7 +328,10 @@ class UserMenu extends React.Component<IUserMenuProps, any> {
     handleUrlClick(url: string, e: any) {
         e.stopPropagation();
         this.props.router.push(url);
-        MenuAction.do(TOGGLE, false);
+        if (!this.props.isDesktop) {
+            MenuAction.do(TOGGLE, false);
+        }
+
     }
 
     render() {
@@ -337,20 +340,30 @@ class UserMenu extends React.Component<IUserMenuProps, any> {
                 <div className="menu__close" onClick={this.closeMenu.bind(this)}>
                     <CloseIcon />
                 </div>
-                <div className="menu__user" onClick={this.goToProfile.bind(this)}>
-                    <div className="menu__user_avatar">
-                        <img src={ this.props.user.avatar } />
-                    </div>
-                    <div className="menu__user_username"><span>{this.props.user.first_name}</span> <span>{this.props.user.last_name}</span></div>
+                <div className="menu__user">
+                    <Link to={"/profile/" + this.props.user.id}>
+                        <div className="menu__user_avatar">
+                            <img src={ this.props.user.avatar } />
+                        </div>
+                        <div className="menu__user_username"><span>{this.props.user.first_name}</span> <span>{this.props.user.last_name}</span></div>
+                    </Link>
                 </div>
 
-                <div className="menu__links"><div className="menu__link" onClick={this.createArticle.bind(this)}>{ Captions.main_menu.create_article }</div></div>
-                <div className="menu__links"><div className="menu__link" onClick={this.handleUrlClick.bind(this, '/drafts/')}>{ Captions.main_menu.drafts }</div></div>
+                <div className="menu__links">
+                    <div className="menu__link">
+                        <Link to="/articles/new/">{ Captions.main_menu.create_article }</Link>
+                    </div>
+                </div>
+                <div className="menu__links">
+                    <div className="menu__link">
+                        <Link to={"/profile/" + this.props.user.id + "/?show=drafts"}>{ Captions.main_menu.drafts }</Link>
+                    </div>
+                </div>
 
                 <div className="menu__controls">
                     <NotificationBlockWithRouter showZero={true} />
-                    <div onClick={this.handleUrlClick.bind(this, '/manage/')}><SettingsIcon /></div>
-                    <div onClick={this.handleUrlClick.bind(this, '/info/')} ><InfoIcon /></div>
+                    <div><Link to="/manage/"><SettingsIcon /></Link></div>
+                    <div><Link to="/info/"><InfoIcon /></Link></div>
                     <div onClick={this.logout.bind(this)}><ExitIcon /></div>
                 </div>
 
@@ -364,8 +377,12 @@ class UserMenu extends React.Component<IUserMenuProps, any> {
                     </div>
                     <NotificationBlockWithRouter />
                     <div className="menu__links">
-                        <div className="menu__link" onClick={this.createArticle.bind(this)}>{ Captions.main_menu.create_article }</div>
-                        <div className="menu__link" onClick={this.handleUrlClick.bind(this, '/drafts/')}>{ Captions.main_menu.drafts }</div>
+                        <div className="menu__link">
+                            { Captions.main_menu.create_article }
+                        </div>
+                        <div className="menu__link" onClick={this.handleUrlClick.bind(this, '/drafts/')}>
+                            { Captions.main_menu.drafts }
+                        </div>
                     </div>
                     <div onClick={this.handleUrlClick.bind(this, '/info/')} className="menu__info" ><InfoIcon /></div>
                     <div className="menu__controls">
@@ -391,7 +408,7 @@ export default class Menu extends React.Component<any, IMenuStateInterface> {
 
     constructor() {
         super();
-        this.state = {open: false, user: UserAction.getStore().user,  isDesktop: MediaQuerySerice.getIsDesktop()};
+        this.state = {open: true, user: UserAction.getStore().user,  isDesktop: MediaQuerySerice.getIsDesktop()};
         this.setUser = this.setUser.bind(this);
         this.setOpen = this.setOpen.bind(this);
     }

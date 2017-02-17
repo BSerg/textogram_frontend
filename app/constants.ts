@@ -79,6 +79,11 @@ export namespace Captions {
 
         subscribersYouAreSubscribed: "Вы читаете",
         subscribersNumber: "Читают",
+
+        switchButtonDrafts: "Черновики",
+        switchButtonCloseDrafts: "Закрыть черновики",
+        switchButtonAuthors: "Авторы",
+        switchButtonCloseAuthors: "Авторы",
     };
 
     export const main_menu = {

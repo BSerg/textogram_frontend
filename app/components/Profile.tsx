@@ -38,18 +38,20 @@ interface IUserArticlesStateInterface {
     feed?: any[];
     selectedSection?: string;
     selectedId?: number|null;
+    showSubsection?: boolean;
 }
 
 class UserArticles extends React.Component<IUserArticlesPropsInterface, IUserArticlesStateInterface> {
 
     SECTION_SUBSCRIPTIONS = 'subscriptions';
     SECTION_ARTICLES = 'articles';
-    SECTION_DRAFTS = 'drafts';
+    // SECTION_DRAFTS = 'drafts';
 
 
     constructor() {
         super();
-        this.state = {articles: [], feed: [], drafts: [], selectedSection: this.SECTION_ARTICLES, selectedId: null};
+        this.state = {articles: [], feed: [], drafts: [], selectedSection: this.SECTION_ARTICLES, selectedId: null,
+            showSubsection: false};
     }
 
     loadArticles(userId: string|number, drafts?: boolean) {
@@ -77,11 +79,15 @@ class UserArticles extends React.Component<IUserArticlesPropsInterface, IUserArt
     }
 
     setSection(sectionName: string) {
-        if (sectionName != this.SECTION_ARTICLES && sectionName != this.SECTION_SUBSCRIPTIONS && sectionName != this.SECTION_DRAFTS) {
+        if (sectionName != this.SECTION_ARTICLES && sectionName != this.SECTION_SUBSCRIPTIONS) {
             return;
         }
-        if ((sectionName == this.SECTION_SUBSCRIPTIONS || sectionName == this.SECTION_DRAFTS)  && !this.props.isSelf) return;
-        this.setState({selectedSection: sectionName});
+        if ((sectionName == this.SECTION_SUBSCRIPTIONS)  && !this.props.isSelf) return;
+        this.setState({selectedSection: sectionName, showSubsection: false});
+    }
+
+    toggleSubsection() {
+        this.setState({showSubsection: !this.state.showSubsection});
     }
 
     componentWillReceiveProps(nextProps: any) {
@@ -110,15 +116,24 @@ class UserArticles extends React.Component<IUserArticlesPropsInterface, IUserArt
         if (this.state.selectedSection == this.SECTION_SUBSCRIPTIONS) {
             items = this.state.feed;
         }
-        else if (this.state.selectedSection == this.SECTION_DRAFTS) {
+        else if (this.state.selectedSection == this.SECTION_ARTICLES && this.state.showSubsection) {
             items = this.state.drafts;
         }
         else {
             items = this.state.articles;
         }
 
+        let switchCaption = "";
+        if (this.state.selectedSection == this.SECTION_ARTICLES) {
+            switchCaption = this.state.showSubsection ? Captions.profile.switchButtonCloseDrafts : Captions.profile.switchButtonDrafts;
+        }
+        else if (this.state.selectedSection == this.SECTION_SUBSCRIPTIONS) {
+            switchCaption = this.state.showSubsection ? Captions.profile.switchButtonCloseAuthors : Captions.profile.switchButtonAuthors;
+        }
+
+
         let isFeed = this.state.selectedSection == this.SECTION_SUBSCRIPTIONS;
-        let isOwner = this.props.isSelf && (this.state.selectedSection == this.SECTION_ARTICLES || this.state.selectedSection == this.SECTION_DRAFTS);
+        let isOwner = this.props.isSelf && (this.state.selectedSection == this.SECTION_ARTICLES);
 
         return (<div className={"profile__articles" + (this.props.hidden ? " hidden" : "") }>
 
@@ -128,19 +143,29 @@ class UserArticles extends React.Component<IUserArticlesPropsInterface, IUserArt
                     <div onClick={this.setSection.bind(this, this.SECTION_ARTICLES)} className={(this.state.selectedSection == this.SECTION_ARTICLES) ? 'active': null}>
                         {Captions.profile.menuArticles}
                     </div>
-                    <div onClick={this.setSection.bind(this, this.SECTION_DRAFTS)} className={(this.state.selectedSection == this.SECTION_DRAFTS) ? 'active': null}>
-                        {Captions.profile.menuDrafts}
-                    </div>
                     <div onClick={this.setSection.bind(this, this.SECTION_SUBSCRIPTIONS)}  className={(this.state.selectedSection == this.SECTION_SUBSCRIPTIONS) ? 'active': null}>
                         {Captions.profile.menuSubscriptions}
+                    </div>
+                    <div className="profile__articles__menu_switch_button" onClick={this.toggleSubsection.bind(this)}>
+                        <span>{ switchCaption }</span>
+                        {
+                            this.state.showSubsection ? <CloseIcon /> : null
+                        }
                     </div>
                 </div>) : null
             }
 
             {
-                items.map((article, index) => {
-                    return (<ArticlePreview isFeed={isFeed} key={index} item={article} isOwner={isOwner} />)
-                })
+                ((this.state.selectedSection == this.SECTION_ARTICLES) || (this.state.selectedSection == this.SECTION_SUBSCRIPTIONS && !this.state.showSubsection)) ?
+
+                    items.map((article, index) => {
+                        return (<ArticlePreview isFeed={isFeed} key={index} item={article} isOwner={isOwner} />)
+                    }) : null
+            }
+
+            {
+                (this.state.selectedSection == this.SECTION_SUBSCRIPTIONS && this.state.showSubsection) ? (
+                    <div>authorsss</div>) : null
             }
         </div>)
     }
@@ -220,9 +245,9 @@ class UserSubscribers extends React.Component<ISubscribersPropsInterface, ISubsc
                 {this.state.itemsFiltered.map((item: any, index) => {
                     return (
                         <div className="profile__subscriber" key={index}>
-                            <div className="avatar" onClick={this.close.bind(this)}><Link to={"/profile/" + item.id}><img src={item.avatar} /></Link></div>
+                            <div className="avatar"><Link to={"/profile/" + item.id}><img src={item.avatar} /></Link></div>
 
-                            <div className="name" onClick={this.close.bind(this)}>
+                            <div className="name">
                                 <Link to={"/profile/" + item.id}>
                                     <span>{item.first_name} </span> <span>{item.last_name}</span>
                                 </Link>
