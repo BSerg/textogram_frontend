@@ -58,13 +58,16 @@
       flex-grow: 1;
     }
 
-    .close svg {
-      width: 10px;
-      height: 10px;
-      fill: #000000;
-      stroke: #000000;
-    }
+    .close {
+      cursor: pointer;
 
+      svg {
+        width: 10px;
+        height: 10px;
+        fill: $color3;
+        stroke: #000000;
+      }
+    }
 
   }
 

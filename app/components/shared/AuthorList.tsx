@@ -26,6 +26,8 @@ export default class AuthorList extends React.Component<IAuthorListPropsInterfac
             {
                 this.props.items.map((item: any, index: number) => {
 
+                    console.log(item);
+
 
                     return (<div key={index} className="author_list__author">
 

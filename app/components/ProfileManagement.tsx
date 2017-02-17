@@ -60,35 +60,30 @@ class Subscriptions extends React.Component<ISectionPropsInterface, ISubscriptio
         console.log(id);
         console.log(this.state);
 
-        // api.post('/users/' + id + '/un_subscribe/').then((response: any) => {
-        //     let indexToDelete: number;
-        //     let indexToDeleteFiltered: number;
-        //     this.state.objects.forEach((o: any, index: number) => {
-        //         if (o.author.id == id) indexToDelete = index;
-        //     });
-        //     this.state.objectsFiltered.forEach((of: any, index: number) => {
-        //         if (of.author.id == id) indexToDeleteFiltered = index;
-        //     });
-        //     let objects = this.state.objects;
-        //     let objectsFiltered = this.state.objectsFiltered;
-        //     if (indexToDelete != undefined) { objects.splice(indexToDelete, 1); }
-        //     if (indexToDeleteFiltered != undefined) { objectsFiltered.splice(indexToDeleteFiltered, 1); }
-        //
-        //     this.setState({objects: objects, objectsFiltered: objectsFiltered});
-        // });
+        api.post('/users/' + id + '/un_subscribe/').then((response: any) => {
+            let indexToDelete: number;
+            let indexToDeleteFiltered: number;
+            this.state.objects.forEach((o: any, index: number) => {
+                if (o.id == id) indexToDelete = index;
+            });
+            this.state.objectsFiltered.forEach((of: any, index: number) => {
+                if (of.id == id) indexToDeleteFiltered = index;
+            });
+            let objects = this.state.objects;
+            let objectsFiltered = this.state.objectsFiltered;
+            if (indexToDelete != undefined) { objects.splice(indexToDelete, 1); }
+            if (indexToDeleteFiltered != undefined) { objectsFiltered.splice(indexToDeleteFiltered, 1); }
+
+            this.setState({objects: objects, objectsFiltered: objectsFiltered});
+        });
     }
 
     load() {
         api.get('/subscriptions/').then((response: any) => {
-            // let objects = this.updateObjects(response.data);
-            // let objectsFiltered = this.updateObjects(response.data);
-
-            // this.setState({objects: objects, objectsFiltered: objectsFiltered});
             let objects = this.updateObjects(response.data.map((o: any) => {
                 return o.author
             }));
-
-            this.setState({objects: objects, objectsFiltered: objects});
+            this.setState({objects: objects, objectsFiltered: this.updateObjects(objects)});
         })
     }
 
@@ -126,7 +121,7 @@ class Subscriptions extends React.Component<ISectionPropsInterface, ISubscriptio
                 <div className="filter_input">
                     <input onChange={this.filterSubscriptions.bind(this)} type="text" placeholder={Captions.management.fastSearch} />
                 </div>
-                <AuthorList items={this.state.objectsFiltered} />
+                <AuthorList items={this.state.objectsFiltered} clickUnSubscribe={this.removeSubscription.bind(this)} />
             </div>);
     }
 }
@@ -545,7 +540,7 @@ export default class ProfileManagement extends React.Component<any, IProfileMana
     constructor() {
         super();
         this.state = this.getStateData();
-        this.state.currentSection = 3;
+        this.state.currentSection = 0;
         this.checkUser = this.checkUser.bind(this);
         this.avatarClick = this.avatarClick.bind(this);
         this.uploadAvatar = this.uploadAvatar.bind(this);
