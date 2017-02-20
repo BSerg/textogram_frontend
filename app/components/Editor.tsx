@@ -433,11 +433,7 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
                                                   ]}/>
                                     : null
                             ,
-                            <div key="add_content_help" className="add_content_help">
-                                {!this.state.article.content.blocks.length || !this.state.article.content.blocks.length ?
-                                    Captions.editor.add_content_help : null
-                                }
-                            </div>,
+                            <div key="add_content_help" className="add_content_help"></div>,
                             (this.state.article.status == ArticleStatuses.DRAFT ?
                                 <div key="publish_button"
                                      className={"editor__publish" + (!this.state.isValid ? ' disabled': '')}
