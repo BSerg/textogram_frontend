@@ -326,7 +326,7 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
                 <div className="editor__wrapper">
                     {this.state.article && !this.state.error ?
                         [
-                            <TitleBlock key={"titleBlock" + (this.state.article & this.state.article.id ? this.state.article.id : '')}
+                            <TitleBlock key={"titleBlock" + (this.state.article && this.state.article.id ? this.state.article.id : '')}
                                         articleSlug={this.state.article.id}
                                         title={this.state.article.content.title}
                                         cover={this.state.article.content.cover}/>,
