@@ -178,23 +178,21 @@ $base_desktop_photo_height: 400px;
       }
     }
 
-    &:not(.active) {
-      .content_block_photo__photo {
-        &.photo0 {
-          width: calc(82% - #{$space}/2)!important;
-          height: $base_desktop_photo_height!important;
-          margin-right: $space;
-        }
+    &:not(.active) .content_block_photo__photo {
+      &.photo0 {
+        width: calc(82% - #{$space}/2);
+        height: $base_desktop_photo_height;
+        margin-right: $space;
+      }
 
-        &.photo1, &.photo2, &.photo3, &.photo4, &.photo5 {
-          width: calc(18% - #{$space}/2)!important;
-          height: ($base_desktop_photo_height - 4 * $space) / 5!important;
-          margin: 0;
-        }
+      &.photo1, &.photo2, &.photo3, &.photo4, &.photo5 {
+        width: calc(18% - #{$space}/2);
+        height: ($base_desktop_photo_height - 4 * $space) / 5;
+        margin: 0;
+      }
 
-        &.photo1, &.photo2, &.photo3, &.photo4 {
-          margin-bottom: $space;
-        }
+      &.photo1, &.photo2, &.photo3, &.photo4 {
+        margin-bottom: $space;
       }
     }
 
