@@ -60,7 +60,7 @@ $base_desktop_photo_height: 400px;
     .content_block_photo__photo {
       display: none;
 
-      &.photo0, &.photo1, &.photo2, &.photo3, &.photo4, &.photo5 {
+      &.photo0, &.photo1, &.photo2, &.photo3, &.photo4, &.photo5, &.content_block_photo__empty {
         display: block;
       }
 
