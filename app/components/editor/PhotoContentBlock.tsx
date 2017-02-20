@@ -246,7 +246,8 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
             return;
         }
         let tempURL = window.URL.createObjectURL(file);
-        this.state.content.photos.push({id: null, image: tempURL});
+        let photo: any = {id: null, image: tempURL};
+        this.state.content.photos.push(photo);
         this.setState({loadingImage: true, content: this.state.content}, () => {
             PopupPanelAction.do(OPEN_POPUP, {content: this.getPopupContent()});
             const progressHandler = this.handleUploadProgress.bind(this, file.name);
@@ -264,7 +265,8 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
             }).catch((err) => {
                 console.log(err);
                 UploadImageAction.unbind(UPDATE_PROGRESS, progressHandler);
-                this.setState({loadingImage: false});
+                this.state.content.photos.splice(this.state.content.photos.indexOf(photo), 1);
+                this.setState({loadingImage: false, content: this.state.content});
             });
         });
     }
