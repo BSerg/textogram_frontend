@@ -166,12 +166,7 @@ $base_desktop_photo_height: 400px;
     }
 
     &:not(.active) {
-      &:not(.grid_1) .content_block_photo__photo,
-      &:not(.grid_2) .content_block_photo__photo,
-      &:not(.grid_3) .content_block_photo__photo,
-      &:not(.grid_4) .content_block_photo__photo,
-      &:not(.grid_5) .content_block_photo__photo,
-      &:not(.grid_6) .content_block_photo__photo {
+      .content_block_photo__photo {
         &.photo0 {
           width: calc(82% - #{$space}/2)!important;
           height: $base_desktop_photo_height!important;

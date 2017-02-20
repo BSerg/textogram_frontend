@@ -150,6 +150,10 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
                             ContentAction.do(UPDATE_CONTENT, {contentBlock: that.state.content});
                         });
                     }
+                },
+                onMove: (e: any): boolean => {
+                    this.handleOnMovePhoto();
+                    return true;
                 }
             });
             this.setState({sortable: sortable});
@@ -201,6 +205,19 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
                 PopupPanelAction.do(OPEN_POPUP, {content: this.getPopupContent()});
             });
         }
+    }
+
+    handleOnMovePhoto() {
+        window.setTimeout(() => {
+            let photos = this.refs.photosContainer.getElementsByClassName('content_block_photo__photo');
+            for (let i in photos) {
+                let photo = photos[i];
+                if (photo && photo.classList) {
+                    photo.classList.remove('photo0', 'photo1', 'photo2', 'photo3', 'photo4', 'photo5');
+                    photo.classList.add('photo' + i);
+                }
+            }
+        });
     }
 
     openModal(id: number) {
