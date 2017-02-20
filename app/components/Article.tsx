@@ -190,12 +190,21 @@ export default class Article extends React.Component<any, IArticleState> {
                 this.state.article ?
                     <div id={"article" + this.state.article.id} className="article">
                         <div className={"article__title" + (this.state.article.cover ? ' inverted' : '')} style={coverStyle}>
-                            <Link to={`/profile/${this.state.article.owner.id}`} className="article__author">
-                                <span className="article__first_name">{this.state.article.owner.first_name}</span>
-                                {this.state.article.owner.last_name}
-                            </Link>
+                            {!this.state.isDesktop ?
+                                <Link to={`/profile/${this.state.article.owner.id}`} className="article__author">
+                                    {this.state.article.owner.first_name} {this.state.article.owner.last_name}
+                                </Link> : null
+                            }
                             <h1>{this.state.article.title}</h1>
                             <div className="article__stats">
+                                {this.state.isDesktop ?
+                                    <div className="article__author1">
+                                        Автор:&nbsp;
+                                        <Link to={`/profile/${this.state.article.owner.id}`}>
+                                            {this.state.article.owner.first_name} {this.state.article.owner.last_name}
+                                        </Link>
+                                    </div> : null
+                                }
                                 <div className="article__date">{this.state.article.date}</div>
                                 <div className="article__views">
                                     <ViewIcon/> {this.state.article.views}
@@ -208,8 +217,7 @@ export default class Article extends React.Component<any, IArticleState> {
                                 {this.state.article.owner.avatar ?
                                     <img className="article__avatar" src={this.state.article.owner.avatar}/> : null
                                 }
-                                 <span className="article__first_name">{this.state.article.owner.first_name}</span>
-                                {this.state.article.owner.last_name}
+                                {this.state.article.owner.first_name}&nbsp;{this.state.article.owner.last_name}
                             </Link>
                             <div className="article__shares">
                                 <a href={"http://vk.com/share.php?url=" + this.state.article.url}

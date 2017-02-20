@@ -26,14 +26,9 @@
       font-family: $family_open_sans;
       letter-spacing: 1px;
       text-transform: uppercase;
-      text-decoration: none;
+      text-decoration: underline;
       color: $color;
       cursor: pointer;
-
-      .article__first_name {
-        font-weight: $font-weight-bold;
-        margin-right: 10px;
-      }
     }
 
     h1 {
@@ -42,6 +37,7 @@
       font-size: 33px;
       font-weight: $font-weight-bold;
       line-height: 43px;
+      word-wrap: break-word;
     }
 
     .article__stats {
@@ -52,16 +48,22 @@
       align-items: center;
       justify-content: center;
       color: $color;
-    }
-
-    .article__date, .article__views {
       letter-spacing: 1px;
       text-align: center;
       font-size: 12px;
       font-family: $family_open_sans;
       line-height: 14px;
+    }
+
+    .article__author1, .article__date, .article__views {
       &:not(:last-child) {
         margin-right: 20px;
+      }
+    }
+
+    .article__author1 {
+      a {
+        color: $color;
       }
     }
 
@@ -95,6 +97,10 @@
       .article__stats {
         color: white;
 
+        a {
+          color: white;
+        }
+
         svg {
           stroke: white;
         }
@@ -114,6 +120,10 @@
         font-size: 40px;
         line-height: 51px;
         margin: 0 auto;
+      }
+
+      .article__author {
+
       }
     }
   }
@@ -476,6 +486,10 @@
     text-transform: uppercase;
     letter-spacing: 1px;
     text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
 
     .article__avatar {
       width: 35px;
