@@ -431,6 +431,8 @@
       .menu__controls {
         position: relative;
         justify-content: flex-end;
+        padding: 0 $padding/2 0 0;
+        height: 100%;
 
         &>div {
           margin: 0 5px;
