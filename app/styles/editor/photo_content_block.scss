@@ -45,6 +45,15 @@ $base_desktop_photo_height: 400px;
     margin-right: $space;
     margin-bottom: $space;
     cursor: pointer;
+
+    &.content_block_photo__empty {
+      width: 100%;
+      height: $base_photo_height;
+      margin: 0;
+      background: $color4 url('../../assets/images/image.svg') no-repeat center center;
+      background-size: 64px;
+      cursor: pointer;
+    }
   }
 
   &:not(.active) {
@@ -163,6 +172,10 @@ $base_desktop_photo_height: 400px;
   @include desktop {
     .content_block_photo__photo {
       height: $base_desktop_photo_height/2;
+
+      &.content_block_photo__empty {
+        height: $base_desktop_photo_height!important;
+      }
     }
 
     &:not(.active) {

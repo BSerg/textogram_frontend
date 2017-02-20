@@ -371,7 +371,8 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
                         <div className="content_block_photo__help">{Captions.editor.help_photo}</div> : null
                     }
                     {!this.state.content.photos.length ?
-                        <div className="content_block_photo__empty_label">{Captions.editor.add_photo_help}</div> : null
+                        <div className="content_block_photo__photo content_block_photo__empty"
+                             onClick={this.openFileDialog.bind(this)}></div> : null
                     }
 
                 </div>
