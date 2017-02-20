@@ -161,7 +161,7 @@ $avatar-side-size: 60px;
         text-align: center;
         flex-grow: 1;
         max-width: 200px;
-        padding: $padding/2;
+        padding: $padding/2 0;
         cursor: pointer;
         color: $color5;
         border-bottom: 1px solid $color5;
@@ -206,7 +206,7 @@ $avatar-side-size: 60px;
 
 .profile__subscribers {
 
-  background-color: $color4;
+  //background-color: $color4;
   height: 100%;
   width: 100%;
   max-height: 100%;
@@ -407,8 +407,14 @@ $avatar-side-size: 60px;
     height: 100%;
     max-height: 100%;
 
-    max-width: 800px;
+    max-width: 600px;
     margin: 0 $margin;
+
+    .profile_subscriber {
+      .info {
+        display: none;
+      }
+    }
 
     .filter_input {
       background-color: transparent;

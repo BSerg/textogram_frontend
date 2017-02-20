@@ -79,6 +79,7 @@ export namespace Captions {
 
         subscribersYouAreSubscribed: "Вы читаете",
         subscribersNumber: "Читают",
+        subscribersArticles: "Текстов",
 
         switchButtonDrafts: "Черновики",
         switchButtonCloseDrafts: "Закрыть черновики",

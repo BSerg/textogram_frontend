@@ -12,6 +12,8 @@ import ArticlePreview from './shared/ArticlePreview';
 import Error from './Error';
 import {UserAction, GET_ME, LOGIN, LOGOUT} from "../actions/user/UserAction";
 
+import AuthorList from './shared/AuthorList';
+
 import {Captions} from '../constants';
 import SocialIcon from './shared/SocialIcon';
 
@@ -45,8 +47,6 @@ class UserArticles extends React.Component<IUserArticlesPropsInterface, IUserArt
 
     SECTION_SUBSCRIPTIONS = 'subscriptions';
     SECTION_ARTICLES = 'articles';
-    // SECTION_DRAFTS = 'drafts';
-
 
     constructor() {
         super();
@@ -55,10 +55,9 @@ class UserArticles extends React.Component<IUserArticlesPropsInterface, IUserArt
     }
 
     loadArticles(userId: string|number, drafts?: boolean) {
-
         if (drafts) {
             api.get('/drafts/').then((response: any) => {
-                this.setState({drafts: this.state.drafts.concat(response.data)});
+                this.setState({drafts: this.state.drafts.concat(response.data || [])});
             }).catch((error) => {})
         }
         else {
@@ -67,15 +66,17 @@ class UserArticles extends React.Component<IUserArticlesPropsInterface, IUserArt
                     { feed: this.state.feed.concat(response.data.results || []) }
                     );
                 }
-                else this.setState(
-                    { articles: this.state.articles.concat(response.data.results || []) }
-                )
+                else {
+                    this.setState(
+                        { articles: this.state.articles.concat(response.data.results || []) }
+                    )
+                }
             }).catch((error) => {});
         }
     }
 
     selectArticle(id: number|null) {
-        console.log(id);
+
     }
 
     setSection(sectionName: string) {
@@ -91,16 +92,16 @@ class UserArticles extends React.Component<IUserArticlesPropsInterface, IUserArt
     }
 
     componentWillReceiveProps(nextProps: any) {
-        if (nextProps.user.id != this.props.user.id) {
-            this.setState({articles: []}, () => { this.loadArticles(nextProps.user.id) });
-        }
-        if (nextProps.isSelf && !this.props.isSelf) {
-            this.setState({feed: [], drafts: []}, () => {
-                this.loadArticles('me') ;
-                this.loadArticles(nextProps.user.id, true);
+        if (nextProps.user.id != this.props.user.id || nextProps.isSelf != this.props.isSelf) {
+
+            this.setState({selectedSection: this.SECTION_ARTICLES, showSubsection: false, articles: [], drafts: [], feed: []}, () => {
+                this.loadArticles(nextProps.user.id);
+                if (nextProps.isSelf) {
+                    this.loadArticles('me');
+                    this.loadArticles(nextProps.user.id, true);
+                }
             });
         }
-        if (!nextProps.isSelf) { this.setState({feed: [], selectedSection: this.SECTION_ARTICLES}) }
     }
 
     componentDidMount() {
@@ -165,25 +166,26 @@ class UserArticles extends React.Component<IUserArticlesPropsInterface, IUserArt
 
             {
                 (this.state.selectedSection == this.SECTION_SUBSCRIPTIONS && this.state.showSubsection) ? (
-                    <div>authorsss</div>) : null
+                    <UserAuthors userId={this.props.user.id} subscribedBy={true} />) : null
             }
         </div>)
     }
 }
 
-interface ISubscribersPropsInterface {
+interface IAuthorsPropsInterface {
     userId: number | string;
     closeSubscribers?: () => {};
     isDesktop?: boolean;
+    subscribedBy?: boolean;
 }
 
-interface ISubscribersStateInterface {
+interface IAuthorsStateInterface {
     items?: any[];
     itemsFiltered?: any[],
     filterString?: string;
 }
 
-class UserSubscribers extends React.Component<ISubscribersPropsInterface, ISubscribersStateInterface> {
+class UserAuthors extends React.Component<IAuthorsPropsInterface, IAuthorsStateInterface> {
 
     constructor() {
         super();
@@ -192,7 +194,9 @@ class UserSubscribers extends React.Component<ISubscribersPropsInterface, ISubsc
 
 
     load() {
-        api.get('/users/', {params: {subscribed_to: this.props.userId}}).then((response: any) => {
+        let params: any = this.props.subscribedBy ? {subscribed_by: this.props.userId} : {subscribed_to: this.props.userId};
+
+        api.get('/users/', {params: params}).then((response: any) => {
             let items = this.updateItems(response.data);
             let objectsFiltered = this.updateItems(response.data);
             this.setState({items: items, itemsFiltered: objectsFiltered});
@@ -241,32 +245,10 @@ class UserSubscribers extends React.Component<ISubscribersPropsInterface, ISubsc
     render() {
         return (
             <div className="profile__subscribers">
-                <div onClick={this.close.bind(this)} className="close"><CloseIcon /></div>
-                {this.state.itemsFiltered.map((item: any, index) => {
-                    return (
-                        <div className="profile__subscriber" key={index}>
-                            <div className="avatar"><Link to={"/profile/" + item.id}><img src={item.avatar} /></Link></div>
-
-                            <div className="name">
-                                <Link to={"/profile/" + item.id}>
-                                    <span>{item.first_name} </span> <span>{item.last_name}</span>
-                                </Link>
-                            </div>
-
-                            {
-                                item.is_subscribed && !this.props.isDesktop ? (<div className="confirm_icon" ><ConfirmIcon /></div>) : null
-                            }
-
-                            {
-                                this.props.isDesktop ? (<div className="subscription_info">
-                                    {item.is_subscribed ? (<span>{Captions.profile.subscribersYouAreSubscribed}</span>)
-                                        : (<span>{Captions.profile.subscribersNumber} {item.subscribers}</span>)}
-                                </div>) : null
-                            }
-
-                        </div>)
-                })}
-
+                {
+                    this.props.closeSubscribers ? (<div onClick={this.close.bind(this)} className="close"><CloseIcon /></div>) : null
+                }
+                <AuthorList items={this.state.itemsFiltered} showInfo={true} />
                 <div className="filter_input">
                     <input onChange={this.filterItems.bind(this)} type="text" placeholder={Captions.management.fastSearch} />
                 </div>
@@ -288,20 +270,27 @@ export default class Profile extends React.Component<any, IProfileState> {
 
     constructor(props: any) {
         super(props);
-        this.state = {user: null, error: null, isSelf: false, showSubscribers: false, isDesktop: MediaQuerySerice.getIsDesktop()};
+        this.state = {user: null, error: null, isSelf: false, showSubscribers: true, isDesktop: MediaQuerySerice.getIsDesktop()};
         this.checkIsSelf = this.checkIsSelf.bind(this);
     }
 
     checkIsSelf() {
         let isSelf: boolean =  Boolean(this.state.user && UserAction.getStore().user && UserAction.getStore().user.id == this.state.user.id);
-        this.setState({ isSelf: isSelf });
+        if (isSelf != this.state.isSelf) {
+            this.setState({ isSelf: isSelf });
+        }
     }
 
     getUserData(userId: string) {
         this.setState({error: null}, () => {
             api.get('/users/' + userId + '/').then((response: any) => {
-                this.setState({user: response.data, showSubscribers: false}, () => {
-                    this.checkIsSelf();
+                this.setState({
+                    user: response.data,
+                    showSubscribers: false,
+                    isSelf: Boolean(response.data && UserAction.getStore().user && UserAction.getStore().user.id == response.data.id)
+
+                }, () => {
+                    // this.checkIsSelf();
 
                 });
             }).catch((error) => {
@@ -331,7 +320,7 @@ export default class Profile extends React.Component<any, IProfileState> {
             this.setState({showSubscribers: true});
         }
         else {
-            ModalAction.do(OPEN_MODAL, {content: <UserSubscribers userId={this.state.user.id} />});
+            ModalAction.do(OPEN_MODAL, {content: <UserAuthors userId={this.state.user.id} />});
         }
     }
 
@@ -427,7 +416,7 @@ export default class Profile extends React.Component<any, IProfileState> {
                          </div>
 
                          {
-                             this.state.isSelf ? (<div className="profile__subscription">
+                             this.state.isSelf && this.state.isDesktop ? (<div className="profile__subscription">
                                  <Link to="/articles/new">
                                      <div className="profile__subscription_info">
                                          <EditIcon />
@@ -441,11 +430,13 @@ export default class Profile extends React.Component<any, IProfileState> {
 
                      {
                          (this.state.isDesktop && this.state.showSubscribers) ? (
-                             <UserSubscribers isDesktop={this.state.isDesktop} userId={this.state.user.id} closeSubscribers={this.closeSubscribers.bind(this)} />
+                             <UserAuthors isDesktop={this.state.isDesktop} userId={this.state.user.id} closeSubscribers={this.closeSubscribers.bind(this)} />
                          ) : null
                      }
 
                      <UserArticles hidden={this.state.isDesktop && this.state.showSubscribers} user={this.state.user} isSelf={this.state.isSelf} key="articles" />
+
+
                  </div>
              </div>
         )

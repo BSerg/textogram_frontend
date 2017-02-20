@@ -78,7 +78,9 @@ class DefaultMenu extends React.Component<DefaultMenuPropsInterface, IDefaultMen
 
     passwordChange(e: any) {
         let password = e.target.value;
-        this.setState({password: password, loginError: null});
+        if (password != this.state.password) {
+            this.setState({password: password, loginError: null});
+        }
     }
 
     toggleIsAuthorization() {

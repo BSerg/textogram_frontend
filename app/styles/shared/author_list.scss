@@ -19,7 +19,8 @@
     flex-direction: row;
     align-items: center;
     justify-content: flex-start;
-    padding: 10px 0;
+    padding: 10px;
+
 
 
     .avatar {
@@ -35,6 +36,21 @@
     .name, .info {
       color: $color;
       text-transform: uppercase;
+    }
+
+    .info {
+      font-size: 9px;
+      padding: 0 $padding;
+      word-spacing: 5px;
+      svg {
+        width: 20px;
+        height: 20px;
+        fill: $color5;
+      }
+    }
+
+    .confirm {
+      min-width: 20px;
     }
 
     .name {
@@ -70,6 +86,19 @@
     }
 
   }
+}
 
+@media (max-width: 1023px) {
+  .author_list {
 
+    .author_list__author {
+      .info {
+        display: none;
+      }
+
+      .info.confirm {
+        display: block;
+      }
+    }
+  }
 }
