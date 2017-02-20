@@ -15,9 +15,9 @@ import ProgressBar, {PROGRESS_BAR_TYPE} from "../shared/ProgressBar";
 import {DesktopBlockToolsAction, UPDATE_TOOLS} from "../../actions/editor/DesktopBlockToolsAction";
 import PopupPrompt from "../shared/PopupPrompt";
 import {PhotoModal} from "./PhotoModal";
-import Sortable = require('sortablejs');
-import "../../styles/editor/photo_content_block.scss";
 import {MediaQuerySerice} from "../../services/MediaQueryService";
+import "../../styles/editor/photo_content_block.scss";
+import Sortable = require('sortablejs');
 
 const AddButton = require('babel!svg-react!../../assets/images/redactor_icon_popup_add.svg?name=AddButton');
 const DeleteButton = require('babel!svg-react!../../assets/images/close.svg?name=DeleteButton');
@@ -118,7 +118,7 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
     }
 
     static defaultProps = {
-        maxPhotoCount: 6
+        maxPhotoCount: 100
     };
 
     getPosition() {
@@ -250,7 +250,6 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
                 this.setState({loadingImage: false});
             });
         });
-
     }
 
     deletePhoto(id: number) {
@@ -316,6 +315,10 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
 
     render() {
         let className = 'content_block_photo';
+        if (this.state.content.photos.length && this.state.content.photos.length <= 6) {
+            className += ' grid_' + this.state.content.photos.length;
+        }
+
         if (this.props.className) {
             className += ' ' + this.props.className;
         }
@@ -342,6 +345,11 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
                     {!this.state.isActive && this.state.content.photos.length == 1 && this.state.content.photos[0].caption ?
                         <div className="content_block_photo__caption">{this.state.content.photos[0].caption}</div> : null
                     }
+
+                    {!this.state.isActive && this.state.content.photos.length > 6 ?
+                        <div className="content_block_photo__caption">Галерея из {this.state.content.photos.length} фото</div> : null
+                    }
+
                     {!this.state.isDesktop && this.state.isActive && this.state.content.photos.length ?
                         <div className="content_block_photo__help">{Captions.editor.help_photo}</div> : null
                     }
