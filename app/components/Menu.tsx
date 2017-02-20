@@ -116,13 +116,10 @@ class DefaultMenu extends React.Component<DefaultMenuPropsInterface, IDefaultMen
         return (
             <div className="menu__content main__menu_default" onClick={this.stopClosePropagation.bind(this)}>
 
-                {
-                    !this.props.isDesktop ? (
-                        <div className="menu__controls">
-                            <div onClick={this.handleUrlClick.bind(this, '/info/')} ><InfoIcon /></div>
-                        </div>
-                    ) : null
-                }
+                { !this.props.isDesktop ? (<div onClick={this.closeMenu.bind(this)} className="menu__close_mobile"><CloseIcon /></div>) : null}
+                { !this.props.isDesktop ? (<div onClick={this.handleUrlClick.bind(this, '/info/')} className="menu__info"><InfoIcon /></div>) : null}
+
+
                 {
                     this.props.isDesktop ? (
                         <div className="menu__close" onClick={this.closeMenu.bind(this)}>
@@ -133,14 +130,14 @@ class DefaultMenu extends React.Component<DefaultMenuPropsInterface, IDefaultMen
                 <div className="menu__user">
                     {
                             this.props.isDesktop ? (
-                                <div className="menu__user_avatar_dummy">
+                                <div className="menu__user_avatar_dummy"  onClick={this.handleUrlClick.bind(this, '/')}>
                                 </div>
                             ) : null
                         }
 
 
-                    <div className="menu__user_username" onClick={this.handleUrlClick.bind(this, '/')}>
-                        <span>{Captions.main_menu.title}</span>
+                    <div className="menu__user_username">
+                        <span  onClick={this.handleUrlClick.bind(this, '/')}>{Captions.main_menu.title}</span>
                     </div>
 
                 </div>
@@ -188,7 +185,7 @@ class DefaultMenu extends React.Component<DefaultMenuPropsInterface, IDefaultMen
                 }
 
                 {
-                    !this.props.isDesktop ? (<div className="menu__about">{Captions.main_menu.about}</div>) : null
+                    !this.props.isDesktop ? (<div className="menu__about" onClick={this.handleUrlClick.bind(this, '/info/')}>{Captions.main_menu.about}</div>) : null
                 }
                 {
                     this.props.isDesktop ?
@@ -393,7 +390,7 @@ class UserMenu extends React.Component<IUserMenuProps, any> {
                         <div className="menu__link" onClick={this.handleUrlClick.bind(this, '/articles/new/')}>
                             { Captions.main_menu.create_article }
                         </div>
-                        <div className="menu__link" onClick={this.handleUrlClick.bind(this, '/profile/' + this.props.user.id)}>
+                        <div className="menu__link" onClick={this.handleUrlClick.bind(this, '/profile/' + this.props.user.id + + "/?show=drafts")}>
                             { Captions.main_menu.drafts }
                         </div>
                     </div>
@@ -419,7 +416,7 @@ export default class Menu extends React.Component<any, IMenuStateInterface> {
 
     constructor() {
         super();
-        this.state = {open: true, user: UserAction.getStore().user,  isDesktop: MediaQuerySerice.getIsDesktop()};
+        this.state = {open: false, user: UserAction.getStore().user,  isDesktop: MediaQuerySerice.getIsDesktop()};
         this.setUser = this.setUser.bind(this);
         this.setOpen = this.setOpen.bind(this);
     }
