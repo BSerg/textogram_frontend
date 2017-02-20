@@ -879,9 +879,10 @@
         width: 10%;
         background-size: cover!important;
         cursor: pointer;
+        opacity: 0.75;
 
         &:hover {
-          outline: 2px solid $color;
+          opacity: 1;
         }
       }
 
