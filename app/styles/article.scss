@@ -329,6 +329,12 @@
         display: block;
       }
 
+      &.photos_1 .photo {
+        width: 100%;
+        height: auto;
+        margin: 0;
+      }
+
       &.photos_2 .photo {
         width: calc(50% - #{$space}/2);
         height: $photo_height;
@@ -428,6 +434,11 @@
             width: calc(18% - #{$space}/2);
             height: ($desktop_photo_height - 4 * $space) / 5;
           }
+        }
+
+        &.photos_1 .photo {
+          width: 100%;
+          height: $desktop_photo_height;
         }
 
         &.photos_2 .photo {
