@@ -48,9 +48,9 @@
   .menu__info {
     position: absolute;
     top: 0;
-    left: 0;
+    right: 0;
 
-    padding: $padding - 10px $padding/2;
+    padding: 12px;
     $svg-size: 35px;
 
     svg {
@@ -60,18 +60,34 @@
     }
   }
 
-  .menu__controls {
+  .menu__close_mobile {
     position: absolute;
     top: 0;
-    right: 0;
+    left: 0;
+    padding: 20px;
+    $svg-size: 15px;
+
+    svg {
+      width: $svg-size;
+      height: $svg-size;
+      fill: #FFFFFF;
+    }
+  }
+
+  .menu__controls {
+    //position: absolute;
+    //top: 0;
+    //right: 0;
     display: flex;
     flex-direction: row;
-    padding: $padding - 10px $padding/2;
+    padding: $padding - 10px $padding/2 0 $padding/2;
+    justify-content: center;
+    align-items: center;
 
     $svg-size: 35px;
 
-    div {
-      margin-left: 5px;
+    &>div {
+      margin: 0 10px;
     }
 
     svg {
@@ -108,12 +124,12 @@
 
       span {
         padding: 0 5px;
-        font-weight: $font-weight;
-      }
-
-      span:first-child {
         font-weight: $font-weight-bold;
       }
+
+      //span:first-child {
+      //  font-weight: $font-weight-bold;
+      //}
     }
   }
 
@@ -145,24 +161,25 @@
   .menu__notifications {
 
     flex-wrap: nowrap;
-    padding: $padding - 5px $padding;
-    border-bottom: 1px solid black;
-    justify-content: flex-start;
+    //padding: $padding - 5px $padding;
+    //border-bottom: 1px solid black;
+    //justify-content: flex-start;
     cursor: pointer;
+    width: unset;
 
     .menu__notifications_icon {
       position: relative;
-      margin-right: $margin;
+      //margin-right: $margin;
 
 
       svg {
-        width: 40px;
-        height: 40px;
+        width: 30px;
+        height: 30px;
         fill: #FFFFFF;
       }
 
       .menu__notifications_count {
-        $count-size: 20px;
+        $count-size: 15px;
         position: absolute;
         top: 0;
         right: 0;
@@ -415,6 +432,10 @@
         position: relative;
         justify-content: flex-end;
 
+        &>div {
+          margin: 0 5px;
+        }
+
         svg {
           width: 30px;
           height: 30px;
@@ -432,7 +453,7 @@
         width: auto;
         background-color: transparent;
         padding: 0;
-        margin: 0;
+        //margin: 0;
         border: none;
         align-items: center;
 
