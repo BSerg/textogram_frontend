@@ -395,7 +395,7 @@
 
       & > p {
         padding: 0;
-        margin: 15px 0;
+        margin: 25px 0;
       }
 
       h2 {
@@ -413,6 +413,29 @@
 
         li:not(:last-child) {
           margin-bottom: 10px;
+        }
+      }
+
+      blockquote {
+
+        &.personal {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          margin-top: 50px;
+          margin-bottom: 50px;
+          padding: 0;
+
+          img {
+            position: unset;
+            min-width: 100px;
+            width: 100px;
+            height: 100px;
+            @include border_radius(100px);
+            object-fit: cover;
+            margin-top: unset!important;
+            margin-right: 30px;
+          }
         }
       }
 
