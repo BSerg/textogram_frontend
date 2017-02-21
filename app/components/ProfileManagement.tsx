@@ -12,6 +12,7 @@ import AvatarEditor from './shared/AvatarEditor';
 import Registration from './Registration';
 import ResetPassword from './ResetPassword';
 
+import AuthorList from './shared/AuthorList';
 
 import Error from './Error';
 import Header from './shared/Header';
@@ -56,15 +57,17 @@ class Subscriptions extends React.Component<ISectionPropsInterface, ISubscriptio
 
     removeSubscription(id: null | number = null) {
         if (id == null) return;
+        console.log(id);
+        console.log(this.state);
 
         api.post('/users/' + id + '/un_subscribe/').then((response: any) => {
             let indexToDelete: number;
             let indexToDeleteFiltered: number;
             this.state.objects.forEach((o: any, index: number) => {
-                if (o.author.id == id) indexToDelete = index;
+                if (o.id == id) indexToDelete = index;
             });
             this.state.objectsFiltered.forEach((of: any, index: number) => {
-                if (of.author.id == id) indexToDeleteFiltered = index;
+                if (of.id == id) indexToDeleteFiltered = index;
             });
             let objects = this.state.objects;
             let objectsFiltered = this.state.objectsFiltered;
@@ -77,9 +80,10 @@ class Subscriptions extends React.Component<ISectionPropsInterface, ISubscriptio
 
     load() {
         api.get('/subscriptions/').then((response: any) => {
-            let objects = this.updateObjects(response.data);
-            let objectsFiltered = this.updateObjects(response.data);
-            this.setState({objects: objects, objectsFiltered: objectsFiltered});
+            let objects = this.updateObjects(response.data.map((o: any) => {
+                return o.author
+            }));
+            this.setState({objects: objects, objectsFiltered: this.updateObjects(objects)});
         })
     }
 
@@ -102,7 +106,7 @@ class Subscriptions extends React.Component<ISectionPropsInterface, ISubscriptio
     updateObjects(objects: any[]): any[] {
 
         return objects.map((o: any) => {
-            o.userName = (o.author.first_name + ' ' + o.author.last_name).toLowerCase();
+            o.userName = (o.first_name + ' ' + o.last_name).toLowerCase();
             return o;
         });
     }
@@ -117,20 +121,7 @@ class Subscriptions extends React.Component<ISectionPropsInterface, ISubscriptio
                 <div className="filter_input">
                     <input onChange={this.filterSubscriptions.bind(this)} type="text" placeholder={Captions.management.fastSearch} />
                 </div>
-                {this.state.objectsFiltered.map((subscription, index) => {
-                    return (
-                        <div className="profile__subscription" key={index}>
-                            <div className="avatar"><Link to={"/profile/" + subscription.author.id}><img src={subscription.author.avatar} /></Link></div>
-
-                            <div className="name">
-                                <Link to={"/profile/" + subscription.author.id}>
-                                    <span>{subscription.author.first_name} </span> <span>{subscription.author.last_name}</span>
-                                </Link>
-                            </div>
-
-                            <div className="close_icon" onClick={this.removeSubscription.bind(this, subscription.author.id)}><CloseIcon /></div>
-                        </div>)
-                })}
+                <AuthorList items={this.state.objectsFiltered} clickUnSubscribe={this.removeSubscription.bind(this)} />
             </div>);
     }
 }
@@ -430,7 +421,7 @@ class SocialLinks extends React.Component<ISectionPropsInterface, ISectionLinksS
                 {
                     (this.state.links.length) ? (
                         <div className="profile__additional_links">
-                            { this.state.authLink ? (<div className="link_text">{Captions.management.additionalLinks}</div>) : null }
+                            <div className="link_text">{Captions.management.additionalLinks}</div>
                             <div>
                                 {
                                     this.state.links.map((link, index) => {
@@ -677,38 +668,48 @@ export default class ProfileManagement extends React.Component<any, IProfileMana
         return (
             <div id="profile_management">
                 <Header>{Captions.management.title}</Header>
-                <div className="profile__avatar" onClick={this.avatarClick} >
-                    <input type="file" style={{display: 'none'}} ref="inputAvatar" onChange={this.uploadAvatar}/>
-                    <img src={this.state.user.avatar} />
-                </div>
-                <div className="profile__username">
-                    { this.state.userNameEdit ? (
-                        <form onSubmit={this.userNameSubmit.bind(this)}>
-                            <input className={ this.state.userNameError ? 'error': '' } type="text" value={this.state.userName} onChange={this.userNameChange.bind(this)} />
-                            <span onClick={this.userNameSave.bind(this)}><ConfirmIcon /></span>
-                        </form>
-                    ) : (
-                        <div>
-                            <div className="name">
-                                <span>{ this.state.user.first_name }</span>
-                                <span>{ this.state.user.last_name }</span>
+
+                <div className="profile__management_head">
+                    <div className="profile__avatar" onClick={this.avatarClick} >
+                        <input type="file" style={{display: 'none'}} ref="inputAvatar" onChange={this.uploadAvatar}/>
+                        <img src={this.state.user.avatar} />
+                    </div>
+                    <div className="profile__username">
+                        { this.state.userNameEdit ? (
+                            <form onSubmit={this.userNameSubmit.bind(this)}>
+                                <input className={ this.state.userNameError ? 'error': '' } type="text" value={this.state.userName} onChange={this.userNameChange.bind(this)} />
+                                <span onClick={this.userNameSave.bind(this)}><ConfirmIcon /></span>
+                            </form>
+                        ) : (
+                            <div>
+                                <div className="name">
+                                    <span>{ this.state.user.first_name }</span>
+                                    <span>{ this.state.user.last_name }</span>
+                                </div>
+                                <span onClick={this.toggleEditUserName}><EditIcon /></span>
                             </div>
-                            <span onClick={this.toggleEditUserName}><EditIcon /></span>
-                        </div>
-                    ) }
+                        ) }
+                    </div>
+
+
+                    <div className="profile__menu">
+                        { this.SECTIONS.map((section, index) => {
+                            return (
+                                <div className={"profile__menu_section" + (index == this.state.currentSection ? ' active' : '')}
+                                     key={"section" + index.toString() }
+                                     onClick={this.setSection.bind(this, index)}>
+                                    {section.icon ? (<section.icon />) : null}
+                                    <span>{ section.caption }</span>
+                                </div>)
+                        }) }
+                    </div>
                 </div>
 
-                <div className="profile__menu">
-                    { this.SECTIONS.map((section, index) => {
-                        return (
-                            <div className={"profile__menu_section" + (index == this.state.currentSection ? ' active' : '')}
-                                 key={"section" + index.toString() }
-                                 onClick={this.setSection.bind(this, index)}>
-                                {section.icon ? (<section.icon />) : null}
-                                <span>{ section.caption }</span>
-                            </div>)
-                    }) }
+                <div className="profile__management_filler">
+
                 </div>
+
+
                 { CurrentSection ? <CurrentSection user={ this.state.user } /> : null}
             </div>);
     }

@@ -79,11 +79,17 @@ export namespace Captions {
 
         subscribersYouAreSubscribed: "Вы читаете",
         subscribersNumber: "Читают",
+        subscribersArticles: "Текстов",
+
+        switchButtonDrafts: "Черновики",
+        switchButtonCloseDrafts: "Закрыть черновики",
+        switchButtonAuthors: "Авторы",
+        switchButtonCloseAuthors: "Авторы",
     };
 
     export const main_menu = {
         manage_profile: 'управление профилем',
-        create_article: 'создать публикацию',
+        create_article: 'новый текст',
         drafts: 'черновики',
         notificationDefaultText: 'Новые уведомления',
         notificationZeroText: 'Нет непрочитанных  уведомлений',

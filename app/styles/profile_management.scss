@@ -66,6 +66,7 @@
       border: none;
       font-size: 18px;
       text-align: center;
+      background-color: transparent;
 
       &.error {
         border-bottom: 1px solid $color-accent;
@@ -499,48 +500,96 @@
 
   #profile_management {
 
-    width: 800px;
-    margin: auto;
+    width: 100%;
+    //margin: auto;
+    display: flex;
+    flex-direction: row;
+
+    .profile__management_head {
+      background-color: #F7F7F7;
+      width: 400px;
+      height: 100%;
+      position: fixed;
+      top: 0;
+      left: 0;
+    }
+
+    .profile__management_filler {
+      width: 400px;
+      min-width: 400px;
+    }
 
     .header {
       display: none;
     }
 
     .profile__avatar {
+      margin-top: 70px;
+      padding: $padding/2;
       img {
-        width: 122px;
-        height: 122px;
+        width: 95px;
+        height: 95px;
         border-radius: 50%;
       }
     }
 
     .profile__username {
+      padding: 0;
+      span {
+        padding: 0;
+        margin: 0 5px;
+      }
       span, input {
-        font-size: 24px;
+        font-size: 20px;
       }
 
       svg {
-        width: 30px;
-        height: 30px;
+        width: 25px;
+        height: 25px;
       }
 
     }
 
     .profile__menu {
 
+      //display: none;
+      flex-direction: column;
 
       .profile__menu_section {
-        flex-grow: 1;
+        //flex-grow: 1;
+        width: 100%;
+        justify-content: center;
+        border-bottom: 1px solid $color4;
+
+
+        &:last-child {
+          border: none;
+        }
+
         span {
+          width: 120px;
           font-size: 11px;
           letter-spacing: 1px;
           margin-left: 20px;
           display: block;
         }
+        &:hover {
+          background-color: $color4;
+        }
+
+        &.active, &.active:hover {
+          border: none;
+          background-color: #FFFFFF;
+        }
       }
     }
 
     .profile__section {
+
+      margin-top: $margin * 2;
+      padding: 0 $padding;
+      //width: unset;
+      max-width: 800px;
 
       .profile__phone {
         flex-direction: row;
@@ -585,7 +634,7 @@
         flex-direction: column;
         align-items: flex-start;
         justify-content: space-around;
-        margin: $margin 15%;
+        //margin: $margin 15%;
 
 
         .time {
@@ -600,15 +649,22 @@
         }
       }
 
+      .profile__auth_link {
+        border-bottom: 1px solid $color3;
+      }
+
       .profile__auth_link, .profile__additional_links {
         display: flex;
         flex-direction: row;
         justify-content: flex-start;
-        padding-left: 40px;
+        //padding-left: 40px;
+        padding: 0;
+        background-color: transparent;
 
         .link_text {
           font-size: $font-size-small;
-          width: 220px;
+          padding: $padding / 2;
+          width: 200px;
         }
         .url {
           font-size: $font_size6;
@@ -617,6 +673,7 @@
           text-overflow: ellipsis;
         }
         .profile__link {
+          padding: $padding / 2;
           svg {
             width: 25px;
             height: 25px;
@@ -627,7 +684,7 @@
           }
 
           .eye, .close_icon {
-            width: 100px;
+            width: 50px;
             text-align: center;
           }
         }
@@ -683,6 +740,7 @@
 
       .profile__add_link {
         display: none;
+        margin: $margin 0;
 
         &.active, &.phone {
           display: flex;
@@ -691,10 +749,12 @@
     }
 
     .profile__subscriptions {
-      padding-top: 0;
+      padding: $padding;
       display: flex;
       flex-direction: column;
       align-items: center;
+      width: 100%;
+      max-width: 800px;
 
       .profile__subscription {
         width: 80%;
@@ -705,8 +765,9 @@
 
       .filter_input {
         position: relative;
-        background-color: $color4;
-        height: 85px;
+        background-color: transparent;
+        border-bottom: 1px solid $color4;
+        height: 70px;
         margin-bottom: $margin * 2;
         input {
           color: $color;

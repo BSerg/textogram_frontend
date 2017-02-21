@@ -17,7 +17,7 @@ $avatar-side-size: 60px;
   }
 
 
-  .profile__avatar, .profile__username, .profile__social_links, .profile__subscription {
+  .profile__avatar, .profile__username, .profile__social_links_list, .profile__subscription {
     min-width: 100%;
     display: flex;
     flex-direction: row;
@@ -110,8 +110,18 @@ $avatar-side-size: 60px;
 
   .profile__social_links {
     $link-size: 30px;
+    text-align: center;
 
     margin-bottom: $margin;
+
+    .profile__social_links_caption {
+      width: 100%;
+      margin-bottom: $margin;
+      font-size: $font-size-small;
+      text-transform: uppercase;
+      display: none;
+    }
+
 
     .profile__social_icon {
 
@@ -161,7 +171,7 @@ $avatar-side-size: 60px;
         text-align: center;
         flex-grow: 1;
         max-width: 200px;
-        padding: $padding/2;
+        padding: $padding/2 0;
         cursor: pointer;
         color: $color5;
         border-bottom: 1px solid $color5;
@@ -174,6 +184,25 @@ $avatar-side-size: 60px;
           color: $color;
         }
       }
+
+      .profile__articles__menu_switch_button {
+        border: none;
+        background-color: #F7F7F7;
+        position: relative;
+
+        svg {
+          position: absolute;
+          right: 15px;
+          width: 10px;
+          height: 10px;
+          fill: $color5;
+        }
+      }
+
+      .profile__articles__menu_switch_button:hover {
+        border: none;
+      }
+
     }
 
     .article_preview:first-child {
@@ -187,7 +216,7 @@ $avatar-side-size: 60px;
 
 .profile__subscribers {
 
-  background-color: $color4;
+  //background-color: $color4;
   height: 100%;
   width: 100%;
   max-height: 100%;
@@ -340,13 +369,31 @@ $avatar-side-size: 60px;
     .profile__articles {
       width: 100%;
       max-width: 800px;
+      margin-top: $margin;
 
       //margin-left: 400px;
+
+      .article_preview:first-child {
+        border: none;
+        margin: 0;
+      }
 
     }
 
     .profile__social_links {
-      margin-bottom: 40px;
+      margin: 0;
+
+      padding: $padding;
+      box-sizing: border-box;
+      width: 400px;
+      position: fixed;
+      left: 0;
+      bottom: 0;
+      background-color: #F2F2F2;
+
+      .profile__social_links_caption {
+        display: block;
+      }
 
       .profile__social_icon {
         width: 35px;
@@ -382,8 +429,14 @@ $avatar-side-size: 60px;
     height: 100%;
     max-height: 100%;
 
-    max-width: 800px;
+    max-width: 600px;
     margin: 0 $margin;
+
+    .profile_subscriber {
+      .info {
+        display: none;
+      }
+    }
 
     .filter_input {
       background-color: transparent;
