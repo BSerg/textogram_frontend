@@ -9,7 +9,7 @@
   .article__title {
     position: relative;
     width: 100%;
-    padding: 80px 0;
+    padding: 100px 0;
     background-size: cover!important;
     text-align: center;
     background-color: $color4;
@@ -32,6 +32,8 @@
     }
 
     h1 {
+      width: calc(100% - #{$padding}*2);
+      margin: 0 auto;
       position: relative;
       font-family: $family_arimo;
       font-size: 33px;
