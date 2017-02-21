@@ -326,7 +326,7 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
                 <div className="editor__wrapper">
                     {this.state.article && !this.state.error ?
                         [
-                            <TitleBlock key={"titleBlock" + (this.state.article & this.state.article.id ? this.state.article.id : '')}
+                            <TitleBlock key={"titleBlock" + (this.state.article && this.state.article.id ? this.state.article.id : '')}
                                         articleSlug={this.state.article.id}
                                         title={this.state.article.content.title}
                                         cover={this.state.article.content.cover}/>,
@@ -433,11 +433,7 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
                                                   ]}/>
                                     : null
                             ,
-                            <div key="add_content_help" className="add_content_help">
-                                {!this.state.article.content.blocks.length || !this.state.article.content.blocks.length ?
-                                    Captions.editor.add_content_help : null
-                                }
-                            </div>,
+                            <div key="add_content_help" className="add_content_help"></div>,
                             (this.state.article.status == ArticleStatuses.DRAFT ?
                                 <div key="publish_button"
                                      className={"editor__publish" + (!this.state.isValid ? ' disabled': '')}

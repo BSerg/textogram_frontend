@@ -3,6 +3,7 @@
 
 #selection_tools {
   position: absolute;
+  z-index: 10;
 
   &:empty {
     display: none;

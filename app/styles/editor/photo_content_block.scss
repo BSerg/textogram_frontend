@@ -4,21 +4,13 @@
 $space: 10px;
 $desktop_space: 20px;
 
+$base_photo_height: 200px;
+$base_desktop_photo_height: 400px;
+
 
 .content_block_photo {
   padding: $padding;
   position: relative;
-
-  .content_block_photo__photo {
-    @include transition();
-    position: relative;
-    width: calc(50% - #{$space});
-    height: 80px;
-    float: left;
-    margin-right: $space;
-    margin-bottom: $space;
-    cursor: pointer;
-  }
 
   .content_block_photo__delete {
     position: absolute;
@@ -31,25 +23,8 @@ $desktop_space: 20px;
     @include border_radius(14px);
   }
 
-  &:not(.active) .content_block_photo__photo {
-    width: calc(100% - #{$space});
-    height: 100px;
-
-    &.photo0 {
-      height: 200px;
-    }
-
-    &.photo1, &.photo2, &.photo3, &.photo4, &.photo5 {
-      width: calc(50% - #{$space});
-    }
-
-    &.photo1 {
-      height: 200px + $space;
-    }
-
-    .content_block_photo__delete {
-      display: none;
-    }
+  &:not(.active) .content_block_photo__delete {
+    display: none;
   }
 
   .progress_bar {
@@ -61,43 +36,251 @@ $desktop_space: 20px;
     }
   }
 
-  @include desktop {
+  .content_block_photo__photo {
+    @include transition();
+    position: relative;
+    width: calc(50% - #{$space});
+    height: $base_photo_height/2;
+    float: left;
+    margin-right: $space;
+    margin-bottom: $space;
+    cursor: pointer;
+
+    &.content_block_photo__empty {
+      width: 100%;
+      height: $base_photo_height;
+      margin: 0;
+      background: $color4 url('../../assets/images/image.svg') no-repeat center center;
+      background-size: 64px;
+      cursor: pointer;
+    }
+  }
+
+  &:not(.active) {
     .content_block_photo__photo {
-      width: calc(50% - #{$desktop_space});
-      height: 200px;
-      margin-right: $desktop_space;
-      margin-bottom: $desktop_space;
+      display: none;
+
+      &.photo0, &.photo1, &.photo2, &.photo3, &.photo4, &.photo5, &.content_block_photo__empty {
+        display: block;
+      }
+
+      &.photo0 {
+        width: calc(82% - #{$space}/2);
+        height: $base_photo_height;
+        margin-right: $space;
+      }
+
+      &.photo1, &.photo2, &.photo3, &.photo4, &.photo5 {
+        width: calc(18% - #{$space}/2);
+        height: ($base_photo_height - 4 * $space) / 5;
+        margin: 0;
+      }
+
+      &.photo1, &.photo2, &.photo3, &.photo4 {
+        margin-bottom: $space;
+      }
     }
 
-    .content_block_photo__delete {
-      width: 34px;
-      height: 34px;
-      background-size: 20px;
-      @include border_radius(20px);
-      cursor: pointer;
-      &:hover {
-        background-color: darken($color, 10%);
+    &.grid_1 .content_block_photo__photo.photo0 {
+      width: 100%;
+      height: $base_photo_height;
+    }
+
+    &.grid_2 .content_block_photo__photo{
+      width: calc(50% - #{$space}/2);
+      height: $base_photo_height;
+      margin: 0;
+
+      &.photo0 {
+        margin-right: $space;
+      }
+    }
+
+    &.grid_3 .content_block_photo__photo{
+      &.photo0 {
+        width: calc(62% - #{$space}/2);
+        height: $base_photo_height;
+        margin-right: $space;
+      }
+
+      &.photo1, &.photo2 {
+        width: calc(38% - #{$space});
+        height: ($base_photo_height - $space)/2;
+        margin: 0;
+      }
+
+      &.photo1 {
+        margin-bottom: 10px;
+      }
+    }
+
+    &.grid_4 .content_block_photo__photo{
+      &.photo0 {
+        width: calc(75% - #{$space}/2);
+        height: $base_photo_height;
+        margin-right: $space;
+      }
+
+      &.photo1, &.photo2, &.photo3 {
+        width: calc(25% - #{$space}/2);
+        height: ($base_photo_height - 2 * $space) / 3;
+        margin: 0;
+      }
+
+      &.photo1, &.photo2 {
+        margin-bottom: $space;
+      }
+    }
+
+    &.grid_5 .content_block_photo__photo{
+      &.photo0 {
+        width: calc(80% - #{$space}/2);
+        height: $base_photo_height;
+        margin-right: $space;
+      }
+
+      &.photo1, &.photo2, &.photo3, &.photo4 {
+        width: calc(20% - #{$space}/2);
+        height: ($base_photo_height - 3 * $space) / 4;
+        margin: 0;
+      }
+
+      &.photo1, &.photo2, &.photo3 {
+        margin-bottom: $space;
+      }
+    }
+
+    &.grid_6 .content_block_photo__photo {
+      &.photo0 {
+        width: calc(82% - #{$space}/2);
+        height: $base_photo_height;
+        margin-right: $space;
+      }
+
+      &.photo1, &.photo2, &.photo3, &.photo4, &.photo5 {
+        width: calc(18% - #{$space}/2);
+        height: ($base_photo_height - 4 * $space) / 5;
+        margin: 0;
+      }
+
+      &.photo1, &.photo2, &.photo3, &.photo4 {
+        margin-bottom: $space;
+      }
+    }
+  }
+
+  @include desktop {
+    .content_block_photo__photo {
+      height: $base_desktop_photo_height/2;
+
+      &.content_block_photo__empty {
+        height: $base_desktop_photo_height!important;
       }
     }
 
     &:not(.active) .content_block_photo__photo {
-      width: calc(100% - #{$desktop_space});
-      height: 200px;
-
       &.photo0 {
-        height: 400px;
+        width: calc(82% - #{$space}/2);
+        height: $base_desktop_photo_height;
+        margin-right: $space;
       }
 
       &.photo1, &.photo2, &.photo3, &.photo4, &.photo5 {
-        width: calc(50% - #{$desktop_space});
+        width: calc(18% - #{$space}/2);
+        height: ($base_desktop_photo_height - 4 * $space) / 5;
+        margin: 0;
+      }
+
+      &.photo1, &.photo2, &.photo3, &.photo4 {
+        margin-bottom: $space;
+      }
+    }
+
+
+    &.grid_1 .content_block_photo__photo.photo0 {
+      width: 100%!important;
+      height: $base_desktop_photo_height!important;
+    }
+
+    &.grid_2 .content_block_photo__photo{
+      width: calc(50% - #{$space}/2)!important;
+      height: $base_desktop_photo_height!important;
+      margin: 0;
+
+      &.photo0 {
+        margin-right: $space;
+      }
+    }
+
+    &.grid_3 .content_block_photo__photo{
+      &.photo0 {
+        width: calc(62% - #{$space}/2)!important;
+        height: $base_desktop_photo_height!important;
+        margin-right: $space;
+      }
+
+      &.photo1, &.photo2 {
+        width: calc(38% - #{$space})!important;
+        height: ($base_desktop_photo_height - $space)/2!important;
+        margin: 0;
       }
 
       &.photo1 {
-        height: 400px + $desktop_space;
+        margin-bottom: 10px;
+      }
+    }
+
+    &.grid_4 .content_block_photo__photo{
+      &.photo0 {
+        width: calc(75% - #{$space}/2)!important;
+        height: $base_desktop_photo_height!important;
+        margin-right: $space;
       }
 
-      .content_block_photo__delete {
-        display: none;
+      &.photo1, &.photo2, &.photo3 {
+        width: calc(25% - #{$space}/2)!important;
+        height: ($base_desktop_photo_height - 2 * $space) / 3!important;
+        margin: 0;
+      }
+
+      &.photo1, &.photo2 {
+        margin-bottom: $space;
+      }
+    }
+
+    &.grid_5 .content_block_photo__photo{
+      &.photo0 {
+        width: calc(80% - #{$space}/2)!important;
+        height: $base_desktop_photo_height!important;
+        margin-right: $space;
+      }
+
+      &.photo1, &.photo2, &.photo3, &.photo4 {
+        width: calc(20% - #{$space}/2)!important;
+        height: ($base_desktop_photo_height - 3 * $space) / 4!important;
+        margin: 0;
+      }
+
+      &.photo1, &.photo2, &.photo3 {
+        margin-bottom: $space;
+      }
+    }
+
+    &.grid_6 .content_block_photo__photo {
+      &.photo0 {
+        width: calc(82% - #{$space}/2)!important;
+        height: $base_desktop_photo_height!important;
+        margin-right: $space;
+      }
+
+      &.photo1, &.photo2, &.photo3, &.photo4, &.photo5 {
+        width: calc(18% - #{$space}/2)!important;
+        height: ($base_desktop_photo_height - 4 * $space) / 5!important;
+        margin: 0;
+      }
+
+      &.photo1, &.photo2, &.photo3, &.photo4 {
+        margin-bottom: $space;
       }
     }
   }

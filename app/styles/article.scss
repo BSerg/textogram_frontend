@@ -26,14 +26,9 @@
       font-family: $family_open_sans;
       letter-spacing: 1px;
       text-transform: uppercase;
-      text-decoration: none;
+      text-decoration: underline;
       color: $color;
       cursor: pointer;
-
-      .article__first_name {
-        font-weight: $font-weight-bold;
-        margin-right: 10px;
-      }
     }
 
     h1 {
@@ -42,6 +37,7 @@
       font-size: 33px;
       font-weight: $font-weight-bold;
       line-height: 43px;
+      word-wrap: break-word;
     }
 
     .article__stats {
@@ -52,16 +48,22 @@
       align-items: center;
       justify-content: center;
       color: $color;
-    }
-
-    .article__date, .article__views {
       letter-spacing: 1px;
       text-align: center;
       font-size: 12px;
       font-family: $family_open_sans;
       line-height: 14px;
+    }
+
+    .article__author1, .article__date, .article__views {
       &:not(:last-child) {
         margin-right: 20px;
+      }
+    }
+
+    .article__author1 {
+      a {
+        color: $color;
       }
     }
 
@@ -95,6 +97,10 @@
       .article__stats {
         color: white;
 
+        a {
+          color: white;
+        }
+
         svg {
           stroke: white;
         }
@@ -114,6 +120,10 @@
         font-size: 40px;
         line-height: 51px;
         margin: 0 auto;
+      }
+
+      .article__author {
+
       }
     }
   }
@@ -287,45 +297,200 @@
     }
 
     .photos {
+      $space: 10px;
+      $photo_height: 200px;
+      $desktop_photo_height: 400px;
+
       padding: $padding;
 
       .photo {
-        width: calc(100% - 10px);
-        height: 100px;
         object-fit: cover;
         float: left;
-        margin-right: 10px;
-        margin-bottom: 10px;
         cursor: pointer;
+        display: none;
 
         &.photo_0 {
-          height: 200px;
+          width: calc(80% - #{$space}/2);
+          height: $photo_height;
+          margin-right: $space;
         }
 
         &.photo_1, &.photo_2, &.photo_3, &.photo_4, &.photo_5 {
-          width: calc(50% - 10px);
+          width: calc(20% - #{$space}/2);
+          height: ($photo_height - 4 * $space) / 5;
+        }
+
+        &.photo_1, &.photo_2, &.photo_3, &.photo_4 {
+          margin-bottom: $space;
+        }
+      }
+
+      .photo_0, .photo_1, .photo_2, .photo_3, .photo_4, .photo_5 {
+        display: block;
+      }
+
+      &.photos_1 .photo {
+        width: 100%;
+        height: auto;
+        margin: 0;
+      }
+
+      &.photos_2 .photo {
+        width: calc(50% - #{$space}/2);
+        height: $photo_height;
+        margin: 0;
+
+        &.photo_0 {
+          margin-right: $space;
+        }
+      }
+
+      &.photos_3 .photo {
+        &.photo_0 {
+          width: calc(62% - #{$space}/2);
+          height: $photo_height;
+          margin-right: $space;
+        }
+
+        &.photo_1, &.photo_2 {
+          width: calc(38% - #{$space}/2);
+          height: ($photo_height - $space)/2;
         }
 
         &.photo_1 {
-          height: 200px + 10px;
+          margin-bottom: $space;
+        }
+      }
+
+      &.photos_4 .photo {
+        &.photo_0 {
+          width: calc(70% - #{$space}/2);
+          height: $photo_height;
+          margin-right: $space;
         }
 
-        @include desktop {
-          width: calc(100% - 20px);
-          height: 200px;
-          margin-right: 20px;
-          margin-bottom: 20px;
+        &.photo_1, &.photo_2, &.photo_3 {
+          width: calc(30% - #{$space}/2);
+          height: ($photo_height - 2 * $space) / 3;
+        }
 
+        &.photo_1, &.photo_2 {
+          margin-bottom: $space;
+        }
+      }
+
+      &.photos_5 .photo {
+        &.photo_0 {
+          width: calc(75% - #{$space}/2);
+          height: $photo_height;
+          margin-right: $space;
+        }
+
+        &.photo_1, &.photo_2, &.photo_3, &.photo_4 {
+          width: calc(25% - #{$space}/2);
+          height: ($photo_height - 3 * $space) / 4;
+        }
+
+        &.photo_1, &.photo_2, &.photo_3 {
+          margin-bottom: $space;
+        }
+      }
+
+      &.photos_6 .photo {
+        &.photo_0 {
+          width: calc(80% - #{$space}/2);
+          height: $photo_height;
+          margin-right: $space;
+        }
+
+        &.photo_1, &.photo_2, &.photo_3, &.photo_4, &.photo_5 {
+          width: calc(20% - #{$space}/2);
+          height: ($photo_height - 4 * $space) / 5;
+        }
+
+        &.photo_1, &.photo_2, &.photo_3, &.photo_4 {
+          margin-bottom: $space;
+        }
+      }
+
+      .caption {
+        text-align: center;
+        color: $color5;
+        font-size: 12px;
+        line-height: 20px;
+        letter-spacing: 1px;
+        padding-top: 15px;
+        font-family: $family_open_sans;
+      }
+
+      @include desktop {
+        .photo {
           &.photo_0 {
-            height: 400px;
+            width: calc(82% - #{$space}/2);
+            height: $desktop_photo_height;
           }
 
           &.photo_1, &.photo_2, &.photo_3, &.photo_4, &.photo_5 {
-            width: calc(50% - 20px);
+            width: calc(18% - #{$space}/2);
+            height: ($desktop_photo_height - 4 * $space) / 5;
+          }
+        }
+
+        &.photos_1 .photo {
+          width: 100%;
+          height: auto;
+        }
+
+        &.photos_2 .photo {
+          width: calc(50% - #{$space}/2);
+          height: $desktop_photo_height;
+        }
+
+        &.photos_3 .photo {
+          &.photo_0 {
+            width: calc(62% - #{$space}/2);
+            height: $desktop_photo_height;
           }
 
-          &.photo_1 {
-            height: 400px + 20px;
+          &.photo_1, &.photo_2 {
+            width: calc(38% - #{$space}/2);
+            height: ($desktop_photo_height - $space)/2;
+          }
+        }
+
+        &.photos_4 .photo {
+          &.photo_0 {
+            width: calc(75% - #{$space}/2);
+            height: $desktop_photo_height;
+          }
+
+          &.photo_1, &.photo_2, &.photo_3 {
+            width: calc(25% - #{$space}/2);
+            height: ($desktop_photo_height - 2 * $space) / 3;
+          }
+        }
+
+        &.photos_5 .photo {
+          &.photo_0 {
+            width: calc(80% - #{$space}/2);
+            height: $desktop_photo_height;
+          }
+
+          &.photo_1, &.photo_2, &.photo_3, &.photo_4 {
+            width: calc(20% - #{$space}/2);
+            height: ($desktop_photo_height - 3 * $space) / 4;
+          }
+        }
+
+        &.photos_6 .photo {
+          &.photo_0 {
+            width: calc(82% - #{$space}/2);
+            height: $desktop_photo_height;
+          }
+
+          &.photo_1, &.photo_2, &.photo_3, &.photo_4, &.photo_5 {
+            width: calc(18% - #{$space}/2);
+            height: ($desktop_photo_height - 4 * $space) / 5;
           }
         }
       }
@@ -385,7 +550,7 @@
 
       & > p {
         padding: 0;
-        margin: 15px 0;
+        margin: 25px 0;
       }
 
       h2 {
@@ -403,6 +568,29 @@
 
         li:not(:last-child) {
           margin-bottom: 10px;
+        }
+      }
+
+      blockquote {
+
+        &.personal {
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          margin-top: 50px;
+          margin-bottom: 50px;
+          padding: 0;
+
+          img {
+            position: unset;
+            min-width: 100px;
+            width: 100px;
+            height: 100px;
+            @include border_radius(100px);
+            object-fit: cover;
+            margin-top: unset!important;
+            margin-right: 30px;
+          }
         }
       }
 
@@ -476,6 +664,10 @@
     text-transform: uppercase;
     letter-spacing: 1px;
     text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
 
     .article__avatar {
       width: 35px;
@@ -687,9 +879,10 @@
         width: 10%;
         background-size: cover!important;
         cursor: pointer;
+        opacity: 0.75;
 
         &:hover {
-          width: 15%;
+          opacity: 1;
         }
       }
 

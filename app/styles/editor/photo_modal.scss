@@ -148,9 +148,10 @@
         width: 10%;
         background-size: cover!important;
         cursor: pointer;
+        opacity: 0.75;
 
         &:hover {
-          width: 15%;
+          opacity: 1;
         }
       }
 
