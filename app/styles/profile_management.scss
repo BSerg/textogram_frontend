@@ -383,8 +383,11 @@
       justify-content: flex-start;
       padding: 0 $padding/2;
       letter-spacing: 1px;
-      span:first-child {
+      span {
         font-weight: $font-weight-bold;
+      }
+      span:first-child {
+        //font-weight: $font-weight-bold;
         padding-right: $padding/3;
       }
       a {
