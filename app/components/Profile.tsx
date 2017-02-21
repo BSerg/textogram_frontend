@@ -285,10 +285,13 @@ class UserAuthors extends React.Component<IAuthorsPropsInterface, IAuthorsStateI
                 {
                     this.props.closeSubscribers ? (<div onClick={this.close.bind(this)} className="close"><CloseIcon /></div>) : null
                 }
-                <AuthorList items={this.state.itemsFiltered} showInfo={true} />
+
                 <div className="filter_input">
                     <input onChange={this.filterItems.bind(this)} type="text" placeholder={Captions.management.fastSearch} />
                 </div>
+
+                <AuthorList items={this.state.itemsFiltered} showInfo={true} />
+
 
             </div>)
     }
@@ -357,7 +360,7 @@ export default class Profile extends React.Component<any, IProfileState> {
             this.setState({showSubscribers: true});
         }
         else {
-            ModalAction.do(OPEN_MODAL, {content: <UserAuthors userId={this.state.user.id} />});
+            ModalAction.do(OPEN_MODAL, {content: <UserAuthors userId={this.state.user.id} closeSubscribers={this.closeSubscribers.bind(this)} />});
         }
     }
 
@@ -447,7 +450,7 @@ export default class Profile extends React.Component<any, IProfileState> {
                              </div>
 
                              {
-                                 (!this.state.isSelf && UserAction.getStore().user) ?
+                                 (!this.state.isSelf && this.state.user) ?
                                      <div>
                                          { this.state.user.is_subscribed ?
                                              <div className="profile__subscription_info profile__subscription_unsubscribe" onClick={this.unSubscribe.bind(this)}>

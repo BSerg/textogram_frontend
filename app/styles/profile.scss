@@ -176,7 +176,7 @@ $avatar-side-size: 60px;
         cursor: pointer;
         color: $color5;
         letter-spacing: 1px;
-        border-bottom: 1px solid $color5;
+        border-bottom: 1px solid $color3;
         box-sizing: border-box;
 
         @include transition();
@@ -188,8 +188,9 @@ $avatar-side-size: 60px;
       }
 
       .profile__articles__menu_switch_button {
-        border: none;
+        //border: none;
         background-color: #F7F7F7;
+        border: 1px solid #F7F7F7;
         position: relative;
 
         svg {
@@ -219,6 +220,7 @@ $avatar-side-size: 60px;
 .profile__subscribers {
 
   //background-color: $color4;
+  background-color: #FFFFFF;
   height: 100%;
   width: 100%;
   //max-height: 100%;
@@ -290,9 +292,9 @@ $avatar-side-size: 60px;
     justify-content: center;
     $input_height: 50px;
 
-    position: absolute;
-    left: 0;
-    bottom: 0;
+    //position: absolute;
+    //left: 0;
+    //bottom: 0;
     width: 100%;
     height: $input_height;
     padding: 0;
@@ -349,7 +351,7 @@ $avatar-side-size: 60px;
     }
 
     .profile__username {
-      margin-bottom: 30px;
+      margin-bottom: 90px;
       span {
         font-size: 20px;
       }
@@ -420,6 +422,11 @@ $avatar-side-size: 60px;
 
       .profile__subscription_info {
         margin-bottom: $margin;
+
+        //svg {
+        //  width: 30px;
+        //  height: 30px;
+        //}
       }
     }
 
@@ -434,8 +441,16 @@ $avatar-side-size: 60px;
     height: 100%;
     //max-height: 100%;
 
-    max-width: 600px;
+    max-width: 800px;
     margin: 0 $margin;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    &>div {
+      max-width: 600px;
+    }
 
     .profile_subscriber {
       .info {
@@ -445,7 +460,7 @@ $avatar-side-size: 60px;
 
     .filter_input {
       background-color: transparent;
-      border-top: 1px solid $color5;
+      border-bottom: 1px solid $color5;
 
       input {
         color: $color;

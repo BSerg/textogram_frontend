@@ -26,7 +26,7 @@ class ArticlePreviewClass extends React.Component<IArticlePreviewPropsInterface,
 
     getDateString(dt: string): string {
         if (!dt) return '';
-        let dateString = moment(dt).format('DD.MM.YYYY, HH:mm');
+        let dateString = moment(dt).format('DD.MM.YYYY  HH:mm');
         return dateString;
     }
 
@@ -96,11 +96,15 @@ class ArticlePreviewClass extends React.Component<IArticlePreviewPropsInterface,
                     }
 
                 <div className="bottom">
-                    { (this.props.item.owner && !this.props.item.is_draft) ?
+
+                    { (this.props.item.owner && this.props.isFeed) ?
                         <Link to={ "/profile/" + this.props.item.owner.id }><div className="owner">
                             {this.props.item.owner.first_name + " " + this.props.item.owner.last_name}
                         </div></Link> : null
                     }
+                    { (this.props.item.owner && this.props.isFeed) ? (<div className="fill"></div>) : null}
+
+
                     <div>{date}</div>
                     {
                         this.props.item.is_draft ? null : (<div className="views">{ this.props.item.link_access ? <LockIcon/> : <ViewsIcon />} {views}</div>)
