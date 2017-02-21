@@ -89,7 +89,7 @@ export namespace Captions {
 
     export const main_menu = {
         manage_profile: 'управление профилем',
-        create_article: 'создать публикацию',
+        create_article: 'новый текст',
         drafts: 'черновики',
         notificationDefaultText: 'Новые уведомления',
         notificationZeroText: 'Нет непрочитанных  уведомлений',

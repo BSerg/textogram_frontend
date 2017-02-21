@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import {Link} from 'react-router';
+import {Link, withRouter} from 'react-router';
 
 import '../styles/common.scss';
 import '../styles/profile.scss';
@@ -11,6 +11,7 @@ import Header from './shared/Header';
 import ArticlePreview from './shared/ArticlePreview';
 import Error from './Error';
 import {UserAction, GET_ME, LOGIN, LOGOUT} from "../actions/user/UserAction";
+import {NotificationAction, SHOW_NOTIFICATION} from '../actions/shared/NotificationAction';
 
 import AuthorList from './shared/AuthorList';
 
@@ -32,6 +33,8 @@ interface IUserArticlesPropsInterface {
     user: any;
     isSelf: boolean;
     hidden: boolean;
+    location?: any;
+    router?: any;
 }
 
 interface IUserArticlesStateInterface {
@@ -43,7 +46,7 @@ interface IUserArticlesStateInterface {
     showSubsection?: boolean;
 }
 
-class UserArticles extends React.Component<IUserArticlesPropsInterface, IUserArticlesStateInterface> {
+class UserArticlesClass extends React.Component<IUserArticlesPropsInterface, IUserArticlesStateInterface> {
 
     SECTION_SUBSCRIPTIONS = 'subscriptions';
     SECTION_ARTICLES = 'articles';
@@ -80,8 +83,17 @@ class UserArticles extends React.Component<IUserArticlesPropsInterface, IUserArt
     }
 
     deleteArticle(articleId: number|string, index?: number) {
-        console.log(articleId);
-        console.log(index);
+        if (! (this.state.selectedSection == this.SECTION_ARTICLES)) {
+            return;
+        }
+
+        api.delete('/articles/editor/' + articleId + '/').then((response: any) => {
+            let items: any[] = this.state.showSubsection ? this.state.drafts : this.state.articles;
+            items.splice(index, 1);
+            this.setState(this.state.showSubsection ? {drafts: items} : {articles: items});
+
+            NotificationAction.do(SHOW_NOTIFICATION, {content: 'deleted'});
+        }).catch((error: any) => {});
     }
 
     setSection(sectionName: string) {
@@ -93,7 +105,13 @@ class UserArticles extends React.Component<IUserArticlesPropsInterface, IUserArt
     }
 
     toggleSubsection() {
-        this.setState({showSubsection: !this.state.showSubsection});
+        let closeDrafts: boolean = this.state.selectedSection == this.SECTION_ARTICLES
+            && this.state.showSubsection && this.props.location.query && this.props.location.query.show == 'drafts';
+        this.setState({showSubsection: !this.state.showSubsection}, () => {
+            if (closeDrafts) {
+                this.props.router.push('/profile/' + this.props.user.id);
+            }
+        });
     }
 
     componentWillReceiveProps(nextProps: any) {
@@ -107,6 +125,12 @@ class UserArticles extends React.Component<IUserArticlesPropsInterface, IUserArt
                 }
             });
         }
+
+        if (nextProps.location.query
+                && nextProps.location.query.show != this.props.location.query.show
+                && nextProps.location.query.show == 'drafts') {
+            this.setState({selectedSection: this.SECTION_ARTICLES, showSubsection: true});
+        }
     }
 
     componentDidMount() {
@@ -114,6 +138,9 @@ class UserArticles extends React.Component<IUserArticlesPropsInterface, IUserArt
         if (this.props.isSelf) {
             this.loadArticles('me');
             this.loadArticles(this.props.user.id, true);
+        }
+        if (this.props.location.query.show == 'drafts') {
+            this.setState({showSubsection: true});
         }
     }
 
@@ -177,6 +204,10 @@ class UserArticles extends React.Component<IUserArticlesPropsInterface, IUserArt
         </div>)
     }
 }
+
+
+let UserArticles = withRouter(UserArticlesClass);
+
 
 interface IAuthorsPropsInterface {
     userId: number | string;

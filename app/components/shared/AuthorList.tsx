@@ -46,7 +46,7 @@ export default class AuthorList extends React.Component<IAuthorListPropsInterfac
                         <div className="filler"></div>
 
                         { this.props.showInfo ? (<div className="info">{Captions.profile.subscribersNumber} {item.subscribers}</div>) : null}
-                        { this.props.showInfo ? (<div className="info">{Captions.profile.subscribersArticles} {item.text || 0}</div>) : null}
+                        { this.props.showInfo ? (<div className="info">{Captions.profile.subscribersArticles} {item.number_of_articles || 0}</div>) : null}
                         { this.props.showInfo ? (<div className="info confirm">
                             { item.is_subscribed ? <ConfirmIcon /> : null }
                         </div>) : null}

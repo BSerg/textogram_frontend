@@ -3,7 +3,7 @@ import {Link, withRouter} from 'react-router';
 import {api} from '../api';
 
 import {MenuAction, TOGGLE} from '../actions/MenuAction';
-import {UserAction, GET_ME, LOGIN, LOGOUT, SAVE_USER} from '../actions/user/UserAction';
+import {UserAction, GET_ME, LOGIN, LOGOUT, SAVE_USER, UPDATE_USER} from '../actions/user/UserAction';
 import {NotificationAction, CHECK} from '../actions/NotificationAction'
 import {ModalAction, OPEN_MODAL} from '../actions/shared/ModalAction';
 import Registration from './Registration';
@@ -447,6 +447,7 @@ export default class Menu extends React.Component<any, IMenuStateInterface> {
 
         MenuAction.onChange(TOGGLE, this.setOpen);
         UserAction.onChange(SAVE_USER, this.setUser);
+        UserAction.onChange(UPDATE_USER, this.setUser);
         UserAction.onChange(GET_ME, this.setUser);
         UserAction.onChange(LOGIN, this.setUser);
         UserAction.onChange(LOGOUT, this.setUser);

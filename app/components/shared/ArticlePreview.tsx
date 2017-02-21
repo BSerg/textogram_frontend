@@ -51,7 +51,9 @@ class ArticlePreviewClass extends React.Component<IArticlePreviewPropsInterface,
 
         if (this.props.onClickDelete) {
 
-            this.props.onClickDelete(this.props.item.id, this.props.index);
+            if (confirm()) {
+                this.props.onClickDelete(this.props.item.id, this.props.index);
+            }
         }
     }
 
