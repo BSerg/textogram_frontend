@@ -173,10 +173,10 @@ class UserArticlesClass extends React.Component<IUserArticlesPropsInterface, IUs
             {this.props.isSelf ? (
                 <div className="profile__articles__menu">
 
-                    <div onClick={this.setSection.bind(this, this.SECTION_ARTICLES)} className={(this.state.selectedSection == this.SECTION_ARTICLES) ? 'active': null}>
+                    <div onClick={this.setSection.bind(this, this.SECTION_ARTICLES)} className={(this.state.selectedSection == this.SECTION_ARTICLES && !this.state.showSubsection) ? 'active': null}>
                         {Captions.profile.menuArticles}
                     </div>
-                    <div onClick={this.setSection.bind(this, this.SECTION_SUBSCRIPTIONS)}  className={(this.state.selectedSection == this.SECTION_SUBSCRIPTIONS) ? 'active': null}>
+                    <div onClick={this.setSection.bind(this, this.SECTION_SUBSCRIPTIONS)}  className={(this.state.selectedSection == this.SECTION_SUBSCRIPTIONS && !this.state.showSubsection) ? 'active': null}>
                         {Captions.profile.menuSubscriptions}
                     </div>
                     <div className="profile__articles__menu_switch_button" onClick={this.toggleSubsection.bind(this)}>
