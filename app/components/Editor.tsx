@@ -40,11 +40,13 @@ import InlineBlock from "./editor/InlineBlock";
 import {MediaQuerySerice} from "../services/MediaQueryService";
 import {NotificationAction, SHOW_NOTIFICATION} from "../actions/shared/NotificationAction";
 import PopupPrompt from "./shared/PopupPrompt";
+import {UserAction} from "../actions/user/UserAction";
 
 
 interface IEditorProps {
     newArticle?: boolean
     params?: any
+    router?: any
 }
 
 interface IEditorState {
@@ -202,7 +204,8 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
     publish() {
         api.post(`/articles/editor/${this.state.article.id}/publish/`).then((response: any) => {
             this.setState({article: response.data}, () => {
-                NotificationAction.do(SHOW_NOTIFICATION, {content: 'Поздравляем, ваш материал опубликован.'})
+                NotificationAction.do(SHOW_NOTIFICATION, {content: 'Поздравляем, ваш материал опубликован.'});
+                this.props.router.push(`/profile/${UserAction.getStore().user.id}`);
             });
         });
     }
@@ -467,6 +470,6 @@ export class NewArticleEditor extends React.Component<any, any> {
     }
 
     render() {
-        return <Editor newArticle={true}/>;
+        return <Editor router={this.props.router} newArticle={true}/>;
     }
 }
