@@ -23,6 +23,7 @@ interface TitleBlockStateInterface {
     title?: string|null,
     cover?: {id: number, image: string} | null,
     isValid?: boolean
+    coverLoading?: boolean
 }
 
 export default class TitleBlock extends React.Component<TitleBlockPropsInterface, TitleBlockStateInterface> {
@@ -31,6 +32,7 @@ export default class TitleBlock extends React.Component<TitleBlockPropsInterface
         this.state = {
             title: props.title,
             cover: props.cover,
+            coverLoading: false
         }
     }
 
@@ -73,13 +75,15 @@ export default class TitleBlock extends React.Component<TitleBlockPropsInterface
     }
 
     handleCover() {
+        this.setState({coverLoading: true});
         var file = this.refs.fileInput.files[0];
         UploadImageAction.doAsync(UPLOAD_IMAGE, {articleId: this.props.articleSlug, image: file}).then(() => {
             let store = UploadImageAction.getStore();
-            console.log(store);
-            this.setState({cover: store.image}, () => {
+            this.setState({cover: store.image, coverLoading: false}, () => {
                 ContentAction.do(UPDATE_COVER_CONTENT, {articleId: this.props.articleSlug, autoSave: this.props.autoSave, cover: store.image});
             });
+        }).catch((err: any) => {
+            this.setState({coverLoading: false});
         });
     }
 
@@ -106,10 +110,10 @@ export default class TitleBlock extends React.Component<TitleBlockPropsInterface
                 {this.props.articleSlug != null ?
                     <div className="title_block__cover_handler_wrapper">
                         {!this.state.cover ?
-                            <div onClick={this.openFileDialog.bind(this)} className="title_block__cover_handler">
-                                {Captions.editor.add_cover_ru}
+                            <div onClick={!this.state.coverLoading && this.openFileDialog.bind(this)} className="title_block__cover_handler">
+                                {this.state.coverLoading ? 'Обложка загружается...' : Captions.editor.add_cover_ru}
                             </div> :
-                            <div onClick={this.deleteCover.bind(this)} className="title_block__cover_handler">
+                            <div onClick={!this.state.coverLoading && this.deleteCover.bind(this)} className="title_block__cover_handler">
                                 {Captions.editor.remove_cover_ru}
                             </div>
                         }
