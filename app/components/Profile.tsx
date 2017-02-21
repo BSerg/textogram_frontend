@@ -419,21 +419,25 @@ export default class Profile extends React.Component<any, IProfileState> {
                                 <span>{this.state.user.first_name}</span> <span> {this.state.user.last_name}</span>
                          </div>
 
-                         <div className="profile__social_links">
+                         {
+                             this.state.user.social_links.length ? (
+                                 <div className="profile__social_links">
 
-                             <div className="profile__social_links_caption">Читайте меня в соцсетях</div>
-                             <div className="profile__social_links_list">
-                                 { this.state.user.social_links.map((social_link: any, index: number) => {
-                                     return (
-                                         <div className="profile__social_icon" key={index}>
-                                             <Link to={social_link.url} target="_blank" >
-                                                 <SocialIcon social={social_link.social} />
-                                             </Link>
-                                        </div>)
-                                 }) }
-                             </div>
+                                     <div className="profile__social_links_caption">Читайте меня в соцсетях</div>
+                                     <div className="profile__social_links_list">
+                                         { this.state.user.social_links.map((social_link: any, index: number) => {
+                                             return (
+                                                 <div className="profile__social_icon" key={index}>
+                                                     <Link to={social_link.url} target="_blank" >
+                                                         <SocialIcon social={social_link.social} />
+                                                     </Link>
+                                                </div>)
+                                         }) }
+                                     </div>
 
-                         </div>
+                                 </div>
+                             ) : null
+                         }
 
                          <div key="subscription" className="profile__subscription">
                              <div className="profile__subscription_info" onClick={this.showSubscribers.bind(this)}>
