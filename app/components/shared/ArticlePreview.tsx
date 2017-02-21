@@ -13,7 +13,8 @@ const EditIcon = require('babel!svg-react!../../assets/images/edit.svg?name=Edit
 
 interface IArticlePreviewPropsInterface {
     item: any,
-    onDelete?: (id: number) => {},
+    index?: number,
+    onClickDelete?: (id: number, index?: number) => {},
     onClick?: (id: number|null) => {},
     isFeed?: boolean,
     isOwner?: boolean,
@@ -47,7 +48,11 @@ class ArticlePreviewClass extends React.Component<IArticlePreviewPropsInterface,
     }
 
     deleteArticle() {
-        if (this.props.onDelete) this.props.onDelete(this.props.item.id);
+
+        if (this.props.onClickDelete) {
+
+            this.props.onClickDelete(this.props.item.id, this.props.index);
+        }
     }
 
     render() {
@@ -115,7 +120,7 @@ class ArticlePreviewClass extends React.Component<IArticlePreviewPropsInterface,
                             </Link>
                             <div>{Captions.profile.articlePreviewSettings}</div>
                             <div>{Captions.profile.articlePreviewCopy}</div>
-                            <div className="delete">{Captions.profile.articlePreviewDelete}</div>
+                            <div className="delete" onClick={this.deleteArticle.bind(this)}>{Captions.profile.articlePreviewDelete}</div>
                         </div>) : null
                 }
 

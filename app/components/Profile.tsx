@@ -57,18 +57,18 @@ class UserArticles extends React.Component<IUserArticlesPropsInterface, IUserArt
     loadArticles(userId: string|number, drafts?: boolean) {
         if (drafts) {
             api.get('/drafts/').then((response: any) => {
-                this.setState({drafts: this.state.drafts.concat(response.data || [])});
+                this.setState({drafts: response.data || []});
             }).catch((error) => {})
         }
         else {
             api.get('/articles/', {params: {user: userId}}).then((response: any) => {
                 if (userId == 'me') { this.setState(
-                    { feed: this.state.feed.concat(response.data.results || []) }
+                    { feed: response.data.results || [] }
                     );
                 }
                 else {
                     this.setState(
-                        { articles: this.state.articles.concat(response.data.results || []) }
+                        { articles: response.data.results || [] }
                     )
                 }
             }).catch((error) => {});
@@ -77,6 +77,11 @@ class UserArticles extends React.Component<IUserArticlesPropsInterface, IUserArt
 
     selectArticle(id: number|null) {
 
+    }
+
+    deleteArticle(articleId: number|string, index?: number) {
+        console.log(articleId);
+        console.log(index);
     }
 
     setSection(sectionName: string) {
@@ -160,7 +165,8 @@ class UserArticles extends React.Component<IUserArticlesPropsInterface, IUserArt
                 ((this.state.selectedSection == this.SECTION_ARTICLES) || (this.state.selectedSection == this.SECTION_SUBSCRIPTIONS && !this.state.showSubsection)) ?
 
                     items.map((article, index) => {
-                        return (<ArticlePreview isFeed={isFeed} key={index} item={article} isOwner={isOwner} />)
+                        return (<ArticlePreview isFeed={isFeed} key={index} item={article} isOwner={isOwner}
+                                                onClickDelete={this.deleteArticle.bind(this)} index={index} />)
                     }) : null
             }
 
