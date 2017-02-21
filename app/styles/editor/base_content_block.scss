@@ -28,7 +28,7 @@
       position: absolute;
       top: 0;
       left: 0;
-      width: 2px;
+      width: 1px;
       height: 100%;
       background-color: #FF3333;
     }
@@ -102,6 +102,16 @@
     &.last {
       .base_content_block__tools {
         height: calc(100% - #{$padding * 2  + 25px});
+      }
+    }
+
+    &.invalid:after {
+      display: none;
+    }
+
+    &.invalid {
+      .base_content_block__tools {
+        border-right: 1px solid $color-accent;
       }
     }
   }

@@ -217,32 +217,32 @@ export namespace Validation {
     };
 
     export const TEXT = {
-        value: {maxLength: 3000, message: `Текст ограничен 3000 символами`}
+        value: {maxLength: 3000, message: `Рекомендуемая длина текста 3000 символов`}
     };
 
     export const HEADER = {
-        value: {maxLength: 100, message: `Заголовок ограничен 150 символами`}
+        value: {maxLength: 100, message: `Рекомендуемая длина заголовка 150 символов`}
     };
 
     export const LEAD = {
-        value: {maxLength: 400, message: `Лид ограничен 400 символами`}
+        value: {maxLength: 400, message: `Рекомендуемая длина лида 400 символов`}
     };
 
     export const PHRASE = {
-        value: {maxLength: 200, message: `Фраза ограничена 200 символами`}
+        value: {maxLength: 200, message: `Рекомендуемая длина фразы 200 символами`}
     };
 
     export const QUOTE = {
-        value: {maxLength: 500, message: `Текст цитаты ограничен 500 символами`}
+        value: {maxLength: 500, message: `Рекомендуемая длина цитаты 500 символов`}
     };
 
     export const COLUMN = {
         image: {isRequired: true, message: `Добавьте изображение`},
-        value: {maxLength: 300, message: `Текст колонки ограничен 300 символами`}
+        value: {maxLength: 300, message: `Рекомендуемая длина колонки 300 символов`}
     };
 
     export const LIST = {
-        value: {maxLength: 3000, message: `Текст списков ограничен 3000 символами`}
+        value: {maxLength: 3000, message: `Рекомендуемая длина текста списка 3000 символов`}
     };
 
     export const DIALOGUE = {

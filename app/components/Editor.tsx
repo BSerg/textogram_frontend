@@ -108,35 +108,35 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
 
     validateContent(content: any, config: any) {
         let isValid = Validator.isValid(content, config);
-        for (let index in content.blocks || []) {
-            let block = content.blocks[index], validationConfig;
-            switch (block.type) {
-                case BlockContentTypes.TEXT:
-                    validationConfig = Validation.TEXT;
-                    break;
-                case BlockContentTypes.HEADER:
-                    validationConfig = Validation.HEADER;
-                    break;
-                case BlockContentTypes.LEAD:
-                    validationConfig = Validation.LEAD;
-                    break;
-                case BlockContentTypes.QUOTE:
-                    validationConfig = Validation.QUOTE;
-                    break;
-                case BlockContentTypes.COLUMNS:
-                    validationConfig = Validation.COLUMN;
-                    break;
-                case BlockContentTypes.PHRASE:
-                    validationConfig = Validation.PHRASE;
-                    break;
-                case BlockContentTypes.LIST:
-                    validationConfig = Validation.LIST;
-                    break;
-            }
-            if (!Validator.isValid(block, validationConfig)) {
-                isValid = false;
-            }
-        }
+        // for (let index in content.blocks || []) {
+        //     let block = content.blocks[index], validationConfig;
+        //     switch (block.type) {
+        //         case BlockContentTypes.TEXT:
+        //             validationConfig = Validation.TEXT;
+        //             break;
+        //         case BlockContentTypes.HEADER:
+        //             validationConfig = Validation.HEADER;
+        //             break;
+        //         case BlockContentTypes.LEAD:
+        //             validationConfig = Validation.LEAD;
+        //             break;
+        //         case BlockContentTypes.QUOTE:
+        //             validationConfig = Validation.QUOTE;
+        //             break;
+        //         case BlockContentTypes.COLUMNS:
+        //             validationConfig = Validation.COLUMN;
+        //             break;
+        //         case BlockContentTypes.PHRASE:
+        //             validationConfig = Validation.PHRASE;
+        //             break;
+        //         case BlockContentTypes.LIST:
+        //             validationConfig = Validation.LIST;
+        //             break;
+        //     }
+        //     if (!Validator.isValid(block, validationConfig)) {
+        //         isValid = false;
+        //     }
+        // }
         return isValid;
     }
 

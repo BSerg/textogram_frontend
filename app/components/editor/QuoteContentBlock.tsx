@@ -64,7 +64,9 @@ export default class QuoteContentBlock extends React.Component<IQuoteContentBloc
 
     handleActivate() {
         let store = ContentBlockAction.getStore();
-        this.setState({isActive: store.id == this.props.content.id});
+        this.setState({isActive: store.id == this.props.content.id}, () => {
+            this.updateValidationState();
+        });
     }
 
     handleFocus() {
@@ -116,12 +118,9 @@ export default class QuoteContentBlock extends React.Component<IQuoteContentBloc
             this.refs.inputUpload.value = "";
             return;
         }
-        if (file.size > Constants.maxImageSize) {
-            alert(`Image size is more than ${Constants.maxImageSize/1024/1024}Mb`);
-            return;
-        }
         this.setState({loadingImage: true, menuOpened: false});
         let tempURL = window.URL.createObjectURL(file);
+        let oldImage = this.state.content.image;
         this.state.content.image = {id: null, image: tempURL};
         const handlerUploadProgress = this.handleUploadProgress.bind(this, file.name);
         this.setState({content: this.state.content}, () => {
@@ -136,7 +135,8 @@ export default class QuoteContentBlock extends React.Component<IQuoteContentBloc
                 });
             }).catch((err) => {
                 UploadImageAction.unbind(UPDATE_PROGRESS, handlerUploadProgress);
-                this.setState({loadingImage: false, loadingProgress: null});
+                 this.state.content.image = oldImage;
+                this.setState({loadingImage: false, loadingProgress: null, content: this.state.content});
             })
         });
     }
