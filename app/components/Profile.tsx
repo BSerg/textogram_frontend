@@ -443,7 +443,7 @@ export default class Profile extends React.Component<any, IProfileState> {
                          }
 
                          <div key="subscription" className="profile__subscription">
-                             <div className="profile__subscription_info" onClick={this.showSubscribers.bind(this)}>
+                             <div className="profile__subscription_info sub_icon" onClick={this.showSubscribers.bind(this)}>
                                  <SubscriptionIcon />
                                  <span>{ this.state.isSelf ? Captions.profile.subscribersOwnProfile : Captions.profile.subscribers }</span>
                                  <span>{ this.state.user.subscribers }</span>

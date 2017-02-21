@@ -117,7 +117,7 @@ $avatar-side-size: 60px;
 
     .profile__social_links_caption {
       width: 100%;
-      margin-bottom: $margin;
+      margin-bottom: 40px;
       font-size: $font-size-small;
       text-transform: uppercase;
       display: none;
@@ -351,7 +351,7 @@ $avatar-side-size: 60px;
     }
 
     .profile__username {
-      margin-bottom: 90px;
+      margin-bottom: 100px;
       span {
         font-size: 20px;
       }
@@ -422,7 +422,15 @@ $avatar-side-size: 60px;
 
       .profile__subscription_info {
         margin-bottom: $margin;
-
+        &.sub_icon {
+          position: relative;
+          svg {
+            position: absolute;
+            left: 0;
+            width: 35px;
+            height: 35px;
+          }
+        }
         //svg {
         //  width: 30px;
         //  height: 30px;
