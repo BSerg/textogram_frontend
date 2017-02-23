@@ -114,5 +114,15 @@
         border-right: 1px solid $color-accent;
       }
     }
+
+    &.expand_top {
+      padding-top: 25px;
+      margin-top: 25px;
+    }
+
+    &.expand_bottom {
+      padding-bottom: 25px;
+      margin-bottom: 25px;
+    }
   }
 }
