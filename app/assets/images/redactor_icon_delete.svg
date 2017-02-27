@@ -2,12 +2,9 @@
 <!-- Generator: Adobe Illustrator 21.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
 <svg version="1.1" id="Слой_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 viewBox="0 0 44 44" style="enable-background:new 0 0 44 44;" xml:space="preserve">
-<style type="text/css">
-	.st0{fill:#FFFFFF;}
-</style>
 <g>
-	<path class="st0" d="M17.2,15l13-3.1l-0.5-1.9l-17.4,4.2V15h0v19.1h19.4V15H17.2z M29.7,32.1H14.3v-7.2h0V17h15.4V32.1z"/>
-	<rect x="18.3" y="19.8" class="st0" width="2" height="9.2"/>
-	<rect x="23.7" y="19.8" class="st0" width="2" height="9.2"/>
+	<path d="M17.2,15l13-3.1l-0.5-1.9l-17.4,4.2V15h0v19.1h19.4V15H17.2z M29.7,32.1H14.3v-7.2h0V17h15.4V32.1z"/>
+	<rect x="18.3" y="19.8" width="2" height="9.2"/>
+	<rect x="23.7" y="19.8" width="2" height="9.2"/>
 </g>
 </svg>
