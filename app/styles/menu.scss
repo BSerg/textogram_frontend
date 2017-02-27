@@ -315,14 +315,45 @@
   .menu__link, .menu__register, .menu__about, .menu__controls, .menu__user  {
     cursor: pointer;
   }
+
 }
 
 @media (min-width: 1024px) {
   #main_menu {
-    position: relative;
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 20px;
+
+    .main_menu__min {
+      display: flex;
+      flex-direction: row;
+      width: 100%;
+      height: 100%;
+      justify-content: center;
+      align-items: center;
+      background-color: #333333;
+      color: #FFFFFF;
+      text-transform: uppercase;
+      font-size: 11px;
+      font-family: $family_arimo;
+      letter-spacing: 1px;
+      font-weight: $font-weight-bold;
+    }
 
     .main_menu_container {
       max-width: unset;
+      display: none;
+    }
+
+    &:hover {
+      height: 75px;
+      .main_menu__min {
+        display: none;
+      }
+      .main_menu_container {
+        display: block;
+      }
     }
 
     .menu__content {
@@ -435,12 +466,23 @@
         height: 100%;
 
         &>div {
-          margin: 0 5px;
+          margin: 0;
+          padding: 0 5px;
+          height: 100%;
+
+          display: flex;
+          flex-direction: row;
+          align-items: center;
+          justify-content: center;
+
+          &:hover {
+            background-color: #282828;
+          }
         }
 
         svg {
-          width: 30px;
-          height: 30px;
+          width: 35px;
+          height: 35px;
           fill: $color3;
         }
 
@@ -465,9 +507,11 @@
         .menu__notifications_icon {
           margin: 0;
           .menu__notifications_count {
-            width: 15px;
-            height: 15px;
-            line-height: 15px;
+            width: 18px;
+            height: 18px;
+            line-height: 18px;
+            top: 3px;
+            right: -3px;
           }
         }
       }
