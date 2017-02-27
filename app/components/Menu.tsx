@@ -116,15 +116,9 @@ class DefaultMenu extends React.Component<DefaultMenuPropsInterface, IDefaultMen
         return (
             <div className="menu__content main__menu_default" onClick={this.stopClosePropagation.bind(this)}>
 
+                { !this.props.isDesktop ? (<div onClick={this.closeMenu.bind(this)} className="menu__close_mobile"><CloseIcon /></div>) : null}
                 { !this.props.isDesktop ? (<div onClick={this.handleUrlClick.bind(this, '/info/')} className="menu__info"><InfoIcon /></div>) : null}
 
-                {
-                    this.props.isDesktop ? (
-                        <div className="menu__close" onClick={this.closeMenu.bind(this)}>
-                            <CloseIcon />
-                        </div>
-                    ) : null
-                }
                 <div className="menu__user">
                     {
                             this.props.isDesktop ? (

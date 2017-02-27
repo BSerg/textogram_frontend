@@ -347,7 +347,7 @@
     }
 
     &:hover {
-      height: 75px;
+      height: 70px;
       .main_menu__min {
         display: none;
       }
@@ -363,7 +363,7 @@
       background-color: transparent;
       //padding: 0 $padding;
       align-items: center;
-      height: 75px;
+      height: 68px;
       justify-content: space-around;
 
       .menu__user, .menu__links {
@@ -467,7 +467,7 @@
 
         &>div {
           margin: 0;
-          padding: 0 5px;
+          padding: 0 8px;
           height: 100%;
 
           display: flex;
