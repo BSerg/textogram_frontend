@@ -479,7 +479,8 @@ export default class Profile extends React.Component<any, IProfileState> {
 
                      {
                          (this.state.isDesktop && this.state.showSubscribers) ? (
-                             <UserAuthors isDesktop={this.state.isDesktop} userId={this.state.user.id} closeSubscribers={this.closeSubscribers.bind(this)} />
+                             <div className="profile__articles">
+                             <UserAuthors isDesktop={this.state.isDesktop} userId={this.state.user.id} closeSubscribers={this.closeSubscribers.bind(this)} /></div>
                          ) : null
                      }
 

@@ -119,14 +119,6 @@ class DefaultMenu extends React.Component<DefaultMenuPropsInterface, IDefaultMen
                 { !this.props.isDesktop ? (<div onClick={this.closeMenu.bind(this)} className="menu__close_mobile"><CloseIcon /></div>) : null}
                 { !this.props.isDesktop ? (<div onClick={this.handleUrlClick.bind(this, '/info/')} className="menu__info"><InfoIcon /></div>) : null}
 
-
-                {
-                    this.props.isDesktop ? (
-                        <div className="menu__close" onClick={this.closeMenu.bind(this)}>
-                            <CloseIcon />
-                        </div>
-                    ) : null
-                }
                 <div className="menu__user">
                     {
                             this.props.isDesktop ? (
@@ -341,9 +333,7 @@ class UserMenu extends React.Component<IUserMenuProps, any> {
     render() {
         return this.props.isDesktop ? (
             <div className="menu__content" onClick={this.stopClosePropagation.bind(this)}>
-                <div className="menu__close" onClick={this.closeMenu.bind(this)}>
-                    <CloseIcon />
-                </div>
+
                 <div className="menu__user">
                     <Link to={"/profile/" + this.props.user.id}>
                         <div className="menu__user_avatar">
@@ -416,7 +406,11 @@ export default class Menu extends React.Component<any, IMenuStateInterface> {
 
     constructor() {
         super();
-        this.state = {open: false, user: UserAction.getStore().user,  isDesktop: MediaQuerySerice.getIsDesktop()};
+        this.state = {
+            open: MediaQuerySerice.getIsDesktop(),
+            user: UserAction.getStore().user,
+            isDesktop: MediaQuerySerice.getIsDesktop()
+        };
         this.setUser = this.setUser.bind(this);
         this.setOpen = this.setOpen.bind(this);
     }
@@ -430,7 +424,7 @@ export default class Menu extends React.Component<any, IMenuStateInterface> {
     }
 
     setOpen() {
-        this.setState({open: Boolean(MenuAction.getStore().open)});
+        this.setState({open: this.state.isDesktop || Boolean(MenuAction.getStore().open)});
     }
 
     stopClosePropagation(e: any) {
@@ -441,7 +435,7 @@ export default class Menu extends React.Component<any, IMenuStateInterface> {
 
         MediaQuerySerice.listen((isDesktop: boolean) => {
             if (isDesktop != this.state.isDesktop) {
-                this.setState({isDesktop: isDesktop});
+                this.setState({isDesktop: isDesktop, open: isDesktop});
             }
         });
 
@@ -465,6 +459,7 @@ export default class Menu extends React.Component<any, IMenuStateInterface> {
         if (!this.state.open) return null;
         return (
             <div id="main_menu" onClick={this.toggleMenu}>
+                {this.state.isDesktop ? (<div className="main_menu__min">Textius</div>) : null }
                 <div onClick={this.stopClosePropagation.bind(this)} className="main_menu_container">
                 { this.state.user ?
                     <UserMenuWithRouter user={this.state.user} isDesktop={this.state.isDesktop} /> :
