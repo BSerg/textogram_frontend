@@ -377,7 +377,11 @@ $avatar-side-size: 60px;
     .profile__articles {
       width: 100%;
       max-width: 800px;
-      margin-top: 75px;
+      margin-top: 68px;
+
+      .profile__articles__menu {
+        min-height: 43px;
+      }
 
       //margin-left: 400px;
 
