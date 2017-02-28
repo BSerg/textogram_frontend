@@ -395,7 +395,7 @@ class ShareFloatingPanel extends React.Component<any, any> {
         );
         let scrollDelta = window.pageYOffset / height;
         console.log(scrollDelta, height);
-        this.setState({visible: window.pageYOffset >= 300, scrollDelta: scrollDelta})
+        this.setState({opacity: Math.min(scrollDelta * 2, 1), scrollDelta: scrollDelta})
     }
 
     componentDidMount() {
@@ -407,7 +407,10 @@ class ShareFloatingPanel extends React.Component<any, any> {
     }
 
     render() {
-        let style = {top: this.state.scrollDelta * window.innerHeight / 3};
+        let style = {
+            top: 30 - Math.min(this.state.scrollDelta * 3, 1) * 20 + '%',
+            opacity: Math.min(this.state.scrollDelta * 3, 1)
+        };
         return (
             <div style={style} className={"share_panel" + (this.state.visible ? ' visible' : '')}>
                 <a href={"http://vk.com/share.php?url=" + this.props.articleUrl}

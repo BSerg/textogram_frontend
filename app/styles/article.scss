@@ -921,7 +921,7 @@
 .share_panel {
   @include transition();
   position: fixed;
-  top: 0;
+  top: 30%;
   left: 50px;
   display: flex;
   flex-direction: column;
@@ -942,8 +942,8 @@
     margin-bottom: 20px;
 
     svg {
-      width: 20px;
-      heigth: 20px;
+      width: 19px;
+      heigth: 19px;
       fill: white;
     }
   }
