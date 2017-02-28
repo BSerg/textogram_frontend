@@ -5,6 +5,7 @@ const FBIcon = require('babel!svg-react!../../assets/images/profile_social_icon_
 const TwitterIcon = require('babel!svg-react!../../assets/images/profile_social_icon_twitter.svg?name=TwitterIcon');
 const GoogleIcon = require('babel!svg-react!../../assets/images/profile_social_icon_google.svg?name=GoogleIcon');
 const UrlIcon = require('babel!svg-react!../../assets/images/profile_web_link_icon.svg?name=UrlIcon');
+const TelegramIcon = require('babel!svg-react!../../assets/images/telegram.svg?name=TelegramIcon');
 
 interface ISocialIconProps {
     social?: string
@@ -18,6 +19,7 @@ export default class SocialIcon extends React.Component<ISocialIconProps, any> {
         'facebook': FBIcon,
         'twitter': TwitterIcon,
         'google': GoogleIcon,
+        'telegram': TelegramIcon,
     };
 
     constructor(props: any) {

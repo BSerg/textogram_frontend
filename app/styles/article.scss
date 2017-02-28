@@ -654,14 +654,14 @@
   align-items: center;
   font-family: $family_open_sans;
   background-color: $color4;
-  padding: $padding 0;
+  padding: $padding * 2 0;
 
   .article__author {
     display: flex;
     flex-direction: row;
     align-items: center;
-    font-size: 12px;
-    line-height: 14px;
+    font-size: 15px;
+    line-height: 20px;
     color: $color;
     text-transform: uppercase;
     letter-spacing: 1px;
@@ -697,12 +697,12 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      height: 64px;
+      height: 55px;
       background-color: $color3;
       cursor: pointer;
 
       &:hover {
-        background-color: $color5;
+        background-color: $color;
       }
 
       &:not(:last-child) {
@@ -718,7 +718,7 @@
   }
 
   @include desktop {
-    margin: 50px 0 30px 0;
+    margin: 50px 0 0 0;
 
     .article__shares {
       width: 600px;
@@ -915,5 +915,36 @@
   span {
     font-weight: $font-weight-bold;
     margin-right: 10px;
+  }
+}
+
+.share_panel {
+  @include transition();
+  position: fixed;
+  top: 0;
+  left: 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  &:not(.visible) {
+    opacity: 0;
+  }
+
+  a {
+    @include border_radius(30px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    background-color: $color;
+    margin-bottom: 20px;
+
+    svg {
+      width: 20px;
+      heigth: 20px;
+      fill: white;
+    }
   }
 }

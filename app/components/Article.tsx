@@ -226,7 +226,10 @@ export default class Article extends React.Component<any, IArticleState> {
                                    className="article__share_btn"><SocialIcon social="facebook"/></a>
                                 <a href={"https://twitter.com/home?status=" + this.state.article.url}
                                    className="article__share_btn"><SocialIcon social="twitter"/></a>
+                                <a href={"https://telegram.me/share/url?url=" + this.state.article.url}
+                                   className="article__share_btn"><SocialIcon social="telegram"/></a>
                             </div>
+                            <ShareFloatingPanel articleUrl={this.state.article.url}/>
                         </div>
                     </div>
                     : <div className="article__loading"><span>СТАТЬЯ</span> ЗАГРУЖАЕТСЯ...</div>
@@ -371,5 +374,51 @@ class GalleryModal extends React.Component<IGalleryModalProps, IGalleryModalStat
                 {photo.caption ? <div className="gallery_modal__caption">{photo.caption}</div> : null}
             </div>
         );
+    }
+}
+
+class ShareFloatingPanel extends React.Component<any, any> {
+    constructor(props: any) {
+        super(props);
+        this.state = {
+            visible: false,
+            scrollDelta: 0,
+        };
+        this.handleScroll = this.handleScroll.bind(this);
+    }
+
+    handleScroll() {
+        let height = Math.max(
+            document.body.scrollHeight, document.body.offsetHeight,
+            document.documentElement.clientHeight, document.documentElement.scrollHeight,
+            document.documentElement.offsetHeight
+        );
+        let scrollDelta = window.pageYOffset / height;
+        console.log(scrollDelta, height);
+        this.setState({visible: window.pageYOffset >= 300, scrollDelta: scrollDelta})
+    }
+
+    componentDidMount() {
+        window.addEventListener('scroll', this.handleScroll);
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener('scroll', this.handleScroll);
+    }
+
+    render() {
+        let style = {top: this.state.scrollDelta * window.innerHeight / 2};
+        return (
+            <div style={style} className={"share_panel" + (this.state.visible ? ' visible' : '')}>
+                <a href={"http://vk.com/share.php?url=" + this.props.articleUrl}
+                   className="share_panel__share_btn"><SocialIcon social="vk"/></a>
+                <a href={"https://www.facebook.com/sharer/sharer.php?u=" + this.props.articleUrl}
+                   className="share_panel__share_btn"><SocialIcon social="facebook"/></a>
+                <a href={"https://twitter.com/home?status=" + this.props.articleUrl}
+                   className="share_panel__share_btn"><SocialIcon social="twitter"/></a>
+                <a href={"https://telegram.me/share/url?url=" + this.props.articleUrl}
+                   className="share_panel__share_btn"><SocialIcon social="telegram"/></a>
+            </div>
+        )
     }
 }
