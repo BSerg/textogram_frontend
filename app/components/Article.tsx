@@ -407,7 +407,7 @@ class ShareFloatingPanel extends React.Component<any, any> {
     }
 
     render() {
-        let style = {top: this.state.scrollDelta * window.innerHeight / 2};
+        let style = {top: this.state.scrollDelta * window.innerHeight / 3};
         return (
             <div style={style} className={"share_panel" + (this.state.visible ? ' visible' : '')}>
                 <a href={"http://vk.com/share.php?url=" + this.props.articleUrl}
