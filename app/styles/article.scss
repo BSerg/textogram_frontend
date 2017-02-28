@@ -130,7 +130,12 @@
     }
   }
 
+  .article__content_wrapper {
+    position: relative;
+  }
+
   .article__content {
+    position: relative;
 
     & > p, h2, blockquote, ul, .lead, .phrase, .columns, .embed, .photos, .dialogue, .single_photo {
       padding: $padding/2 $padding;
@@ -946,5 +951,72 @@
       heigth: 19px;
       fill: white;
     }
+  }
+}
+
+.floating_panel {
+  position: absolute;
+  top: 0;
+  right: 50px;
+  width: 250px;
+  min-height: 400px;
+
+  &.pinned {
+    position: fixed;
+    top: 30px;
+  }
+}
+
+.ad {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: $color3;
+  margin: 0 auto;
+  overflow: hidden;
+
+  &:before {
+    content: 'Реклама';
+    position: absolute;
+    color: $color5;
+    font-size: 12px;
+    text-transform: uppercase;
+    z-index: -1;
+  }
+}
+
+.ad_728x90 {
+  width: 728px;
+  margin-left: -64px;
+}
+
+.ad_x250 {
+  width: 100%;
+  height: 250px;
+}
+
+.ad_250x400 {
+  width: 250px;
+  height: 400px;
+}
+
+.ad_300x250 {
+  width: 300px;
+  height: 250px;
+}
+
+.ad_728x90, .ad_250x400 {
+  display: none;
+}
+
+
+@include desktop {
+  .ad_728x90, .ad_250x400 {
+    display: flex;
+  }
+  .ad_300x250, .ad_x250 {
+    display: none;
   }
 }

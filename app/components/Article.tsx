@@ -9,6 +9,7 @@ import * as moment from 'moment';
 import "../styles/article.scss";
 import SocialIcon from "./shared/SocialIcon";
 import {MediaQuerySerice} from "../services/MediaQueryService";
+import FloatingPanel from "./shared/FloatingPanel";
 
 const EditButton = require('babel!svg-react!../assets/images/edit.svg?name=EditButton');
 const DeleteButton = require('babel!svg-react!../assets/images/redactor_icon_delete.svg?name=DeleteButton');
@@ -40,6 +41,7 @@ interface IArticle {
     },
     images: IPhoto[]
     url: string
+    ads_enabled?: boolean
 }
 
 interface IArticleState {
@@ -47,6 +49,7 @@ interface IArticleState {
     error?: any
     isSelf?: boolean
     isDesktop?: boolean
+    floatingBanner?: any
 }
 
 export default class Article extends React.Component<any, IArticleState> {
@@ -55,7 +58,8 @@ export default class Article extends React.Component<any, IArticleState> {
         this.state = {
             article: null,
             isSelf: false,
-            isDesktop: MediaQuerySerice.getIsDesktop()
+            isDesktop: MediaQuerySerice.getIsDesktop(),
+            floatingBanner: null
         };
         this.handleMediaQuery = this.handleMediaQuery.bind(this);
     }
@@ -158,6 +162,13 @@ export default class Article extends React.Component<any, IArticleState> {
                     this.processPhoto();
                     this.processEmbed();
                 }, 50);
+                if (this.state.article.ads_enabled) {
+                    api.get('/banners/250x400/').then((response: any) => {
+                        this.setState({floatingBanner: response.data.code});
+                    }).catch((err) => {
+                        console.log(err);
+                    })
+                }
             });
         }).catch((err: any) => {
             console.log(err);
@@ -211,7 +222,13 @@ export default class Article extends React.Component<any, IArticleState> {
                                 </div>
                             </div>
                         </div>
-                        <div className="article__content" dangerouslySetInnerHTML={{__html: this.state.article.html}}/>
+                        <div className="article__content_wrapper">
+                            <div className="article__content" dangerouslySetInnerHTML={{__html: this.state.article.html}}/>
+                            {this.state.isDesktop && this.state.floatingBanner ?
+                                <FloatingPanel fixed={true} content={this.state.floatingBanner}/> : null
+                            }
+                        </div>
+
                         <div className="article__share">
                             <Link to={`/profile/${this.state.article.owner.id}`} className="article__author">
                                 {this.state.article.owner.avatar ?
@@ -229,8 +246,8 @@ export default class Article extends React.Component<any, IArticleState> {
                                 <a href={"https://telegram.me/share/url?url=" + this.state.article.url}
                                    className="article__share_btn"><SocialIcon social="telegram"/></a>
                             </div>
-                            <ShareFloatingPanel articleUrl={this.state.article.url}/>
                         </div>
+                        {this.state.isDesktop ? <ShareFloatingPanel articleUrl={this.state.article.url}/> : null}
                     </div>
                     : <div className="article__loading"><span>СТАТЬЯ</span> ЗАГРУЖАЕТСЯ...</div>
                 : this.state.error
@@ -301,7 +318,6 @@ class GalleryModal extends React.Component<IGalleryModalProps, IGalleryModalStat
     }
 
     getImageStyle(index: number) {
-        console.log(index, this.props.photos);
         if (index == null) {
             return {background: 'transparent'};
         } else {
@@ -394,7 +410,6 @@ class ShareFloatingPanel extends React.Component<any, any> {
             document.documentElement.offsetHeight
         );
         let scrollDelta = window.pageYOffset / height;
-        console.log(scrollDelta, height);
         this.setState({opacity: Math.min(scrollDelta * 2, 1), scrollDelta: scrollDelta})
     }
 
