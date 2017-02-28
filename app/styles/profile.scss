@@ -345,7 +345,8 @@ $avatar-side-size: 60px;
       position: fixed;
       top: 0;
       left: 0;
-      width: 400px;
+      width: 33%;
+      max-width: 400px;
       height: 100%;
       background-color: #F7F7F7;
 
@@ -395,11 +396,12 @@ $avatar-side-size: 60px;
 
     .profile__social_links {
       margin: 0;
+      z-index: 10;
 
       padding: $padding;
       box-sizing: border-box;
-      width: 400px;
-      position: fixed;
+      width: 100%;
+      position: absolute;
       left: 0;
       bottom: 0;
       background-color: #F2F2F2;
@@ -481,4 +483,29 @@ $avatar-side-size: 60px;
       }
     }
   }
+}
+
+@media (min-width: 1024px) and (max-height: 600px){
+
+  #profile_content {
+    .profile_content_main {
+
+      .profile__avatar {
+        margin-top: $margin;
+      }
+
+      .profile__username {
+        margin-bottom: $margin;
+      }
+
+      .profile__social_links {
+
+        .profile__social_links_caption {
+          display: none;
+
+        }
+      }
+    }
+  }
+
 }
