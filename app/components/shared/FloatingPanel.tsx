@@ -5,6 +5,7 @@ import '../../styles/shared/floating_panel.scss';
 interface IFloatingPanel {
     fixed?: boolean
     content: any
+    className?: string
 }
 
 interface IFloatingPanelState {
@@ -56,6 +57,7 @@ export default class FloatingPanel extends React.Component<IFloatingPanel, IFloa
 
     render() {
         let className = 'floating_panel';
+        if (this.props.className) className += ' ' + this.props.className;
         if (this.props.fixed && this.state.pinned) className += ' pinned';
         return (
             <div ref="element" className={className} dangerouslySetInnerHTML={{__html: this.props.content}}/>

@@ -225,7 +225,7 @@ export default class Article extends React.Component<any, IArticleState> {
                         <div className="article__content_wrapper">
                             <div className="article__content" dangerouslySetInnerHTML={{__html: this.state.article.html}}/>
                             {this.state.isDesktop && this.state.floatingBanner ?
-                                <FloatingPanel fixed={true} content={this.state.floatingBanner}/> : null
+                                <FloatingPanel className="ad_250x400" fixed={true} content={this.state.floatingBanner}/> : null
                             }
                         </div>
 

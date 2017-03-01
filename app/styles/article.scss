@@ -1020,3 +1020,9 @@
     display: none;
   }
 }
+
+@include small_desktop {
+  .ad_250x400 {
+    display: none;
+  }
+}
