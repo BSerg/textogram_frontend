@@ -129,7 +129,7 @@
 }
 
 $desktop-width: 1024px;
-$regular-desktop-width: 1366px;
+$regular-desktop-width: 1280px;
 
 @mixin desktop {
   @media (min-width: #{$desktop-width}) {
@@ -138,7 +138,7 @@ $regular-desktop-width: 1366px;
 }
 
 @mixin small_desktop {
-  @media (min-width: #{$desktop-width}) and (max-width: #{$regular-desktop-width}) {
+  @media (min-width: #{$desktop-width}) and (max-width: #{$regular-desktop-width - 1}) {
     @content;
   }
 }
