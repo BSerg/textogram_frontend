@@ -265,7 +265,7 @@ export default class ContentEditable extends React.Component<ContentEditableProp
 
             let sRect = this.range.getBoundingClientRect();
             let sTools = document.getElementById('selection_tools');
-            sTools.style.top = sRect.top + window.pageYOffset + 30 + 'px';
+            sTools.style.top = sRect.top + window.pageYOffset - 65 + 'px';
             sTools.style.left = sRect.left + window.pageXOffset + sRect.width / 2 - 75 + 'px';
             ReactDOM.render(tools, sTools);
         } else {
