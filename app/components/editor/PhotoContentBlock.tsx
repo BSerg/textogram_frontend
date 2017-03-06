@@ -23,11 +23,17 @@ const AddButton = require('babel!svg-react!../../assets/images/redactor_icon_pop
 const DeleteButton = require('babel!svg-react!../../assets/images/close.svg?name=DeleteButton');
 const BackButton = require('babel!svg-react!../../assets/images/back.svg?name=BackButton');
 
+const ResizeBig = require('babel!svg-react!../../assets/images/resize_big.svg?name=ResizeBig');
+const ResizeSmall = require('babel!svg-react!../../assets/images/resize_small.svg?name=ResizeSmall');
+
+type PhotoSize = 'original' | 'cropped';
+
 interface IPhoto {
     id: number
     image: string
     preview?: string
     caption?: string
+    size?: PhotoSize
 }
 
 interface IPhotoProps {
@@ -63,6 +69,9 @@ export class Photo extends React.Component<IPhotoProps, any> {
 
     render() {
         let className = 'content_block_photo__photo';
+        if (this.props.content.size == 'cropped') {
+            className += ' photo_cropped';
+        }
         if (this.props.className) {
             className += ' ' + this.props.className
         }
@@ -73,6 +82,7 @@ export class Photo extends React.Component<IPhotoProps, any> {
         });
         return (
             <div className={className} style={style} onClick={this.handleOpenModal.bind(this)}>
+                <img src={this.props.content.preview || this.props.content.image} style={{visibility: "hidden"}}/>
                 <div onClick={this.handleDelete.bind(this)} className="content_block_photo__delete"></div>
                 {/*<DeleteButton onClick={this.handleDelete.bind(this)} className="content_block_photo__delete"/>*/}
             </div>
@@ -286,6 +296,18 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
         });
     }
 
+    resizePhoto() {
+        let photo = this.state.content.photos[0];
+        if (photo) {
+            if (!photo.size || photo.size == 'original') {
+                photo.size = 'cropped';
+            } else {
+                photo.size = 'original';
+            }
+        }
+        this.setState({content: this.state.content});
+    }
+
     private openFileDialog() {
         this.refs.inputUpload.value = '';
         this.refs.inputUpload.click();
@@ -304,12 +326,23 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
     }
 
     private getDesktopToolsContent() {
+        let content = [];
+        if (this.state.content.photos.length == 1) {
+            content.push(
+                <div onClick={this.resizePhoto.bind(this)}>
+                    {this.state.content.photos[0].size == 'cropped' ?
+                        <ResizeBig/> : <ResizeSmall/>
+                    }
+                </div>
+            );
+        }
         if (this.state.content.photos.length >= this.props.maxPhotoCount ||
             (this.state.imageUploadProgress && this.state.imageUploadProgress.progress != this.state.imageUploadProgress.total)) {
-            return <div><AddButton className="disabled"/></div>
+            content.push(<div><AddButton className="disabled"/></div>)
         } else {
-            return <div onClick={this.openFileDialog.bind(this)}><AddButton/></div>
+            content.push(<div onClick={this.openFileDialog.bind(this)}><AddButton/></div>)
         }
+        return content;
     }
 
     handleMediaQuery(isDesktop: boolean) {

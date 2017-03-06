@@ -46,6 +46,11 @@ $base_desktop_photo_height: 400px;
     margin-bottom: $space;
     cursor: pointer;
 
+    img {
+      width: 100%;
+      height: auto;
+    }
+
     &.content_block_photo__empty {
       width: 100%;
       height: $base_photo_height;
@@ -84,6 +89,14 @@ $base_desktop_photo_height: 400px;
     &.grid_1 .content_block_photo__photo.photo0 {
       width: 100%;
       height: $base_photo_height;
+
+      &.photo0 {
+        height: auto;
+      }
+
+      &.photo0.photo_cropped {
+        height: $base_photo_height;
+      }
     }
 
     &.grid_2 .content_block_photo__photo{
@@ -199,7 +212,11 @@ $base_desktop_photo_height: 400px;
 
     &.grid_1 .content_block_photo__photo.photo0 {
       width: 100%!important;
-      height: $base_desktop_photo_height!important;
+      height: auto!important;
+
+      &.photo_cropped {
+        height: $base_desktop_photo_height!important;
+      }
     }
 
     &.grid_2 .content_block_photo__photo{
