@@ -199,6 +199,9 @@ export default class DialogContentBlock extends React.Component<IDialogContentBl
                 }
             });
         }
+        if (e.keyCode == 13 && index == this.state.content.remarks.length - 1) {
+            this.addRemark();
+        }
     }
 
     handleActive() {
