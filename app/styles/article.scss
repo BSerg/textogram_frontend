@@ -115,6 +115,9 @@
 
     @include desktop {
       padding: 120px 0;
+      min-height: calc(360px - 120px * 2);
+      max-height: calc(480px - 120px * 2);
+      overflow: hidden;
       margin-bottom: 30px;
 
       h1 {
