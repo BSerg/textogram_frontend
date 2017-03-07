@@ -74,9 +74,13 @@
 }
 
 @include desktop {
+  $title_padding: 120px;
   .title_block {
     background-color: $color4;
     padding: 120px 0;
+    min-height: calc(360px - #{$title_padding} * 2);
+    max-height: calc(480px - #{$title_padding} * 2);
+    overflow: hidden;
   }
 
   .title_block__title {
