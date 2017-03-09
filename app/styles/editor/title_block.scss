@@ -10,6 +10,13 @@
   background-color: $color4;
   text-align: center;
   padding: 100px $padding;
+
+  .image_editor_alt {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 0;
+  }
 }
 
 .title_block__title {
@@ -20,6 +27,7 @@
   font-weight: $font-weight-bold;
   line-height: 43px;
   text-align: center;
+  z-index: 1;
 }
 
 .title_block__cover_handler_wrapper {
@@ -28,6 +36,7 @@
   position: absolute;
   top: 25px;
   left: 0;
+  z-index: 1;
 }
 
 .title_block__cover_handler {

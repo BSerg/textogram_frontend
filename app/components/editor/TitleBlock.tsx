@@ -11,19 +11,33 @@ import {api} from '../../api';
 import '../../styles/editor/title_block.scss';
 import {NotificationAction, SHOW_NOTIFICATION} from "../../actions/shared/NotificationAction";
 import {Validator} from "./utils";
+import ImageEditor from "../shared/ImageEditor";
+import {MediaQuerySerice} from "../../services/MediaQueryService";
+
+
+interface ICover {
+    id: number
+    image: string
+    image_clipped: string|null
+    zoom: number
+    position_x: number
+    position_y: number
+}
 
 interface TitleBlockPropsInterface {
-    title: string|null,
-    cover: string|null,
+    title: string|null
+    cover: ICover|null
     articleSlug: string
     autoSave?: boolean
 }
 
 interface TitleBlockStateInterface {
-    title?: string|null,
-    cover?: {id: number, image: string} | null,
+    title?: string|null
+    cover?: ICover | null
     isValid?: boolean
     coverLoading?: boolean
+    isActive?: boolean
+    canvas?: any
 }
 
 export default class TitleBlock extends React.Component<TitleBlockPropsInterface, TitleBlockStateInterface> {
@@ -32,8 +46,11 @@ export default class TitleBlock extends React.Component<TitleBlockPropsInterface
         this.state = {
             title: props.title,
             cover: props.cover,
-            coverLoading: false
-        }
+            coverLoading: false,
+            isActive: false,
+            canvas: null
+        };
+        this.handleResize = this.handleResize.bind(this);
     }
 
     static defaultProps = {
@@ -71,6 +88,7 @@ export default class TitleBlock extends React.Component<TitleBlockPropsInterface
                     {content: Validation.ROOT.title.message}
                 );
             }
+            this.drawCanvas();
         });
     }
 
@@ -81,6 +99,7 @@ export default class TitleBlock extends React.Component<TitleBlockPropsInterface
             let store = UploadImageAction.getStore();
             this.setState({cover: store.image, coverLoading: false}, () => {
                 ContentAction.do(UPDATE_COVER_CONTENT, {articleId: this.props.articleSlug, autoSave: this.props.autoSave, cover: store.image});
+                this.drawCanvas();
             });
         }).catch((err: any) => {
             this.setState({coverLoading: false});
@@ -90,11 +109,35 @@ export default class TitleBlock extends React.Component<TitleBlockPropsInterface
     deleteCover() {
         this.setState({cover: null}, () => {
             ContentAction.do(UPDATE_COVER_CONTENT, {articleId: this.props.articleSlug, autoSave: this.props.autoSave, cover: null});
+            this.drawCanvas();
+        });
+    }
+
+    drawCanvas() {
+        if (this.state.cover) {
+            let canvas = <ImageEditor image={this.state.cover}
+                                      width={this.refs.componentRootElement.offsetWidth}
+                                      height={this.refs.componentRootElement.offsetHeight}/>;
+            this.setState({canvas: canvas});
+        } else {
+            this.setState({canvas: null});
+        }
+    }
+
+    handleResize() {
+        window.setTimeout(() => {
+            this.drawCanvas();
         });
     }
 
     componentDidMount() {
         this.updateValidState();
+        this.drawCanvas();
+        window.addEventListener('resize', this.handleResize);
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener('resize', this.handleResize);
     }
 
     render() {
@@ -102,7 +145,7 @@ export default class TitleBlock extends React.Component<TitleBlockPropsInterface
             style = {};
         if (this.state.cover) {
             className += ' inverse';
-            style = {background: 'url("' + this.state.cover.image + '") no-repeat center center', backgroundSize: 'cover'}
+            // style = {background: 'url("' + this.state.cover.image + '") no-repeat center center', backgroundSize: 'cover'}
         }
 
         return (
@@ -110,7 +153,8 @@ export default class TitleBlock extends React.Component<TitleBlockPropsInterface
                 {this.props.articleSlug != null ?
                     <div className="title_block__cover_handler_wrapper">
                         {!this.state.cover ?
-                            <div onClick={!this.state.coverLoading && this.openFileDialog.bind(this)} className="title_block__cover_handler">
+                            <div onClick={!this.state.coverLoading && this.openFileDialog.bind(this)}
+                                 className="title_block__cover_handler">
                                 {this.state.coverLoading ? 'Обложка загружается...' : Captions.editor.add_cover_ru}
                             </div> :
                             <div onClick={!this.state.coverLoading && this.deleteCover.bind(this)} className="title_block__cover_handler">
@@ -132,6 +176,7 @@ export default class TitleBlock extends React.Component<TitleBlockPropsInterface
                        style={{display: 'none'}}
                        accept="image/jpeg,image/png,image/gif"
                        onChange={this.handleCover.bind(this)}/>
+                {this.state.canvas}
             </div>
         )
     }
