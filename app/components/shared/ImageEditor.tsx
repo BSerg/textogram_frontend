@@ -151,14 +151,14 @@ export default class ImageEditor extends React.Component<IProps, IState> {
         }
     }
 
-    private _drawImage(image: HTMLImageElement) {
+    private _drawImage(img: HTMLImageElement, forceRedraw: boolean = false) {
         let x = this.state.image.position_x,
             y = this.state.image.position_y,
             width = this.state.image.image_width,
             height = this.state.image.image_height;
 
-        if (x == null || y == null || !width || !height) {
-            let aspectRatio = image.width / image.height;
+        if (x == null || y == null || !width || !height || forceRedraw) {
+            let aspectRatio = img.width / img.height;
             if (aspectRatio >= this.state.width / this.state.height) {
                 height = this.state.height;
                 width = aspectRatio * height;
@@ -176,23 +176,23 @@ export default class ImageEditor extends React.Component<IProps, IState> {
             this.state.image.image_height = height;
         }
         this.state.canvasCtx.clearRect(0, 0, this.state.width, this.state.height);
-        this.state.canvasCtx.drawImage(image, x, y, width, height);
+        this.state.canvasCtx.drawImage(img, x, y, width, height);
         this.state.canvasCtx.fillStyle = 'rgba(0, 0, 0, 0.5)';
         this.state.canvasCtx.fillRect(0, 0, this.state.width, this.state.height);
     }
 
-    private drawImage() {
+    private drawImage(forceRedraw: boolean = false) {
         if (!this.state.imageObject) {
             let image = new Image();
             image.onload = () => {
                 this.state.imageObject = image;
-                this._drawImage(image);
+                this._drawImage(image, forceRedraw);
                 this.state.zoomValue = this.image2zoom();
                 this.setState({zoomValue: this.state.zoomValue});
             };
             image.src = this.state.image.image;
         } else {
-            this._drawImage(this.state.imageObject);
+            this._drawImage(this.state.imageObject, forceRedraw);
         }
     }
 
@@ -218,6 +218,9 @@ export default class ImageEditor extends React.Component<IProps, IState> {
                 image: nextProps.image,
                 width: nextProps.width,
                 height: nextProps.height,
+                zoomValue: 1
+            }, () => {
+                this.drawImage(true);
             });
         }
     }
