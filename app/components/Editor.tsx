@@ -332,7 +332,8 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
                             <TitleBlock key={"titleBlock" + (this.state.article && this.state.article.id ? this.state.article.id : '')}
                                         articleSlug={this.state.article.id}
                                         title={this.state.article.content.title}
-                                        cover={this.state.article.content.cover}/>,
+                                        cover={this.state.article.content.cover}
+                                        autoSave={this.state.autoSave}/>,
                             this.state.article.content.blocks.map((contentBlock: IContentData, index: number) => {
                                 let blockHandlerButtons, block, isLast = index == this.state.article.content.blocks.length - 1;
 

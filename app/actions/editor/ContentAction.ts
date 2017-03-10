@@ -98,6 +98,7 @@ ContentAction.register(
         }
     ) => {
     store.content.cover = data.cover;
+    store.content.cover_clipped = data.coverClipped;
 });
 
 ContentAction.register(SWAP_CONTENT, (store, data: {position: number}) => {

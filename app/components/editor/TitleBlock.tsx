@@ -128,7 +128,7 @@ export default class TitleBlock extends React.Component<TitleBlockPropsInterface
             window.clearTimeout(this.coverClippedProcess);
             this.coverClippedProcess = window.setTimeout(() => {
                 UploadImageAction.doAsync(UPLOAD_IMAGE_BASE64,  {articleId: this.props.articleSlug, image: imageBase64}).then((data: any) => {
-                    console.log('UPLOAD BASE64', data)
+                    console.log('UPLOAD BASE64', data);
 
                     let updateCoverContent = () => {
                         this.setState({coverClipped: data}, () => {
@@ -141,7 +141,7 @@ export default class TitleBlock extends React.Component<TitleBlockPropsInterface
                         });
                     };
 
-                    if (this.state.coverClipped) {
+                    if (this.state.coverClipped && this.props.autoSave) {
                         api.delete(`/articles/editor/images/${this.state.coverClipped.id}/`).then(() => {
                             updateCoverContent();
                         })
