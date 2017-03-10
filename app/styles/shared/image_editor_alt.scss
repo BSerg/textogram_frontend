@@ -23,8 +23,8 @@
       width: 100%;
       background: transparent;
       cursor: pointer;
-      @include input-range-thumb($color5, 20px, 20px, 50%, -7.5px);
-      @include input-range-track($color3, 100%, 5px, none, 5px);
+      @include input-range-thumb($color3, 20px, 20px, 50%, -8px);
+      @include input-range-track($color3, 100%, 5px, none, 4px);
     }
 
   }
