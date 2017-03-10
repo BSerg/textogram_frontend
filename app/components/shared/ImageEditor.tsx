@@ -4,7 +4,6 @@ import '../../styles/shared/image_editor_alt.scss';
 interface IImage {
     id: number
     image: string
-    image_clipped?: string|null
     position_x?: number
     position_y?: number
     image_width?: number
@@ -18,6 +17,7 @@ interface IProps {
     width: number
     height: number
     maxZoom?: number
+    onChange?: (image: IImage, imageBase64?: string) => any
 }
 
 interface IState {
@@ -39,7 +39,7 @@ export default class ImageEditor extends React.Component<IProps, IState> {
             width: this.props.width,
             height: this.props.height,
             dragProcess: false,
-            zoomValue: this.image2zoom(this.props.image)
+            zoomValue: 1
         };
         this.handleMouseMove = this.handleMouseMove.bind(this);
         this.handleMouseDown = this.handleMouseDown.bind(this);
@@ -65,7 +65,7 @@ export default class ImageEditor extends React.Component<IProps, IState> {
     }
 
     zoom2image(zoom: number): IImage {
-        let dZoom = this.round(zoom - this.state.zoomValue, 2);
+        let dZoom = (zoom - this.state.zoomValue) / this.state.zoomValue;
         let im = Object.assign({}, this.state.image);
         let dWidth = im.image_width * dZoom;
         im.image_width += dWidth;
@@ -82,22 +82,29 @@ export default class ImageEditor extends React.Component<IProps, IState> {
 
     image2zoom(image?: IImage): number {
         let im = image || this.state.image;
+        let aspectRatio = im.image_width / im.image_height;
+        let canvasAspectRatio = this.state.width / this.state.height;
         if (im.image_width != null) {
-            return im.image_width / this.state.imageObject.width;
+            if (aspectRatio >= canvasAspectRatio) {
+                return im.image_height / this.state.height;
+            } else {
+                return im.image_width / this.state.width;
+            }
         } else {
             return 1;
         }
     }
 
     handleZoom() {
-        let zoomValue = this.round((parseInt(this.refs.zoomInput.value) * (this.props.maxZoom - 1)/100 + 1), 2);
+        let zoomValue = (parseInt(this.refs.zoomInput.value) * (this.props.maxZoom - 1)/100 + 1);
         this.setState({zoomValue: zoomValue, image: this.zoom2image(zoomValue)}, () => {
             this.drawImage();
+            this.props.onChange && this.props.onChange(this.state.image, this.refs.canvas.toDataURL());
         });
     }
 
     handleMouseDown(e: Event) {
-        console.log('MOUSE DOWN', e);
+        if (!this.props.enableDrag) return;
         let dragPoint = {x: (e as MouseEvent).clientX, y: (e as MouseEvent).clientY};
         if (!this.state.dragProcess) {
             this.setState({
@@ -111,7 +118,6 @@ export default class ImageEditor extends React.Component<IProps, IState> {
     }
 
     handleMouseUp(e: Event) {
-        console.log('MOUSE UP', e);
         if (this.state.dragProcess) {
             this.setState({
                 dragProcess: false,
@@ -121,6 +127,7 @@ export default class ImageEditor extends React.Component<IProps, IState> {
             }, () => {
                 document.removeEventListener('mousemove', this.handleMouseMove);
                 document.removeEventListener('mouseup', this.handleMouseUp);
+                this.props.onChange && this.props.onChange(this.state.image, this.refs.canvas.toDataURL());
             });
         }
     }
@@ -180,6 +187,8 @@ export default class ImageEditor extends React.Component<IProps, IState> {
             image.onload = () => {
                 this.state.imageObject = image;
                 this._drawImage(image);
+                this.state.zoomValue = this.image2zoom();
+                this.setState({zoomValue: this.state.zoomValue});
             };
             image.src = this.state.image.image;
         } else {
@@ -208,7 +217,7 @@ export default class ImageEditor extends React.Component<IProps, IState> {
             this.setState({
                 image: nextProps.image,
                 width: nextProps.width,
-                height: nextProps.height
+                height: nextProps.height,
             });
         }
     }
@@ -220,13 +229,15 @@ export default class ImageEditor extends React.Component<IProps, IState> {
                         width={this.state.width}
                         height={this.state.height}
                         onMouseDown={this.handleMouseDown.bind(this)}/>
-                <div className="image_editor_alt__control"
-                     style={{width: this.state.height - 60 + 'px', right: -this.state.height / 2 + 60 + 'px'}}>
-                    <input type="range" min="0" max="100" step="1"
-                           ref="zoomInput"
-                           value={(this.state.zoomValue - 1) * 100}
-                           onChange={this.handleZoom.bind(this)}/>
-                </div>
+                {this.props.enableZoom ?
+                    <div className="image_editor_alt__control"
+                         style={{width: this.state.height - 60 + 'px', right: -this.state.height / 2 + 60 + 'px'}}>
+                        <input type="range" min="0" max="100" step="1"
+                               ref="zoomInput"
+                               value={(this.state.zoomValue - 1) * 100}
+                               onChange={this.handleZoom.bind(this)}/>
+                    </div> : null
+                }
             </div>
         )
     }

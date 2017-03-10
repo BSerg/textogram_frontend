@@ -93,7 +93,8 @@ ContentAction.register(
         store,
         data: {
             articleId: number,
-            cover: {id: number, image: string} | null
+            cover: {id: number, image: string} | null,
+            coverClipped?: {id: number, image: string} | null
         }
     ) => {
     store.content.cover = data.cover;

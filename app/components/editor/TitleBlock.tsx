@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {Captions, Constants, Validation} from '../../constants';
 import ContentEditable from '../shared/ContentEditable';
-import {UploadImageAction, UPLOAD_IMAGE} from '../../actions/editor/UploadImageAction';
+import {UploadImageAction, UPLOAD_IMAGE, UPLOAD_IMAGE_BASE64} from '../../actions/editor/UploadImageAction';
 import {ContentAction, UPDATE_TITLE_CONTENT, UPDATE_COVER_CONTENT} from '../../actions/editor/ContentAction';
 
 import {TitleBlockAction, UPDATE_COVER_ACTION, UPDATE_TITLE_ACTION} from '../../actions/editor/TitleBlockAction';
@@ -18,15 +18,21 @@ import {MediaQuerySerice} from "../../services/MediaQueryService";
 interface ICover {
     id: number
     image: string
-    image_clipped: string|null
-    zoom: number
-    position_x: number
-    position_y: number
+    position_x?: number
+    position_y?: number
+    image_width?: number
+    image_height?: number
+}
+
+interface ICoverClipped {
+    id: number
+    image: string
 }
 
 interface TitleBlockPropsInterface {
     title: string|null
     cover: ICover|null
+    coverClipped?: ICoverClipped|null
     articleSlug: string
     autoSave?: boolean
 }
@@ -34,6 +40,7 @@ interface TitleBlockPropsInterface {
 interface TitleBlockStateInterface {
     title?: string|null
     cover?: ICover | null
+    coverClipped?: ICoverClipped | null
     isValid?: boolean
     coverLoading?: boolean
     isActive?: boolean
@@ -41,16 +48,20 @@ interface TitleBlockStateInterface {
 }
 
 export default class TitleBlock extends React.Component<TitleBlockPropsInterface, TitleBlockStateInterface> {
+    private coverClippedProcess: number;
+
     constructor(props: any) {
         super(props);
         this.state = {
             title: props.title,
             cover: props.cover,
+            coverClipped: props.coverClipped || null,
             coverLoading: false,
             isActive: false,
             canvas: null
         };
         this.handleResize = this.handleResize.bind(this);
+        this.coverClippedProcess = -1;
     }
 
     static defaultProps = {
@@ -95,10 +106,9 @@ export default class TitleBlock extends React.Component<TitleBlockPropsInterface
     handleCover() {
         this.setState({coverLoading: true});
         var file = this.refs.fileInput.files[0];
-        UploadImageAction.doAsync(UPLOAD_IMAGE, {articleId: this.props.articleSlug, image: file}).then(() => {
-            let store = UploadImageAction.getStore();
-            this.setState({cover: store.image, coverLoading: false}, () => {
-                ContentAction.do(UPDATE_COVER_CONTENT, {articleId: this.props.articleSlug, autoSave: this.props.autoSave, cover: store.image});
+        UploadImageAction.doAsync(UPLOAD_IMAGE, {articleId: this.props.articleSlug, image: file}).then((data: any) => {
+            this.setState({cover: data, coverLoading: false}, () => {
+                ContentAction.do(UPDATE_COVER_CONTENT, {articleId: this.props.articleSlug, autoSave: this.props.autoSave, cover: data});
                 this.drawCanvas();
             });
         }).catch((err: any) => {
@@ -107,17 +117,49 @@ export default class TitleBlock extends React.Component<TitleBlockPropsInterface
     }
 
     deleteCover() {
-        this.setState({cover: null}, () => {
+        this.setState({cover: null, coverClipped: null}, () => {
             ContentAction.do(UPDATE_COVER_CONTENT, {articleId: this.props.articleSlug, autoSave: this.props.autoSave, cover: null});
             this.drawCanvas();
         });
+    }
+
+    handleImageEditorChange(image: ICover, imageBase64: string) {
+        this.setState({cover: image, }, () => {
+            window.clearTimeout(this.coverClippedProcess);
+            this.coverClippedProcess = window.setTimeout(() => {
+                UploadImageAction.doAsync(UPLOAD_IMAGE_BASE64,  {articleId: this.props.articleSlug, image: imageBase64}).then((data: any) => {
+                    console.log('UPLOAD BASE64', data)
+
+                    let updateCoverContent = () => {
+                        this.setState({coverClipped: data}, () => {
+                            ContentAction.do(UPDATE_COVER_CONTENT, {
+                                articleId: this.props.articleSlug,
+                                autoSave: this.props.autoSave,
+                                cover: image,
+                                coverClipped: data
+                            });
+                        });
+                    };
+
+                    if (this.state.coverClipped) {
+                        api.delete(`/articles/editor/images/${this.state.coverClipped.id}/`).then(() => {
+                            updateCoverContent();
+                        })
+                    } else {
+                        updateCoverContent();
+                    }
+
+                });
+            }, 1000);
+        })
     }
 
     drawCanvas() {
         if (this.state.cover) {
             let canvas = <ImageEditor image={this.state.cover}
                                       width={this.refs.componentRootElement.offsetWidth}
-                                      height={this.refs.componentRootElement.offsetHeight}/>;
+                                      height={this.refs.componentRootElement.offsetHeight}
+                                      onChange={this.handleImageEditorChange.bind(this)}/>;
             this.setState({canvas: canvas});
         } else {
             this.setState({canvas: null});
@@ -132,7 +174,9 @@ export default class TitleBlock extends React.Component<TitleBlockPropsInterface
 
     componentDidMount() {
         this.updateValidState();
-        this.drawCanvas();
+        window.setTimeout(() => {
+            this.drawCanvas();
+        }, 100);
         window.addEventListener('resize', this.handleResize);
     }
 
@@ -145,7 +189,6 @@ export default class TitleBlock extends React.Component<TitleBlockPropsInterface
             style = {};
         if (this.state.cover) {
             className += ' inverse';
-            // style = {background: 'url("' + this.state.cover.image + '") no-repeat center center', backgroundSize: 'cover'}
         }
 
         return (
