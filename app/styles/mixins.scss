@@ -106,13 +106,13 @@
 
 }
 
-@mixin input-range-thumb ($bg-color, $width, $height, $border-radius, $chrome-margin-top) {
+@mixin input-range-thumb ($bg-color, $width, $height, $border-radius, $chrome-margin-top, $border: none) {
   -webkit-appearance: none;
 
   &::-webkit-slider-thumb {
     -webkit-appearance: none;
     margin-top: $chrome-margin-top;
-    border: none;
+    border: $border;
     background: $bg-color;
     //background-color: $bg-color;
     width: $width;
@@ -121,7 +121,7 @@
   }
 
   &::-moz-range-thumb {
-    border: none;
+    border: $border;
     background-color: $bg-color;
     width: $width;
     height: $height;

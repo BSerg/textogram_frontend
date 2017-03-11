@@ -6,10 +6,11 @@
   z-index: 2;
   
   canvas {
-    cursor: move;
+    cursor: url('../../assets/images/move.svg') 12.5 12.5, move;
   }
 
   .image_editor_alt__control {
+    width: 20px;
     position: absolute;
     top: 50%;
     right: 0;
@@ -18,13 +19,14 @@
     justify-content: center;
     align-items: center;
     @include rotate(-90deg);
+    cursor: auto;
 
     input[type="range"] {
       width: 100%;
       background: transparent;
       cursor: pointer;
-      @include input-range-thumb($color3, 20px, 20px, 50%, -8px);
-      @include input-range-track($color3, 100%, 5px, none, 4px);
+      @include input-range-thumb($color, 13px, 13px, 50%, -5.5px, 2px solid $color3);
+      @include input-range-track($color3, 100%, 2px, none, 2px);
     }
 
   }

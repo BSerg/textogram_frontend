@@ -234,7 +234,7 @@ export default class ImageEditor extends React.Component<IProps, IState> {
                         onMouseDown={this.handleMouseDown.bind(this)}/>
                 {this.props.enableZoom ?
                     <div className="image_editor_alt__control"
-                         style={{width: this.state.height - 60 + 'px', right: -this.state.height / 2 + 60 + 'px'}}>
+                         style={{width: this.state.height - 60 + 'px', right: -this.state.height / 2 + 200 + 'px'}}>
                         <input type="range" min="0" max="100" step="1"
                                ref="zoomInput"
                                value={(this.state.zoomValue - 1) * 100}
