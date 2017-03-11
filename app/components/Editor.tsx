@@ -65,6 +65,10 @@ interface IEditorState {
 export default class Editor extends React.Component<IEditorProps, IEditorState> {
     forceUpdateContent: (forceUpdate?: boolean) => void;
 
+    refs: {
+        editor: HTMLDivElement
+    };
+
     constructor(props: any) {
         super(props);
         this.state = {
@@ -84,6 +88,7 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
         this.handleOpenInlineBlock = this.handleOpenInlineBlock.bind(this);
         this.handleCloseInlineBlock = this.handleCloseInlineBlock.bind(this);
         this.handleMediaQuery = this.handleMediaQuery.bind(this);
+        this.handleDocumentClick = this.handleDocumentClick.bind(this);
     }
 
     static defaultProps = {
@@ -275,6 +280,13 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
         });
     }
 
+    handleDocumentClick(e: Event) {
+        e.stopPropagation();
+        if ((e.target as HTMLElement).classList.contains('editor__wrapper')) {
+            ContentBlockAction.do(DEACTIVATE_CONTENT_BLOCK, null);
+        }
+    }
+
     componentWillReceiveProps(nextProps: any) {
         if (this.props.params.articleId != nextProps.params.articleId) {
             this.loadArticle(nextProps.params.articleId);
@@ -308,6 +320,8 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
         } else {
             this.loadArticle(this.props.params.articleId);
         }
+
+        document.addEventListener('click', this.handleDocumentClick);
     }
 
     componentWillUnmount() {
@@ -325,7 +339,7 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
 
     render() {
         return (
-            <div className="editor">
+            <div ref="editor" onClick={this.handleDocumentClick.bind(this)} className="editor">
                 <div className="editor__wrapper">
                     {this.state.article && !this.state.error ?
                         [
