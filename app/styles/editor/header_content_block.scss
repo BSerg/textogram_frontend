@@ -2,14 +2,10 @@
 @import "../mixins";
 
 .content_block_header {
-  font-family: $family_arimo;
-  font-size: 24px;
-  font-weight: $font-weight-bold;
-  line-height: 35px;
+  @include header_font();
   padding-top: $padding;
 
   @include desktop {
-    font-size: 34px;
-    line-height: 46px;
+    @include header_font_desktop();
   }
 }

@@ -2,13 +2,10 @@
 @import "../mixins";
 
 .content_block_column {
+  @include columns_font();
   display: flex;
   flex-flow: row wrap;
   position: relative;
-  font-family: $family-noto;
-  font-size: 16px;
-  font-weight: $font-weight;
-  line-height: 27px;
   padding: $padding * 1.5 $padding $padding $padding;
 
   p {
@@ -89,8 +86,7 @@
   }
 
   @include desktop {
-    font-size: 18px;
-    line-height: 29px;
+    @include columns_font_desktop();
 
     .content_block_column__column {
       &.content_block_column__column_left {

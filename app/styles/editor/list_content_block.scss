@@ -2,9 +2,7 @@
 @import "../mixins";
 
 .content_block_list {
-  font-size: $font-size;
-  font-weight: $font-weight;
-  line-height: $line-height;
+  @include list_font();
 
   ul {
     list-style: disc outside;

@@ -5,14 +5,11 @@ $photo_size: 70px;
 $desktop_photo_size: 100px;
 
 .content_block_quote {
+  @include quote_font();
   display: flex;
   position: relative;
   flex-direction: column;
   align-items: center;
-  font-family: $family_arimo;
-  font-size: 17px;
-  font-weight: $font-weight;
-  line-height: 26px;
 
   b, strong {
     font-weight: $font-weight-bold;
@@ -129,6 +126,7 @@ $desktop_photo_size: 100px;
   }
 
   @include desktop {
+    @include quote_font_desktop();
     flex-direction: row;
     align-items: center;
 

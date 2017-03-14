@@ -4,10 +4,7 @@
 $avatar_size: 32px;
 
 .content_block_dialog {
-  font-family: $family-noto;
-  font-size: 18px;
-  font-weight: $font-weight;
-  line-height: 31px;
+  @include dialogue_font();
 
   .content_editable.empty.inline:after {
     padding-left: $avatar_size + $margin;
@@ -20,6 +17,7 @@ $avatar_size: 32px;
   }
 
   @include desktop {
+    @include dialogue_font_desktop();
     .content_editable.empty.inline:after {
       padding-left: 0;
     }

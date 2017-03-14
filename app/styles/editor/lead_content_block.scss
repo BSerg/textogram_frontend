@@ -2,10 +2,7 @@
 @import "../mixins";
 
 .content_block_lead {
-  font-family: $family_arimo;
-  font-size: 19px;
-  font-weight: $font-weight-bold;
-  line-height: $line-height3;
+  @include lead_font();
 
   p {
     &:not(:last-child) {
@@ -25,8 +22,7 @@
   }
 
   @include desktop {
-    font-size: 24px;
-    line-height: 36px;
+    @include lead_font_desktop();
   }
 }
 

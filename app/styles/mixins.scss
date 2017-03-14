@@ -156,3 +156,10 @@ $regular-desktop-width: 1280px;
     @content;
   }
 }
+
+@mixin font($font_size, $font_weight, $font_family, $line-height) {
+  font-size: $font_size;
+  font-weight: $font_weight;
+  font-family: $font-family;
+  line-height: $line-height;
+}

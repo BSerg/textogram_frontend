@@ -2,10 +2,7 @@
 @import "../mixins";
 
 .content_block_text {
-  font-family: $family-noto;
-  font-size: $font-size;
-  font-weight: $font-weight;
-  line-height: $line-height;
+  @include text_font();
 
   p {
     &:not(:last-child) {
@@ -31,5 +28,9 @@
     .content_editable.empty:empty:after, .content_editable.empty .empty_tag:last-child:after {
       font-weight: $font-weight-bold;
     }
+  }
+
+  @include desktop {
+    @include text_font_desktop();
   }
 }

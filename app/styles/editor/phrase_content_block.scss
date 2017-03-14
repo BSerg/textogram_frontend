@@ -2,11 +2,8 @@
 @import "../mixins";
 
 .content_block_phrase {
+  @include phrase_font();
   position: relative;
-  font-family: $family-arimo;
-  font-size: $font-size4;
-  font-weight: $font-weight-bold;
-  line-height: $line-height4;
   text-align: right;
   padding-top: $padding * 1.5;
   padding-left: 25%;
@@ -22,9 +19,7 @@
   }
 
   @include desktop {
-    font-size: 26px;
-    line-height: 39px;
-    padding-left: $padding;
+    @include phrase_font_desktop();
 
     .content_editable {
       margin-left: 25%;

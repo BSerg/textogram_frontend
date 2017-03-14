@@ -3,8 +3,6 @@
 
 .article {
   width: 100%;
-  font-family: $family_noto;
-  font-size: $font-size;
 
   .article__title {
     position: relative;
@@ -36,13 +34,10 @@
     }
 
     h1 {
+      @include title_font();
       width: calc(100% - #{$padding}*2);
       margin: 0 auto;
       position: relative;
-      font-family: $family_arimo;
-      font-size: 33px;
-      font-weight: $font-weight-bold;
-      line-height: 43px;
       word-wrap: break-word;
     }
 
@@ -125,9 +120,8 @@
       margin-bottom: 30px;
 
       h1 {
+        @include title_font_desktop();
         width: 600px;
-        font-size: 40px;
-        line-height: 51px;
         margin: 0 auto;
       }
 
@@ -153,14 +147,12 @@
     }
 
     h2 {
-      font-family: $family_arimo;
-      font-size: 24px;
-      font-weight: $font-weight-bold;
-      line-height: 35px;
+      @include header_font();
       margin-top: 20px;
     }
 
     & > p {
+      @include text_font();
       line-height: 29px;
     }
 
@@ -176,10 +168,8 @@
     }
 
     blockquote {
+      @include quote_font();
       position: relative;
-      font-family: $family_arimo;
-      font-size: 17px;
-      line-height: 26px;
       margin: 45px 0;
 
       & > p:before {
@@ -223,17 +213,13 @@
     }
 
     .lead {
-      font-family: $family_arimo;
-      font-size: 19px;
-      font-weight: $font-weight-bold;
-      line-height: 27px;
+      @include lead_font();
     }
 
     .columns {
+      @include columns_font();
       display: flex;
       position: relative;
-      font-size: 16px;
-      line-height: 27px;
       padding-top: 45px;
 
       &:after {
@@ -267,11 +253,8 @@
     }
 
     .phrase {
+      @include phrase_font();
       position: relative;
-      font-family: $family_arimo;
-      font-size: 20px;
-      font-weight: $font-weight-bold;
-      line-height: 30px;
       text-align: right;
       padding-top: 45px;
       padding-left: 25%;
@@ -511,8 +494,7 @@
     }
 
     .dialogue {
-      font-size: 18px;
-      line-height: 31px;
+      @include dialogue_font();
 
       .remark {
         margin: 30px 0;
@@ -563,21 +545,18 @@
       }
 
       & > p {
+        @include text_font_desktop();
         padding: 0;
         margin: 25px 0;
       }
 
       h2 {
-        font-size: 34px;
-        line-height: 46px;
+        @include header_font_desktop();
         margin-top: 45px;
       }
 
       ul {
-        font-family: $family_open_sans;
-        font-size: 20px;
-        font-weight: $font-weight-bold;
-        line-height: 34px;
+        @include list_font_desktop();
         padding-left: 50px;
 
         li:not(:last-child) {
@@ -586,6 +565,7 @@
       }
 
       blockquote {
+        @include quote_font_desktop();
 
         &.personal {
           display: flex;
@@ -609,14 +589,11 @@
       }
 
       .lead {
-        font-size: 24px;
-        line-height: 36px;
+        @include lead_font_desktop();
       }
 
       .columns {
-        padding-top: 45px;
-        font-size: 18px;
-        line-height: 29px;
+        @include columns_font_desktop();
 
         .column:not(:first-child) {
           width: calc(62% - 30px);
@@ -630,9 +607,8 @@
       }
 
       .phrase {
+        @include phrase_font_desktop();
         width: 75%;
-        font-size: 26px;
-        line-height: 39px;
         padding-top: 45px;
         padding-left: 25%;
 
@@ -642,6 +618,7 @@
       }
 
       .dialogue {
+        @include dialogue_font_desktop();
         margin: 45px 0;
 
         .remark {

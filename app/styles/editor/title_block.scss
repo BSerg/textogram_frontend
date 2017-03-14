@@ -20,12 +20,9 @@
 }
 
 .title_block__title {
+  @include title_font();
   position: relative;
   width: 100%;
-  font-family: $family-arimo;
-  font-size: 33px;
-  font-weight: $font-weight-bold;
-  line-height: 43px;
   text-align: center;
   z-index: 1;
 }
@@ -93,9 +90,8 @@
   }
 
   .title_block__title {
+    @include title_font_desktop();
     max-width: 600px;
-    font-size: 40px;
-    line-height: 51px;
   }
 
   .title_block__cover_handler {

@@ -1,3 +1,4 @@
+@import "mixins";
 @import url('https://fonts.googleapis.com/css?family=Arimo:400,700|Noto+Serif:400,700|Open+Sans:400,700&subset=cyrillic');
 
 $margin: 15px;
@@ -42,3 +43,85 @@ $font-weight-bold: 700;
 
 $header-height: 35px;
 $profile-avatar-side-size: 60px;
+
+// ARTICLE CONTENT CONSTANTS
+
+@mixin title_font() {
+  @include font(33px, $font-weight-bold, $family_arimo, 43px)
+}
+
+@mixin header_font() {
+  @include font(24px, $font-weight-bold, $family_arimo, 35px)
+}
+
+@mixin lead_font() {
+  @include font(19px, $font-weight-bold, $family_arimo, 27px)
+}
+
+@mixin text_font() {
+  @include font(18px, $font-weight, $family_noto, 29px)
+}
+
+@mixin quote_font() {
+  @include font(17px, $font-weight, $family_arimo, 26px)
+}
+
+@mixin phrase_font() {
+  @include font(20px, $font-weight-bold, $family_arimo, 30px)
+}
+
+@mixin columns_font() {
+  @include font(16px, $font-weight, $family_noto, 27px)
+}
+
+@mixin dialogue_font() {
+  @include font(18px, $font-weight, $family_noto, 31px)
+}
+
+@mixin list_font() {
+  @include font(22px, $font-weight-bold, $family_arimo, 37px)
+}
+
+// desktop
+
+@mixin title_font_desktop() {
+  @include font(40px, $font-weight-bold, $family_arimo, 51px)
+}
+
+@mixin header_font_desktop() {
+  @include font(24px, $font-weight-bold, $family_arimo, 35px)
+}
+
+@mixin lead_font_desktop() {
+  @include font(22px, $font-weight-bold, $family_arimo, 33px)
+}
+
+@mixin text_font_desktop() {
+  @include font(18px, $font-weight, $family_noto, 29px)
+}
+
+@mixin quote_font_desktop() {
+  @include font(20px, $font-weight, $family_arimo, 30px)
+}
+
+@mixin phrase_font_desktop() {
+  @include font(22px, $font-weight-bold, $family_arimo, 33px)
+}
+
+@mixin columns_font_desktop() {
+  @include font(18px, $font-weight, $family_noto, 29px)
+}
+
+@mixin dialogue_font_desktop() {
+  @include font(18px, $font-weight, $family_noto, 31px)
+}
+
+@mixin list_font_desktop() {
+  @include font(22px, $font-weight-bold, $family_open_sans, 37px)
+}
+
+
+
+
+
+
