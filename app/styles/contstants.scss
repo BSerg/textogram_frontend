@@ -47,11 +47,11 @@ $profile-avatar-side-size: 60px;
 // ARTICLE CONTENT CONSTANTS
 
 @mixin title_font() {
-  @include font(33px, $font-weight-bold, $family_arimo, 43px)
+  @include font(30px, $font-weight-bold, $family_arimo, 43px)
 }
 
 @mixin header_font() {
-  @include font(24px, $font-weight-bold, $family_arimo, 35px)
+  @include font(23px, $font-weight-bold, $family_arimo, 35px)
 }
 
 @mixin lead_font() {
@@ -63,15 +63,15 @@ $profile-avatar-side-size: 60px;
 }
 
 @mixin quote_font() {
-  @include font(17px, $font-weight, $family_arimo, 26px)
+  @include font(18px, $font-weight, $family_arimo, 26px)
 }
 
 @mixin phrase_font() {
-  @include font(20px, $font-weight-bold, $family_arimo, 30px)
+  @include font(19px, $font-weight-bold, $family_arimo, 30px)
 }
 
 @mixin columns_font() {
-  @include font(16px, $font-weight, $family_noto, 27px)
+  @include font(16px, $font-weight, $family_noto, 24px)
 }
 
 @mixin dialogue_font() {
@@ -79,7 +79,7 @@ $profile-avatar-side-size: 60px;
 }
 
 @mixin list_font() {
-  @include font(22px, $font-weight-bold, $family_arimo, 37px)
+  @include font(17px, $font-weight-bold, $family_arimo, 37px)
 }
 
 // desktop
