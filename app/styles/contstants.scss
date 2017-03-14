@@ -71,7 +71,7 @@ $profile-avatar-side-size: 60px;
 }
 
 @mixin columns_font() {
-  @include font(16px, $font-weight, $family_noto, 24px)
+  @include font(16px, $font-weight, $family_noto, 26px)
 }
 
 @mixin dialogue_font() {
@@ -117,7 +117,7 @@ $profile-avatar-side-size: 60px;
 }
 
 @mixin list_font_desktop() {
-  @include font(22px, $font-weight-bold, $family_open_sans, 37px)
+  @include font(22px, $font-weight-bold, $family_arimo, 37px)
 }
 
 
