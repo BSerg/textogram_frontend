@@ -89,7 +89,7 @@ $profile-avatar-side-size: 60px;
 }
 
 @mixin header_font_desktop() {
-  @include font(24px, $font-weight-bold, $family_arimo, 35px)
+  @include font(34px, $font-weight-bold, $family_arimo, 46px)
 }
 
 @mixin lead_font_desktop() {
@@ -101,7 +101,7 @@ $profile-avatar-side-size: 60px;
 }
 
 @mixin quote_font_desktop() {
-  @include font(20px, $font-weight, $family_arimo, 30px)
+  @include font(18px, $font-weight, $family_noto, 30px)
 }
 
 @mixin phrase_font_desktop() {
