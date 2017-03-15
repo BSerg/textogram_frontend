@@ -63,7 +63,7 @@ $profile-avatar-side-size: 60px;
 }
 
 @mixin quote_font() {
-  @include font(18px, $font-weight, $family_arimo, 26px)
+  @include font(18px, $font-weight, $family_noto, 26px)
 }
 
 @mixin phrase_font() {
