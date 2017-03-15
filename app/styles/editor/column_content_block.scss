@@ -88,6 +88,10 @@
   @include desktop {
     @include columns_font_desktop();
 
+    &.expand_top {
+      padding-top: 45px;
+    }
+
     .content_block_column__column {
       &.content_block_column__column_left {
         width: 38%;
