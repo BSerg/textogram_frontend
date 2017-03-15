@@ -594,6 +594,7 @@
 
       .columns {
         @include columns_font_desktop();
+        padding-top: 45px;
 
         .column:not(:first-child) {
           width: calc(62% - 30px);
