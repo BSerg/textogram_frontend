@@ -20,6 +20,7 @@
 
   @include desktop {
     @include phrase_font_desktop();
+    padding-left: $padding;
 
     .content_editable {
       margin-left: 25%;

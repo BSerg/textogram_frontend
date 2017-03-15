@@ -552,7 +552,7 @@
 
       h2 {
         @include header_font_desktop();
-        margin-top: 45px;
+        margin-top: 65px;
       }
 
       ul {
@@ -566,13 +566,13 @@
 
       blockquote {
         @include quote_font_desktop();
+        margin-top: 50px;
+        margin-bottom: 50px;
 
         &.personal {
           display: flex;
           flex-direction: row;
           align-items: center;
-          margin-top: 50px;
-          margin-bottom: 50px;
           padding: 0;
 
           img {
@@ -583,7 +583,7 @@
             @include border_radius(100px);
             object-fit: cover;
             margin-top: unset!important;
-            margin-right: 30px;
+            margin-right: 65px;
           }
         }
       }
