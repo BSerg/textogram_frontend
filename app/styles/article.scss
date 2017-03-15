@@ -15,6 +15,7 @@
     background-size: cover!important;
     text-align: center;
     background-color: $color4;
+    margin-bottom: 50px;
 
     .article__author {
       display: block;
@@ -540,7 +541,7 @@
 
       & > p, h2, blockquote, ul, .lead, .phrase, .columns, .embed, .photos, .dialogue, .single_photo {
         width: 100%;
-        margin: 30px 0;
+        margin: 50px 0;
         padding: 0;
       }
 
@@ -552,7 +553,7 @@
 
       h2 {
         @include header_font_desktop();
-        margin-top: 65px;
+        margin-top: 150px;
       }
 
       ul {
