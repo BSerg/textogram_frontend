@@ -7,7 +7,8 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background-color: $color4;
+  //background-color: $color4;
+  border-bottom: 1px solid $color3;
   text-align: center;
   padding: 100px $padding;
   background-size: cover!important;
@@ -83,7 +84,6 @@
 @include desktop {
   $title_padding: 120px;
   .title_block {
-    background-color: $color4;
     padding: 120px 0;
     min-height: calc(360px - #{$title_padding} * 2);
     max-height: calc(480px - #{$title_padding} * 2);
