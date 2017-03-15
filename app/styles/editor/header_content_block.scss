@@ -7,10 +7,10 @@
 
   @include desktop {
     @include header_font_desktop();
-    padding-top: 100px;
+    padding-top: 50px;
 
     &.expand_top {
-      padding-top: 100px!important;
+      padding-top: 50px!important;
     }
   }
 }
