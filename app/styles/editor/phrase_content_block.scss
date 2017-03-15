@@ -22,6 +22,10 @@
     @include phrase_font_desktop();
     padding-left: $padding;
 
+    &.expand_top {
+      padding-top: $padding * 1.5!important;
+    }
+
     .content_editable {
       margin-left: 25%;
     }
