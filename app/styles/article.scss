@@ -647,7 +647,7 @@
   align-items: center;
   font-family: $family_open_sans;
   background-color: $color4;
-  padding: $padding * 2 0;
+  padding: 50px 0;
 
   .article__author {
     display: flex;
@@ -665,10 +665,10 @@
     }
 
     .article__avatar {
-      width: 35px;
-      height: 35px;
+      width: 40px;
+      height: 40px;
       object-fit: cover;
-      @include border_radius(35px);
+      @include border_radius(40px);
       margin-right: 20px;
     }
 
@@ -703,8 +703,8 @@
       }
 
       svg {
-        width: 40px;
-        height: 40px;
+        width: 35px;
+        height: 35px;
         fill: white;
       }
     }
@@ -715,7 +715,7 @@
 
     .article__shares {
       width: 600px;
-      margin: 30px auto 0 auto;
+      margin: 40px auto 0 auto;
     }
   }
 }
