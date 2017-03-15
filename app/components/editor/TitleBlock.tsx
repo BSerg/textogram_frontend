@@ -45,6 +45,7 @@ interface TitleBlockStateInterface {
     coverLoading?: boolean
     isActive?: boolean
     canvas?: any
+    isDesktop?: boolean
 }
 
 export default class TitleBlock extends React.Component<TitleBlockPropsInterface, TitleBlockStateInterface> {
@@ -58,9 +59,11 @@ export default class TitleBlock extends React.Component<TitleBlockPropsInterface
             coverClipped: props.coverClipped || null,
             coverLoading: false,
             isActive: false,
-            canvas: null
+            canvas: null,
+            isDesktop: MediaQuerySerice.getIsDesktop()
         };
         this.handleResize = this.handleResize.bind(this);
+        this.handleMediaQuery = this.handleMediaQuery.bind(this);
         this.coverClippedProcess = -1;
     }
 
@@ -172,21 +175,29 @@ export default class TitleBlock extends React.Component<TitleBlockPropsInterface
         });
     }
 
+    handleMediaQuery(isDesktop: boolean) {
+        if (this.state.isDesktop != isDesktop) {
+            this.setState({isDesktop: isDesktop});
+        }
+    }
+
     componentDidMount() {
         this.updateValidState();
         window.setTimeout(() => {
             this.drawCanvas();
         }, 100);
         window.addEventListener('resize', this.handleResize);
+        MediaQuerySerice.listen(this.handleMediaQuery);
     }
 
     componentWillUnmount() {
         window.removeEventListener('resize', this.handleResize);
+        MediaQuerySerice.listen(this.handleMediaQuery);
     }
 
     render() {
         let className = 'title_block',
-            style = {};
+            style = this.state.isDesktop ? {} : {background: `url(${this.state.coverClipped && this.state.coverClipped.image || this.state.cover && this.state.cover.image}) no-repeat center center`};
         if (this.state.cover) {
             className += ' inverse';
         }
@@ -219,7 +230,7 @@ export default class TitleBlock extends React.Component<TitleBlockPropsInterface
                        style={{display: 'none'}}
                        accept="image/jpeg,image/png,image/gif"
                        onChange={this.handleCover.bind(this)}/>
-                {this.state.canvas}
+                {this.state.isDesktop ? this.state.canvas : null}
             </div>
         )
     }

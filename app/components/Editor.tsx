@@ -347,6 +347,7 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
                                         articleSlug={this.state.article.id}
                                         title={this.state.article.content.title}
                                         cover={this.state.article.content.cover}
+                                        coverClipped={this.state.article.content.cover_clipped}
                                         autoSave={this.state.autoSave}/>,
                             this.state.article.content.blocks.map((contentBlock: IContentData, index: number) => {
                                 let blockHandlerButtons, block, isLast = index == this.state.article.content.blocks.length - 1;

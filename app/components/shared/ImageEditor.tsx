@@ -14,6 +14,7 @@ interface IProps {
     image: IImage
     enableZoom?: boolean
     enableDrag?: boolean
+    foregroundColor?: string
     width: number
     height: number
     maxZoom?: number
@@ -49,6 +50,7 @@ export default class ImageEditor extends React.Component<IProps, IState> {
     static defaultProps = {
         enableZoom: true,
         enableDrag: true,
+        foregroundColor: 'rgba(0, 0, 0, 0.5)',
         maxZoom: 2
     };
 
@@ -99,7 +101,7 @@ export default class ImageEditor extends React.Component<IProps, IState> {
         let zoomValue = (parseInt(this.refs.zoomInput.value) * (this.props.maxZoom - 1)/100 + 1);
         this.setState({zoomValue: zoomValue, image: this.zoom2image(zoomValue)}, () => {
             this.drawImage();
-            this.props.onChange && this.props.onChange(this.state.image, this.refs.canvas.toDataURL());
+            this.props.onChange && this.props.onChange(this.state.image, this._getBase64Image());
         });
     }
 
@@ -127,7 +129,7 @@ export default class ImageEditor extends React.Component<IProps, IState> {
             }, () => {
                 document.removeEventListener('mousemove', this.handleMouseMove);
                 document.removeEventListener('mouseup', this.handleMouseUp);
-                this.props.onChange && this.props.onChange(this.state.image, this.refs.canvas.toDataURL());
+                this.props.onChange && this.props.onChange(this.state.image, this._getBase64Image());
             });
         }
     }
@@ -151,13 +153,28 @@ export default class ImageEditor extends React.Component<IProps, IState> {
         }
     }
 
-    private _drawImage(img: HTMLImageElement, forceRedraw: boolean = false) {
+    private _getBase64Image() {
+        let tempCanvas = document.createElement('canvas');
+        tempCanvas.width = this.state.width;
+        tempCanvas.height = this.state.height;
+        let ctx = tempCanvas.getContext('2d');
+        ctx.drawImage(
+            this.state.imageObject,
+            this.state.image.position_x,
+            this.state.image.position_y,
+            this.state.image.image_width,
+            this.state.image.image_height
+        );
+        return tempCanvas.toDataURL();
+    }
+
+    private _drawImage(img: HTMLImageElement) {
         let x = this.state.image.position_x,
             y = this.state.image.position_y,
             width = this.state.image.image_width,
             height = this.state.image.image_height;
 
-        if (x == null || y == null || !width || !height || forceRedraw) {
+        if (x == null || y == null || !width || !height) {
             let aspectRatio = img.width / img.height;
             if (aspectRatio >= this.state.width / this.state.height) {
                 height = this.state.height;
@@ -177,22 +194,22 @@ export default class ImageEditor extends React.Component<IProps, IState> {
         }
         this.state.canvasCtx.clearRect(0, 0, this.state.width, this.state.height);
         this.state.canvasCtx.drawImage(img, x, y, width, height);
-        this.state.canvasCtx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+        this.state.canvasCtx.fillStyle = this.props.foregroundColor;
         this.state.canvasCtx.fillRect(0, 0, this.state.width, this.state.height);
     }
 
-    private drawImage(forceRedraw: boolean = false) {
+    private drawImage() {
         if (!this.state.imageObject) {
             let image = new Image();
             image.onload = () => {
                 this.state.imageObject = image;
-                this._drawImage(image, forceRedraw);
+                this._drawImage(image);
                 this.state.zoomValue = this.image2zoom();
                 this.setState({zoomValue: this.state.zoomValue});
             };
             image.src = this.state.image.image;
         } else {
-            this._drawImage(this.state.imageObject, forceRedraw);
+            this._drawImage(this.state.imageObject);
         }
     }
 
@@ -220,7 +237,7 @@ export default class ImageEditor extends React.Component<IProps, IState> {
                 height: nextProps.height,
                 zoomValue: 1
             }, () => {
-                this.drawImage(true);
+                this.drawImage();
             });
         }
     }
