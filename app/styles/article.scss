@@ -267,7 +267,7 @@
         top: 30px;
         left: 25%;
         width: calc(75% - 30px);
-        height: 4px;
+        height: 3px;
         background-color: $color;
       }
     }
@@ -559,7 +559,7 @@
 
       ul {
         @include list_font_desktop();
-        padding-left: 50px;
+        padding-left: 70px;
 
         li:not(:last-child) {
           margin-bottom: 10px;
@@ -570,7 +570,10 @@
         @include quote_font_desktop();
         margin-top: 50px;
         margin-bottom: 50px;
-        padding-left: 50px;
+
+        &:not(.personal) > p {
+          padding-left: 70px;
+        }
 
         &.personal {
           display: flex;
@@ -612,12 +615,13 @@
 
       .phrase {
         @include phrase_font_desktop();
-        width: 75%;
+        width: 67%;
         padding-top: 45px;
-        padding-left: 25%;
+        padding-left: 33%;
 
         &:after {
-          width: 75%;
+          left: 33%;
+          width: 67%;
         }
       }
 
