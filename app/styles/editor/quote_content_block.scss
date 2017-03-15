@@ -130,6 +130,10 @@ $desktop_photo_size: 100px;
     flex-direction: row;
     align-items: center;
 
+    &:not(.personal):not(.active) .content_editable {
+      padding-left: 50px;
+    }
+
     .content_block_quote__photo,
     .content_block_quote__empty_photo {
       @include border_radius($desktop_photo_size);

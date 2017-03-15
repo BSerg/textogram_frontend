@@ -195,6 +195,7 @@ export default class QuoteContentBlock extends React.Component<IQuoteContentBloc
         }
         let imageStyle: any = {};
         if (this.state.content.image) {
+            className += ' personal';
             imageStyle = {
                 background: `url('${this.state.content.image.preview ||this.state.content.image.image}') no-repeat center center`,
                 backgroundSize: 'cover'
