@@ -11,6 +11,7 @@ import SocialIcon from "./shared/SocialIcon";
 import {MediaQuerySerice} from "../services/MediaQueryService";
 import FloatingPanel from "./shared/FloatingPanel";
 import {PopupPanelAction, OPEN_POPUP, CLOSE_POPUP} from "../actions/shared/PopupPanelAction";
+import * as Swapeable from 'react-swipeable';
 
 const EditButton = require('babel!svg-react!../assets/images/edit.svg?name=EditButton');
 const DeleteButton = require('babel!svg-react!../assets/images/redactor_icon_delete.svg?name=DeleteButton');
@@ -304,18 +305,26 @@ interface IGalleryModalProps {
     currentPhotoIndex: number,
 }
 
+type SwipingDirection = 'left' | 'right';
+
 interface IGalleryModalState {
     currentPhotoIndex?: number,
-    isDesktop?: boolean
+    isDesktop?: boolean,
+    swipingDirection?: SwipingDirection | null;
 }
 
 
 class GalleryModal extends React.Component<IGalleryModalProps, IGalleryModalState> {
+    refs: {
+        image: HTMLDivElement
+    };
+
     constructor(props: any) {
         super(props);
         this.state = {
             currentPhotoIndex: this.props.currentPhotoIndex,
-            isDesktop: MediaQuerySerice.getIsDesktop()
+            isDesktop: MediaQuerySerice.getIsDesktop(),
+            swipingDirection: null
         };
         this.handleMediaQuery = this.handleMediaQuery.bind(this);
     }
@@ -329,7 +338,7 @@ class GalleryModal extends React.Component<IGalleryModalProps, IGalleryModalStat
         if (this.state.currentPhotoIndex >= this.props.photos.length) {
             this.state.currentPhotoIndex = 0;
         }
-        this.setState({currentPhotoIndex: this.state.currentPhotoIndex});
+        this.setState({currentPhotoIndex: this.state.currentPhotoIndex, swipingDirection: null});
     }
 
     prevPhoto() {
@@ -337,7 +346,7 @@ class GalleryModal extends React.Component<IGalleryModalProps, IGalleryModalStat
         if (this.state.currentPhotoIndex < 0) {
             this.state.currentPhotoIndex = this.props.photos.length - 1;
         }
-        this.setState({currentPhotoIndex: this.state.currentPhotoIndex});
+        this.setState({currentPhotoIndex: this.state.currentPhotoIndex, swipingDirection: null});
     }
 
     getPrevPhotoIndex() {
@@ -372,6 +381,34 @@ class GalleryModal extends React.Component<IGalleryModalProps, IGalleryModalStat
         if (this.state.isDesktop != isDesktop) {
             this.setState({isDesktop: isDesktop});
         }
+    }
+
+    handleSwipingRight(e: any, deltaX: number) {
+        this.setState({swipingDirection: 'right'}, () => {
+            this.refs.image.style.left = deltaX * 0.1 + 'px';
+        });
+    }
+
+    handleSwipingLeft(e: any, deltaX: number) {
+        this.setState({swipingDirection: 'left'}, () => {
+            this.refs.image.style.left = -deltaX * 0.1 + 'px';
+        });
+    }
+
+    handleSwipeRight() {
+        console.log('SWIPE RIGHT');
+        this.prevPhoto();
+    }
+
+    handleSwipeLeft() {
+        console.log('SWIPE LEFT');
+        this.nextPhoto();
+    }
+
+    handleSwipe() {
+        this.setState({swipingDirection: null}, () => {
+            this.refs.image.style.left = "0";
+        });
     }
 
     componentDidMount() {
@@ -428,7 +465,18 @@ class GalleryModal extends React.Component<IGalleryModalProps, IGalleryModalStat
                             <div className="gallery_modal__image_next empty"></div>
                         }
                     </div> :
-                    <div className="gallery_modal__image" style={imageStyle} onClick={this.nextPhoto.bind(this)}/>
+                    <Swapeable delta={30}
+                               onSwipingRight={this.handleSwipingRight.bind(this)}
+                               onSwipingLeft={this.handleSwipingLeft.bind(this)}
+                               onSwipedRight={this.handleSwipeRight.bind(this)}
+                               onSwipedLeft={this.handleSwipeLeft.bind(this)}
+                               onSwiped={this.handleSwipe.bind(this)}>
+                        <div ref="image"
+                             className={"gallery_modal__image" + (this.state.swipingDirection? ' ' + this.state.swipingDirection: '')}
+                             style={imageStyle}
+                             onClick={this.nextPhoto.bind(this)}/>
+                    </Swapeable>
+
                 }
                 {photo.caption ? <div className="gallery_modal__caption">{photo.caption}</div> : null}
             </div>
