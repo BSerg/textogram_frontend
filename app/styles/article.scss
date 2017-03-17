@@ -41,6 +41,7 @@
       margin: 0 auto;
       position: relative;
       word-wrap: break-word;
+      margin-top: -30px;
     }
 
     .article__stats {
@@ -755,9 +756,10 @@
   width: 100%;
   height:100%;
 
-  & > div {
+  & > span {
+    display: flex;
+    flex-direction: column;
     flex: auto;
-    height: 100%;
   }
 
   .gallery_modal__header {

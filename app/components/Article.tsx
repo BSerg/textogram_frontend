@@ -465,7 +465,8 @@ class GalleryModal extends React.Component<IGalleryModalProps, IGalleryModalStat
                             <div className="gallery_modal__image_next empty"></div>
                         }
                     </div> :
-                    <Swapeable delta={30}
+                    <Swapeable nodeName="span"
+                               delta={30}
                                onSwipingRight={this.handleSwipingRight.bind(this)}
                                onSwipingLeft={this.handleSwipingLeft.bind(this)}
                                onSwipedRight={this.handleSwipeRight.bind(this)}
