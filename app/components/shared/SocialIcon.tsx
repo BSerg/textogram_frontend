@@ -6,6 +6,8 @@ const TwitterIcon = require('babel!svg-react!../../assets/images/profile_social_
 const GoogleIcon = require('babel!svg-react!../../assets/images/profile_social_icon_google.svg?name=GoogleIcon');
 const UrlIcon = require('babel!svg-react!../../assets/images/profile_web_link_icon.svg?name=UrlIcon');
 const TelegramIcon = require('babel!svg-react!../../assets/images/telegram.svg?name=TelegramIcon');
+const WhatsappIcon = require('babel!svg-react!../../assets/images/whatsapp.svg?name=WhatsappIcon');
+const ViberIcon = require('babel!svg-react!../../assets/images/viber.svg?name=ViberIcon');
 
 interface ISocialIconProps {
     social?: string
@@ -20,6 +22,8 @@ export default class SocialIcon extends React.Component<ISocialIconProps, any> {
         'twitter': TwitterIcon,
         'google': GoogleIcon,
         'telegram': TelegramIcon,
+        'whatsapp': WhatsappIcon,
+        'viber': ViberIcon
     };
 
     constructor(props: any) {

@@ -652,7 +652,7 @@
   align-items: center;
   font-family: $family_open_sans;
   background-color: $color4;
-  padding: 50px 0;
+  padding: 50px 0 0 0;
 
   .article__author {
     display: flex;
@@ -717,6 +717,7 @@
 
   @include desktop {
     margin: 50px 0 0 0;
+    padding: 50px 0;
 
     .article__shares {
       width: 600px;
@@ -957,6 +958,90 @@
   &.pinned {
     position: fixed;
     top: 30px;
+  }
+}
+
+.article__shares_btn {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  height: 64px;
+  width: 100%;
+  background-color: $color;
+  color: white;
+  font-family: $family_open_sans;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 30px;
+
+  svg {
+    width: 40px;
+    height: 40px;
+    fill: white;
+    margin-right: 10px;
+    margin-left: -40px;
+  }
+}
+
+.share_popup {
+  display: flex;
+  flex-direction: row;
+  flex-flow: wrap;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  padding: 30px;
+
+  .share_popup__row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+  }
+
+  .share_popup__close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 50px;
+    height: 50px;
+
+    svg {
+      width: 20px;
+      height: 20px;
+      fill: white;
+    }
+  }
+
+  $button_size: 45px;
+
+  .share_popup__item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    @include border_radius($button_size);
+    width: $button_size;
+    height: $button_size;
+    margin: 10px 15px;
+
+    svg {
+      width: 35px;
+      height: 35px;
+      fill: white;
+    }
+
+    &.share_popup__vk {background-color: #44678D;}
+    &.share_popup__fb {background-color: #3A559F;}
+    &.share_popup__twitter {background-color: #50ABF1;}
+    &.share_popup__telegram {background-color: #61A8DE;}
+    &.share_popup__whatsapp {background-color: #1BD741;}
+    &.share_popup__viber {background-color: #7D3DAF;}
   }
 }
 

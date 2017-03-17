@@ -10,6 +10,7 @@ import "../styles/article.scss";
 import SocialIcon from "./shared/SocialIcon";
 import {MediaQuerySerice} from "../services/MediaQueryService";
 import FloatingPanel from "./shared/FloatingPanel";
+import {PopupPanelAction, OPEN_POPUP, CLOSE_POPUP} from "../actions/shared/PopupPanelAction";
 
 const EditButton = require('babel!svg-react!../assets/images/edit.svg?name=EditButton');
 const DeleteButton = require('babel!svg-react!../assets/images/redactor_icon_delete.svg?name=DeleteButton');
@@ -17,6 +18,7 @@ const BackButton = require('babel!svg-react!../assets/images/back.svg?name=BackB
 const ViewIcon = require('babel!svg-react!../assets/images/views_white.svg?name=ViewIcon');
 const CloseIcon = require('babel!svg-react!../assets/images/close_white.svg?name=CloseIcon');
 const ArrowButton = require('babel!svg-react!../assets/images/arrow.svg?name=ArrowButton');
+const ShareButton = require('babel!svg-react!../assets/images/share.svg?name=ShareButton');
 
 
 
@@ -146,6 +148,36 @@ export default class Article extends React.Component<any, IArticleState> {
         }
     }
 
+    closeSharePopup() {
+        PopupPanelAction.do(CLOSE_POPUP, null);
+    }
+
+    openSharePopup() {
+        let content = (
+            <div className="share_popup">
+                <div className="share_popup__row">
+                    <a href={"http://vk.com/share.php?url=" + this.state.article.url}
+                       className="share_popup__item share_popup__vk"><SocialIcon social="vk"/></a>
+                    <a href={"https://www.facebook.com/sharer/sharer.php?u=" + this.state.article.url}
+                       className="share_popup__item share_popup__fb"><SocialIcon social="facebook"/></a>
+                    <a href={"https://twitter.com/home?status=" + this.state.article.url}
+                       className="share_popup__item share_popup__twitter"><SocialIcon social="twitter"/></a>
+                </div>
+                <div className="share_popup__row">
+                    <a href={"https://telegram.me/share/url?url=" + this.state.article.url}
+                       className="share_popup__item share_popup__telegram"><SocialIcon social="telegram"/></a>
+                    <a href={"whatsapp://send?text=" + this.state.article.url}
+                       data-action="share/whatsapp/share"
+                       className="share_popup__item share_popup__whatsapp"><SocialIcon social="whatsapp"/></a>
+                    <a href={"viber://forward?text=" + this.state.article.url}
+                       className="share_popup__item share_popup__viber"><SocialIcon social="viber"/></a>
+                </div>
+                <div className="share_popup__close" onClick={this.closeSharePopup.bind(this)}><CloseIcon/></div>
+            </div>
+        );
+        PopupPanelAction.do(OPEN_POPUP, {content: content});
+    }
+
     handleMediaQuery(isDesktop: boolean) {
         if (this.state.isDesktop != isDesktop) {
             this.setState({isDesktop: isDesktop});
@@ -236,16 +268,22 @@ export default class Article extends React.Component<any, IArticleState> {
                                 }
                                 {this.state.article.owner.first_name}&nbsp;{this.state.article.owner.last_name}
                             </Link>
-                            <div className="article__shares">
-                                <a href={"http://vk.com/share.php?url=" + this.state.article.url}
-                                   className="article__share_btn"><SocialIcon social="vk"/></a>
-                                <a href={"https://www.facebook.com/sharer/sharer.php?u=" + this.state.article.url}
-                                   className="article__share_btn"><SocialIcon social="facebook"/></a>
-                                <a href={"https://twitter.com/home?status=" + this.state.article.url}
-                                   className="article__share_btn"><SocialIcon social="twitter"/></a>
-                                <a href={"https://telegram.me/share/url?url=" + this.state.article.url}
-                                   className="article__share_btn"><SocialIcon social="telegram"/></a>
-                            </div>
+                            {this.state.isDesktop ?
+                                <div className="article__shares">
+                                    <a href={"http://vk.com/share.php?url=" + this.state.article.url}
+                                       className="article__share_btn"><SocialIcon social="vk"/></a>
+                                    <a href={"https://www.facebook.com/sharer/sharer.php?u=" + this.state.article.url}
+                                       className="article__share_btn"><SocialIcon social="facebook"/></a>
+                                    <a href={"https://twitter.com/home?status=" + this.state.article.url}
+                                       className="article__share_btn"><SocialIcon social="twitter"/></a>
+                                    <a href={"https://telegram.me/share/url?url=" + this.state.article.url}
+                                       className="article__share_btn"><SocialIcon social="telegram"/></a>
+                                </div> :
+                                <div className="article__shares_btn" onClick={this.openSharePopup.bind(this)}>
+                                    <ShareButton/>Поделиться
+                                </div>
+                            }
+
                         </div>
                         {this.state.isDesktop ? <ShareFloatingPanel articleUrl={this.state.article.url}/> : null}
                     </div>
