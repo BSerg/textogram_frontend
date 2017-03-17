@@ -918,16 +918,18 @@
 }
 
 .share_panel {
-  @include transition();
+  @include transition(500ms);
   position: fixed;
-  top: 30%;
+  top: 10vh;
   left: 50px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  opacity: 1;
 
   &:not(.visible) {
     opacity: 0;
+    top: 30vh;
   }
 
   a {

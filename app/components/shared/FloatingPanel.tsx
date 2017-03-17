@@ -34,7 +34,6 @@ export default class FloatingPanel extends React.Component<IFloatingPanel, IFloa
     };
 
     handleScroll() {
-        console.log(this.scrollPosition, window.pageYOffset)
         let pinned = this.scrollPosition ? this.scrollPosition <= window.pageYOffset : this.refs.element.getBoundingClientRect().top <= 50;
         if (pinned != this.state.pinned) {
             if (pinned) {

@@ -233,7 +233,7 @@ export default class Article extends React.Component<any, IArticleState> {
                 this.state.article ?
                     <div id={"article" + this.state.article.id} className="article">
                         <div className={"article__title" + (this.state.article.cover ? ' inverted' : '')} style={coverStyle}>
-                            {!this.state.isDesktop ?
+                            {false && !this.state.isDesktop ?
                                 <Link to={`/profile/${this.state.article.owner.id}`} className="article__author">
                                     {this.state.article.owner.first_name} {this.state.article.owner.last_name}
                                 </Link> : null
@@ -246,7 +246,12 @@ export default class Article extends React.Component<any, IArticleState> {
                                         <Link to={`/profile/${this.state.article.owner.id}`}>
                                             {this.state.article.owner.first_name} {this.state.article.owner.last_name}
                                         </Link>
-                                    </div> : null
+                                    </div> :
+                                    <div className="article__author1">
+                                        <Link to={`/profile/${this.state.article.owner.id}`}>
+                                            {this.state.article.owner.first_name} {this.state.article.owner.last_name}
+                                        </Link>
+                                    </div>
                                 }
                                 <div className="article__date">{this.state.article.date}</div>
                                 <div className="article__views">
@@ -442,13 +447,10 @@ class ShareFloatingPanel extends React.Component<any, any> {
     }
 
     handleScroll() {
-        let height = Math.max(
-            document.body.scrollHeight, document.body.offsetHeight,
-            document.documentElement.clientHeight, document.documentElement.scrollHeight,
-            document.documentElement.offsetHeight
-        );
-        let scrollDelta = window.pageYOffset / height;
-        this.setState({opacity: Math.min(scrollDelta * 2, 1), scrollDelta: scrollDelta})
+        let visible = window.pageYOffset >= 360;
+        if (this.state.visible != visible) {
+            this.setState({visible: visible});
+        }
     }
 
     componentDidMount() {
@@ -460,12 +462,12 @@ class ShareFloatingPanel extends React.Component<any, any> {
     }
 
     render() {
-        let style = {
-            top: 30 - Math.min(this.state.scrollDelta * 3, 1) * 20 + '%',
-            opacity: Math.min(this.state.scrollDelta * 3, 1)
-        };
+        let className = 'share_panel';
+        if (this.state.visible) {
+            className += ' visible';
+        }
         return (
-            <div style={style} className={"share_panel" + (this.state.visible ? ' visible' : '')}>
+            <div className={className}>
                 <a href={"http://vk.com/share.php?url=" + this.props.articleUrl}
                    className="share_panel__share_btn"><SocialIcon social="vk"/></a>
                 <a href={"https://www.facebook.com/sharer/sharer.php?u=" + this.props.articleUrl}
