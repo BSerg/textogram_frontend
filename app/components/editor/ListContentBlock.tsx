@@ -68,6 +68,7 @@ export default class ListContentBlock extends React.Component<IListContentBlockP
                                  onFocus={this.handleFocus.bind(this)}
                                  onChange={this.handleChange.bind(this)}
                                  onChangeDelay={1000}
+                                 enableTextFormat={true}
                                  content={marked(this.state.content.value)}
                                  placeholder={Captions.editor.enter_list}/>
             </BaseContentBlock>

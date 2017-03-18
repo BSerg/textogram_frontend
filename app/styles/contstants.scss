@@ -79,7 +79,7 @@ $profile-avatar-side-size: 60px;
 }
 
 @mixin list_font() {
-  @include font(17px, $font-weight-bold, $family_arimo, 37px)
+  @include font(17px, $font-weight, $family_arimo, 37px)
 }
 
 // desktop
@@ -117,7 +117,7 @@ $profile-avatar-side-size: 60px;
 }
 
 @mixin list_font_desktop() {
-  @include font(22px, $font-weight-bold, $family_arimo, 37px)
+  @include font(22px, $font-weight, $family_arimo, 37px)
 }
 
 
