@@ -1156,6 +1156,10 @@
 .ad_x250 {
   width: 100%;
   height: 250px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
 }
 
 .ad_250x400 {
