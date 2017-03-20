@@ -652,7 +652,6 @@
   flex-direction: column;
   align-items: center;
   font-family: $family_open_sans;
-  background-color: $color4;
   padding: 50px 0 0 0;
 
   .article__author {
@@ -719,6 +718,7 @@
   @include desktop {
     margin: 50px 0 0 0;
     padding: 50px 0;
+    background-color: $color4;
 
     .article__shares {
       width: 600px;

@@ -63,6 +63,7 @@ interface IArticleState {
     isSelf?: boolean
     isDesktop?: boolean
     floatingBanner?: any
+    topBanner?: any
 }
 
 export default class Article extends React.Component<IArticleProps, IArticleState> {
@@ -220,7 +221,13 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
                     this.setState({floatingBanner: response.data.code});
                 }).catch((err) => {
                     console.log(err);
-                })
+                });
+                api.get('/banners/x250/').then((response: any) => {
+                    this.setState({topBanner: response.data.code});
+                }).catch((err) => {
+                    console.log(err);
+                });
+
             }
             document.title = this.state.article.title;
         });
@@ -309,6 +316,9 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
             !this.state.error ?
                 this.state.article ?
                     <div id={"article" + this.state.article.id} className="article">
+                        {this.state.topBanner ?
+                            <div className="ad_x250" dangerouslySetInnerHTML={{__html: this.state.topBanner}}/>: null
+                        }
                         <div className={"article__title" + (this.state.article.cover ? ' inverted' : '')} style={coverStyle}>
                             {false && !this.state.isDesktop ?
                                 <Link to={`/profile/${this.state.article.owner.id}`} className="article__author">
