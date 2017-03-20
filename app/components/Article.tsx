@@ -12,6 +12,8 @@ import {MediaQuerySerice} from "../services/MediaQueryService";
 import FloatingPanel from "./shared/FloatingPanel";
 import {PopupPanelAction, OPEN_POPUP, CLOSE_POPUP} from "../actions/shared/PopupPanelAction";
 import * as Swapeable from 'react-swipeable';
+import PopupPrompt from "./shared/PopupPrompt";
+import {NotificationAction, SHOW_NOTIFICATION} from "../actions/shared/NotificationAction";
 
 const EditButton = require('babel!svg-react!../assets/images/edit.svg?name=EditButton');
 const DeleteButton = require('babel!svg-react!../assets/images/redactor_icon_delete.svg?name=DeleteButton');
@@ -20,6 +22,8 @@ const ViewIcon = require('babel!svg-react!../assets/images/views_white.svg?name=
 const CloseIcon = require('babel!svg-react!../assets/images/close_white.svg?name=CloseIcon');
 const ArrowButton = require('babel!svg-react!../assets/images/arrow.svg?name=ArrowButton');
 const ShareButton = require('babel!svg-react!../assets/images/share.svg?name=ShareButton');
+const EditBlackButton = require('babel!svg-react!../assets/images/edit_black.svg?name=EditBlackButton');
+const PublishButton = require('babel!svg-react!../assets/images/publish.svg?name=PublishButton');
 
 
 
@@ -47,6 +51,12 @@ interface IArticle {
     ads_enabled?: boolean
 }
 
+interface IArticleProps {
+    isPreview?: boolean,
+    params?: any,
+    router?: any
+}
+
 interface IArticleState {
     article?: IArticle | null
     error?: any
@@ -55,7 +65,7 @@ interface IArticleState {
     floatingBanner?: any
 }
 
-export default class Article extends React.Component<any, IArticleState> {
+export default class Article extends React.Component<IArticleProps, IArticleState> {
     constructor(props: any) {
         super(props);
         this.state = {
@@ -66,6 +76,10 @@ export default class Article extends React.Component<any, IArticleState> {
         };
         this.handleMediaQuery = this.handleMediaQuery.bind(this);
     }
+
+    static defaultProps = {
+        isPreview: false
+    };
 
     handleUser() {
         let user = UserAction.getStore().user;
@@ -79,12 +93,21 @@ export default class Article extends React.Component<any, IArticleState> {
     }
 
     processArticle(article: IArticle) {
-        article.date = moment(article.published_at).locale('ru').calendar(null, {
-            sameDay: 'DD MMMM YYYY',
-            lastDay: 'DD MMMM YYYY',
-            sameElse: 'DD MMMM YYYY',
-            lastWeek: 'DD MMMM YYYY'
-        });
+        if (this.props.isPreview && !article.published_at) {
+            article.date = moment().locale('ru').calendar(null, {
+                sameDay: 'DD MMMM YYYY',
+                lastDay: 'DD MMMM YYYY',
+                sameElse: 'DD MMMM YYYY',
+                lastWeek: 'DD MMMM YYYY'
+            });
+        } else {
+            article.date = moment(article.published_at).locale('ru').calendar(null, {
+                sameDay: 'DD MMMM YYYY',
+                lastDay: 'DD MMMM YYYY',
+                sameElse: 'DD MMMM YYYY',
+                lastWeek: 'DD MMMM YYYY'
+            });
+        }
         return article;
     }
 
@@ -185,24 +208,46 @@ export default class Article extends React.Component<any, IArticleState> {
         }
     }
 
-    componentDidMount() {
-        MediaQuerySerice.listen(this.handleMediaQuery);
-        UserAction.onChange([LOGIN, LOGOUT, UPDATE_USER, SAVE_USER], this.handleUser);
+    loadArticle(data: IArticle) {
+        let isSelf = UserAction.getStore().user ? UserAction.getStore().user.id == data.owner.id : false;
+        this.setState({article: this.processArticle(data), isSelf: isSelf}, () => {
+            window.setTimeout(() => {
+                this.processPhoto();
+                this.processEmbed();
+            }, 50);
+            if (this.state.article.ads_enabled) {
+                api.get('/banners/250x400/').then((response: any) => {
+                    this.setState({floatingBanner: response.data.code});
+                }).catch((err) => {
+                    console.log(err);
+                })
+            }
+            document.title = this.state.article.title;
+        });
+    }
+
+    _publish() {
+        api.post(`/articles/editor/${this.props.params.articleId}/publish/`).then((response: any) => {
+            NotificationAction.do(SHOW_NOTIFICATION, {content: 'Поздравляем, ваш материал опубликован.'});
+            this.props.router.push(`/articles/${this.state.article.slug}/`);
+        });
+    }
+
+    publishArticle() {
+        if (this.state.isDesktop) {
+            if (confirm('Опубликовать материал?')) {
+                this._publish();
+            }
+        } else {
+            let content = <PopupPrompt confirmLabel="Опубликовать" onConfirm={this._publish.bind(this)}/>;
+            PopupPanelAction.do(OPEN_POPUP, {content: content});
+        }
+    }
+
+    retrieveArticle() {
         api.get(`/articles/${this.props.params.articleSlug}/`).then((response: any) => {
-            let isSelf = UserAction.getStore().user ? UserAction.getStore().user.id == response.data.owner.id : false;
-            this.setState({article: this.processArticle(response.data), isSelf: isSelf}, () => {
-                window.setTimeout(() => {
-                    this.processPhoto();
-                    this.processEmbed();
-                }, 50);
-                if (this.state.article.ads_enabled) {
-                    api.get('/banners/250x400/').then((response: any) => {
-                        this.setState({floatingBanner: response.data.code});
-                    }).catch((err) => {
-                        console.log(err);
-                    })
-                }
-            });
+            let data = response.data;
+            this.loadArticle(data);
         }).catch((err: any) => {
             console.log(err);
             if (err.response) {
@@ -215,6 +260,37 @@ export default class Article extends React.Component<any, IArticleState> {
                 }
             }
         });
+    }
+
+    retrieveArticlePreview() {
+        api.get(`/articles/${this.props.params.articleId}/preview/`).then((response: any) => {
+            let data = response.data;
+            this.loadArticle(data);
+        }).catch((err: any) => {
+            console.log(err);
+            if (err.response) {
+                switch (err.response.status) {
+                    case 404:
+                        this.setState({error: <Error code={404} msg="Article not found"/>});
+                        break;
+                    case 401:
+                        this.setState({error: <Error code={401} msg="You haven't access to this article. Sorry."/>});
+                        break;
+                    default:
+                        this.setState({error: <Error/>})
+                }
+            }
+        });
+    }
+
+    componentDidMount() {
+        MediaQuerySerice.listen(this.handleMediaQuery);
+        UserAction.onChange([LOGIN, LOGOUT, UPDATE_USER, SAVE_USER], this.handleUser);
+        if (this.props.isPreview) {
+            this.retrieveArticlePreview();
+        } else {
+            this.retrieveArticle();
+        }
     }
 
     componentWillUnmount() {
@@ -291,7 +367,21 @@ export default class Article extends React.Component<any, IArticleState> {
                             }
 
                         </div>
-                        {this.state.isDesktop ? <ShareFloatingPanel articleUrl={this.state.article.url}/> : null}
+                        {this.state.isDesktop ?
+                            <ShareFloatingPanel articleUrl={this.state.article.url}/> : null}
+                        {this.state.isDesktop && this.props.isPreview ?
+                            <div className="tools_panel">
+                                <div className="tools_panel__item">
+                                    <div className="tools_panel__caption">Редактировать</div>
+                                    <Link to={`/articles/${this.props.params.articleId}/edit`}
+                                          className="tools_panel__icon"><EditBlackButton/></Link>
+                                </div>
+                                <div className="tools_panel__item">
+                                    <div className="tools_panel__caption">Опубликовать</div>
+                                    <div onClick={this.publishArticle.bind(this)}
+                                         className="tools_panel__icon"><PublishButton/></div>
+                                </div>
+                            </div> : null}
                     </div>
                     : <div className="article__loading"><span>СТАТЬЯ</span> ЗАГРУЖАЕТСЯ...</div>
                 : this.state.error
@@ -527,5 +617,16 @@ class ShareFloatingPanel extends React.Component<any, any> {
                    className="share_panel__share_btn"><SocialIcon social="telegram"/></a>
             </div>
         )
+    }
+}
+
+export class ArticlePreview extends React.Component<any, any> {
+    constructor(props: any) {
+        super(props);
+    }
+
+    render() {
+        let props = Object.assign({}, this.props, {isPreview: true});
+        return <Article {...props}/>;
     }
 }
