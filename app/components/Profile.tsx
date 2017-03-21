@@ -117,7 +117,9 @@ class UserArticlesClass extends React.Component<IUserArticlesPropsInterface, IUs
     componentWillReceiveProps(nextProps: any) {
         if (nextProps.user.id != this.props.user.id || nextProps.isSelf != this.props.isSelf) {
 
-            this.setState({selectedSection: this.SECTION_ARTICLES, showSubsection: false, articles: [], drafts: [], feed: []}, () => {
+            this.setState({
+                selectedSection: nextProps.isSelf ? this.SECTION_SUBSCRIPTIONS : this.SECTION_ARTICLES,
+                showSubsection: false, articles: [], drafts: [], feed: []}, () => {
                 this.loadArticles(nextProps.user.id);
                 if (nextProps.isSelf) {
                     this.loadArticles('me');
@@ -135,13 +137,18 @@ class UserArticlesClass extends React.Component<IUserArticlesPropsInterface, IUs
 
     componentDidMount() {
         this.loadArticles(this.props.user.id);
+        let stateData: any = {};
         if (this.props.isSelf) {
+            stateData.selectedSection = this.SECTION_SUBSCRIPTIONS;
             this.loadArticles('me');
             this.loadArticles(this.props.user.id, true);
         }
         if (this.props.location.query.show == 'drafts') {
-            this.setState({showSubsection: true});
+            stateData.selectedSection = this.SECTION_ARTICLES;
+            stateData.showSubsection = true;
+            // this.setState({showSubsection: true});
         }
+        this.setState(stateData);
     }
 
     render() {
@@ -173,11 +180,11 @@ class UserArticlesClass extends React.Component<IUserArticlesPropsInterface, IUs
             {this.props.isSelf ? (
                 <div className="profile__articles__menu">
 
-                    <div onClick={this.setSection.bind(this, this.SECTION_ARTICLES)} className={(this.state.selectedSection == this.SECTION_ARTICLES && !this.state.showSubsection) ? 'active': null}>
-                        {Captions.profile.menuArticles}
-                    </div>
                     <div onClick={this.setSection.bind(this, this.SECTION_SUBSCRIPTIONS)}  className={(this.state.selectedSection == this.SECTION_SUBSCRIPTIONS && !this.state.showSubsection) ? 'active': null}>
                         {Captions.profile.menuSubscriptions}
+                    </div>
+                    <div onClick={this.setSection.bind(this, this.SECTION_ARTICLES)} className={(this.state.selectedSection == this.SECTION_ARTICLES && !this.state.showSubsection) ? 'active': null}>
+                        {Captions.profile.menuArticles}
                     </div>
                     <div className="profile__articles__menu_switch_button" onClick={this.toggleSubsection.bind(this)}>
                         <span>{ switchCaption }</span>
@@ -312,6 +319,7 @@ export default class Profile extends React.Component<any, IProfileState> {
         super(props);
         this.state = {user: null, error: null, isSelf: false, showSubscribers: true, isDesktop: MediaQuerySerice.getIsDesktop()};
         this.checkIsSelf = this.checkIsSelf.bind(this);
+        this.checkDesktop = this.checkDesktop.bind(this);
     }
 
     checkIsSelf() {
@@ -382,12 +390,14 @@ export default class Profile extends React.Component<any, IProfileState> {
         this.getUserData(nextProps.params.userId);
     }
 
+    checkDesktop(isDesktop: boolean) {
+        if (isDesktop != this.state.isDesktop) {
+            this.setState({isDesktop: isDesktop, showSubscribers: false});
+        }
+    }
+
     componentDidMount() {
-        MediaQuerySerice.listen((isDesktop: boolean) => {
-            if (isDesktop != this.state.isDesktop) {
-                this.setState({isDesktop: isDesktop, showSubscribers: false});
-            }
-        });
+        MediaQuerySerice.listen(this.checkDesktop);
 
         this.getUserData(this.props.params.userId);
         UserAction.onChange(GET_ME, this.checkIsSelf);
@@ -399,6 +409,8 @@ export default class Profile extends React.Component<any, IProfileState> {
         UserAction.unbind(GET_ME, this.checkIsSelf);
         UserAction.unbind(LOGIN, this.checkIsSelf);
         UserAction.unbind(LOGOUT, this.checkIsSelf);
+
+        MediaQuerySerice.unbind(this.checkDesktop);
     }
 
     render() {
@@ -426,7 +438,6 @@ export default class Profile extends React.Component<any, IProfileState> {
                              this.state.user.social_links.length ? (
                                  <div className="profile__social_links">
 
-                                     <div className="profile__social_links_caption">Читайте меня в соцсетях</div>
                                      <div className="profile__social_links_list">
                                          { this.state.user.social_links.map((social_link: any, index: number) => {
                                              return (

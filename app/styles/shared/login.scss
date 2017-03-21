@@ -1,0 +1,111 @@
+@import "../contstants";
+@import "../mixins";
+
+.login {
+  background-color: $color;
+  width: 100%;
+  height: 100%;
+  max-width: 600px;
+  max-height: 320px;
+
+  padding: 50px;
+  box-sizing: border-box;
+
+  font-family: $family_open_sans;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  form {
+    display: flex;
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 320px;
+    &>div {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      position: relative;
+
+      margin-bottom: 30px;
+
+      .input_icon {
+        position: absolute;
+        right: 10px;
+        top: 5px;
+        cursor: pointer;
+
+        svg {
+          width: 25px;
+          height: 25px;
+          fill: #CCCCCC;
+        }
+      }
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      input, button {
+        width: 100%;
+        font-family: $family_open_sans;
+        border: none;
+        outline: none;
+      }
+
+      button {
+        height: 50px;
+        background-color: #282828;
+        color: #FFFFFF;
+        &:hover {
+          background-color: #000000;
+        }
+      }
+
+      input {
+        height: 30px;
+        border: none;
+        border-bottom: 1px solid #CCCCCC;
+        text-align: center;
+        background-color: transparent;
+        color: #7F7F7F;
+        font-size: 13px;
+        letter-spacing: 1px;
+        margin-bottom: 7px;
+        position: relative;
+
+        &:focus {
+          color: #FFFFFF;
+          border-color: #FFFFFF;
+          &.error {
+            border-color: $color-accent;
+          }
+        }
+
+        &.error {
+          border-color: $color-accent;
+        }
+      }
+
+      .hint {
+        font-size: 7px;
+        letter-spacing: 1px;
+        color: #7F7F7F;
+
+        &.hint_clickable {
+          text-decoration: underline;
+          cursor: pointer;
+        }
+        &.hint_error {
+          color: $color-accent;
+        }
+      }
+    }
+  }
+}

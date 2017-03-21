@@ -8,6 +8,7 @@ import {NotificationAction, CHECK} from '../actions/NotificationAction'
 import {ModalAction, OPEN_MODAL} from '../actions/shared/ModalAction';
 import Registration from './Registration';
 import {Captions} from '../constants';
+import Login from './shared/Login';
 import LoginBlock from './shared/LoginBlock';
 
 import {MediaQuerySerice} from '../services/MediaQueryService';
@@ -87,6 +88,11 @@ class DefaultMenu extends React.Component<DefaultMenuPropsInterface, IDefaultMen
         this.setState({isAuthorization: !this.state.isAuthorization});
     }
 
+    authorize() {
+        console.log('auth');
+        ModalAction.do(OPEN_MODAL, {content: <Login />});
+    }
+
     handleUrlClick(url: string, e: any) {
         e.stopPropagation();
         this.props.router.push(url);
@@ -116,7 +122,7 @@ class DefaultMenu extends React.Component<DefaultMenuPropsInterface, IDefaultMen
         return (
             <div className="menu__content main__menu_default" onClick={this.stopClosePropagation.bind(this)}>
 
-                { !this.props.isDesktop ? (<div onClick={this.closeMenu.bind(this)} className="menu__close_mobile"><CloseIcon /></div>) : null}
+                <div onClick={this.closeMenu.bind(this)} className={this.props.isDesktop ? "menu__close" : "menu__close_mobile"}><CloseIcon /></div>
                 { !this.props.isDesktop ? (<div onClick={this.handleUrlClick.bind(this, '/info/')} className="menu__info"><InfoIcon /></div>) : null}
 
                 <div className="menu__user">
@@ -168,7 +174,7 @@ class DefaultMenu extends React.Component<DefaultMenuPropsInterface, IDefaultMen
                 }
 
                 { this.props.isDesktop ? (<div className="menu__about" onClick={this.handleUrlClick.bind(this, '/info/')}>
-                        {Captions.main_menu.about}
+                        {Captions.main_menu.help}
                     </div>) : null}
                 { this.props.isDesktop ? (<div className="menu__about" onClick={this.registration.bind(this, false)}>{Captions.main_menu.register}</div>) : null}
 
@@ -211,8 +217,8 @@ class DefaultMenu extends React.Component<DefaultMenuPropsInterface, IDefaultMen
 
 
                             </div>) : (
-                            <div className="menu__authorization" onClick={this.toggleIsAuthorization.bind(this)}>
-                                <div className="menu__authorization_caption">{Captions.main_menu.authorize}</div>
+                            <div className="menu__authorization" onClick={this.authorize.bind(this)}>
+                                <div className="menu__authorization_caption">{Captions.main_menu.login}:</div>
                                 <LoginBlock />
                             </div>))
                      : null
@@ -318,6 +324,7 @@ class UserMenu extends React.Component<IUserMenuProps, any> {
     }
 
     closeMenu() {
+        console.log('close');
         MenuAction.do(TOGGLE, false);
     }
 
@@ -334,13 +341,15 @@ class UserMenu extends React.Component<IUserMenuProps, any> {
         return this.props.isDesktop ? (
             <div className="menu__content" onClick={this.stopClosePropagation.bind(this)}>
 
-                <div className="menu__user">
-                    <Link to={"/profile/" + this.props.user.id}>
-                        <div className="menu__user_avatar">
+                <div onClick={this.closeMenu.bind(this)} className="menu__close"><CloseIcon /></div>
+
+                <div className="menu__user menu__links">
+                    <div className="menu__link">
+                        <Link to={"/profile/" + this.props.user.id}>
                             <img src={ this.props.user.avatar } />
-                        </div>
-                        <div className="menu__user_username"><span>{this.props.user.first_name}</span> <span>{this.props.user.last_name}</span></div>
-                    </Link>
+                            {Captions.main_menu.myProfile}
+                        </Link>
+                    </div>
                 </div>
 
                 <div className="menu__links">
@@ -407,7 +416,7 @@ export default class Menu extends React.Component<any, IMenuStateInterface> {
     constructor() {
         super();
         this.state = {
-            open: MediaQuerySerice.getIsDesktop(),
+            open: true,
             user: UserAction.getStore().user,
             isDesktop: MediaQuerySerice.getIsDesktop()
         };
@@ -424,7 +433,7 @@ export default class Menu extends React.Component<any, IMenuStateInterface> {
     }
 
     setOpen() {
-        this.setState({open: this.state.isDesktop || Boolean(MenuAction.getStore().open)});
+        this.setState({open: Boolean(MenuAction.getStore().open)});
     }
 
     stopClosePropagation(e: any) {
@@ -435,7 +444,7 @@ export default class Menu extends React.Component<any, IMenuStateInterface> {
 
         MediaQuerySerice.listen((isDesktop: boolean) => {
             if (isDesktop != this.state.isDesktop) {
-                this.setState({isDesktop: isDesktop, open: isDesktop});
+                this.setState({isDesktop: isDesktop, open: false});
             }
         });
 

@@ -75,6 +75,7 @@ export namespace Captions {
         articlePreviewEdit: "Редактировать",
         articlePreviewSettings: "Настройки",
         articlePreviewCopy: "Копировать",
+        articlePreviewCopyToDrafts: "Копировать в черновики",
         articlePreviewDelete: "Удалить",
 
         subscribersYouAreSubscribed: "Вы читаете",
@@ -89,6 +90,7 @@ export namespace Captions {
 
     export const main_menu = {
         manage_profile: 'управление профилем',
+        myProfile: 'мой профиль',
         create_article: 'новый текст',
         drafts: 'черновики',
         notificationDefaultText: 'Новые уведомления',
@@ -97,11 +99,13 @@ export namespace Captions {
         forgotPassword: 'забыли пароль?',
         register: 'регистрация',
         about: 'Что такое TEXTIUS?',
+        help: 'Помощь',
         inputPhonePlaceholder: '+7 ',
         inputPasswordPlaceholder: 'Введите пароль',
         loginHint: 'Логин',
         passwordHint: 'Пароль',
         authorize: 'авторизация',
+        login: "Войти",
     };
 
     export const management = {
