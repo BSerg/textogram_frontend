@@ -72,9 +72,7 @@ class App extends React.Component<any, any> {
                 window.setTimeout(onGAPILoad.bind(this), 0)
             }
         }
-
         window.setTimeout(onGAPILoad.bind(this), 0);
-
         UserAction.do(GET_ME, null);
     }
 
@@ -83,7 +81,6 @@ class App extends React.Component<any, any> {
             <Router history={browserHistory}>
                 <Route path="/" component={Base}>
                     <IndexRoute component={IndexPage}/>
-
                     <Route path="home/:id" component={IndexPage} />
                     <Route path="profile/:userId" component={Profile}/>
                     <Route path="articles/new" component={NewArticleEditor}/>
