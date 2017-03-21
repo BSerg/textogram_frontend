@@ -1,5 +1,6 @@
 import * as React from 'react';
 import {ModalAction, OPEN_MODAL, CLOSE_MODAL} from '../../actions/shared/ModalAction';
+import {UserAction, LOGIN} from '../../actions/user/UserAction';
 import '../../styles/shared/login.scss';
 
 const VisibilityIcon = require('babel!svg-react!../../assets/images/profile_visibility_icon.svg?name=VisibilityIcon');
@@ -23,8 +24,6 @@ export default class Login extends React.Component<any, ILoginStateInterface> {
 
     phoneChange(e: any) {
         let phone: string = e.target.value;
-        console.log(phone);
-
         if (phone.match(/^\+*\d{0,11}$/)) {
             this.setState({phone: phone, phoneError: false, passwordError: false});
         }
@@ -51,7 +50,13 @@ export default class Login extends React.Component<any, ILoginStateInterface> {
     }
 
     login() {
-        console.log('login');
+        let phone: string = this.state.phone;
+        phone = phone.replace('+', '');
+        UserAction.doAsync(LOGIN, {phone: phone, password: this.state.password}).then(() => {
+            ModalAction.do(CLOSE_MODAL, null);
+        }).catch((error) => { this.setState({phoneError: true, passwordError: true}); });
+
+
     }
 
     componentDidMount() {
@@ -73,8 +78,9 @@ export default class Login extends React.Component<any, ILoginStateInterface> {
                         <input type={ this.state.passwordVisible ? "text" : "password"}
                                name="password" value={this.state.password}
                                className={this.state.phoneError ? "error" : ""}
+                               placeholder="Пароль"
                                onChange={this.passwordChange.bind(this)}/>
-                        <div className={"hint hint_clickable" + (this.state.passwordError ? "hint_error" : "")}>ЗАБЫЛИ ПАРОЛЬ?</div>
+                        <div className={"hint hint_clickable" + (this.state.passwordError ? " hint_error" : "")}>ЗАБЫЛИ ПАРОЛЬ?</div>
 
                         <div className="input_icon" onClick={this.togglePasswordVisible.bind(this)}>
                             {this.state.passwordVisible ? (<VisibilityIcon />) : (<VisibilityOffIcon />)}
