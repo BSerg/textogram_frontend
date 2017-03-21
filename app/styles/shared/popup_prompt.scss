@@ -4,8 +4,8 @@
 .popup_prompt {
   display: flex;
   align-items: center;
+  align-self: stretch;
   width: 100%;
-  height: 100%;
   font-family: $family_open_sans;
   font-size: 10px;
   letter-spacing: 1px;
