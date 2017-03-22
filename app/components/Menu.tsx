@@ -89,7 +89,6 @@ class DefaultMenu extends React.Component<DefaultMenuPropsInterface, IDefaultMen
     }
 
     authorize() {
-        console.log('auth');
         ModalAction.do(OPEN_MODAL, {content: <Login />});
     }
 
@@ -324,7 +323,6 @@ class UserMenu extends React.Component<IUserMenuProps, any> {
     }
 
     closeMenu() {
-        console.log('close');
         MenuAction.do(TOGGLE, false);
     }
 
@@ -416,7 +414,7 @@ export default class Menu extends React.Component<any, IMenuStateInterface> {
     constructor() {
         super();
         this.state = {
-            open: true,
+            open: false,
             user: UserAction.getStore().user,
             isDesktop: MediaQuerySerice.getIsDesktop()
         };

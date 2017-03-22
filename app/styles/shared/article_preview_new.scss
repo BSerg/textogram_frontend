@@ -12,6 +12,13 @@
   width: 100%;
   max-width: 600px;
 
+  &.new {
+    opacity: 0.3;
+  }
+
+  @include transition(300ms);
+  opacity: 1;
+
   .content {
     display: flex;
     flex-direction: row;
@@ -73,12 +80,19 @@
     .controls {
       position: relative;
       .more_button {
+        cursor: pointer;
+        svg {
+          width: 30px;
+          height: 30px;
+          fill: $color;
+
+        }
       }
 
       .buttons {
         background-color: #FFFFFF;
         position: absolute;
-        right: 20px;
+        right: 30px;
         top: -30px;
         border: 1px solid #CCCCCC;
         font-family: $family_open_sans;

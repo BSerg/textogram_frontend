@@ -14,6 +14,7 @@
     "files": [
         "./app/index.d.ts",
         "./node_modules/retyped-fbsdk-tsd-ambient/fbsdk.d.ts",
+        "./node_modules/axios/index.d.ts",
         "./app/types/vk.d.ts"
     ],
     "exclude": [

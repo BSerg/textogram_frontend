@@ -8,7 +8,8 @@ interface MenuButtonPropsInterface {
 }
 
 interface MenuButtonStateInterface {
-    hidden: boolean
+    hidden?: boolean,
+    menuDisplayed?: boolean,
 }
 
 export default class MenuButton extends React.Component<MenuButtonPropsInterface, MenuButtonStateInterface> {
@@ -19,10 +20,11 @@ export default class MenuButton extends React.Component<MenuButtonPropsInterface
 
     constructor(props: any) {
         super(props);
-        this.state = {hidden: false};
+        this.state = {hidden: false, menuDisplayed: false};
         this.hideTimeout = null;
         this.scrollDelta = 0;
         this.checkScroll = this.checkScroll.bind(this);
+        this.setMenuDisplayed = this.setMenuDisplayed.bind(this);
     }
 
     static defaultProps = {
@@ -61,19 +63,32 @@ export default class MenuButton extends React.Component<MenuButtonPropsInterface
         this.lastScrollPosition = scrollTop;
     }
 
+    setMenuDisplayed() {
+        this.setState({menuDisplayed: MenuAction.getStore().open});
+    }
+
     componentDidMount() {
+
         document.addEventListener('scroll', this.checkScroll);
+        this.setMenuDisplayed();
+        MenuAction.onChange(TOGGLE, this.setMenuDisplayed);
+        // this.setState({menuDisplayed: MenuAction.getStore().open});
     }
 
     componentWillUnmount() {
         document.removeEventListener('scroll', this.checkScroll);
+        MenuAction.unbind(TOGGLE, this.setMenuDisplayed)
     }
 
     render() {
+
         let className = 'menu_button';
-        if (this.state.hidden) {
+        if (this.state.hidden || this.state.menuDisplayed) {
             className += ' hidden';
         }
+        // if (this.state.menuDisplayed) {
+        //     className += ' menu_displayed'
+        // }
         return (
             <div className={className} onClick={this.handleClick}></div>
         )

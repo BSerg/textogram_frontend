@@ -29,7 +29,7 @@
     "uuid": "^3.0.1"
   },
   "devDependencies": {
-    "@types/axios": "^0.9.34",
+    "@types/axios": "^0.14.0",
     "@types/core-js": "^0.9.35",
     "@types/flux": "0.0.33",
     "@types/gapi": "0.0.30",

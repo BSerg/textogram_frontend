@@ -9,6 +9,7 @@ const ViewsIcon = require('babel!svg-react!../../assets/images/views_icon.svg?na
 const LockIcon = require('babel!svg-react!../../assets/images/lock.svg?name=LockIcon');
 const CloseIcon = require('babel!svg-react!../../assets/images/close.svg?name=CloseIcon');
 const EditIcon = require('babel!svg-react!../../assets/images/edit.svg?name=EditIcon');
+const MoreIcon = require('babel!svg-react!../../assets/images/more_vertical.svg?name=MoreIcon');
 
 import {MediaQuerySerice} from '../../services/MediaQueryService';
 
@@ -26,6 +27,8 @@ interface IArticlePreviewStateInterface {
     menuOpen?: boolean;
     deleted?: boolean;
     isDesktop?: boolean;
+    isNew?: boolean;
+    timeout?: number;
 }
 
 
@@ -34,17 +37,16 @@ class ArticlePreviewClass extends React.Component<IArticlePreviewPropsInterface,
 
     constructor() {
         super();
-        this.state = {menuOpen: false, isDesktop: MediaQuerySerice.getIsDesktop()};
-        this.toggleMenu = this.toggleMenu.bind(this);
+        this.state = {menuOpen: false, isDesktop: MediaQuerySerice.getIsDesktop(), isNew: false};
         this.checkDesktop = this.checkDesktop.bind(this);
+        this.setNotNew = this.setNotNew.bind(this);
     }
 
-    toggleMenu() {
-        this.setState({menuOpen: !this.state.menuOpen});
+    toggleMenu(open: boolean) {
+        this.setState({menuOpen: open});
     }
 
     checkDesktop(isDesktop: boolean) {
-        console.log(isDesktop);
         if (isDesktop != this.state.isDesktop) {
             this.setState({isDesktop: isDesktop});
         }
@@ -83,12 +85,19 @@ class ArticlePreviewClass extends React.Component<IArticlePreviewPropsInterface,
         }
     }
 
+    setNotNew() {
+        this.setState({isNew: false})
+    }
+
     componentDidMount() {
         MediaQuerySerice.listen(this.checkDesktop);
+        this.setState({isNew: Boolean(this.props.item.isNew)});
+        this.state.timeout = window.setTimeout(this.setNotNew, 0);
     }
 
     componentWillUnmount() {
         MediaQuerySerice.unbind(this.checkDesktop);
+        window.clearTimeout(this.state.timeout);
     }
 
     render() {
@@ -96,7 +105,7 @@ class ArticlePreviewClass extends React.Component<IArticlePreviewPropsInterface,
         let views = this.getViewsString(this.props.item.views || 0);
 
         return (
-            <div className="article_preview">
+            <div className={"article_preview" + (this.state.isNew ? " new" : "")} onMouseLeave={this.toggleMenu.bind(this, false)}>
 
                 <div className="content">
                     {this.props.isFeed ? (
@@ -149,12 +158,10 @@ class ArticlePreviewClass extends React.Component<IArticlePreviewPropsInterface,
                     }
 
 
-
-
                     { this.props.isOwner ? (
                         <div className="controls">
-                            <div className="more_button" onClick={this.toggleMenu}>
-                                btn
+                            <div className="more_button" onClick={this.toggleMenu.bind(this, !this.state.menuOpen)}>
+                                <MoreIcon />
                             </div>
 
                             {
