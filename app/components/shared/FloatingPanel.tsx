@@ -9,7 +9,10 @@ interface IFloatingPanel {
 }
 
 interface IFloatingPanelState {
-    pinned: boolean
+    pinned?: boolean
+    initTop?: number
+    initLeft?: number
+    initRight?: number
 }
 
 export default class FloatingPanel extends React.Component<IFloatingPanel, IFloatingPanelState> {
@@ -45,8 +48,18 @@ export default class FloatingPanel extends React.Component<IFloatingPanel, IFloa
         }
     }
 
+    keepInitPosition() {
+        let rect = this.refs.element.getBoundingClientRect();
+        this.setState({
+            initTop: rect.top,
+            initLeft: rect.left,
+            initRight: window.innerWidth - rect.right
+        })
+    }
+
     componentDidMount() {
         window.addEventListener('scroll', this.handleScroll);
+        this.keepInitPosition();
         this.handleScroll();
     }
 
@@ -55,11 +68,17 @@ export default class FloatingPanel extends React.Component<IFloatingPanel, IFloa
     }
 
     render() {
-        let className = 'floating_panel';
+        let className = 'floating_panel', style = {};
         if (this.props.className) className += ' ' + this.props.className;
-        if (this.props.fixed && this.state.pinned) className += ' pinned';
+        if (this.props.fixed && this.state.pinned) {
+            className += ' pinned';
+            style = {left: this.state.initLeft + 'px'}
+        }
         return (
-            <div ref="element" className={className} dangerouslySetInnerHTML={{__html: this.props.content}}/>
+            <div ref="element"
+                 className={className}
+                 style={style}
+                 dangerouslySetInnerHTML={{__html: this.props.content}}/>
         )
     }
 }
