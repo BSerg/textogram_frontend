@@ -41,6 +41,10 @@ import {MediaQuerySerice} from "../services/MediaQueryService";
 import {NotificationAction, SHOW_NOTIFICATION} from "../actions/shared/NotificationAction";
 import PopupPrompt from "./shared/PopupPrompt";
 import {UserAction} from "../actions/user/UserAction";
+import {Link} from 'react-router';
+
+const PreviewButton = require('babel!svg-react!../assets/images/preview.svg?name=PreviewButton');
+const PublishButton = require('babel!svg-react!../assets/images/publish.svg?name=PublishButton');
 
 
 interface IEditorProps {
@@ -470,7 +474,20 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
                                      className={"editor__publish" + (!this.state.isValid ? ' disabled': '')}
                                      onClick={this.state.isValid && this.resetContent.bind(this, true)}>
                                     Сохранить
-                                </div> : null)
+                                </div> : null),
+                            this.state.isDesktop && this.state.article.status == ArticleStatuses.DRAFT && this.state.article.id ?
+                                <div className="tools_panel">
+                                    <div className="tools_panel__item">
+                                        <div className="tools_panel__caption">Просмотр</div>
+                                        <Link to={`/articles/${this.state.article.id}/preview`}
+                                              className="tools_panel__icon"><PreviewButton/></Link>
+                                    </div>
+                                    <div className="tools_panel__item">
+                                        <div className="tools_panel__caption">Опубликовать</div>
+                                        <div onClick={this.prePublish.bind(this)}
+                                             className="tools_panel__icon"><PublishButton/></div>
+                                    </div>
+                                </div> : null
                         ] : null
                     }
                 </div>
