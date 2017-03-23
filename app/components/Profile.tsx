@@ -238,7 +238,6 @@ class UserArticlesClass extends React.Component<IUserArticlesPropsInterface, IUs
                     </div>
                 </div>) : null
             }
-            <Loading />
 
             {
                 ((this.state.selectedSection == this.SECTION_ARTICLES) || (this.state.selectedSection == this.SECTION_SUBSCRIPTIONS && !this.state.showSubsection)) ?
