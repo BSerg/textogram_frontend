@@ -159,7 +159,7 @@ class UserArticlesClass extends React.Component<IUserArticlesPropsInterface, IUs
     }
 
     setIsSelf() {
-        let isSelf: boolean = Boolean(UserAction.getStore().user && (UserAction.getStore().user.id = this.props.user.id));
+        let isSelf: boolean = Boolean(UserAction.getStore().user && (UserAction.getStore().user.id == this.props.user.id));
         if (isSelf != this.state.isSelf) {
             this.setState({isSelf: isSelf, selectedSection: isSelf ? this.SECTION_SUBSCRIPTIONS : this.SECTION_ARTICLES}, () => {
                 this.loadArticles();
@@ -370,7 +370,7 @@ export default class Profile extends React.Component<any, IProfileState> {
     }
 
     checkIsSelf() {
-        let isSelf: boolean =  Boolean(this.state.user && UserAction.getStore().user && UserAction.getStore().user.id == this.state.user.id);
+        let isSelf: boolean =  Boolean(this.state.user && UserAction.getStore().user && (UserAction.getStore().user.id == this.state.user.id));
         if (isSelf != this.state.isSelf) {
             this.setState({ isSelf: isSelf });
         }
@@ -382,7 +382,7 @@ export default class Profile extends React.Component<any, IProfileState> {
                 this.setState({
                     user: response.data,
                     showSubscribers: false,
-                    isSelf: Boolean(response.data && UserAction.getStore().user && UserAction.getStore().user.id == response.data.id)
+                    isSelf: Boolean(response.data && UserAction.getStore().user && (UserAction.getStore().user.id == response.data.id))
 
                 }, () => {
                     // this.checkIsSelf();
