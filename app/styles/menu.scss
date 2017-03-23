@@ -11,6 +11,10 @@
   z-index: 10000;
   background-color: rgba(0, 0, 0, 0.5);
 
+  &.hidden {
+    display: none;
+  }
+
   .main_menu_container {
     width: 100%;
     max-width: 600px;
@@ -324,6 +328,14 @@
     top: 0;
     left: 0;
     height: 55px;
+
+    @include transition(200ms);
+
+    &.hidden {
+      display: block;
+      top: -55px;
+      @include transition(200ms);
+    }
 
     .main_menu__min {
       display: none;

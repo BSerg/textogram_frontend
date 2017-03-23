@@ -442,31 +442,23 @@ export default class Menu extends React.Component<any, IMenuStateInterface> {
 
         MediaQuerySerice.listen((isDesktop: boolean) => {
             if (isDesktop != this.state.isDesktop) {
-                this.setState({isDesktop: isDesktop, open: false});
+                this.setState({isDesktop: isDesktop});
+                MenuAction.do(TOGGLE, false);
             }
         });
 
         MenuAction.onChange(TOGGLE, this.setOpen);
-        UserAction.onChange(SAVE_USER, this.setUser);
-        UserAction.onChange(UPDATE_USER, this.setUser);
-        UserAction.onChange(GET_ME, this.setUser);
-        UserAction.onChange(LOGIN, this.setUser);
-        UserAction.onChange(LOGOUT, this.setUser);
+        UserAction.onChange([SAVE_USER, UPDATE_USER, GET_ME, LOGIN, LOGOUT], this.setUser);
     }
 
     componentWillUnmount() {
         MenuAction.unbind(TOGGLE, this.setOpen);
-        UserAction.unbind(SAVE_USER, this.setUser);
-        UserAction.unbind(GET_ME, this.setUser);
-        UserAction.unbind(LOGIN, this.setUser);
-        UserAction.unbind(LOGOUT, this.setUser);
+        UserAction.unbind([SAVE_USER, UPDATE_USER, GET_ME, LOGIN, LOGOUT], this.setUser);
     }
 
     render() {
-        if (!this.state.open) return null;
         return (
-            <div id="main_menu" onClick={this.toggleMenu}>
-                {this.state.isDesktop ? (<div className="main_menu__min">Textius</div>) : null }
+            <div id="main_menu" onClick={this.toggleMenu} className={this.state.open ? "" : "hidden"}>
                 <div onClick={this.stopClosePropagation.bind(this)} className="main_menu_container">
                 { this.state.user ?
                     <UserMenuWithRouter user={this.state.user} isDesktop={this.state.isDesktop} /> :
