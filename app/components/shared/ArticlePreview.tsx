@@ -37,13 +37,13 @@ class ArticlePreviewClass extends React.Component<IArticlePreviewPropsInterface,
 
     constructor() {
         super();
-        this.state = {menuOpen: false, isDesktop: MediaQuerySerice.getIsDesktop(), isNew: false};
+        this.state = {menuOpen: true, isDesktop: MediaQuerySerice.getIsDesktop(), isNew: false};
         this.checkDesktop = this.checkDesktop.bind(this);
         this.setNotNew = this.setNotNew.bind(this);
     }
 
     toggleMenu(open: boolean) {
-        this.setState({menuOpen: open});
+        // this.setState({menuOpen: open});
     }
 
     checkDesktop(isDesktop: boolean) {
