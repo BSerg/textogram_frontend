@@ -16,6 +16,10 @@
   flex-direction: column;
   justify-content: space-between;
 
+  .filler {
+    flex-grow: 1;
+  }
+
   &.new {
     opacity: 0.3;
   }
@@ -222,6 +226,8 @@
     width: 100%;
     max-width: 700px;
 
+    height: 240px;
+
     //display: flex;
     flex-direction: row;
 
@@ -245,9 +251,9 @@
         height: 180px;
         margin-right: 50px;
         .title {
-          font-size: 22px;
+          font-size: 19px;
           font-weight: $font-weight-bold;
-          line-height: 29px;
+          line-height: 24px;
           margin-bottom: 15px;
         }
 
