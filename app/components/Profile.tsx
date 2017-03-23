@@ -238,6 +238,7 @@ class UserArticlesClass extends React.Component<IUserArticlesPropsInterface, IUs
                     </div>
                 </div>) : null
             }
+            <Loading />
 
             {
                 ((this.state.selectedSection == this.SECTION_ARTICLES) || (this.state.selectedSection == this.SECTION_SUBSCRIPTIONS && !this.state.showSubsection)) ?
@@ -247,7 +248,6 @@ class UserArticlesClass extends React.Component<IUserArticlesPropsInterface, IUs
                                                 onClickDelete={this.deleteArticle.bind(this)} index={index} />)
                     }) : null
             }
-
             {
                 this.state.isLoading ? (<Loading />) : null
             }

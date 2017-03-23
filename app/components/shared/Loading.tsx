@@ -1,38 +1,33 @@
 import * as React from 'react';
 import '../../styles/shared/loading.scss';
 
+interface ILoadingProps {
+    className?: string;
+}
+
 interface ILoadingState {
-    indicators?: boolean[];
+    indicatedIndex?: number;
     interval?: number;
 }
 
-export default class Loading extends React.Component<any, ILoadingState> {
+export default class Loading extends React.Component<ILoadingProps, ILoadingState> {
 
     NUMBER_OF_INDICATORS: number = 3;
-    INTERVAL_DURATION: number = 300;
+    INTERVAL_DURATION: number = 200;
 
     constructor() {
         super();
-        this.state = {indicators: [true, false, false]};
+        this.state = {indicatedIndex: 0};
         this.changeIndicators = this.changeIndicators.bind(this);
     }
 
     changeIndicators() {
-        let nextIndex = 0;
-        this.state.indicators.forEach((indicated: boolean, index: number) => {
-            if (indicated) {
-                nextIndex = index + 1;
-            }
-        });
-
-        if (nextIndex > (this.NUMBER_OF_INDICATORS - 1)) {
-            nextIndex = 0;
+        let indicatedIndex = this.state.indicatedIndex;
+        indicatedIndex++;
+        if (indicatedIndex > (this.NUMBER_OF_INDICATORS - 1)) {
+            indicatedIndex = 0;
         }
-        let indicators: boolean[] = [];
-        for (let i = 0; i < this.NUMBER_OF_INDICATORS; i++) {
-            indicators.push(i == nextIndex);
-        }
-        this.setState({indicators: indicators});
+        this.setState({indicatedIndex: indicatedIndex});
     }
 
     componentDidMount() {
@@ -45,9 +40,18 @@ export default class Loading extends React.Component<any, ILoadingState> {
     }
 
     render() {
-        return (<div className="loading">
+
+        let indicators: boolean[] = [];
+
+        for (let i = 0; i < this.NUMBER_OF_INDICATORS; i++) {
+            indicators.push(i == this.state.indicatedIndex);
+        }
+
+        let className = "loading" + (this.props.className ? (" " + this.props.className) : "");
+
+        return (<div className={className}>
             {
-                this.state.indicators.map((indicated: boolean, index: number) => {
+                indicators.map((indicated: boolean, index: number) => {
                     return (<div key={index} className={ indicated ? "indicated" : "" }></div>)
                 })
             }
