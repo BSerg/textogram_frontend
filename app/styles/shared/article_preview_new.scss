@@ -184,6 +184,7 @@
 
     color: #333333;
     align-items: center;
+    margin-top: 15px;
 
     a {
       text-decoration: none;
@@ -253,10 +254,12 @@
         .lead {
           font-size: 13px;
           line-height: 17px;
+          max-height: 51px;
+          overflow: hidden;
 
           a {
             display: block;
-            height: 51px;
+            //height: 51px;
             max-height: 51px;
             overflow: hidden;
           }
