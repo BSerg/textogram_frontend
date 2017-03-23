@@ -1,0 +1,37 @@
+@import "../contstants";
+@import "../mixins";
+
+.loading {
+  width: 100%;
+  min-width: 100%;
+  height: 30px;
+
+  $indicator_size: 8px;
+  $transition_duration: 300ms;
+
+  display: flex;
+  flex-direction: row;
+
+  align-items: center;
+  justify-content: center;
+
+  &>div {
+    min-width: $indicator_size;
+    width: $indicator_size;
+    height: $indicator_size;
+
+    background-color: $color5;
+
+    @include border_radius(50%);
+    margin: 0 3px;
+
+    opacity: 0.1;
+    @include transition($transition_duration);
+
+    &.indicated {
+      opacity: 0.8;
+      @include transition($transition_duration);
+    }
+  }
+
+}

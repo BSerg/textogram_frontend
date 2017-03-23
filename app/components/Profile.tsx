@@ -6,14 +6,17 @@ import '../styles/common.scss';
 import '../styles/profile.scss';
 
 import {api} from '../api';
+import axios from 'axios';
 
 import Header from './shared/Header';
 import ArticlePreview from './shared/ArticlePreview';
 import Error from './Error';
 import {UserAction, GET_ME, LOGIN, LOGOUT} from "../actions/user/UserAction";
 import {NotificationAction, SHOW_NOTIFICATION} from '../actions/shared/NotificationAction';
+import ProgressBar from './shared/ProgressBar';
 
 import AuthorList from './shared/AuthorList';
+import Loading from './shared/Loading';
 
 import {Captions} from '../constants';
 import SocialIcon from './shared/SocialIcon';
@@ -31,7 +34,6 @@ const CloseIcon = require('babel!svg-react!../assets/images/close.svg?name=Close
 
 interface IUserArticlesPropsInterface {
     user: any;
-    isSelf: boolean;
     hidden: boolean;
     location?: any;
     router?: any;
@@ -39,11 +41,12 @@ interface IUserArticlesPropsInterface {
 
 interface IUserArticlesStateInterface {
     articles?: any[];
-    drafts?: any[];
-    feed?: any[];
+    nextUrl?: string,
     selectedSection?: string;
-    selectedId?: number|null;
     showSubsection?: boolean;
+    isSelf?: boolean,
+    isLoading?: boolean,
+    cancelSource?: any,
 }
 
 class UserArticlesClass extends React.Component<IUserArticlesPropsInterface, IUserArticlesStateInterface> {
@@ -51,46 +54,66 @@ class UserArticlesClass extends React.Component<IUserArticlesPropsInterface, IUs
     SECTION_SUBSCRIPTIONS = 'subscriptions';
     SECTION_ARTICLES = 'articles';
 
+    refs: {
+        main: HTMLDivElement;
+    };
+
     constructor() {
         super();
-        this.state = {articles: [], feed: [], drafts: [], selectedSection: this.SECTION_ARTICLES, selectedId: null,
-            showSubsection: false};
+        this.state = {articles: [], selectedSection: this.SECTION_ARTICLES, showSubsection: false, nextUrl: null, isLoading: false,
+            cancelSource: null};
+        this.setIsSelf = this.setIsSelf.bind(this);
+        this.handleScroll = this.handleScroll.bind(this);
     }
 
-    loadArticles(userId: string|number, drafts?: boolean) {
-        if (drafts) {
-            api.get('/drafts/').then((response: any) => {
-                this.setState({drafts: response.data || []});
-            }).catch((error) => {})
-        }
-        else {
-            api.get('/articles/', {params: {user: userId}}).then((response: any) => {
-                if (userId == 'me') { this.setState(
-                    { feed: response.data.results || [] }
-                    );
-                }
-                else {
-                    this.setState(
-                        { articles: response.data.results || [] }
-                    )
-                }
-            }).catch((error) => {});
-        }
-    }
+    loadArticles(more: boolean = false) {
+        let articles: any[] = more ? this.state.articles : [];
 
-    selectArticle(id: number|null) {
+        if (this.state.cancelSource) {
+            this.state.cancelSource.cancel();
+        }
 
+        let CancelToken = axios.CancelToken;
+        let source: any = CancelToken.source();
+        this.state.cancelSource = source;
+
+
+        this.setState({articles:  articles, isLoading: true}, () => {
+            let apiUrl = more ? this.state.nextUrl : '/articles/';
+            let requestParams: any = {};
+            if (!more) {
+                if ((this.state.selectedSection == this.SECTION_ARTICLES) && !this.state.showSubsection ) {
+                    requestParams.user = this.props.user.id;
+                }
+                else if ((this.state.selectedSection == this.SECTION_ARTICLES) && this.state.showSubsection && this.state.isSelf) {
+                    requestParams.drafts = true;
+                }
+                else if (this.state.isSelf && (this.state.selectedSection == this.SECTION_SUBSCRIPTIONS)) {
+                    requestParams.feed = true;
+                }
+            }
+
+            api.get(apiUrl, {cancelToken: source.token, params: requestParams}).then((response: any) => {
+                let results: any = response.data.results || [];
+                results.forEach((r: any) => {
+                    r.isNew = true;
+                });
+                articles = articles.concat(results);
+                this.setState({articles: articles, nextUrl: response.data.next, isLoading: false});
+            }).catch((error) => {
+                if (!axios.isCancel(error)) {
+                    this.setState({isLoading: false});
+                }
+            });
+        });
     }
 
     deleteArticle(articleId: number|string, index?: number) {
-        if (! (this.state.selectedSection == this.SECTION_ARTICLES)) {
-            return;
-        }
 
         api.delete('/articles/editor/' + articleId + '/').then((response: any) => {
-            let items: any[] = this.state.showSubsection ? this.state.drafts : this.state.articles;
-            items.splice(index, 1);
-            this.setState(this.state.showSubsection ? {drafts: items} : {articles: items});
+            let articles: any[] = this.state.articles;
+            articles.splice(index, 1);
+            this.setState({articles: articles});
 
             NotificationAction.do(SHOW_NOTIFICATION, {content: 'deleted'});
         }).catch((error: any) => {});
@@ -100,8 +123,8 @@ class UserArticlesClass extends React.Component<IUserArticlesPropsInterface, IUs
         if (sectionName != this.SECTION_ARTICLES && sectionName != this.SECTION_SUBSCRIPTIONS) {
             return;
         }
-        if ((sectionName == this.SECTION_SUBSCRIPTIONS)  && !this.props.isSelf) return;
-        this.setState({selectedSection: sectionName, showSubsection: false});
+        if ((sectionName == this.SECTION_SUBSCRIPTIONS)  && !this.state.isSelf) return;
+        this.setState({selectedSection: sectionName, showSubsection: false}, () => {this.loadArticles()});
     }
 
     toggleSubsection() {
@@ -111,50 +134,78 @@ class UserArticlesClass extends React.Component<IUserArticlesPropsInterface, IUs
             if (closeDrafts) {
                 this.props.router.push('/profile/' + this.props.user.id);
             }
+            if (!(this.state.selectedSection == this.SECTION_SUBSCRIPTIONS && this.state.showSubsection)) {
+                this.loadArticles();
+            }
         });
     }
 
     componentWillReceiveProps(nextProps: any) {
-        if (nextProps.user.id != this.props.user.id || nextProps.isSelf != this.props.isSelf) {
+        if (nextProps.user.id != this.props.user.id) {
 
-            this.setState({selectedSection: this.SECTION_ARTICLES, showSubsection: false, articles: [], drafts: [], feed: []}, () => {
-                this.loadArticles(nextProps.user.id);
-                if (nextProps.isSelf) {
-                    this.loadArticles('me');
-                    this.loadArticles(nextProps.user.id, true);
-                }
+            let isSelf: boolean = Boolean(UserAction.getStore().user && (UserAction.getStore().user.id == nextProps.user.id));
+            this.setState({
+                isSelf: isSelf,
+                selectedSection: isSelf ? this.SECTION_SUBSCRIPTIONS : this.SECTION_ARTICLES, showSubsection: false}, () => {
+                    this.loadArticles();
             });
         }
 
         if (nextProps.location.query
-                && nextProps.location.query.show != this.props.location.query.show
-                && nextProps.location.query.show == 'drafts') {
-            this.setState({selectedSection: this.SECTION_ARTICLES, showSubsection: true});
+                && (nextProps.location.query.show != this.props.location.query.show)
+                && (nextProps.location.query.show == 'drafts')) {
+            this.setState({selectedSection: this.SECTION_ARTICLES, showSubsection: true}, () => { this.loadArticles() });
         }
     }
 
+    setIsSelf() {
+        let isSelf: boolean = Boolean(UserAction.getStore().user && (UserAction.getStore().user.id = this.props.user.id));
+        if (isSelf != this.state.isSelf) {
+            this.setState({isSelf: isSelf, selectedSection: isSelf ? this.SECTION_SUBSCRIPTIONS : this.SECTION_ARTICLES}, () => {
+                this.loadArticles();
+            });
+        }
+    }
+
+    handleScroll() {
+        let rect: ClientRect = this.refs.main.getBoundingClientRect();
+        if ((rect.bottom <= window.innerHeight) && !this.state.isLoading && this.state.nextUrl) {
+            this.loadArticles(true);
+        }
+
+    }
+
     componentDidMount() {
-        this.loadArticles(this.props.user.id);
-        if (this.props.isSelf) {
-            this.loadArticles('me');
-            this.loadArticles(this.props.user.id, true);
+
+        window.addEventListener('scroll', this.handleScroll);
+
+        UserAction.onChange([GET_ME, LOGIN, LOGOUT], this.setIsSelf);
+
+        let stateData: any = {};
+        if (UserAction.getStore().user && (UserAction.getStore().user.id == this.props.user.id)) {
+            stateData.selectedSection = this.SECTION_SUBSCRIPTIONS;
+            stateData.isSelf = true;
+        }
+        else {
+            stateData.isSelf = false;
         }
         if (this.props.location.query.show == 'drafts') {
-            this.setState({showSubsection: true});
+            stateData.selectedSection = this.SECTION_ARTICLES;
+            stateData.showSubsection = true;
+        }
+        this.setState(stateData, () => { this.loadArticles() });
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener('scroll', this.handleScroll);
+        UserAction.unbind([GET_ME, LOGIN, LOGOUT], this.setIsSelf);
+        if (this.state.cancelSource) {
+            this.state.cancelSource.cancel();
         }
     }
 
     render() {
-        let items: any[];
-        if (this.state.selectedSection == this.SECTION_SUBSCRIPTIONS) {
-            items = this.state.feed;
-        }
-        else if (this.state.selectedSection == this.SECTION_ARTICLES && this.state.showSubsection) {
-            items = this.state.drafts;
-        }
-        else {
-            items = this.state.articles;
-        }
+        let items: any[] = this.state.articles;
 
         let switchCaption = "";
         if (this.state.selectedSection == this.SECTION_ARTICLES) {
@@ -166,18 +217,18 @@ class UserArticlesClass extends React.Component<IUserArticlesPropsInterface, IUs
 
 
         let isFeed = this.state.selectedSection == this.SECTION_SUBSCRIPTIONS;
-        let isOwner = this.props.isSelf && (this.state.selectedSection == this.SECTION_ARTICLES);
+        let isOwner = this.state.isSelf && (this.state.selectedSection == this.SECTION_ARTICLES);
 
-        return (<div className={"profile__articles" + (this.props.hidden ? " hidden" : "") }>
+        return (<div className={"profile__articles" + (this.props.hidden ? " hidden" : "") } ref="main">
 
-            {this.props.isSelf ? (
+            {this.state.isSelf ? (
                 <div className="profile__articles__menu">
 
-                    <div onClick={this.setSection.bind(this, this.SECTION_ARTICLES)} className={(this.state.selectedSection == this.SECTION_ARTICLES && !this.state.showSubsection) ? 'active': null}>
-                        {Captions.profile.menuArticles}
-                    </div>
                     <div onClick={this.setSection.bind(this, this.SECTION_SUBSCRIPTIONS)}  className={(this.state.selectedSection == this.SECTION_SUBSCRIPTIONS && !this.state.showSubsection) ? 'active': null}>
                         {Captions.profile.menuSubscriptions}
+                    </div>
+                    <div onClick={this.setSection.bind(this, this.SECTION_ARTICLES)} className={(this.state.selectedSection == this.SECTION_ARTICLES && !this.state.showSubsection) ? 'active': null}>
+                        {Captions.profile.menuArticles}
                     </div>
                     <div className="profile__articles__menu_switch_button" onClick={this.toggleSubsection.bind(this)}>
                         <span>{ switchCaption }</span>
@@ -195,6 +246,10 @@ class UserArticlesClass extends React.Component<IUserArticlesPropsInterface, IUs
                         return (<ArticlePreview isFeed={isFeed} key={index} item={article} isOwner={isOwner}
                                                 onClickDelete={this.deleteArticle.bind(this)} index={index} />)
                     }) : null
+            }
+
+            {
+                this.state.isLoading ? (<Loading />) : null
             }
 
             {
@@ -312,6 +367,7 @@ export default class Profile extends React.Component<any, IProfileState> {
         super(props);
         this.state = {user: null, error: null, isSelf: false, showSubscribers: true, isDesktop: MediaQuerySerice.getIsDesktop()};
         this.checkIsSelf = this.checkIsSelf.bind(this);
+        this.checkDesktop = this.checkDesktop.bind(this);
     }
 
     checkIsSelf() {
@@ -340,15 +396,16 @@ export default class Profile extends React.Component<any, IProfileState> {
     }
 
     subscribe() {
+
         api.post('/users/' + this.state.user.id + '/subscribe/').then((response) => {
             this.setIsSubscribed(true);
-        }).catch((error) => {});
+        }).catch((error: any) => {});
     }
 
     unSubscribe() {
         api.post('/users/' + this.state.user.id + '/un_subscribe/').then((response) => {
             this.setIsSubscribed(false);
-        }).catch((error) => {})
+        }).catch((error: any) => {})
     }
 
     closeSubscribers() {
@@ -382,12 +439,14 @@ export default class Profile extends React.Component<any, IProfileState> {
         this.getUserData(nextProps.params.userId);
     }
 
+    checkDesktop(isDesktop: boolean) {
+        if (isDesktop != this.state.isDesktop) {
+            this.setState({isDesktop: isDesktop, showSubscribers: false});
+        }
+    }
+
     componentDidMount() {
-        MediaQuerySerice.listen((isDesktop: boolean) => {
-            if (isDesktop != this.state.isDesktop) {
-                this.setState({isDesktop: isDesktop, showSubscribers: false});
-            }
-        });
+        MediaQuerySerice.listen(this.checkDesktop);
 
         this.getUserData(this.props.params.userId);
         UserAction.onChange(GET_ME, this.checkIsSelf);
@@ -399,6 +458,8 @@ export default class Profile extends React.Component<any, IProfileState> {
         UserAction.unbind(GET_ME, this.checkIsSelf);
         UserAction.unbind(LOGIN, this.checkIsSelf);
         UserAction.unbind(LOGOUT, this.checkIsSelf);
+
+        MediaQuerySerice.unbind(this.checkDesktop);
     }
 
     render() {
@@ -426,7 +487,6 @@ export default class Profile extends React.Component<any, IProfileState> {
                              this.state.user.social_links.length ? (
                                  <div className="profile__social_links">
 
-                                     <div className="profile__social_links_caption">Читайте меня в соцсетях</div>
                                      <div className="profile__social_links_list">
                                          { this.state.user.social_links.map((social_link: any, index: number) => {
                                              return (
@@ -484,7 +544,7 @@ export default class Profile extends React.Component<any, IProfileState> {
                          ) : null
                      }
 
-                     <UserArticles hidden={this.state.isDesktop && this.state.showSubscribers} user={this.state.user} isSelf={this.state.isSelf} key="articles" />
+                     <UserArticles hidden={this.state.isDesktop && this.state.showSubscribers} user={this.state.user}  key="articles" />
 
 
                  </div>

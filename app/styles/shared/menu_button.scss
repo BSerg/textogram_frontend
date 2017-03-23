@@ -23,7 +23,7 @@ $menu_button_size: 50px;
     content: 'T';
   }
   
-  &.hidden {
+  &.hidden, &.menu_displayed {
     opacity: 0;
     @include scale(0, 0);
   }
@@ -31,7 +31,7 @@ $menu_button_size: 50px;
 
 @media (min-width: 1024px) {
   .menu_button {
-    display: none;
+    //display: none;
   }
 
 }

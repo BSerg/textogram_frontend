@@ -7,6 +7,13 @@ $avatar-side-size: 60px;
   display: flex;
   flex-direction: column;
 
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  min-height: 100%;
+  background-color: #FAFAFA;
+
   //margin-top: $header-height + $avatar-side-size/2 + $margin;
 
   .profile__header {
@@ -165,13 +172,14 @@ $avatar-side-size: 60px;
       justify-content: center;
       align-items: center;
       width: 100%;
+      max-width: 600px;
 
       div {
         font-size: $font-size-small;
         text-transform: uppercase;
         text-align: center;
         flex-grow: 1;
-        max-width: 200px;
+        //max-width: 200px;
         padding: $padding/2 0;
         cursor: pointer;
         color: $color5;
@@ -189,8 +197,9 @@ $avatar-side-size: 60px;
 
       .profile__articles__menu_switch_button {
         //border: none;
-        background-color: #F7F7F7;
-        border: 1px solid #F7F7F7;
+        background-color: #EBEBEB;
+        border: 1px solid #EBEBEB;
+        color: #7F7F7F;
         position: relative;
 
         svg {
@@ -339,6 +348,9 @@ $avatar-side-size: 60px;
 }
 
 @media (min-width: 1024px) {
+
+  $profile_main_width: 320px;
+
   #profile_content {
     flex-direction: row;
     .profile_content_main {
@@ -346,21 +358,27 @@ $avatar-side-size: 60px;
       top: 0;
       left: 0;
       width: 33%;
-      max-width: 400px;
+      max-width: $profile_main_width;
       height: 100%;
-      background-color: #F7F7F7;
+      background-color: #FFFFFF;
+
+      display: flex;
+      flex-direction: column;
+
+      align-items: center;
+      justify-content: center;
 
     }
 
     .profile__username {
-      margin-bottom: 100px;
+      //margin-bottom: 100px;
       span {
         font-size: 20px;
       }
     }
 
     .profile__avatar {
-      margin-top: 70px;
+      //margin-top: 70px;
 
       //img, .profile__avatar_dummy {
       //  width: 95px;
@@ -371,18 +389,22 @@ $avatar-side-size: 60px;
     }
 
     .profile_content_filler {
-      width: 400px;
-      min-width: 400px;
+      width: $profile_main_width;
+      min-width: $profile_main_width;
     }
 
     .profile__articles {
       width: 100%;
       max-width: 800px;
-      margin-top: 68px;
+      //margin-top: 68px;
 
       .profile__articles__menu {
+        margin-top: 55px;
         min-height: 43px;
-        margin-bottom: 5px;
+        //margin-bottom: 5px;
+        max-width: 700px;
+        //padding: 0 30px;
+        box-sizing: border-box;
       }
 
       //margin-left: 400px;
@@ -401,10 +423,10 @@ $avatar-side-size: 60px;
       padding: $padding;
       box-sizing: border-box;
       width: 100%;
-      position: absolute;
-      left: 0;
-      bottom: 0;
-      background-color: #F2F2F2;
+      //position: absolute;
+      //left: 0;
+      //bottom: 0;
+      //background-color: #F2F2F2;
 
       .profile__social_links_caption {
         display: block;
