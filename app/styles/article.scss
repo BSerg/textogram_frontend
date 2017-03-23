@@ -939,8 +939,8 @@
 .share_panel {
   @include transition(500ms);
   position: fixed;
-  top: 10vh;
-  left: 50px;
+  top: 90px;
+  left: 25px;
   display: flex;
   flex-direction: column;
   align-items: center;
