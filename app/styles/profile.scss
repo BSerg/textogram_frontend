@@ -63,14 +63,14 @@ $avatar-side-size: 60px;
     }
 
     .profile__subscription_info {
-      background-color: $color4;
+      background-color: #F7F7F7;
       width: 180px;
       height: 40px;
       line-height: 40px;
       box-sizing: border-box;
 
       &:hover {
-        background-color: $color3;
+        background-color: $color4;
       }
     }
 
@@ -142,10 +142,14 @@ $avatar-side-size: 60px;
       height: $link-size;
 
       cursor: pointer;
-      background-color: $color4;
+      background-color: #F7F7F7;
       @include border-radius($link-size);
 
       margin: 0 5px;
+
+      &:hover {
+        background-color: $color4;
+      }
 
       svg {
         width: $link-size - 7px;
@@ -373,7 +377,7 @@ $avatar-side-size: 60px;
     .profile__username {
       //margin-bottom: 100px;
       span {
-        font-size: 20px;
+        font-size: 18px;
       }
     }
 
@@ -396,7 +400,7 @@ $avatar-side-size: 60px;
     .profile__articles {
       width: 100%;
       max-width: 800px;
-      //margin-top: 68px;
+      margin-top: 20px;
 
       .profile__articles__menu {
         //margin-top: 55px;
@@ -411,7 +415,7 @@ $avatar-side-size: 60px;
 
       .article_preview:first-child {
         border: none;
-        margin: 0;
+        margin-top: 0;
       }
 
     }
