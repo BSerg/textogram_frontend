@@ -14,6 +14,7 @@ import {PopupPanelAction, OPEN_POPUP, CLOSE_POPUP} from "../actions/shared/Popup
 import * as Swapeable from 'react-swipeable';
 import PopupPrompt from "./shared/PopupPrompt";
 import {NotificationAction, SHOW_NOTIFICATION} from "../actions/shared/NotificationAction";
+import Loading from "./shared/Loading";
 
 const EditButton = require('babel!svg-react!../assets/images/edit.svg?name=EditButton');
 const DeleteButton = require('babel!svg-react!../assets/images/redactor_icon_delete.svg?name=DeleteButton');
@@ -393,7 +394,11 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
                                 </div>
                             </div> : null}
                     </div>
-                    : <div className="article__loading"><span>СТАТЬЯ</span> ЗАГРУЖАЕТСЯ...</div>
+                    :
+                    <div className="article__loading">
+                        {/*<span>СТАТЬЯ</span> ЗАГРУЖАЕТСЯ...*/}
+                        <Loading/>
+                    </div>
                 : this.state.error
         )
     }
