@@ -222,7 +222,7 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
                 }).catch((err) => {
                     console.log(err);
                 });
-                api.get('/banners/x250/').then((response: any) => {
+                api.get('/banners/320x100/').then((response: any) => {
                     this.setState({topBanner: response.data.code});
                 }).catch((err) => {
                     console.log(err);
@@ -317,7 +317,7 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
                 this.state.article ?
                     <div id={"article" + this.state.article.id} className="article">
                         {this.state.topBanner ?
-                            <div className="ad_x250" dangerouslySetInnerHTML={{__html: this.state.topBanner}}/>: null
+                            <div className="ad_320x100" dangerouslySetInnerHTML={{__html: this.state.topBanner}}/>: null
                         }
                         <div className={"article__title" + (this.state.article.cover ? ' inverted' : '')} style={coverStyle}>
                             {false && !this.state.isDesktop ?
