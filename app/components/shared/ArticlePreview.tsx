@@ -136,6 +136,27 @@ class ArticlePreviewClass extends React.Component<IArticlePreviewPropsInterface,
                                         ) : null
                                     }
                                 </div>
+
+                                <div className="filler"></div>
+
+                                <div className="bottom">
+
+                                    { (this.props.isFeed) ?
+                                        <div className="owner">
+                                            <Link to={ "/profile/" + this.props.item.owner.id }>
+
+                                            {this.props.item.owner.first_name + " " + this.props.item.owner.last_name}
+                                            </Link>
+                                        </div> : null
+                                    }
+
+                                    <div>{date}</div>
+                                        <div>
+                                            {
+                                                this.props.item.is_draft ? null : (<div className="views">{ this.props.item.link_access ? <LockIcon/> : <ViewsIcon />} {views}</div>)
+                                            }
+                                        </div>
+                                </div>
                             </div>
 
                             <div className="image">
@@ -150,24 +171,7 @@ class ArticlePreviewClass extends React.Component<IArticlePreviewPropsInterface,
                             </div>
 
                         </div>
-                        <div className="bottom">
 
-                            { (this.props.isFeed) ?
-                                <div className="owner">
-                                    <Link to={ "/profile/" + this.props.item.owner.id }>
-
-                                    {this.props.item.owner.first_name + " " + this.props.item.owner.last_name}
-                                    </Link>
-                                </div> : null
-                            }
-
-                            <div>{date}</div>
-                                <div>
-                                    {
-                                        this.props.item.is_draft ? null : (<div className="views">{ this.props.item.link_access ? <LockIcon/> : <ViewsIcon />} {views}</div>)
-                                    }
-                                </div>
-                        </div>
                     </div>
 
 
