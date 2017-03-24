@@ -6,6 +6,11 @@
   flex-direction: column;
 }
 
+.editor__content {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
 .title {
   $font-size: 32px;
   font-size: $font-size;

@@ -139,8 +139,12 @@ $block_margin_desktop: 25px;
 
   .article__content_wrapper {
     position: relative;
-    max-width: 1500px;
+    max-width: 600px;
     margin: 0 auto;
+
+    @include desktop {
+      max-width: 1500px;
+    }
   }
 
   .article__content {

@@ -354,109 +354,111 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
                                         cover={this.state.article.content.cover}
                                         coverClipped={this.state.article.content.cover_clipped}
                                         autoSave={this.state.autoSave}/>,
-                            this.state.article.content.blocks.map((contentBlock: IContentData, index: number) => {
-                                let blockHandlerButtons, block, isLast = index == this.state.article.content.blocks.length - 1;
+                            <div className="editor__content">
+                                {this.state.article.content.blocks.map((contentBlock: IContentData, index: number) => {
+                                    let blockHandlerButtons, block, isLast = index == this.state.article.content.blocks.length - 1;
 
-                                if (index == 0) {
-                                    blockHandlerButtons = [BlockContentTypes.ADD]
-                                } else {
-                                    blockHandlerButtons = [BlockContentTypes.SWAP_BLOCKS, BlockContentTypes.ADD]
-                                }
+                                    if (index == 0) {
+                                        blockHandlerButtons = [BlockContentTypes.ADD]
+                                    } else {
+                                        blockHandlerButtons = [BlockContentTypes.SWAP_BLOCKS, BlockContentTypes.ADD]
+                                    }
 
-                                switch (contentBlock.type) {
-                                    case BlockContentTypes.TEXT:
-                                        block = <TextContentBlock key={"content" + contentBlock.id}
-                                                                  className={isLast ? 'last' : ''}
-                                                                  content={contentBlock}/>;
-                                        break;
-                                    case BlockContentTypes.LEAD:
-                                        block = <LeadContentBlock key={"content" + contentBlock.id}
-                                                                  className={isLast ? 'last' : ''}
-                                                                  content={contentBlock}/>;
-                                        break;
-                                    case BlockContentTypes.HEADER:
-                                        block = <HeaderContentBlock key={"content" + contentBlock.id}
-                                                                    className={isLast ? 'last' : ''}
-                                                                    content={contentBlock}/>;
-                                        break;
-                                    case BlockContentTypes.PHRASE:
-                                        block = <PhraseContentBlock key={"content" + contentBlock.id}
-                                                                    className={isLast ? 'last' : ''}
-                                                                    content={contentBlock}/>;
-                                        break;
-                                    case BlockContentTypes.LIST:
-                                        block = <ListContentBlock key={"content" + contentBlock.id}
-                                                                  className={isLast ? 'last' : ''}
-                                                                  content={contentBlock}/>;
-                                        break;
-                                    case BlockContentTypes.PHOTO:
-                                        block = <PhotoContentBlock key={"content" + contentBlock.id}
-                                                                   className={isLast ? 'last' : ''}
-                                                                   articleId={this.state.article.id}
-                                                                   content={contentBlock}/>;
-                                        break;
-                                    case BlockContentTypes.QUOTE:
-                                        block = <QuoteContentBlock key={"content" + contentBlock.id}
-                                                                   articleId={this.state.article.id}
-                                                                   content={contentBlock}/>;
-                                        break;
-                                    case BlockContentTypes.VIDEO:
-                                        block = <EmbedContentBlock key={"content" + contentBlock.id}
-                                                                   className={isLast ? 'last' : ''}
-                                                                   content={contentBlock}/>;
-                                        break;
-                                    case BlockContentTypes.AUDIO:
-                                        block = <EmbedContentBlock key={"content" + contentBlock.id}
-                                                                   className={isLast ? 'last' : ''}
-                                                                   content={contentBlock}/>;
-                                        break;
-                                    case BlockContentTypes.POST:
-                                        let hash = btoa((contentBlock as any).value);
-                                        block = <EmbedContentBlock key={"content-" + contentBlock.id + '-' + hash}
-                                                                   className={isLast ? 'last' : ''}
-                                                                   content={contentBlock}/>;
-                                        break;
-                                    case BlockContentTypes.COLUMNS:
-                                        block = <ColumnContentBlock key={"content-" + contentBlock.id}
-                                                                    className={isLast ? 'last' : ''}
-                                                                    articleId={this.state.article.id}
-                                                                    content={contentBlock}/>;
-                                        break;
-                                    case BlockContentTypes.DIALOG:
-                                        block = <DialogContentBlock key={"content-" + contentBlock.id}
-                                                                    className={isLast ? 'last' : ''}
-                                                                    articleId={this.state.article.id}
-                                                                    content={contentBlock}/>;
-                                        break;
-                                }
+                                    switch (contentBlock.type) {
+                                        case BlockContentTypes.TEXT:
+                                            block = <TextContentBlock key={"content" + contentBlock.id}
+                                                                      className={isLast ? 'last' : ''}
+                                                                      content={contentBlock}/>;
+                                            break;
+                                        case BlockContentTypes.LEAD:
+                                            block = <LeadContentBlock key={"content" + contentBlock.id}
+                                                                      className={isLast ? 'last' : ''}
+                                                                      content={contentBlock}/>;
+                                            break;
+                                        case BlockContentTypes.HEADER:
+                                            block = <HeaderContentBlock key={"content" + contentBlock.id}
+                                                                        className={isLast ? 'last' : ''}
+                                                                        content={contentBlock}/>;
+                                            break;
+                                        case BlockContentTypes.PHRASE:
+                                            block = <PhraseContentBlock key={"content" + contentBlock.id}
+                                                                        className={isLast ? 'last' : ''}
+                                                                        content={contentBlock}/>;
+                                            break;
+                                        case BlockContentTypes.LIST:
+                                            block = <ListContentBlock key={"content" + contentBlock.id}
+                                                                      className={isLast ? 'last' : ''}
+                                                                      content={contentBlock}/>;
+                                            break;
+                                        case BlockContentTypes.PHOTO:
+                                            block = <PhotoContentBlock key={"content" + contentBlock.id}
+                                                                       className={isLast ? 'last' : ''}
+                                                                       articleId={this.state.article.id}
+                                                                       content={contentBlock}/>;
+                                            break;
+                                        case BlockContentTypes.QUOTE:
+                                            block = <QuoteContentBlock key={"content" + contentBlock.id}
+                                                                       articleId={this.state.article.id}
+                                                                       content={contentBlock}/>;
+                                            break;
+                                        case BlockContentTypes.VIDEO:
+                                            block = <EmbedContentBlock key={"content" + contentBlock.id}
+                                                                       className={isLast ? 'last' : ''}
+                                                                       content={contentBlock}/>;
+                                            break;
+                                        case BlockContentTypes.AUDIO:
+                                            block = <EmbedContentBlock key={"content" + contentBlock.id}
+                                                                       className={isLast ? 'last' : ''}
+                                                                       content={contentBlock}/>;
+                                            break;
+                                        case BlockContentTypes.POST:
+                                            let hash = btoa((contentBlock as any).value);
+                                            block = <EmbedContentBlock key={"content-" + contentBlock.id + '-' + hash}
+                                                                       className={isLast ? 'last' : ''}
+                                                                       content={contentBlock}/>;
+                                            break;
+                                        case BlockContentTypes.COLUMNS:
+                                            block = <ColumnContentBlock key={"content-" + contentBlock.id}
+                                                                        className={isLast ? 'last' : ''}
+                                                                        articleId={this.state.article.id}
+                                                                        content={contentBlock}/>;
+                                            break;
+                                        case BlockContentTypes.DIALOG:
+                                            block = <DialogContentBlock key={"content-" + contentBlock.id}
+                                                                        className={isLast ? 'last' : ''}
+                                                                        articleId={this.state.article.id}
+                                                                        content={contentBlock}/>;
+                                            break;
+                                    }
 
-                                if (this.state.isDesktop && this.state.inlineBlock && this.state.inlineBlock.position == index) {
-                                    return [
-                                        <InlineBlock>{this.state.inlineBlock.content}</InlineBlock>,
-                                        block
-                                    ]
-                                } else {
-                                    return [
-                                        <BlockHandler key={"handler" + index}
+                                    if (this.state.isDesktop && this.state.inlineBlock && this.state.inlineBlock.position == index) {
+                                        return [
+                                            <InlineBlock>{this.state.inlineBlock.content}</InlineBlock>,
+                                            block
+                                        ]
+                                    } else {
+                                        return [
+                                            <BlockHandler key={"handler" + index}
+                                                          articleId={this.state.article.id}
+                                                          blockPosition={index}
+                                                          items={blockHandlerButtons}/>,
+                                            block
+                                        ]
+                                    }
+                                })}
+                                {this.state.showLastBlockHandler || this.state.isDesktop ?
+                                    this.state.isDesktop && this.state.inlineBlock && this.state.inlineBlock.position == this.state.article.content.blocks.length ?
+                                        <InlineBlock>{this.state.inlineBlock.content}</InlineBlock>
+                                        : <BlockHandler key="handlerLast"
                                                       articleId={this.state.article.id}
-                                                      blockPosition={index}
-                                                      items={blockHandlerButtons}/>,
-                                        block
-                                    ]
+                                                      blockPosition={this.state.article.content.blocks.length}
+                                                      isLast={true}
+                                                      items={[
+                                                          BlockContentTypes.ADD,
+                                                      ]}/>
+                                        : null
                                 }
-                            }),
-                            this.state.showLastBlockHandler || this.state.isDesktop ?
-                                this.state.isDesktop && this.state.inlineBlock && this.state.inlineBlock.position == this.state.article.content.blocks.length ?
-                                    <InlineBlock>{this.state.inlineBlock.content}</InlineBlock>
-                                    : <BlockHandler key="handlerLast"
-                                                  articleId={this.state.article.id}
-                                                  blockPosition={this.state.article.content.blocks.length}
-                                                  isLast={true}
-                                                  items={[
-                                                      BlockContentTypes.ADD,
-                                                  ]}/>
-                                    : null
-                            ,
+                            </div>,
                             <div key="add_content_help" className="add_content_help"></div>,
                             (this.state.article.status == ArticleStatuses.DRAFT ?
                                 <div key="publish_button"
