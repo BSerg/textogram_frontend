@@ -151,11 +151,6 @@ class ArticlePreviewClass extends React.Component<IArticlePreviewPropsInterface,
                                     }
 
                                     <div>{date}</div>
-                                        <div>
-                                            {
-                                                this.props.item.is_draft ? null : (<div className="views">{ this.props.item.link_access ? <LockIcon/> : <ViewsIcon />} {views}</div>)
-                                            }
-                                        </div>
                                 </div>
                             </div>
 
@@ -216,6 +211,33 @@ class ArticlePreviewClass extends React.Component<IArticlePreviewPropsInterface,
 
                             </div>
                         </div>
+
+
+                        { this.props.isOwner ? (
+                            <div className="controls">
+                                <div className="more_button" onClick={this.toggleMenu.bind(this, !this.state.menuOpen)}>
+                                    <MoreIcon />
+                                </div>
+
+                                {
+                                    this.state.menuOpen ? (
+                                        <div className="buttons">
+                                            <div>
+                                                <Link to={"/articles/" + this.props.item.id + "/edit/"}>
+                                                    {Captions.profile.articlePreviewEdit}
+                                                </Link>
+                                            </div>
+                                            {
+                                                !this.props.item.is_draft ? (<div>{Captions.profile.articlePreviewSettings}</div>) : null
+                                            }
+                                            <div>{ this.props.item.is_draft ? Captions.profile.articlePreviewCopy : Captions.profile.articlePreviewCopyToDrafts}</div>
+                                            <div onClick={this.deleteArticle.bind(this)}>{Captions.profile.articlePreviewDelete}</div>
+                                        </div>
+                                    ) : null
+                                }
+                            </div>) : null }
+
+
                     </div>
 
                     {
@@ -245,11 +267,6 @@ class ArticlePreviewClass extends React.Component<IArticlePreviewPropsInterface,
                         }
 
                         <div>{date}</div>
-                            <div>
-                                {
-                                    this.props.item.is_draft ? null : (<div className="views">{ this.props.item.link_access ? <LockIcon/> : <ViewsIcon />} {views}</div>)
-                                }
-                            </div>
                     </div>
 
 

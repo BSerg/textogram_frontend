@@ -44,6 +44,8 @@
 
   .controls {
     position: relative;
+    background-color: #FFFFFF;
+    max-width: 30px;
     .more_button {
       cursor: pointer;
       svg {
@@ -66,6 +68,7 @@
       border: 1px solid #CCCCCC;
       font-family: $family_open_sans;
       font-size: 11px;
+      z-index: 1;
       a {
         color: #7F7F7F;
         text-decoration: none;
@@ -101,7 +104,7 @@
 
   .content {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: flex-start;
     width: 100%;
 
@@ -253,6 +256,7 @@
     .content {
 
       margin-bottom: 15px;
+      flex-direction: column;
       //height: 180px;
 
       .text {
