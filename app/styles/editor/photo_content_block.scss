@@ -45,6 +45,7 @@ $base_desktop_photo_height: 400px;
     margin-right: $space;
     margin-bottom: $space;
     cursor: pointer;
+    background-size: cover!important;
 
     img {
       width: 100%;

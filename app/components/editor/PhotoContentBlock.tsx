@@ -42,6 +42,7 @@ interface IPhotoProps {
     content: IPhoto
     onDelete?: (id: number) => any
     onOpenModal?: (id: number) => any
+    showOriginal?: boolean
 }
 
 export interface IPhotoContent {
@@ -54,6 +55,10 @@ export class Photo extends React.Component<IPhotoProps, any> {
     constructor(props: any) {
         super(props);
     }
+
+    static defaultProps = {
+        showOriginal: false
+    };
 
     handleDelete(e: any) {
         e.preventDefault();
@@ -76,13 +81,14 @@ export class Photo extends React.Component<IPhotoProps, any> {
             className += ' ' + this.props.className
         }
         let style = this.props.style || {};
+        let imgSrc = this.props.showOriginal ? this.props.content.image : (this.props.content.preview || this.props.content.image);
         Object.assign(style, {
-            background: `url('${this.props.content.preview || this.props.content.image}') no-repeat center center`,
+            background: `url('${imgSrc}') no-repeat center center`,
             backgroundSize: 'cover'
         });
         return (
             <div className={className} style={style} onClick={this.handleOpenModal.bind(this)}>
-                <img src={this.props.content.preview || this.props.content.image} style={{visibility: "hidden"}}/>
+                <img src={imgSrc} style={{visibility: "hidden"}}/>
                 <div onClick={this.handleDelete.bind(this)} className="content_block_photo__delete"></div>
                 {/*<DeleteButton onClick={this.handleDelete.bind(this)} className="content_block_photo__delete"/>*/}
             </div>
@@ -391,7 +397,8 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
                                           style={photoStyle}
                                           content={photo}
                                           onDelete={this.deletePhoto.bind(this)}
-                                          onOpenModal={this.openModal.bind(this)}/>
+                                          onOpenModal={this.openModal.bind(this)}
+                                          showOriginal={this.state.content.photos.length == 1}/>
                         }) : null
                     }
                     {!this.state.isActive && this.state.content.photos.length == 1 && this.state.content.photos[0].caption ?
