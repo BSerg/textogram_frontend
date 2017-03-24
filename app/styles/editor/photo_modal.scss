@@ -168,6 +168,14 @@
 
     .photo_modal__caption {
       background-color: transparent;
+
+      form {
+        width: 50%;
+
+        input {
+          width: 100%;
+        }
+      }
     }
   }
 }
