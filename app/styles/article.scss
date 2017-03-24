@@ -548,19 +548,19 @@ $block_margin_desktop: 25px;
 
       & > p, h2, blockquote, ul, .lead, .phrase, .columns, .embed, .photos, .dialogue, .single_photo {
         width: 100%;
-        margin: 50px 0;
+        margin: 30px 0;
         padding: 0;
       }
 
       & > p {
         @include text_font_desktop();
         padding: 0;
-        margin: 25px 0;
+        margin: 15px 0;
       }
 
       h2 {
         @include header_font_desktop();
-        margin-top: 75px;
+        margin-top: 50px;
       }
 
       ul {
@@ -574,8 +574,8 @@ $block_margin_desktop: 25px;
 
       blockquote {
         @include quote_font_desktop();
-        margin-top: 50px;
-        margin-bottom: 50px;
+        margin-top: 25px;
+        margin-bottom: 25px;
 
         &:not(.personal) > p {
           padding-left: 70px;
@@ -606,7 +606,7 @@ $block_margin_desktop: 25px;
 
       .columns {
         @include columns_font_desktop();
-        padding-top: 45px;
+        padding-top: 25px;
 
         .column:not(:first-child) {
           width: calc(62% - 30px);
@@ -614,6 +614,7 @@ $block_margin_desktop: 25px;
         }
 
         &:after {
+          top: 10px;
           left: 0;
           width: 100%;
         }
@@ -622,10 +623,11 @@ $block_margin_desktop: 25px;
       .phrase {
         @include phrase_font_desktop();
         width: 67%;
-        padding-top: 45px;
+        padding-top: 35px;
         padding-left: 33%;
 
         &:after {
+          top: 20px;
           left: 33%;
           width: 67%;
         }
@@ -633,7 +635,7 @@ $block_margin_desktop: 25px;
 
       .dialogue {
         @include dialogue_font_desktop();
-        margin: 45px 0;
+        margin: 25px 0;
 
         .remark {
           display: flex;
