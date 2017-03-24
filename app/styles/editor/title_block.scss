@@ -25,6 +25,7 @@
   @include title_font();
   position: relative;
   width: 100%;
+  max-width: 600px - $padding * 2;
   text-align: center;
   z-index: 1;
 }
@@ -92,7 +93,7 @@
 
   .title_block__title {
     @include title_font_desktop();
-    max-width: 600px;
+    max-width: 600px - $padding * 2;
   }
 
   .title_block__cover_handler {

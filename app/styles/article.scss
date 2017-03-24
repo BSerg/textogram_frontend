@@ -41,6 +41,7 @@ $block_margin_desktop: 25px;
     h1 {
       @include title_font();
       width: calc(100% - #{$padding}*2);
+      max-width: 600px - $padding * 2;
       margin: 0 auto;
       position: relative;
       word-wrap: break-word;
