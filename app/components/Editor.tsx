@@ -214,7 +214,8 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
         api.post(`/articles/editor/${this.state.article.id}/publish/`).then((response: any) => {
             this.setState({article: response.data}, () => {
                 NotificationAction.do(SHOW_NOTIFICATION, {content: 'Поздравляем, ваш материал опубликован.'});
-                this.props.router.push(`/profile/${UserAction.getStore().user.id}`);
+                // this.props.router.push(`/profile/${UserAction.getStore().user.id}`);
+                this.props.router.push(`/articles/${this.state.article.slug}`);
             });
         });
     }

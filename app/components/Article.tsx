@@ -393,6 +393,15 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
                                          className="tools_panel__icon"><PublishButton/></div>
                                 </div>
                             </div> : null}
+                        {this.state.isDesktop && !this.props.isPreview && moment().isBefore(moment(this.state.article.published_at).add(12, 'hours')) ?
+                            <div className="tools_panel">
+                                <div className="tools_panel__item">
+                                    <div className="tools_panel__caption">Редактировать</div>
+                                    <Link to={`/articles/${this.state.article.id}/edit`}
+                                          className="tools_panel__icon"><EditBlackButton/></Link>
+                                </div>
+                            </div> : null
+                        }
                     </div>
                     :
                     <div className="article__loading">
