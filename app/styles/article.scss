@@ -1,6 +1,9 @@
 @import "contstants";
 @import "mixins";
 
+$block_margin: 25px;
+$block_margin_desktop: 25px;
+
 .article {
   width: 100%;
 
@@ -16,7 +19,7 @@
     text-align: center;
     //background-color: $color4;
     border-bottom: 1px solid $color3;
-    margin-bottom: 50px;
+    margin-bottom: 25px;
 
     .article__author {
       display: block;
@@ -144,7 +147,7 @@
     position: relative;
 
     & > p, h2, blockquote, ul, .lead, .phrase, .columns, .embed, .photos, .dialogue, .single_photo {
-      padding: $padding/2 $padding;
+      padding: $padding/4 $padding;
     }
 
     iframe {
@@ -175,7 +178,7 @@
     blockquote {
       @include quote_font();
       position: relative;
-      margin: 45px 0;
+      margin: 25px 0;
 
       & > p:before {
         content: '';
@@ -189,7 +192,7 @@
       }
 
       &.personal {
-        margin-top: 35px + $padding;
+        margin-top: 45px;
         padding-top: 40px;
 
         img {
@@ -303,7 +306,7 @@
       $photo_height: 200px;
       $desktop_photo_height: 400px;
 
-      padding: $padding;
+      padding: $padding/2 $padding;
 
       .photo {
         object-fit: cover;
@@ -502,7 +505,7 @@
       @include dialogue_font();
 
       .remark {
-        margin: 30px 0;
+        margin: 15px 0;
 
         &.question {
           font-weight: $font-weight-bold;
