@@ -43,51 +43,61 @@
 
 
   .controls {
-      position: relative;
-      .more_button {
-        cursor: pointer;
-        svg {
-          width: 30px;
-          height: 30px;
-          fill: $color;
+    position: relative;
+    .more_button {
+      cursor: pointer;
+      svg {
+        width: 30px;
+        height: 30px;
+        fill: $color;
 
-        }
+      }
+    }
+
+
+
+    .buttons {
+      visibility: hidden;
+      opacity: 0;
+      background-color: #FFFFFF;
+      position: absolute;
+      right: 30px;
+      top: -30px;
+      border: 1px solid #CCCCCC;
+      font-family: $family_open_sans;
+      font-size: 11px;
+      a {
+        color: #7F7F7F;
+        text-decoration: none;
       }
 
-      .buttons {
-        background-color: #FFFFFF;
-        position: absolute;
-        right: 30px;
-        top: -30px;
-        border: 1px solid #CCCCCC;
-        font-family: $family_open_sans;
-        font-size: 11px;
-        a {
-          color: #7F7F7F;
-          text-decoration: none;
-        }
+      &>div {
+        min-width: 230px;
+        width: 230px;
+        height: 35px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        color: #7F7F7F;
+        &:hover {
+          background-color: #FBFBFB;
+          color: #333333;
 
-        &>div {
-          min-width: 230px;
-          width: 230px;
-          height: 35px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          cursor: pointer;
-          color: #7F7F7F;
-          &:hover {
-            background-color: #FBFBFB;
+          a {
             color: #333333;
-
-            a {
-              color: #333333;
-            }
           }
         }
       }
     }
 
+    &:hover {
+      .buttons {
+         visibility: visible;
+        opacity: 1;
+      }
+    }
+  }
 
   .content {
     display: flex;
@@ -224,7 +234,7 @@
     padding: 30px 20px 30px 30px;
 
     width: 100%;
-    max-width: 700px;
+    max-width: 800px;
 
     height: 240px;
 
