@@ -16,6 +16,25 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
+
+  .close {
+    position: absolute;
+    right: -40px;
+    top: 10px;
+    cursor: pointer;
+    svg {
+      width: 18px;
+      height: 18px;
+      fill: #CCCCCC;
+    }
+
+    &:hover {
+      svg {
+        fill: #FFFFFF;
+      }
+    }
+  }
 
   form {
     display: flex;
