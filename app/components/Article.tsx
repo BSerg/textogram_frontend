@@ -97,15 +97,15 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
     processArticle(article: IArticle) {
         if (this.props.isPreview && !article.published_at) {
             article.date = moment().locale('ru').calendar(null, {
-                sameDay: 'DD MMMM YYYY',
-                lastDay: 'DD MMMM YYYY',
+                sameDay: 'Сегодня, LT',
+                lastDay: 'Вчера, LT',
                 sameElse: 'DD MMMM YYYY',
                 lastWeek: 'DD MMMM YYYY'
             });
         } else {
             article.date = moment(article.published_at).locale('ru').calendar(null, {
-                sameDay: 'DD MMMM YYYY',
-                lastDay: 'DD MMMM YYYY',
+                sameDay: 'Сегодня, LT',
+                lastDay: 'Вчера, LT',
                 sameElse: 'DD MMMM YYYY',
                 lastWeek: 'DD MMMM YYYY'
             });
