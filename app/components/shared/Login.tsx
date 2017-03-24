@@ -5,6 +5,7 @@ import '../../styles/shared/login.scss';
 
 const VisibilityIcon = require('babel!svg-react!../../assets/images/profile_visibility_icon.svg?name=VisibilityIcon');
 const VisibilityOffIcon = require('babel!svg-react!../../assets/images/profile_visibility_off_icon.svg?name=VisibilityOffIcon');
+const CloseIcon = require('babel!svg-react!../../assets/images/close.svg?name=CloseIcon');
 
 
 interface ILoginStateInterface {
@@ -67,6 +68,7 @@ export default class Login extends React.Component<any, ILoginStateInterface> {
     render() {
         return (
             <div className="login">
+                <div onClick={this.closeModal.bind(this)} className="close"><CloseIcon /></div>
                 <form method="post" onSubmit={this.formSubmit.bind(this)}>
                     <div>
                         <input type="text" name="phone" value={this.state.phone}
