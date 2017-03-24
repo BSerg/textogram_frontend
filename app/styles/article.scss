@@ -307,7 +307,8 @@ $block_margin_desktop: 25px;
     }
 
     .photos {
-      $space: 10px;
+      $space: 5px;
+      $space_desktop: 10px;
       $photo_height: 200px;
       $desktop_photo_height: 400px;
 
@@ -333,93 +334,112 @@ $block_margin_desktop: 25px;
         &.photo_1, &.photo_2, &.photo_3, &.photo_4 {
           margin-bottom: $space;
         }
+
+        @include desktop {
+          &.photo_0 {
+            width: calc(80% - #{$space_desktop}/2);
+            height: $desktop_photo_height;
+            margin-right: $space_desktop;
+          }
+
+          &.photo_1, &.photo_2, &.photo_3, &.photo_4, &.photo_5 {
+            width: calc(20% - #{$space_desktop}/2);
+            height: ($desktop_photo_height - 4 * $space_desktop) / 5;
+          }
+
+          &.photo_1, &.photo_2, &.photo_3, &.photo_4 {
+            margin-bottom: $space_desktop;
+          }
+        }
       }
 
       .photo_0, .photo_1, .photo_2, .photo_3, .photo_4, .photo_5 {
         display: block;
       }
 
-      &.photos_1 .photo {
-        width: 100%;
-        height: auto;
-        margin: 0;
-      }
-
-      &.photos_2 .photo {
-        width: calc(50% - #{$space}/2);
-        height: $photo_height;
-        margin: 0;
-
-        &.photo_0 {
-          margin-right: $space;
+      @include mobile {
+        &.photos_1 .photo {
+          width: 100%;
+          height: auto;
+          margin: 0;
         }
-      }
 
-      &.photos_3 .photo {
-        &.photo_0 {
-          width: calc(62% - #{$space}/2);
+        &.photos_2 .photo {
+          width: calc(50% - #{$space}/2);
           height: $photo_height;
-          margin-right: $space;
+          margin: 0;
+
+          &.photo_0 {
+            margin-right: $space;
+          }
         }
 
-        &.photo_1, &.photo_2 {
-          width: calc(38% - #{$space}/2);
-          height: ($photo_height - $space)/2;
+        &.photos_3 .photo {
+          &.photo_0 {
+            width: calc(62% - #{$space}/2);
+            height: $photo_height;
+            margin-right: $space;
+          }
+
+          &.photo_1, &.photo_2 {
+            width: calc(38% - #{$space}/2);
+            height: ($photo_height - $space)/2;
+          }
+
+          &.photo_1 {
+            margin-bottom: $space;
+          }
         }
 
-        &.photo_1 {
-          margin-bottom: $space;
-        }
-      }
+        &.photos_4 .photo {
+          &.photo_0 {
+            width: calc(70% - #{$space}/2);
+            height: $photo_height;
+            margin-right: $space;
+          }
 
-      &.photos_4 .photo {
-        &.photo_0 {
-          width: calc(70% - #{$space}/2);
-          height: $photo_height;
-          margin-right: $space;
-        }
+          &.photo_1, &.photo_2, &.photo_3 {
+            width: calc(30% - #{$space}/2);
+            height: ($photo_height - 2 * $space) / 3;
+          }
 
-        &.photo_1, &.photo_2, &.photo_3 {
-          width: calc(30% - #{$space}/2);
-          height: ($photo_height - 2 * $space) / 3;
-        }
-
-        &.photo_1, &.photo_2 {
-          margin-bottom: $space;
-        }
-      }
-
-      &.photos_5 .photo {
-        &.photo_0 {
-          width: calc(75% - #{$space}/2);
-          height: $photo_height;
-          margin-right: $space;
+          &.photo_1, &.photo_2 {
+            margin-bottom: $space;
+          }
         }
 
-        &.photo_1, &.photo_2, &.photo_3, &.photo_4 {
-          width: calc(25% - #{$space}/2);
-          height: ($photo_height - 3 * $space) / 4;
+        &.photos_5 .photo {
+          &.photo_0 {
+            width: calc(75% - #{$space}/2);
+            height: $photo_height;
+            margin-right: $space;
+          }
+
+          &.photo_1, &.photo_2, &.photo_3, &.photo_4 {
+            width: calc(25% - #{$space}/2);
+            height: ($photo_height - 3 * $space) / 4;
+          }
+
+          &.photo_1, &.photo_2, &.photo_3 {
+            margin-bottom: $space;
+          }
         }
 
-        &.photo_1, &.photo_2, &.photo_3 {
-          margin-bottom: $space;
-        }
-      }
+        &.photos_6 .photo {
+          &.photo_0 {
+            width: calc(80% - #{$space}/2);
+            height: $photo_height;
+            margin-right: $space;
+          }
 
-      &.photos_6 .photo {
-        &.photo_0 {
-          width: calc(80% - #{$space}/2);
-          height: $photo_height;
-          margin-right: $space;
-        }
+          &.photo_1, &.photo_2, &.photo_3, &.photo_4, &.photo_5 {
+            width: calc(20% - #{$space}/2);
+            height: ($photo_height - 4 * $space) / 5;
+          }
 
-        &.photo_1, &.photo_2, &.photo_3, &.photo_4, &.photo_5 {
-          width: calc(20% - #{$space}/2);
-          height: ($photo_height - 4 * $space) / 5;
-        }
-
-        &.photo_1, &.photo_2, &.photo_3, &.photo_4 {
-          margin-bottom: $space;
+          &.photo_1, &.photo_2, &.photo_3, &.photo_4 {
+            margin-bottom: $space;
+          }
         }
       }
 
@@ -436,13 +456,13 @@ $block_margin_desktop: 25px;
       @include desktop {
         .photo {
           &.photo_0 {
-            width: calc(82% - #{$space}/2);
+            width: calc(82% - #{$space_desktop}/2);
             height: $desktop_photo_height;
           }
 
           &.photo_1, &.photo_2, &.photo_3, &.photo_4, &.photo_5 {
-            width: calc(18% - #{$space}/2);
-            height: ($desktop_photo_height - 4 * $space) / 5;
+            width: calc(18% - #{$space_desktop}/2);
+            height: ($desktop_photo_height - 4 * $space_desktop) / 5;
           }
         }
 
@@ -452,55 +472,55 @@ $block_margin_desktop: 25px;
         }
 
         &.photos_2 .photo {
-          width: calc(50% - #{$space}/2);
+          width: calc(50% - #{$space_desktop}/2);
           height: $desktop_photo_height;
         }
 
         &.photos_3 .photo {
           &.photo_0 {
-            width: calc(62% - #{$space}/2);
+            width: calc(62% - #{$space_desktop}/2);
             height: $desktop_photo_height;
           }
 
           &.photo_1, &.photo_2 {
-            width: calc(38% - #{$space}/2);
-            height: ($desktop_photo_height - $space)/2;
+            width: calc(38% - #{$space_desktop}/2);
+            height: ($desktop_photo_height - $space_desktop)/2;
           }
         }
 
         &.photos_4 .photo {
           &.photo_0 {
-            width: calc(75% - #{$space}/2);
+            width: calc(75% - #{$space_desktop}/2);
             height: $desktop_photo_height;
           }
 
           &.photo_1, &.photo_2, &.photo_3 {
-            width: calc(25% - #{$space}/2);
-            height: ($desktop_photo_height - 2 * $space) / 3;
+            width: calc(25% - #{$space_desktop}/2);
+            height: ($desktop_photo_height - 2 * $space_desktop) / 3;
           }
         }
 
         &.photos_5 .photo {
           &.photo_0 {
-            width: calc(80% - #{$space}/2);
+            width: calc(80% - #{$space_desktop}/2);
             height: $desktop_photo_height;
           }
 
           &.photo_1, &.photo_2, &.photo_3, &.photo_4 {
-            width: calc(20% - #{$space}/2);
-            height: ($desktop_photo_height - 3 * $space) / 4;
+            width: calc(20% - #{$space_desktop}/2);
+            height: ($desktop_photo_height - 3 * $space_desktop) / 4;
           }
         }
 
         &.photos_6 .photo {
           &.photo_0 {
-            width: calc(82% - #{$space}/2);
+            width: calc(82% - #{$space_desktop}/2);
             height: $desktop_photo_height;
           }
 
           &.photo_1, &.photo_2, &.photo_3, &.photo_4, &.photo_5 {
-            width: calc(18% - #{$space}/2);
-            height: ($desktop_photo_height - 4 * $space) / 5;
+            width: calc(18% - #{$space_desktop}/2);
+            height: ($desktop_photo_height - 4 * $space_desktop) / 5;
           }
         }
       }

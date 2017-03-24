@@ -1,7 +1,8 @@
 @import "../contstants";
 @import "../mixins";
 
-$space: 10px;
+$space: 5px;
+$space_desktop: 10px;
 $desktop_space: 20px;
 
 $base_photo_height: 200px;
@@ -60,9 +61,17 @@ $base_desktop_photo_height: 400px;
       background-size: 64px;
       cursor: pointer;
     }
+
+    @include desktop {
+      width: calc(50% - #{$space_desktop});
+      height: $base_desktop_photo_height/2;
+      margin-right: $space_desktop;
+      margin-bottom: $space_desktop;
+    }
   }
 
-  &:not(.active) {
+  @include mobile {
+    &:not(.active) {
     .content_block_photo__photo {
       display: none;
 
@@ -182,6 +191,7 @@ $base_desktop_photo_height: 400px;
       }
     }
   }
+  }
 
   @include desktop {
     .content_block_photo__photo {
@@ -194,19 +204,19 @@ $base_desktop_photo_height: 400px;
 
     &:not(.active) .content_block_photo__photo {
       &.photo0 {
-        width: calc(82% - #{$space}/2);
+        width: calc(82% - #{$space_desktop}/2);
         height: $base_desktop_photo_height;
-        margin-right: $space;
+        margin-right: $space_desktop;
       }
 
       &.photo1, &.photo2, &.photo3, &.photo4, &.photo5 {
-        width: calc(18% - #{$space}/2);
-        height: ($base_desktop_photo_height - 4 * $space) / 5;
+        width: calc(18% - #{$space_desktop}/2);
+        height: ($base_desktop_photo_height - 4 * $space_desktop) / 5;
         margin: 0;
       }
 
       &.photo1, &.photo2, &.photo3, &.photo4 {
-        margin-bottom: $space;
+        margin-bottom: $space_desktop;
       }
     }
 
@@ -221,25 +231,25 @@ $base_desktop_photo_height: 400px;
     }
 
     &.grid_2 .content_block_photo__photo{
-      width: calc(50% - #{$space}/2)!important;
+      width: calc(50% - #{$space_desktop}/2)!important;
       height: $base_desktop_photo_height!important;
       margin: 0;
 
       &.photo0 {
-        margin-right: $space;
+        margin-right: $space_desktop;
       }
     }
 
     &.grid_3 .content_block_photo__photo{
       &.photo0 {
-        width: calc(62% - #{$space}/2)!important;
+        width: calc(62% - #{$space_desktop}/2)!important;
         height: $base_desktop_photo_height!important;
-        margin-right: $space;
+        margin-right: $space_desktop;
       }
 
       &.photo1, &.photo2 {
-        width: calc(38% - #{$space})!important;
-        height: ($base_desktop_photo_height - $space)/2!important;
+        width: calc(38% - #{$space_desktop})!important;
+        height: ($base_desktop_photo_height - $space_desktop)/2!important;
         margin: 0;
       }
 
@@ -250,55 +260,55 @@ $base_desktop_photo_height: 400px;
 
     &.grid_4 .content_block_photo__photo{
       &.photo0 {
-        width: calc(75% - #{$space}/2)!important;
+        width: calc(75% - #{$space_desktop}/2)!important;
         height: $base_desktop_photo_height!important;
-        margin-right: $space;
+        margin-right: $space_desktop;
       }
 
       &.photo1, &.photo2, &.photo3 {
-        width: calc(25% - #{$space}/2)!important;
-        height: ($base_desktop_photo_height - 2 * $space) / 3!important;
+        width: calc(25% - #{$space_desktop}/2)!important;
+        height: ($base_desktop_photo_height - 2 * $space_desktop) / 3!important;
         margin: 0;
       }
 
       &.photo1, &.photo2 {
-        margin-bottom: $space;
+        margin-bottom: $space_desktop;
       }
     }
 
     &.grid_5 .content_block_photo__photo{
       &.photo0 {
-        width: calc(80% - #{$space}/2)!important;
+        width: calc(80% - #{$space_desktop}/2)!important;
         height: $base_desktop_photo_height!important;
-        margin-right: $space;
+        margin-right: $space_desktop;
       }
 
       &.photo1, &.photo2, &.photo3, &.photo4 {
-        width: calc(20% - #{$space}/2)!important;
-        height: ($base_desktop_photo_height - 3 * $space) / 4!important;
+        width: calc(20% - #{$space_desktop}/2)!important;
+        height: ($base_desktop_photo_height - 3 * $space_desktop) / 4!important;
         margin: 0;
       }
 
       &.photo1, &.photo2, &.photo3 {
-        margin-bottom: $space;
+        margin-bottom: $space_desktop;
       }
     }
 
     &.grid_6 .content_block_photo__photo {
       &.photo0 {
-        width: calc(82% - #{$space}/2)!important;
+        width: calc(82% - #{$space_desktop}/2)!important;
         height: $base_desktop_photo_height!important;
-        margin-right: $space;
+        margin-right: $space_desktop;
       }
 
       &.photo1, &.photo2, &.photo3, &.photo4, &.photo5 {
-        width: calc(18% - #{$space}/2)!important;
-        height: ($base_desktop_photo_height - 4 * $space) / 5!important;
+        width: calc(18% - #{$space_desktop}/2)!important;
+        height: ($base_desktop_photo_height - 4 * $space_desktop) / 5!important;
         margin: 0;
       }
 
       &.photo1, &.photo2, &.photo3, &.photo4 {
-        margin-bottom: $space;
+        margin-bottom: $space_desktop;
       }
     }
   }
