@@ -32,9 +32,13 @@ interface IProfileState {
     isSelf?: boolean;
     isDesktop?: boolean;
     showSubscribers?: boolean;
+    currentSection?: string;
 }
 
 export default class Profile extends React.Component<any, IProfileState> {
+
+    SECTION_FEED: string = 'feed';
+    SECTION_ARTICLES: string = 'articles';
 
 
     constructor(props: any) {
@@ -47,21 +51,23 @@ export default class Profile extends React.Component<any, IProfileState> {
     checkIsSelf() {
         let isSelf: boolean =  Boolean(this.state.user && UserAction.getStore().user && (UserAction.getStore().user.id == this.state.user.id));
         if (isSelf != this.state.isSelf) {
-            this.setState({ isSelf: isSelf });
+            this.setState({ isSelf: isSelf, currentSection: isSelf ? this.SECTION_FEED : this.SECTION_ARTICLES });
         }
     }
 
     getUserData(userId: string) {
         this.setState({error: null}, () => {
             api.get('/users/' + userId + '/').then((response: any) => {
+                let isSelf: boolean = Boolean(response.data && UserAction.getStore().user && (UserAction.getStore().user.id == response.data.id));
                 this.setState({
                     user: response.data,
                     showSubscribers: false,
-                    isSelf: Boolean(response.data && UserAction.getStore().user && (UserAction.getStore().user.id == response.data.id))
+                    isSelf: isSelf,
+                    currentSection: isSelf ? this.SECTION_FEED : this.SECTION_ARTICLES,
 
                 }, () => {
 
-                    console.log(this.state.user);
+                    // console.log(this.state.user);
                     // this.checkIsSelf();
 
                 });
@@ -69,6 +75,15 @@ export default class Profile extends React.Component<any, IProfileState> {
                 this.setState({error: <Error code={404} msg="page not found" /> });
             });
         });
+    }
+
+    setSection(sectionName: string) {
+        if (this.state.isSelf && [ this.SECTION_FEED, this.SECTION_ARTICLES ].includes(sectionName)) {
+            this.setState({currentSection: sectionName});
+        }
+        else {
+            this.setState({currentSection: this.SECTION_ARTICLES})
+        }
     }
 
     subscribe() {
@@ -143,15 +158,20 @@ export default class Profile extends React.Component<any, IProfileState> {
             return (this.state.error);
         }
         if (!this.state.user) return null;
+
+        let sections: {name: string, caption: string}[] = this.state.isSelf ? [
+            {name: this.SECTION_FEED, caption: Captions.profile.menuSubscriptions},
+            {name: this.SECTION_ARTICLES, caption: Captions.profile.menuArticles}] : [];
+
         return (
 
             <div id="profile">
 
                  <div id="profile_content">
                      <div className="profile_content_main">
-                         <div className="avatar" key="avatar">
+                         <div className="profile_avatar" key="avatar">
                              { this.state.user.avatar ? (<img src={this.state.user.avatar}/>) : (
-                                 <div className="avatar_dummy"></div>) }
+                                 <div className="profile_avatar_dummy"></div>) }
 
                          </div>
 
@@ -187,7 +207,26 @@ export default class Profile extends React.Component<any, IProfileState> {
                      </div>
                      <div className="profile_content_filler"></div>
 
-                     <div className="profile_menu"></div>
+                     <div className="profile_content_data">
+                         {
+                             this.state.isSelf ? (
+                                 <div className="profile_menu">
+                                     { sections.map((section: {name: string, caption: string}, index  ) => {
+                                         return (<div key={index}
+                                                      className={ "menu_item" + (section.name == this.state.currentSection ? " active" : "")}
+                                                      onClick={this.setSection.bind(this, section.name)}>
+                                             { section.caption }
+                                         </div>)
+                                     }) }
+
+                                     { this.state.isDesktop ? (<div className="filler"></div>) : null }
+                                 </div>
+                             ) : null
+                         }
+
+                         <ProfileArticles userId={this.state.user.id} section={this.state.currentSection} isSelf={this.state.isSelf} />
+                     </div>
+
 
 
                  </div>

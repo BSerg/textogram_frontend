@@ -4,10 +4,17 @@
 
 #profile {
 
-  display: flex;
+  position: absolute;
+  top: 0;
+  left: 0;
+  min-height: 100%;
+
   width: 100%;
+  display: flex;
   flex-direction: row;
   justify-content: center;
+
+  background-color: #F7F7F7;
 
   #profile_content {
     display: flex;
@@ -16,7 +23,9 @@
     max-width: 600px;
   }
 
+
   .profile_content_main {
+    background-color: #FFFFFF;
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -25,7 +34,14 @@
     box-sizing: border-box;
   }
 
-  .avatar, .avatar_dummy {
+  .profile_content_data {
+    flex-grow: 1;
+    position: relative;
+    padding: 0 $padding/2;
+    box-sizing: border-box;
+  }
+
+  .profile_avatar, .profile_avatar_dummy {
     width: 70px;
     min-width: 70px;
     height: 70px;
@@ -109,6 +125,36 @@
       }
     }
   }
+
+  .profile_menu {
+    position: relative;
+    width: 100%;
+    min-width: 100%;
+    display: flex;
+    flex-direction: row;
+    height: 30px;
+    font-family: $family-open-sans;
+    font-size: 10px;
+    border-bottom: 1px solid #BCBCBC;
+    color: $color5;
+    margin-bottom: $margin;
+
+    .menu_item {
+      position: relative;
+      top: 1px;
+      cursor: pointer;
+      flex-grow: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+
+      &.active, &:hover {
+        border-bottom: 2px solid #000000;
+        color: $color;
+      }
+    }
+  }
 }
 
 @media (min-width: 1024px) {
@@ -135,7 +181,23 @@
       justify-content: center;
     }
 
-    .avatar, .avatar_dummy {
+    .profile_content_data {
+      padding: $padding $padding * 1.5;
+    }
+
+    .profile_menu {
+      .menu_item {
+        flex-grow: initial;
+        width: 175px;
+        max-width: 175px;
+      }
+
+      .filler {
+        flex-grow: 1;
+      }
+    }
+
+    .profile_avatar, .profile_avatar_dummy {
       width: 90px;
       min-width: 90px;
       height: 90px;
@@ -165,9 +227,6 @@
         font-size: 13px;
       }
     }
-
-
-
   }
 
 }
