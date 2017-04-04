@@ -5,7 +5,7 @@ import {Router, Route, Link, browserHistory, IndexRoute} from 'react-router';
 import Base from './components/Base';
 import IndexPage from './components/Index';
 import Article from './components/Article';
-import Profile from './components/Profile';
+import Profile from './components/profile/Profile';
 import Editor from './components/Editor';
 import Error from './components/Error';
 import ProfileManagement from'./components/ProfileManagement';

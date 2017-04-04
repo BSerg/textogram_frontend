@@ -1,0 +1,174 @@
+@import "../contstants";
+@import "../mixins";
+
+
+#profile {
+
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+  justify-content: center;
+
+  #profile_content {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 600px;
+  }
+
+  .profile_content_main {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 $padding/2;
+    box-sizing: border-box;
+  }
+
+  .avatar, .avatar_dummy {
+    width: 70px;
+    min-width: 70px;
+    height: 70px;
+    @include border_radius(50%);
+    background-color: $color5;
+    margin: $margin 0;
+
+    img {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      @include border_radius(50%);
+      object-fit: cover;
+    }
+  }
+
+  .username, .description, .subscription {
+    font-family: $family_open_sans;
+  }
+
+  .username {
+    padding: 0 $padding/2;
+    text-transform: uppercase;
+    font-size: 13px;
+    line-height: 16px;
+    margin: $margin 0;
+  }
+
+  .description {
+    font-size: 9px;
+    line-height: 14px;
+
+    max-width: 200px;
+    text-align: center;
+    margin: $margin 0;
+
+  }
+
+  .social_links_list {
+    display: flex;
+    flex-direction: row;
+    margin: $margin 0;
+    &>div {
+      margin: 0 10px;
+    }
+
+    svg {
+      width: 18px;
+      height: 18px;
+      fill: #000000;
+    }
+  }
+
+  .divider {
+    min-width: 100%;
+    height: 1px;
+    //margin: 0 0 $margin 0;
+    background-color: $color4;
+  }
+
+  .subscription {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    margin: $margin 0;
+
+    &>div {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+
+      font-size: 10px;
+      margin: 0 10px;
+
+      cursor: pointer;
+
+      span {
+        font-weight: $font-weight-bold;
+        margin-right: 5px;
+      }
+    }
+  }
+}
+
+@media (min-width: 1024px) {
+
+  #profile {
+
+    $content-main-width: 340px;
+
+    #profile_content {
+      flex-direction: row;
+      max-width: none;
+    }
+
+    .profile_content_main, .profile_content_filler {
+      min-width: $content-main-width;
+      max-width: $content-main-width;
+    }
+
+    .profile_content_main {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100%;
+      justify-content: center;
+    }
+
+    .avatar, .avatar_dummy {
+      width: 90px;
+      min-width: 90px;
+      height: 90px;
+    }
+
+    .username {
+      padding: 0 $padding;
+      font-size: 17px;
+      line-height: 20px;
+    }
+
+    .description {
+      line-height: 19px;
+      font-size: 12px;
+    }
+
+    .social_links_list {
+      svg {
+        width: 26px;
+        height: 26px;
+        fill: #000000;
+      }
+    }
+
+    .subscription {
+      &>div {
+        font-size: 13px;
+      }
+    }
+
+
+
+  }
+
+}
+
