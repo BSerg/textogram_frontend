@@ -4,7 +4,7 @@ import {withRouter, Link} from 'react-router';
 import * as moment from 'moment';
 
 import {Captions} from '../../constants';
-import '../../styles/shared/article_preview_new.scss';
+import '../../styles/shared/article_preview.scss';
 const ViewsIcon = require('babel!svg-react!../../assets/images/views_icon.svg?name=ViewsIcon');
 const LockIcon = require('babel!svg-react!../../assets/images/lock.svg?name=LockIcon');
 const CloseIcon = require('babel!svg-react!../../assets/images/close.svg?name=CloseIcon');
@@ -103,381 +103,52 @@ class ArticlePreviewClass extends React.Component<IArticlePreviewPropsInterface,
     render() {
 
         let date = this.getDateString(this.props.item.is_draft ? this.props.item.last_modified : this.props.item.published_at);
-        let views = this.getViewsString(this.props.item.views || 0);
+        // let views = this.getViewsString(this.props.item.views || 0);
+
+        // console.log(this.props.item.id);
+        console.log(this.props.item.cover);
+        // let coverStyle = { background: `url('${this.props.item.cover}') no-repeat center center` };
+        let coverStyle = { backgroundImage: `url('${this.props.item.cover}')`};
 
         if (this.state.isDesktop) {
             return (
                 <div className={"article_preview" + (this.state.isNew ? " new" : "")} onMouseLeave={this.toggleMenu.bind(this, false)}>
-                    {this.props.isFeed ? (
-                        <div className="avatar">
-                            <Link to={"/profile/" + this.props.item.owner.id} >
-                                <div className="title__avatar"><img src={this.props.item.owner.avatar}/></div>
-                            </Link>
-                    </div>) : null}
 
-                    <div className="content">
-                        <div>
-                            <div className="text">
-                                <div className="title">
-
-                                    <Link to={this.props.item.is_draft ? ("/articles/" + this.props.item.id + "/edit/") :
-                                        ("/articles/" + this.props.item.slug + "/")}><div>{ this.props.item.title || date }</div>
-                                    </Link>
-                                </div>
-
-                                <div className="lead">
-
-                                    {
-                                        this.props.item.lead ? (
-                                            <Link to={this.props.item.is_draft ? ("/articles/" + this.props.item.id + "/edit/") :
-                                                ("/articles/" + this.props.item.slug + "/")}>
-                                                { this.props.item.lead }
-                                            </Link>
-                                        ) : null
-                                    }
-                                </div>
-
-                                <div className="filler"></div>
-
-                                <div className="bottom">
-
-                                    { (this.props.isFeed) ?
-                                        <div className="owner">
-                                            <Link to={ "/profile/" + this.props.item.owner.id }>
-
-                                            {this.props.item.owner.first_name + " " + this.props.item.owner.last_name}
-                                            </Link>
-                                        </div> : null
-                                    }
-
-                                    <div>{date}</div>
-                                </div>
-                            </div>
-
-                            <div className="image">
-                                {
-                                    this.props.item.cover ? (
-                                        <Link to={this.props.item.is_draft ? ("/articles/" + this.props.item.id + "/edit/") :
-                                            ("/articles/" + this.props.item.slug + "/")}>
-                                            <img  src={this.props.item.cover} />
-                                        </Link>
-                                    ) : null
-                                }
-                            </div>
-
-                        </div>
-
-                    </div>
-
-
-
-
-                    { this.props.isOwner ? (
-                        <div className="controls">
-                            <div className="more_button" onClick={this.toggleMenu.bind(this, !this.state.menuOpen)}>
-                                <MoreIcon />
-                            </div>
-
-                            {
-                                this.state.menuOpen ? (
-                                    <div className="buttons">
-                                        <div>
-                                            <Link to={"/articles/" + this.props.item.id + "/edit/"}>
-                                                {Captions.profile.articlePreviewEdit}
-                                            </Link>
-                                        </div>
-                                        {
-                                            !this.props.item.is_draft ? (<div>{Captions.profile.articlePreviewSettings}</div>) : null
-                                        }
-                                        <div>{ this.props.item.is_draft ? Captions.profile.articlePreviewCopy : Captions.profile.articlePreviewCopyToDrafts}</div>
-                                        <div onClick={this.deleteArticle.bind(this)}>{Captions.profile.articlePreviewDelete}</div>
-                                    </div>
-                                ) : null
-                            }
-                        </div>) : null }
-            </div>);
+                </div>);
         }
 
 
         else {
             return (
                 <div className={"article_preview" + (this.state.isNew ? " new" : "")}>
-                    <div className="content">
-                        <div className="text">
-                            <div className="title">
-                                <Link to={this.props.item.is_draft ? ("/articles/" + this.props.item.id + "/edit/") :
-                                    ("/articles/" + this.props.item.slug + "/")}><div>{ this.props.item.title || date }</div>
-                                </Link>
 
-                            </div>
-                        </div>
-
-
-                        { this.props.isOwner ? (
-                            <div className="controls">
-                                <div className="more_button" onClick={this.toggleMenu.bind(this, !this.state.menuOpen)}>
-                                    <MoreIcon />
-                                </div>
-
-                                {
-                                    this.state.menuOpen ? (
-                                        <div className="buttons">
-                                            <div>
-                                                <Link to={"/articles/" + this.props.item.id + "/edit/"}>
-                                                    {Captions.profile.articlePreviewEdit}
-                                                </Link>
-                                            </div>
-                                            {
-                                                !this.props.item.is_draft ? (<div>{Captions.profile.articlePreviewSettings}</div>) : null
-                                            }
-                                            <div>{ this.props.item.is_draft ? Captions.profile.articlePreviewCopy : Captions.profile.articlePreviewCopyToDrafts}</div>
-                                            <div onClick={this.deleteArticle.bind(this)}>{Captions.profile.articlePreviewDelete}</div>
-                                        </div>
-                                    ) : null
-                                }
-                            </div>) : null }
-
-
-                    </div>
-
-                    {
-                        this.props.item.cover ? (
-                            <div className="image_mobile">
-                                {
-                                    this.props.item.cover ? (
-                                        <Link to={this.props.item.is_draft ? ("/articles/" + this.props.item.id + "/edit/") :
-                                            ("/articles/" + this.props.item.slug + "/")}>
-                                            <img  src={this.props.item.cover} />
-                                        </Link>
-                                    ) : null
-                                }
-                            </div>
-                        ) : null
-                    }
-
-                    <div className="bottom">
-
-                        { (this.props.isFeed) ?
-                            <div className="owner">
-                                <Link to={ "/profile/" + this.props.item.owner.id }>
-
-                                {this.props.item.owner.first_name + " " + this.props.item.owner.last_name}
-                                </Link>
-                            </div> : null
-                        }
-
-                        <div>{date}</div>
-                    </div>
-
-
-                </div>);
-        }
-    }
-
-    __render() {
-        let date = this.getDateString(this.props.item.is_draft ? this.props.item.last_modified : this.props.item.published_at);
-        let views = this.getViewsString(this.props.item.views || 0);
-
-        return (
-            <div className={"article_preview" + (this.state.isNew ? " new" : "")} onMouseLeave={this.toggleMenu.bind(this, false)}>
-
-                <div className="content">
-                    {this.props.isFeed ? (
-                        <div className="avatar">
-                            <Link to={"/profile/" + this.props.item.owner.id} >
-                                <div className="title__avatar"><img src={this.props.item.owner.avatar}/></div>
-                            </Link>
-                    </div>) : null}
-
-                    <div className="text">
-                        <div className="title">
-
-                            <Link to={this.props.item.is_draft ? ("/articles/" + this.props.item.id + "/edit/") :
-                                ("/articles/" + this.props.item.slug + "/")}><div>{ this.props.item.title || date }</div>
-                            </Link>
-                        </div>
-
+                    <div className="article_preview__mobile_head">
                         {
-                            this.state.isDesktop ? (
-                                <div className="lead">
-
-                                    {
-                                        this.props.item.lead ? (
-                                            <Link to={this.props.item.is_draft ? ("/articles/" + this.props.item.id + "/edit/") :
-                                                ("/articles/" + this.props.item.slug + "/")}>
-                                                <div className="lead">{ this.props.item.lead }</div>
-                                            </Link>
-                                        ) : null
-                                    }
+                            !this.props.item.is_draft ? (
+                                <div className="article_preview__avatar">
+                                    <Link to={"/profile/" + this.props.item.owner.id} >
+                                        <div className="title__avatar"><img src={this.props.item.owner.avatar}/></div>
+                                    </Link>
                                 </div>
                             ) : null
                         }
 
+
+
                     </div>
 
-                    {
-                        this.state.isDesktop? (
-                            <div className="image">
-
-                                {
-                                    this.props.item.cover ? (
-                                        <Link to={this.props.item.is_draft ? ("/articles/" + this.props.item.id + "/edit/") :
-                                            ("/articles/" + this.props.item.slug + "/")}>
-                                            <img  src={this.props.item.cover} />
-                                        </Link>
-                                    ) : null
-                                }
-                            </div>
-                        ) : null
-                    }
-
-
-                    { this.props.isOwner ? (
-                        <div className="controls">
-                            <div className="more_button" onClick={this.toggleMenu.bind(this, !this.state.menuOpen)}>
-                                <MoreIcon />
-                            </div>
-
-                            {
-                                this.state.menuOpen ? (
-                                    <div className="buttons">
-                                        <div>
-                                            <Link to={"/articles/" + this.props.item.id + "/edit/"}>
-                                                {Captions.profile.articlePreviewEdit}
-                                            </Link>
-                                        </div>
-                                        {
-                                            !this.props.item.is_draft ? (<div>{Captions.profile.articlePreviewSettings}</div>) : null
-                                        }
-                                        <div>{ this.props.item.is_draft ? Captions.profile.articlePreviewCopy : Captions.profile.articlePreviewCopyToDrafts}</div>
-                                        <div onClick={this.deleteArticle.bind(this)}>{Captions.profile.articlePreviewDelete}</div>
-                                    </div>
-                                ) : null
-                            }
-                        </div>) : null }
-
-                    <div>
-
-                    </div>
-                </div>
-
-                {
-                    !this.state.isDesktop ? (
-                        <div className="lead_mobile">
-                            {
-                                this.props.item.lead ? (
-                                    <Link to={this.props.item.is_draft ? ("/articles/" + this.props.item.id + "/edit/") :
-                                        ("/articles/" + this.props.item.slug + "/")}>
-                                        <div className="lead">{ this.props.item.lead }</div>
-                                    </Link>
-                                ) : null
-                            }
-                        </div>
-                    ) : null
-                }
-
-                {
-                    (!this.state.isDesktop && this.props.item.cover) ? (
-                        <div className="image_mobile">
-
-                            {
-                                this.props.item.cover ? (
-                                    <Link to={this.props.item.is_draft ? ("/articles/" + this.props.item.id + "/edit/") :
-                                        ("/articles/" + this.props.item.slug + "/")}>
-                                        <img  src={this.props.item.cover} />
-                                    </Link>
-                                ) : null
-                            }
-                        </div>
-                    ) : null
-                }
-
-                <div className="bottom">
-                    <div>{date}</div>
-                    <div>
-                        {
-                            this.props.item.is_draft ? null : (<div className="views">{ this.props.item.link_access ? <LockIcon/> : <ViewsIcon />} {views}</div>)
-                        }
-                    </div>
-                </div>
-            </div>)
-    }
-
-    _render() {
-        let date = this.getDateString(this.props.item.is_draft ? this.props.item.last_modified : this.props.item.published_at);
-        let views = this.getViewsString(this.props.item.views || 0);
-
-        return (
-            <div className={"article_preview" + (this.props.isOwner ? " article_preview_owner" : "") }>
-                    <div className="title">
+                    <div className="article_preview__title">
                         <Link to={this.props.item.is_draft ? ("/articles/" + this.props.item.id + "/edit/") :
-                            ("/articles/" + this.props.item.slug + "/")}><div>{ this.props.item.title || date }</div></Link>
-
-                        { this.props.isFeed ? (
-                            <Link to={"/profile/" + this.props.item.owner.id} ><div className="title__avatar">
-                                <img src={this.props.item.owner.avatar}/>
-                            </div></Link>) : (this.props.isOwner ? (
-                                <Link to={"/articles/" + this.props.item.id + "/edit/"}>
-                                    <div className="title__edit"><EditIcon /></div>
-                                </Link>) : null) }
+                            ("/articles/" + this.props.item.slug + "/")}><div>{ this.props.item.title || date }</div>
+                        </Link>
                     </div>
 
                     {
-                        this.props.item.lead ? (
-                            <Link to={this.props.item.is_draft ? ("/articles/" + this.props.item.id + "/edit/") :
-                                ("/articles/" + this.props.item.slug + "/")}>
-                                <div className="lead">{ this.props.item.lead }</div>
-                            </Link>
-                        ) : null
-                    }
-                    {
-                        this.props.item.cover ? (
-                            <div className="cover">
-                                <Link to={this.props.item.is_draft ? ("/articles/" + this.props.item.id + "/edit/") :
-                                    ("/articles/" + this.props.item.slug + "/")}>
-                                    <img  src={this.props.item.cover} />
-                                </Link>
-                            </div>
-                        ) : null
+                        this.props.item.cover ? (<div className="article_preview__cover"  style={coverStyle}></div>) : null
                     }
 
-                <div className="bottom">
-
-                    { (this.props.item.owner && this.props.isFeed) ?
-                        <Link to={ "/profile/" + this.props.item.owner.id }><div className="owner">
-                            {this.props.item.owner.first_name + " " + this.props.item.owner.last_name}
-                        </div></Link> : null
-                    }
-                    { (this.props.item.owner && this.props.isFeed) ? (<div className="fill"></div>) : null}
-
-
-                    <div>{date}</div>
-                    {
-                        this.props.item.is_draft ? null : (<div className="views">{ this.props.item.link_access ? <LockIcon/> : <ViewsIcon />} {views}</div>)
-                    }
-
-                    {
-                        this.props.item.is_draft ? (
-                        <div className="delete" onClick={this.deleteArticle.bind(this)}><span>{Captions.management.draftDelete}</span> <CloseIcon /></div>) :
-                        null
-                    }
-
-                </div>
-
-                {
-                    this.props.isOwner ? (
-                        <div className="bottom_controls">
-                            <Link to={"/articles/" + this.props.item.id + "/edit/"}>
-                                <div>{Captions.profile.articlePreviewEdit}</div>
-                            </Link>
-                            <div>{Captions.profile.articlePreviewSettings}</div>
-                            <div>{Captions.profile.articlePreviewCopy}</div>
-                            <div className="delete" onClick={this.deleteArticle.bind(this)}>{Captions.profile.articlePreviewDelete}</div>
-                        </div>) : null
-                }
-
-
-            </div>)
+                </div>);
+        }
     }
 }
 

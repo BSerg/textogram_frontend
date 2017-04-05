@@ -119,7 +119,7 @@ export default class ProfileArticles extends React.Component<IArticlesProps, IAr
         let isOwner = this.state.isSelf && (this.state.section == this.SECTION_ARTICLES);
 
         return (
-            <div ref="main">
+            <div className="profile__articles" ref="main">
 
                 { this.state.items.map((item: any, index: number) => {
                     return (<ArticlePreview isFeed={isFeed} key={index} item={item} isOwner={isOwner}

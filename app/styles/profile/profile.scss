@@ -20,7 +20,7 @@
     display: flex;
     flex-direction: column;
     width: 100%;
-    max-width: 600px;
+    max-width: 768px;
   }
 
 
@@ -155,6 +155,12 @@
       }
     }
   }
+
+  .profile__articles {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
 }
 
 @media (min-width: 1024px) {
@@ -186,6 +192,8 @@
     }
 
     .profile_menu {
+      font-size: 12px;
+      height: 35px;
       .menu_item {
         flex-grow: initial;
         width: 175px;
