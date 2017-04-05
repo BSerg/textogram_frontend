@@ -124,14 +124,22 @@ class ArticlePreviewClass extends React.Component<IArticlePreviewPropsInterface,
 
                     <div className="article_preview__mobile_head">
                         {
-                            !this.props.item.is_draft ? (
-                                <div className="article_preview__avatar">
-                                    <Link to={"/profile/" + this.props.item.owner.id} >
-                                        <div className="title__avatar"><img src={this.props.item.owner.avatar}/></div>
-                                    </Link>
-                                </div>
-                            ) : null
+                            !this.props.item.is_draft ?
+
+                                 [
+                                     <div className="article_preview__avatar" key="avatar">
+                                        <Link to={"/profile/" + this.props.item.owner.id} >
+                                            <div className="title__avatar"><img src={this.props.item.owner.avatar}/></div>
+                                        </Link>
+                                     </div>,
+                                     <div>
+
+                                     </div>
+                                 ]
+
+                            : null
                         }
+
 
 
 
