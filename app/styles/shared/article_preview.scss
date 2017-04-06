@@ -10,6 +10,10 @@
   max-width: 600px;
   margin-bottom: $margin;
 
+  &:first-child {
+    margin-top: $margin;
+  }
+
   .filler {
     flex-grow: 1;
   }
@@ -47,10 +51,30 @@
     }
   }
 
+  .article_preview__lead {
+    font-family: $family-arimo;
+
+
+    font-size: 10px;
+    line-height: 14px;
+    margin-bottom: $margin;
+    &, a {
+      max-height: 70px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    a {
+      color: $color;
+    }
+  }
+
   .article_preview__avatar {
 
     width: 25px;
+    min-width: 25px;
     height: 25px;
+    margin-right: $margin/2;
 
     @include border_radius(50%);
     img {
@@ -58,16 +82,97 @@
       height: 100%;
       @include border_radius(50%);
     }
-
   }
 
-  .article_preview__mobile_head {
+  .article_preview__text {
+    max-width: 100px;
+    width: 100px;
+    height: 10px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    opacity: 0.7;
+    font-size: 10px;
+    margin-right: $margin/2;
+
+    &, a {
+      color: $color;
+      font-family: $family_open_sans;
+    }
+  }
+
+  .article_preview__info {
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: flex-start;
 
     margin-bottom: $margin;
+
+    .filler {
+      flex-grow: 1;
+    }
   }
 
+}
+
+
+@media (min-width: 1024px) {
+  .article_preview {
+    max-width: 800px;
+
+    display: flex;
+    flex-direction: row;
+
+    .article_preview__avatar {
+      width: 45px;
+      min-width: 45px;
+      height: 45px;
+    }
+
+    .article_preview__cover {
+      width: 240px;
+      max-width: 240px;
+      min-width: 240px;
+      height: 205px;
+    }
+
+    .article_preview__data {
+      flex-grow: 1;
+      margin: 0 $margin;
+    }
+
+    .article_preview__title {
+      font-size: 17px;
+      line-height: 22px;
+      margin-top: $margin;
+
+
+      &, a {
+        max-height: 44px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+    }
+
+    .article_preview__lead {
+      font-size: 12px;
+      line-height: 16px;
+      letter-spacing: 1px;
+      margin-bottom: $margin * 2;
+      &, a {
+        max-height: 80px;
+      }
+
+    }
+
+    .article_preview__text {
+      max-width: 120px;
+      width: 120px;
+      font-size: 11px;
+      margin-right: $margin;
+    }
+
+  }
 }

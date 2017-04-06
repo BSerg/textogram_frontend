@@ -7,6 +7,7 @@ import '../../styles/profile/profile.scss';
 
 import ProfileArticles from './ProfileArticles';
 import ProfileAuthors from './ProfileAuthors';
+import Loading from '../shared/Loading';
 
 import {api} from '../../api';
 import Error from '../Error';
@@ -33,6 +34,8 @@ interface IProfileState {
     isDesktop?: boolean;
     showSubscribers?: boolean;
     currentSection?: string;
+    isLoading?: boolean;
+    canSubscribe?: boolean;
 }
 
 export default class Profile extends React.Component<any, IProfileState> {
@@ -43,36 +46,41 @@ export default class Profile extends React.Component<any, IProfileState> {
 
     constructor(props: any) {
         super(props);
-        this.state = {user: null, error: null, isSelf: false, showSubscribers: true, isDesktop: MediaQuerySerice.getIsDesktop()};
+        this.state = {user: null, error: null, isLoading: false, isSelf: false, showSubscribers: true,
+            isDesktop: MediaQuerySerice.getIsDesktop(), canSubscribe: false};
         this.checkIsSelf = this.checkIsSelf.bind(this);
         this.checkDesktop = this.checkDesktop.bind(this);
     }
 
     checkIsSelf() {
         let isSelf: boolean =  Boolean(this.state.user && UserAction.getStore().user && (UserAction.getStore().user.id == this.state.user.id));
-        if (isSelf != this.state.isSelf) {
-            this.setState({ isSelf: isSelf, currentSection: isSelf ? this.SECTION_FEED : this.SECTION_ARTICLES });
+        let stateData: any = { canSubscribe: Boolean(UserAction.getStore().user && !isSelf) };
+        // if (isSelf != this.state.isSelf) {
+        stateData.isSelf = isSelf;
+        stateData.currentSection = isSelf ? this.SECTION_FEED : this.SECTION_ARTICLES;
+            // this.setState({ isSelf: isSelf, currentSection: isSelf ? this.SECTION_FEED : this.SECTION_ARTICLES });
+        // }
+        if (stateData.isSelf != this.state.isSelf || stateData.canSubscribe != this.state.canSubscribe ) {
+            this.setState(stateData);
         }
     }
 
     getUserData(userId: string) {
-        this.setState({error: null}, () => {
+        this.setState({error: null, isLoading: true}, () => {
             api.get('/users/' + userId + '/').then((response: any) => {
                 let isSelf: boolean = Boolean(response.data && UserAction.getStore().user && (UserAction.getStore().user.id == response.data.id));
+                let canSubscribe: boolean = Boolean(UserAction.getStore().user && !isSelf);
                 this.setState({
                     user: response.data,
                     showSubscribers: false,
                     isSelf: isSelf,
                     currentSection: isSelf ? this.SECTION_FEED : this.SECTION_ARTICLES,
+                    isLoading: false,
+                    canSubscribe: canSubscribe,
 
-                }, () => {
-
-                    // console.log(this.state.user);
-                    // this.checkIsSelf();
-
-                });
+                }, () => {});
             }).catch((error) => {
-                this.setState({error: <Error code={404} msg="page not found" /> });
+                this.setState({error: <Error code={404} msg="page not found" />, isLoading: false });
             });
         });
     }
@@ -140,16 +148,16 @@ export default class Profile extends React.Component<any, IProfileState> {
         MediaQuerySerice.listen(this.checkDesktop);
 
         this.getUserData(this.props.params.userId);
-        UserAction.onChange(GET_ME, this.checkIsSelf);
-        UserAction.onChange(LOGIN, this.checkIsSelf);
-        UserAction.onChange(LOGOUT, this.checkIsSelf);
+        UserAction.onChange([GET_ME, LOGIN, LOGOUT], this.checkIsSelf);
+        // UserAction.onChange(LOGIN, this.checkIsSelf);
+        // UserAction.onChange(LOGOUT, this.checkIsSelf);
     }
 
     componentWillUnmount() {
-        UserAction.unbind(GET_ME, this.checkIsSelf);
-        UserAction.unbind(LOGIN, this.checkIsSelf);
-        UserAction.unbind(LOGOUT, this.checkIsSelf);
-
+        UserAction.unbind([GET_ME, LOGIN, LOGOUT], this.checkIsSelf);
+        // UserAction.unbind(LOGIN, this.checkIsSelf);
+        // UserAction.unbind(LOGOUT, this.checkIsSelf);
+        //
         MediaQuerySerice.unbind(this.checkDesktop);
     }
 
@@ -157,6 +165,11 @@ export default class Profile extends React.Component<any, IProfileState> {
         if (this.state && this.state.error) {
             return (this.state.error);
         }
+
+        if (this.state.isLoading) {
+            return (<div id="profile" className="profile_loading"><Loading /></div>);
+        }
+
         if (!this.state.user) return null;
 
         let sections: {name: string, caption: string}[] = this.state.isSelf ? [
@@ -200,9 +213,32 @@ export default class Profile extends React.Component<any, IProfileState> {
                          <div className="subscription">
                              <div><span>{ this.state.user.subscriptions }</span> читает</div>
                              <div><span>{ this.state.user.subscribers }</span> подписано</div>
+                             {
+                                 (!this.state.isDesktop && this.state.canSubscribe) ? (
+                                    this.state.user.is_subscribed ? (
+                                        <div onClick={this.unSubscribe.bind(this)}>{Captions.profile.subscribed}</div>) :
+                                        (<div onClick={this.subscribe.bind(this)}>{ Captions.profile.subscribe }</div>)
+                                 ) : null
+                             }
                          </div>
 
-                         { this.state.isDesktop ? <div className="divider"></div> : null }
+                         {
+                             this.state.isDesktop ? (<div className="divider"></div>) : null
+                         }
+
+
+
+                         { this.state.isDesktop && this.state.canSubscribe ? (
+                             this.state.user.is_subscribed ? (
+                                <div className="desktop_subscription" onClick={this.unSubscribe.bind(this)}>
+                                    {Captions.profile.subscribed}
+
+                                </div>) :
+                                (<div  className="desktop_subscription" onClick={this.subscribe.bind(this)}>
+                                    { Captions.profile.subscribe }
+                                </div>)
+                         ) : null }
+
 
                      </div>
                      <div className="profile_content_filler"></div>

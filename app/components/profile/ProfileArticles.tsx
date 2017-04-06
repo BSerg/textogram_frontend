@@ -102,7 +102,6 @@ export default class ProfileArticles extends React.Component<IArticlesProps, IAr
 
     componentDidMount() {
         window.addEventListener('scroll', this.handleScroll);
-        console.log('mount');
         this.setState({ userId: this.props.userId, section: this.props.section, isSelf: this.props.isSelf }, () => { this.loadArticles(); });
     }
 

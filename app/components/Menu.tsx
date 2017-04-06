@@ -387,7 +387,7 @@ class UserMenu extends React.Component<IUserMenuProps, any> {
                         <div className="menu__link" onClick={this.handleUrlClick.bind(this, '/articles/new/')}>
                             { Captions.main_menu.create_article }
                         </div>
-                        <div className="menu__link" onClick={this.handleUrlClick.bind(this, '/profile/' + this.props.user.id + + "/?show=drafts")}>
+                        <div className="menu__link" onClick={this.handleUrlClick.bind(this, '/profile/' + this.props.user.id + "/?show=drafts")}>
                             { Captions.main_menu.drafts }
                         </div>
                     </div>
