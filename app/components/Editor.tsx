@@ -343,12 +343,18 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
     }
 
     render() {
+        let titleBlockKey = 'titleBlock';
+        if (this.props.newArticle) {
+            titleBlockKey += 'New';
+        } else if (this.state.article && this.state.article.id) {
+            titleBlockKey += this.state.article.id;
+        }
         return (
             <div ref="editor" onClick={this.handleDocumentClick.bind(this)} className="editor">
                 <div className="editor__wrapper">
                     {this.state.article && !this.state.error ?
                         [
-                            <TitleBlock key={"titleBlock" + (this.state.article && this.state.article.id ? this.state.article.id : '')}
+                            <TitleBlock key={titleBlockKey}
                                         articleSlug={this.state.article.id}
                                         title={this.state.article.content.title}
                                         cover={this.state.article.content.cover}
