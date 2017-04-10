@@ -1,0 +1,108 @@
+@import "../contstants";
+@import "../mixins";
+
+
+.profile_authors {
+
+  width: 100%;
+  background-color: #FFFFFF;
+  position: fixed;
+  top: 0;
+  left: 0;
+  box-sizing: border-box;
+  height: 100%;
+  max-height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 1;
+  //max-width: 700px;
+
+  .profile_authors_close {
+    cursor: pointer;
+    width: 25px;
+    min-width: 25px;
+    height: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    svg {
+      width: 15px;
+      height: 15px;
+      fill: $color3;
+    }
+
+    &:hover {
+      svg {
+        fill: $color;
+      }
+    }
+  }
+
+  .profile_author {
+    text-decoration: none;
+    color: $color;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+    max-width: 500px;
+    box-sizing: border-box;
+    text-transform: uppercase;
+    height: 45px;
+    margin-bottom: 5px;
+    font-size: 9px;
+    padding: 0 10px;
+
+    &:hover {
+      background-color: #F7F7F7;
+    }
+
+    &>div {
+      margin-right: $margin;
+      &:last-child {
+        margin-right: 0;
+      }
+    }
+
+    .author_avatar {
+      width: 35px;
+      height: 35px;
+      min-width: 35px;
+      background-color: $color5;
+
+      &, img {
+        @include border_radius(50%);
+      }
+
+      img {
+        width: 100%;
+        height: 100%;
+      }
+    }
+
+    .author_username {
+      flex-grow: 1;
+    }
+
+  }
+
+}
+
+@media (min-width: 1024px) {
+  .profile_authors {
+    position: relative;
+    max-width: 700px;
+    padding: 15px 50px;
+    margin: 0 100px 0 $margin * 2;
+
+    .profile_authors_close {
+      right: -35px;
+    }
+  }
+}

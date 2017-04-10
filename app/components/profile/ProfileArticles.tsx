@@ -47,8 +47,8 @@ export default class ProfileArticles extends React.Component<IArticlesProps, IAr
         }
 
         let CancelToken = axios.CancelToken;
-        let source: any = CancelToken.source();
-        this.state.cancelSource = source;
+        // let source: any = CancelToken.source();
+        this.state.cancelSource = CancelToken.source();
 
         this.setState({items: items, isLoading: true}, () => {
 
@@ -66,7 +66,7 @@ export default class ProfileArticles extends React.Component<IArticlesProps, IAr
                 }
             }
 
-            api.get(apiUrl, {cancelToken: source.token, params: requestParams}).then((response: any) => {
+            api.get(apiUrl, {cancelToken: this.state.cancelSource.token, params: requestParams}).then((response: any) => {
                 let results: any = response.data.results || [];
                 results.forEach((r: any) => {
                     r.isNew = true;
