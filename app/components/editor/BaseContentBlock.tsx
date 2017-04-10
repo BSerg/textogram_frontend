@@ -9,7 +9,8 @@ import {PopupPanelAction, OPEN_POPUP, CLOSE_POPUP} from "../../actions/shared/Po
 import ContentBlockPopup from "./ContentBlockPopup";
 import "../../styles/editor/base_content_block.scss";
 import {
-    BlockHandlerAction, ACTIVATE_BLOCK_HANDLER,
+    BlockHandlerAction,
+    ACTIVATE_BLOCK_HANDLER,
     DEACTIVATE_BLOCK_HANDLER
 } from "../../actions/editor/BlockHandlerAction";
 import {MediaQuerySerice} from "../../services/MediaQueryService";

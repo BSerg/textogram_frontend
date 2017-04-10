@@ -8,7 +8,7 @@
 
 .editor__content {
   width: 100%;
-  max-width: 600px;
+  max-width: 650px + $padding * 2;
   margin: 0 auto;
 }
 
