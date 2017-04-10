@@ -47,7 +47,7 @@ $profile-avatar-side-size: 60px;
 // ARTICLE CONTENT CONSTANTS
 
 @mixin title_font() {
-  @include font(30px, $font-weight-bold, $family_arimo, 43px)
+  @include font(22px, $font-weight-bold, $family_arimo, 145%)
 }
 
 @mixin header_font() {
@@ -85,7 +85,7 @@ $profile-avatar-side-size: 60px;
 // desktop
 
 @mixin title_font_desktop() {
-  @include font(40px, $font-weight-bold, $family_arimo, 51px)
+  @include font(30px, $font-weight-bold, $family_arimo, 145%)
 }
 
 @mixin header_font_desktop() {

@@ -7,10 +7,11 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  //background-color: $color4;
+  min-height: 330px;
+  height: 60vh;
+  max-height: 400px;
   border-bottom: 1px solid $color3;
   text-align: center;
-  padding: 100px $padding;
   background-size: cover!important;
 
   .image_editor_alt {
@@ -24,7 +25,7 @@
 .title_block__title {
   @include title_font();
   position: relative;
-  width: 100%;
+  width: calc(100% - #{$padding} * 2);
   max-width: 600px - $padding * 2;
   text-align: center;
   z-index: 1;
@@ -89,11 +90,23 @@
     min-height: calc(360px - #{$title_padding} * 2);
     max-height: calc(480px - #{$title_padding} * 2);
     overflow: hidden;
+
+    &.inverse {
+      padding: 0;
+      min-height: 500px;
+      height: 60vh;
+      max-height: 60vh;
+
+      .title_block__cover_handler:hover {
+        color: white;
+        background-color: $color;
+      }
+    }
   }
 
   .title_block__title {
     @include title_font_desktop();
-    max-width: 600px - $padding * 2;
+    max-width: 650px;
   }
 
   .title_block__cover_handler {
@@ -111,10 +124,5 @@
       color: $color5;
       border-color: $color5;
     }
-  }
-
-  .title_block.inverse .title_block__cover_handler:hover {
-    color: white;
-    background-color: $color;
   }
 }
