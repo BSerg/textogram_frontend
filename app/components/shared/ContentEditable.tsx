@@ -98,6 +98,7 @@ export default class ContentEditable extends React.Component<ContentEditableProp
             case 'ol':
                 return `<ol><li class="empty_tag" data-placeholder="${this.props.placeholder}"><br/></li></ol>`;
             default:
+                // return `<div class="empty_tag" data-placeholder="${this.props.placeholder}"><br/></div>`;
                 return '<br/>';
         }
     }
@@ -141,10 +142,10 @@ export default class ContentEditable extends React.Component<ContentEditableProp
         if (!this.state.contentText.trim()) {
             this.refs.editableElement.classList.add('empty');
             this.refs.editableElement.innerHTML = this.getElementEmptyContentByType();
-                let el = this.refs.editableElement.childNodes[0];
-                if (el instanceof Node) {
-                    this.setCursorTo(el);
-                }
+            // let el = this.refs.editableElement.childNodes[this.refs.editableElement.childNodes.length - 1];
+            // if (el instanceof Node) {
+            //     this.setCursorTo(el);
+            // }
         } else {
             this.refs.editableElement.classList.remove('empty');
             this.cleanElement();

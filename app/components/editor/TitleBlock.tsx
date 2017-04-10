@@ -1,14 +1,10 @@
-import * as React from 'react';
-import {Captions, Constants, Validation} from '../../constants';
-import ContentEditable from '../shared/ContentEditable';
-import {UploadImageAction, UPLOAD_IMAGE, UPLOAD_IMAGE_BASE64} from '../../actions/editor/UploadImageAction';
-import {ContentAction, UPDATE_TITLE_CONTENT, UPDATE_COVER_CONTENT} from '../../actions/editor/ContentAction';
-
-import {TitleBlockAction, UPDATE_COVER_ACTION, UPDATE_TITLE_ACTION} from '../../actions/editor/TitleBlockAction';
-
-import {api} from '../../api';
-
-import '../../styles/editor/title_block.scss';
+import * as React from "react";
+import {Captions, Validation} from "../../constants";
+import ContentEditable from "../shared/ContentEditable";
+import {UploadImageAction, UPLOAD_IMAGE, UPLOAD_IMAGE_BASE64} from "../../actions/editor/UploadImageAction";
+import {ContentAction, UPDATE_TITLE_CONTENT, UPDATE_COVER_CONTENT} from "../../actions/editor/ContentAction";
+import {api} from "../../api";
+import "../../styles/editor/title_block.scss";
 import {NotificationAction, SHOW_NOTIFICATION} from "../../actions/shared/NotificationAction";
 import {Validator} from "./utils";
 import ImageEditor from "../shared/ImageEditor";
