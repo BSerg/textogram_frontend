@@ -214,19 +214,6 @@ export default class TitleBlock extends React.Component<TitleBlockPropsInterface
 
         return (
             <div className={className} style={style} ref="componentRootElement">
-                {false && this.props.articleSlug != null ?
-                    <div className="title_block__cover_handler_wrapper">
-                        {!this.state.cover ?
-                            <div onClick={!this.state.coverLoading && this.openFileDialog.bind(this)}
-                                 className="title_block__cover_handler">
-                                {this.state.coverLoading ? 'Обложка загружается...' : Captions.editor.add_cover_ru}
-                            </div> :
-                            <div onClick={!this.state.coverLoading && this.deleteCover.bind(this)} className="title_block__cover_handler">
-                                {Captions.editor.remove_cover_ru}
-                            </div>
-                        }
-                    </div> : null
-                }
                 <div className="title_block__cover_handler_wrapper">
                     {!this.state.cover ?
                         <div onClick={!this.state.coverLoading && this.openFileDialog.bind(this)}

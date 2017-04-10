@@ -321,10 +321,13 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
                             <div className="ad_320x100" dangerouslySetInnerHTML={{__html: this.state.topBanner}}/>: null
                         }
                         <div className={"article__title" + (this.state.article.cover ? ' inverted' : '')} style={coverStyle}>
-                            {false && !this.state.isDesktop ?
-                                <Link to={`/profile/${this.state.article.owner.id}`} className="article__author">
-                                    {this.state.article.owner.first_name} {this.state.article.owner.last_name}
-                                </Link> : null
+                            {!this.state.isDesktop ?
+                                <div className="article__author">
+                                    Автор:&nbsp;
+                                    <Link to={`/profile/${this.state.article.owner.id}`}>
+                                        {this.state.article.owner.first_name} {this.state.article.owner.last_name}
+                                    </Link>
+                                </div> : null
                             }
                             <h1>{this.state.article.title}</h1>
                             <div className="article__stats">
@@ -334,12 +337,7 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
                                         <Link to={`/profile/${this.state.article.owner.id}`}>
                                             {this.state.article.owner.first_name} {this.state.article.owner.last_name}
                                         </Link>
-                                    </div> :
-                                    <div className="article__author1">
-                                        <Link to={`/profile/${this.state.article.owner.id}`}>
-                                            {this.state.article.owner.first_name} {this.state.article.owner.last_name}
-                                        </Link>
-                                    </div>
+                                    </div> : null
                                 }
                                 <div className="article__date">{this.state.article.date}</div>
                                 <div className="article__views">
