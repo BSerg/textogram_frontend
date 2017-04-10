@@ -1,6 +1,6 @@
 import * as React from "react";
 import {Captions, BlockContentTypes} from "../../constants";
-import {ContentAction, UPDATE_CONTENT} from "../../actions/editor/ContentAction";
+import {ContentAction, UPDATE_CONTENT_BLCK} from "../../actions/editor/ContentAction";
 import {ModalAction, CLOSE_MODAL} from "../../actions/shared/ModalAction";
 import "../../styles/editor/photo_modal.scss";
 import {MediaQuerySerice} from "../../services/MediaQueryService";
@@ -58,7 +58,7 @@ export class PhotoModal extends React.Component<IPhotoDesktopModalProps, IPhotoD
     handleCaption() {
         this.state.photos[this.state.currentPhotoIndex].caption = this.refs.inputCaption.value;
         this.setState({photos: this.state.photos}, () => {
-            ContentAction.do(UPDATE_CONTENT, {contentBlock: {
+            ContentAction.do(UPDATE_CONTENT_BLCK, {contentBlock: {
                 id: this.props.contentBlockId,
                 type: BlockContentTypes.PHOTO,
                 photos: this.state.photos

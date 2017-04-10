@@ -3,9 +3,9 @@ import {Captions, BlockContentTypes, Embed} from "../../constants";
 import {
     IContentData,
     ContentAction,
-    UPDATE_CONTENT,
-    CREATE_CONTENT,
-    DELETE_CONTENT
+    UPDATE_CONTENT_BLCK,
+    CREATE_CONTENT_BLCK,
+    DELETE_CONTENT_BLCK
 } from "../../actions/editor/ContentAction";
 import {ModalAction, CLOSE_MODAL} from "../../actions/shared/ModalAction";
 import {IEmbedContent} from "./EmbedContentBlock";
@@ -62,16 +62,16 @@ export default class EmbedModal extends React.Component<IEmbedModalProps, IEmbed
         e.stopPropagation();
         if (this.state.isError || !this.refs.urlInput.value) return;
         if (!this.state.content.id) {
-            ContentAction.doAsync(CREATE_CONTENT, {contentBlock: this.state.content, position: this.props.blockPosition});
+            ContentAction.doAsync(CREATE_CONTENT_BLCK, {contentBlock: this.state.content, position: this.props.blockPosition});
         } else {
-            ContentAction.doAsync(UPDATE_CONTENT, {contentBlock: this.state.content});
+            ContentAction.doAsync(UPDATE_CONTENT_BLCK, {contentBlock: this.state.content});
         }
         ModalAction.do(CLOSE_MODAL, null);
         this.props.onSubmit && this.props.onSubmit();
     }
 
     deleteBlock() {
-        ContentAction.do(DELETE_CONTENT, {id: this.state.content.id});
+        ContentAction.do(DELETE_CONTENT_BLCK, {id: this.state.content.id});
         ContentBlockAction.do(DEACTIVATE_CONTENT_BLOCK, null);
         PopupPanelAction.do(CLOSE_POPUP, null);
     }

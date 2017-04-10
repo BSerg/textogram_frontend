@@ -3,7 +3,7 @@ import {Captions, BlockContentTypes, Validation} from "../../constants";
 import ContentEditable from "../shared/ContentEditable";
 import BaseContentBlock from "./BaseContentBlock";
 import {ContentBlockAction, ACTIVATE_CONTENT_BLOCK} from "../../actions/editor/ContentBlockAction";
-import {ContentAction, UPDATE_CONTENT, IContentData} from "../../actions/editor/ContentAction";
+import {ContentAction, UPDATE_CONTENT_BLCK, IContentData} from "../../actions/editor/ContentAction";
 import "../../styles/editor/phrase_content_block.scss";
 import {Validator} from "./utils";
 import {NotificationAction, SHOW_NOTIFICATION} from "../../actions/shared/NotificationAction";
@@ -50,7 +50,7 @@ export default class PhraseContentBlock extends React.Component<IPhraseContentBl
         }
         this.state.content.__meta = {is_valid: isValid};
         this.setState({content: this.state.content, isValid: isValid}, () => {
-            ContentAction.do(UPDATE_CONTENT, {contentBlock: this.state.content});
+            ContentAction.do(UPDATE_CONTENT_BLCK, {contentBlock: this.state.content});
         });
     }
 

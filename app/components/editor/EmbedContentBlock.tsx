@@ -4,7 +4,7 @@ import {
     ContentBlockAction, ACTIVATE_CONTENT_BLOCK,
     DEACTIVATE_CONTENT_BLOCK
 } from "../../actions/editor/ContentBlockAction";
-import {IContentData, DELETE_CONTENT, ContentAction, UPDATE_CONTENT} from "../../actions/editor/ContentAction";
+import {IContentData, DELETE_CONTENT_BLCK, ContentAction, UPDATE_CONTENT_BLCK} from "../../actions/editor/ContentAction";
 import BaseContentBlock from "./BaseContentBlock";
 import ContentBlockPopup from "./ContentBlockPopup";
 import {PopupPanelAction, OPEN_POPUP, CLOSE_POPUP} from "../../actions/shared/PopupPanelAction";
@@ -87,7 +87,7 @@ export default class EmbedContentBlock extends React.Component<IEmbedContentBloc
     }
 
     deleteBlock() {
-        ContentAction.do(DELETE_CONTENT, {id: this.state.content.id});
+        ContentAction.do(DELETE_CONTENT_BLCK, {id: this.state.content.id});
         ContentBlockAction.do(DEACTIVATE_CONTENT_BLOCK, null);
         PopupPanelAction.do(CLOSE_POPUP, null);
     }

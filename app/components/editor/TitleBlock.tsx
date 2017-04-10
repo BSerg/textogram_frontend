@@ -2,7 +2,10 @@ import * as React from "react";
 import {Captions, Validation} from "../../constants";
 import ContentEditable from "../shared/ContentEditable";
 import {UploadImageAction, UPLOAD_IMAGE, UPLOAD_IMAGE_BASE64} from "../../actions/editor/UploadImageAction";
-import {ContentAction, UPDATE_TITLE_CONTENT, UPDATE_COVER_CONTENT} from "../../actions/editor/ContentAction";
+import {
+    ContentAction, UPDATE_TITLE_CONTENT, UPDATE_COVER_CONTENT,
+    RESET_CONTENT
+} from "../../actions/editor/ContentAction";
 import {api} from "../../api";
 import "../../styles/editor/title_block.scss";
 import {NotificationAction, SHOW_NOTIFICATION} from "../../actions/shared/NotificationAction";
@@ -102,17 +105,28 @@ export default class TitleBlock extends React.Component<TitleBlockPropsInterface
         });
     }
 
-    handleCover() {
-        this.setState({coverLoading: true});
+    uploadCover(articleId: string|null) {
         var file = this.refs.fileInput.files[0];
-        UploadImageAction.doAsync(UPLOAD_IMAGE, {articleId: this.props.articleSlug, image: file}).then((data: any) => {
+        UploadImageAction.doAsync(UPLOAD_IMAGE, {articleId: articleId, image: file}).then((data: any) => {
             this.setState({cover: data, coverLoading: false}, () => {
-                ContentAction.do(UPDATE_COVER_CONTENT, {articleId: this.props.articleSlug, autoSave: this.props.autoSave, cover: data});
+                ContentAction.do(UPDATE_COVER_CONTENT, {articleId: articleId, autoSave: this.props.autoSave, cover: data});
                 this.drawCanvas();
             });
         }).catch((err: any) => {
             this.setState({coverLoading: false});
         });
+    }
+
+    handleCover() {
+        this.setState({coverLoading: true});
+        if (!this.props.articleSlug) {
+            api.post('/articles/editor/', ContentAction.getStore().content).then((response: any) => {
+                ContentAction.do(RESET_CONTENT, {articleId: response.data.id, autoSave: false, content: response.data.content});
+                this.uploadCover(response.data.id);
+            });
+        } else {
+            this.uploadCover(this.props.articleSlug);
+        }
     }
 
     deleteCover() {
@@ -200,7 +214,7 @@ export default class TitleBlock extends React.Component<TitleBlockPropsInterface
 
         return (
             <div className={className} style={style} ref="componentRootElement">
-                {this.props.articleSlug != null ?
+                {false && this.props.articleSlug != null ?
                     <div className="title_block__cover_handler_wrapper">
                         {!this.state.cover ?
                             <div onClick={!this.state.coverLoading && this.openFileDialog.bind(this)}
@@ -213,6 +227,17 @@ export default class TitleBlock extends React.Component<TitleBlockPropsInterface
                         }
                     </div> : null
                 }
+                <div className="title_block__cover_handler_wrapper">
+                    {!this.state.cover ?
+                        <div onClick={!this.state.coverLoading && this.openFileDialog.bind(this)}
+                             className="title_block__cover_handler">
+                            {this.state.coverLoading ? 'Обложка загружается...' : Captions.editor.add_cover_ru}
+                        </div> :
+                        <div onClick={!this.state.coverLoading && this.deleteCover.bind(this)} className="title_block__cover_handler">
+                            {Captions.editor.remove_cover_ru}
+                        </div>
+                    }
+                </div>
                 <ContentEditable className="title_block__title"
                                  elementType="inline"
                                  allowLineBreak={false}

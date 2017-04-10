@@ -3,7 +3,7 @@ import {Captions, BlockContentTypes, Constants, Validation} from "../../constant
 import ContentEditable from "../shared/ContentEditable";
 import BaseContentBlock from "./BaseContentBlock";
 import {ContentBlockAction, ACTIVATE_CONTENT_BLOCK} from "../../actions/editor/ContentBlockAction";
-import {ContentAction, UPDATE_CONTENT, IContentData} from "../../actions/editor/ContentAction";
+import {ContentAction, UPDATE_CONTENT_BLCK, IContentData} from "../../actions/editor/ContentAction";
 import {UploadImageAction, UPLOAD_IMAGE, UPDATE_PROGRESS} from "../../actions/editor/UploadImageAction";
 import ProgressBar, {PROGRESS_BAR_TYPE} from "../shared/ProgressBar";
 import {Validator} from "./utils";
@@ -95,7 +95,7 @@ export default class QuoteContentBlock extends React.Component<IQuoteContentBloc
         }
         this.state.content.__meta = {is_valid: validationInfo.isValid};
         this.setState({content: this.state.content, doNotUpdateComponent: true}, () => {
-            ContentAction.do(UPDATE_CONTENT, {contentBlock: this.state.content});
+            ContentAction.do(UPDATE_CONTENT_BLCK, {contentBlock: this.state.content});
             this.updateValidationState();
         });
     }
@@ -130,7 +130,7 @@ export default class QuoteContentBlock extends React.Component<IQuoteContentBloc
                 let store = UploadImageAction.getStore();
                 this.state.content.image = store.image;
                 this.setState({content: this.state.content, loadingImage: false, loadingProgress: null}, () => {
-                    ContentAction.do(UPDATE_CONTENT, {contentBlock: this.state.content});
+                    ContentAction.do(UPDATE_CONTENT_BLCK, {contentBlock: this.state.content});
                     this.closePhotoMenu();
                 });
             }).catch((err) => {
@@ -144,7 +144,7 @@ export default class QuoteContentBlock extends React.Component<IQuoteContentBloc
     deleteImage() {
         this.state.content.image = null;
         this.setState({content: this.state.content}, () => {
-            ContentAction.do(UPDATE_CONTENT, {contentBlock: this.state.content});
+            ContentAction.do(UPDATE_CONTENT_BLCK, {contentBlock: this.state.content});
         });
     }
 

@@ -3,7 +3,7 @@ import {Captions, Constants, BlockContentTypes, Validation} from "../../constant
 import ContentEditable from "../shared/ContentEditable";
 import BaseContentBlock from "./BaseContentBlock";
 import {ContentBlockAction, ACTIVATE_CONTENT_BLOCK} from "../../actions/editor/ContentBlockAction";
-import {ContentAction, UPDATE_CONTENT, IContentData} from "../../actions/editor/ContentAction";
+import {ContentAction, UPDATE_CONTENT_BLCK, IContentData} from "../../actions/editor/ContentAction";
 import * as toMarkdown from "to-markdown";
 import * as marked from "marked";
 import {UploadImageAction, UPLOAD_IMAGE, UPDATE_PROGRESS} from "../../actions/editor/UploadImageAction";
@@ -75,7 +75,7 @@ export default class ColumnContentBlock extends React.Component<IColumnContentBl
         }
         this.state.content.__meta = {is_valid: validationState.isValid};
         this.setState({content: this.state.content}, () => {
-            ContentAction.do(UPDATE_CONTENT, {contentBlock: this.state.content});
+            ContentAction.do(UPDATE_CONTENT_BLCK, {contentBlock: this.state.content});
         });
     }
 
@@ -127,7 +127,7 @@ export default class ColumnContentBlock extends React.Component<IColumnContentBl
                     uploadImageProgress: null,
                 }, () => {
                     UploadImageAction.unbind(UPDATE_PROGRESS, handlerProgress);
-                    ContentAction.do(UPDATE_CONTENT, {contentBlock: this.state.content});
+                    ContentAction.do(UPDATE_CONTENT_BLCK, {contentBlock: this.state.content});
                     this.updateValidationState();
                 });
             }).catch((error) => {

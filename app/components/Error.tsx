@@ -23,3 +23,15 @@ export default class Error extends React.Component<ErrorProps, {}> {
         )
     }
 }
+
+export class Error404 extends React.Component<any, any> {
+    constructor(props: any) {
+        super(props);
+    }
+
+    render() {
+        return (
+            <Error code={404} msg="Page not found"/>
+        )
+    }
+}

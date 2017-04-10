@@ -2,7 +2,7 @@ import * as React from "react";
 import {Captions, BlockContentTypes, Validation} from "../../constants";
 import ContentEditable from "../shared/ContentEditable";
 import BaseContentBlock from "./BaseContentBlock";
-import {IContentData, ContentAction, DELETE_CONTENT, UPDATE_CONTENT} from "../../actions/editor/ContentAction";
+import {IContentData, ContentAction, DELETE_CONTENT_BLCK, UPDATE_CONTENT_BLCK} from "../../actions/editor/ContentAction";
 import {Validator} from "./utils";
 import {IPhoto} from "../../actions/editor/PhotoContentBlockAction";
 import {
@@ -98,7 +98,7 @@ export default class DialogContentBlock extends React.Component<IDialogContentBl
     }
 
     handleDelete() {
-        ContentAction.do(DELETE_CONTENT, {id: this.state.content.id});
+        ContentAction.do(DELETE_CONTENT_BLCK, {id: this.state.content.id});
         ContentBlockAction.do(DEACTIVATE_CONTENT_BLOCK, null);
     }
 
@@ -163,7 +163,7 @@ export default class DialogContentBlock extends React.Component<IDialogContentBl
     }
 
     updateContent() {
-        ContentAction.do(UPDATE_CONTENT, {contentBlock: this.state.content});
+        ContentAction.do(UPDATE_CONTENT_BLCK, {contentBlock: this.state.content});
     }
 
     openFileDialog(participantId: number) {

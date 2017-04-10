@@ -2,7 +2,7 @@ import * as React from "react";
 import {BlockContentTypes, ListBlockContentTypes} from "../../constants";
 import {BlockHandlerAction, OPEN_BLOCK_HANDLER_MODAL} from "../../actions/editor/BlockHandlerAction";
 import "../../styles/editor/block_handler_button.scss";
-import {ContentAction, CREATE_CONTENT, SWAP_CONTENT, IContentData} from "../../actions/editor/ContentAction";
+import {ContentAction, CREATE_CONTENT_BLCK, SWAP_CONTENT_BLCK, IContentData} from "../../actions/editor/ContentAction";
 import {ModalAction, OPEN_MODAL} from "../../actions/shared/ModalAction";
 import EmbedModal from "./EmbedModal";
 import {IParticipant} from "./DialogContentBlock";
@@ -81,7 +81,7 @@ export default class BlockHandlerButton extends React.Component<IContentButtonPr
                     onClick: () => {
                         console.log('SWAP BLOCKS');
                         ContentAction.do(
-                            SWAP_CONTENT,
+                            SWAP_CONTENT_BLCK,
                             {position: this.props.blockPosition}
                         );
                     }
@@ -99,7 +99,7 @@ export default class BlockHandlerButton extends React.Component<IContentButtonPr
                             position: this.props.blockPosition
 
                         };
-                        ContentAction.do(CREATE_CONTENT, data);
+                        ContentAction.do(CREATE_CONTENT_BLCK, data);
                     }
                 };
             case BlockContentTypes.HEADER:
@@ -115,7 +115,7 @@ export default class BlockHandlerButton extends React.Component<IContentButtonPr
                             position: this.props.blockPosition
 
                         };
-                        ContentAction.do(CREATE_CONTENT, data);
+                        ContentAction.do(CREATE_CONTENT_BLCK, data);
 
                     }
                 };
@@ -132,7 +132,7 @@ export default class BlockHandlerButton extends React.Component<IContentButtonPr
                             position: this.props.blockPosition
 
                         };
-                        ContentAction.do(CREATE_CONTENT, data);
+                        ContentAction.do(CREATE_CONTENT_BLCK, data);
                     }
                 };
             case BlockContentTypes.VIDEO:
@@ -174,7 +174,7 @@ export default class BlockHandlerButton extends React.Component<IContentButtonPr
                             type: BlockContentTypes.PHOTO,
                             photos: []
                         };
-                        ContentAction.do(CREATE_CONTENT, {contentBlock: data, position: this.props.blockPosition});
+                        ContentAction.do(CREATE_CONTENT_BLCK, {contentBlock: data, position: this.props.blockPosition});
                     }
                 };
             case BlockContentTypes.AUDIO:
@@ -221,7 +221,7 @@ export default class BlockHandlerButton extends React.Component<IContentButtonPr
                             position: this.props.blockPosition
 
                         };
-                        ContentAction.do(CREATE_CONTENT, data);
+                        ContentAction.do(CREATE_CONTENT_BLCK, data);
                     }
                 };
             case BlockContentTypes.COLUMNS:
@@ -238,7 +238,7 @@ export default class BlockHandlerButton extends React.Component<IContentButtonPr
                             position: this.props.blockPosition
 
                         };
-                        ContentAction.do(CREATE_CONTENT, data);
+                        ContentAction.do(CREATE_CONTENT_BLCK, data);
                     }
                 };
             case BlockContentTypes.PHRASE:
@@ -253,7 +253,7 @@ export default class BlockHandlerButton extends React.Component<IContentButtonPr
                             position: this.props.blockPosition
 
                         };
-                        ContentAction.do(CREATE_CONTENT, data);
+                        ContentAction.do(CREATE_CONTENT_BLCK, data);
                     }
                 };
             case BlockContentTypes.LIST:
@@ -270,7 +270,7 @@ export default class BlockHandlerButton extends React.Component<IContentButtonPr
                             position: this.props.blockPosition
 
                         };
-                        ContentAction.do(CREATE_CONTENT, data);
+                        ContentAction.do(CREATE_CONTENT_BLCK, data);
                     }
                 };
             case BlockContentTypes.DIALOG:
@@ -300,7 +300,7 @@ export default class BlockHandlerButton extends React.Component<IContentButtonPr
                             },
                             position: this.props.blockPosition
                         };
-                        ContentAction.do(CREATE_CONTENT, data);
+                        ContentAction.do(CREATE_CONTENT_BLCK, data);
                     }
                 };
             case BlockContentTypes.POST:
