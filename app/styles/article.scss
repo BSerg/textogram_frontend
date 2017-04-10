@@ -135,7 +135,7 @@ $block_margin_desktop: 25px;
 
       h1 {
         @include title_font_desktop();
-        width: 600px;
+        width: 650px;
         margin: 0 auto;
       }
 
@@ -575,7 +575,7 @@ $block_margin_desktop: 25px;
     }
 
     @include desktop {
-      width: 600px;
+      width: 650px;
       margin: 0 auto;
 
       & > p, h2, blockquote, ul, .lead, .phrase, .columns, .embed, .photos, .dialogue, .single_photo {
