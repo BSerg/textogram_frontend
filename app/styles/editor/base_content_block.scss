@@ -7,9 +7,9 @@
   padding: 10px $basic_mobile_offset;
   background-color: white;
 
-  //&:last-child {
-  //  border: 1px solid red;
-  //}
+  .base_content_block__content {
+    width: 100%;
+  }
 
   &.active {
     background-color: $color4;
@@ -65,7 +65,7 @@
     margin-right: auto;
 
     &.active {
-      background-color: white;
+      //background-color: white;
     }
 
     .base_content_block__tools {

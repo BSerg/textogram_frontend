@@ -28,7 +28,8 @@ interface IQuoteContentBlockProps {
 }
 
 interface IQuoteContentBlockState {
-    content?: IQuoteContent
+    content?: IQuoteContent;
+    contentIsLong?: boolean;
     menuOpened?: boolean
     doNotUpdateComponent?: boolean
     isActive?: boolean
@@ -46,6 +47,7 @@ export default class QuoteContentBlock extends React.Component<IQuoteContentBloc
         super(props);
         this.state = {
             content: this.props.content as IQuoteContent,
+            contentIsLong: this.checkContentIsLong((this.props.content as IQuoteContent).value),
             menuOpened: false,
             loadingImage: false,
             isDesktop: MediaQuerySerice.getIsDesktop()
@@ -60,6 +62,12 @@ export default class QuoteContentBlock extends React.Component<IQuoteContentBloc
 
     private validate(content: IQuoteContent): any {
         return Validator.validate(content, Validation.QUOTE);
+    }
+
+    private checkContentIsLong(value: string) {
+        let el = document.createElement('div');
+        el.innerHTML = marked(value);
+        return el.innerText.length > 500;
     }
 
     handleActivate() {
@@ -94,7 +102,7 @@ export default class QuoteContentBlock extends React.Component<IQuoteContentBloc
             );
         }
         this.state.content.__meta = {is_valid: validationInfo.isValid};
-        this.setState({content: this.state.content, doNotUpdateComponent: true}, () => {
+        this.setState({content: this.state.content, contentIsLong: this.checkContentIsLong(content)}, () => {
             ContentAction.do(UPDATE_CONTENT_BLCK, {contentBlock: this.state.content});
             this.updateValidationState();
         });
@@ -169,13 +177,13 @@ export default class QuoteContentBlock extends React.Component<IQuoteContentBloc
         }
     }
 
-    shouldComponentUpdate(nextProps: any, nextState: any) {
-        if (nextState.updateComponent) {
-            delete nextState.updateComponent;
-            return false;
-        }
-        return true;
-    }
+    // shouldComponentUpdate(nextProps: any, nextState: any) {
+    //     if (nextState.updateComponent) {
+    //         delete nextState.updateComponent;
+    //         return false;
+    //     }
+    //     return true;
+    // }
 
     componentDidMount() {
         ContentBlockAction.onChange(ACTIVATE_CONTENT_BLOCK, this.handleActivate);
@@ -193,6 +201,7 @@ export default class QuoteContentBlock extends React.Component<IQuoteContentBloc
         if (this.props.className) {
             className += ' ' + this.props.className;
         }
+        if (this.state.contentIsLong) className += ' long';
         let imageStyle: any = {};
         if (this.state.content.image) {
             className += ' personal';
@@ -234,14 +243,16 @@ export default class QuoteContentBlock extends React.Component<IQuoteContentBloc
                             )
                         ] : <div className="content_block_quote__empty_photo" onClick={this.openFileDialog.bind(this)}/>
                 }
-                <ContentEditable allowLineBreak={false}
-                                 onFocus={this.handleFocus.bind(this)}
-                                 onBlur={this.handleBlur.bind(this)}
-                                 onChange={this.handleChange.bind(this)}
-                                 onChangeDelay={0}
-                                 content={marked(this.state.content.value)}
-                                 enableTextFormat={true}
-                                 placeholder={Captions.editor.enter_quote}/>
+                <div className="content_block_quote__quote">
+                    <ContentEditable allowLineBreak={true}
+                                     onFocus={this.handleFocus.bind(this)}
+                                     onBlur={this.handleBlur.bind(this)}
+                                     onChange={this.handleChange.bind(this)}
+                                     onChangeDelay={0}
+                                     content={marked(this.state.content.value)}
+                                     enableTextFormat={true}
+                                     placeholder={Captions.editor.enter_quote}/>
+                </div>
                 {this.state.loadingProgress ?
                     <ProgressBar type={PROGRESS_BAR_TYPE.DETERMINATE}
                                  value={this.state.loadingProgress.progress}
