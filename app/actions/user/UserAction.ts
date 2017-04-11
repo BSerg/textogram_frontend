@@ -7,6 +7,8 @@ export const LOGIN = 'login';
 export const LOGOUT = 'logout';
 export const UPDATE_USER = 'update';
 export const SAVE_USER = 'save';
+export const UPDATE_USER_DRAFTS = 'update_drafts';
+
 
 class UserActionClass extends Action {
     constructor() {
@@ -21,6 +23,17 @@ UserAction.register(SAVE_USER, (store, data: any) => {
     localStorage.setItem('authToken', data.token);
 });
 
+UserAction.register(UPDATE_USER_DRAFTS, (store, addAmount: number = 1) => {
+    if (!store.user) {
+        return;
+    }
+    let drafts: number = (store.user.drafts || 0) + addAmount;
+    if (drafts < 0) {
+        drafts = 0;
+    }
+    store.user.drafts = drafts;
+});
+
 UserAction.registerAsync(GET_ME, (store, data: any) => {
 
     return new Promise((resolve, reject) => {
@@ -31,7 +44,8 @@ UserAction.registerAsync(GET_ME, (store, data: any) => {
             resolve(response.data);
         }).catch((error) => {
             // localStorage.removeItem('authToken');
-            // reject(error);
+            store.user = null;
+            reject(error);
         });
     });
 });

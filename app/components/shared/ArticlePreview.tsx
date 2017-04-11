@@ -3,6 +3,9 @@ import {withRouter, Link} from 'react-router';
 import {api} from '../../api';
 
 import * as moment from 'moment';
+import {MediaQuerySerice} from '../../services/MediaQueryService';
+
+import {UserAction, UPDATE_USER_DRAFTS} from '../../actions/user/UserAction';
 
 import {Captions} from '../../constants';
 
@@ -14,8 +17,6 @@ const LockIcon = require('babel!svg-react!../../assets/images/lock.svg?name=Lock
 const CloseIcon = require('babel!svg-react!../../assets/images/close.svg?name=CloseIcon');
 const EditIcon = require('babel!svg-react!../../assets/images/edit.svg?name=EditIcon');
 const MoreIcon = require('babel!svg-react!../../assets/images/more_vertical.svg?name=MoreIcon');
-
-import {MediaQuerySerice} from '../../services/MediaQueryService';
 
 interface IControlProps {
     item: any,
@@ -73,6 +74,11 @@ class ArticlePreviewClass extends React.Component<IArticlePreviewPropsInterface,
 
     deleteArticle() {
         api.delete('/articles/editor/' + this.props.item.id + '/').then((response) => {
+
+            if (this.props.item.is_draft) {
+                UserAction.do(UPDATE_USER_DRAFTS, -1);
+            }
+
             this.setState({deleted: true});
         }).catch((error) => {});
 
@@ -87,7 +93,13 @@ class ArticlePreviewClass extends React.Component<IArticlePreviewPropsInterface,
         }
 
         api.post('/articles/editor/' + this.props.item.id + ( this.props.item.is_draft ? '/restore_draft/' : '/restore_published/')).then(
-            (response) => { this.setState({deleted: false}) }).catch((error) => {  });
+            (response) => {
+                if (this.props.item.is_draft) {
+                    UserAction.do(UPDATE_USER_DRAFTS, -1);
+                }
+                this.setState({deleted: false});
+
+            }).catch((error) => {  });
 
 
 

@@ -8,7 +8,7 @@ import Article from './components/Article';
 import Profile from './components/profile/Profile';
 import Editor from './components/Editor';
 import Error from './components/Error';
-import ProfileManagement from'./components/ProfileManagement';
+import ProfileManagement from'./components/profile/ProfileManagement';
 import Drafts from './components/Drafts';
 import TwitterAuth from './components/TwitterAuth';
 

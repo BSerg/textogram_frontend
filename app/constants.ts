@@ -112,6 +112,7 @@ export namespace Captions {
     export const management = {
         title: "Управление профилем",
         usernamePlaceholder: "Введите имя",
+        sectionAccount: 'Аккаунт',
         sectionLinks: 'Связи',
         sectionLogin: 'Учетная запись',
         sectionNotifications: 'Уведомления',

@@ -22,7 +22,7 @@ export default class LoginBlock extends React.Component<any, ILoginBlockStateInt
     login(social: string, e: any) {
         e.stopPropagation();
         if (this.state.isLogging) return;
-        console.log(social);
+        // console.log(social);
         this.setState({isLogging: true}, () => {
             if (social == 'vk') this.__loginVK();
             else if (social == 'fb') this.__loginFB();
@@ -34,13 +34,13 @@ export default class LoginBlock extends React.Component<any, ILoginBlockStateInt
 
     __loginVK() {
         VK.Auth.login((response: any) => {
-            console.log(response);
+            // console.log(response);
             let data = response.session;
             data.social = 'vk';
-            console.log(data);
+            // console.log(data);
             VK.api('users.get', {access_token: response.session.sid, fields: 'photo_100'}, (userData) => {
                 data.user.avatar = userData.response[0].photo_100;
-                console.log(data);
+                // console.log(data);
                 UserAction.do(LOGIN, data);
             })
         }, 4194304);
@@ -53,7 +53,7 @@ export default class LoginBlock extends React.Component<any, ILoginBlockStateInt
                 data.social = 'fb';
                 UserAction.do(LOGIN, data);
             }
-           console.log(response);
+           // console.log(response);
         });
 
     }
@@ -69,7 +69,7 @@ export default class LoginBlock extends React.Component<any, ILoginBlockStateInt
 
     __loginTwitter() {
        api.post('auth/twitter/', {url: window.location.origin}).then((response: any) => {
-           console.log(response);
+           // console.log(response);
            let oauthToken = response.data.oauth_token;
            window.open('https://api.twitter.com/oauth/authenticate?oauth_token=' + oauthToken);
        });

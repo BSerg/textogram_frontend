@@ -15,7 +15,7 @@ import Loading from '../shared/Loading';
 
 import {api} from '../../api';
 import Error from '../Error';
-import {UserAction, GET_ME, LOGIN, LOGOUT} from "../../actions/user/UserAction";
+import {UserAction, GET_ME, LOGIN, LOGOUT, UPDATE_USER_DRAFTS} from "../../actions/user/UserAction";
 
 import {Captions} from '../../constants';
 import SocialIcon from './../shared/SocialIcon';
@@ -56,6 +56,7 @@ export default class Profile extends React.Component<any, IProfileState> {
             isDesktop: MediaQuerySerice.getIsDesktop(), canSubscribe: false, additionalPage: null};
         this.checkIsSelf = this.checkIsSelf.bind(this);
         this.checkDesktop = this.checkDesktop.bind(this);
+        this.serDrafts = this.serDrafts.bind(this);
     }
 
     checkIsSelf() {
@@ -67,6 +68,12 @@ export default class Profile extends React.Component<any, IProfileState> {
         stateData.additionalPage = null;
         if (stateData.isSelf != this.state.isSelf || stateData.canSubscribe != this.state.canSubscribe ) {
             this.setState(stateData);
+        }
+    }
+
+    serDrafts() {
+        if (this.state.isSelf) {
+            this.setState({selfDrafts: UserAction.getStore().user.drafts || 0});
         }
     }
 
@@ -159,10 +166,12 @@ export default class Profile extends React.Component<any, IProfileState> {
 
         this.getUserData(this.props.params.userId);
         UserAction.onChange([GET_ME, LOGIN, LOGOUT], this.checkIsSelf);
+        UserAction.onChange(UPDATE_USER_DRAFTS, this.serDrafts);
     }
 
     componentWillUnmount() {
         UserAction.unbind([GET_ME, LOGIN, LOGOUT], this.checkIsSelf);
+        UserAction.unbind(UPDATE_USER_DRAFTS, this.serDrafts);
         MediaQuerySerice.unbind(this.checkDesktop);
     }
 
