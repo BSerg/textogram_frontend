@@ -3,36 +3,35 @@
 
 .content_block_phrase {
   @include phrase_font();
-  position: relative;
-  text-align: right;
-  padding-top: $padding * 1.5;
-  padding-left: 25%;
+  padding: $basic_mobile_offset;
 
-  &:before {
-    content: '';
-    position: absolute;
-    top: $padding;
-    left: 25%;
-    width: calc(75% - #{$padding});
-    height: 3px;
-    background-color: $color;
+  &.short {
+    @include phrase_font_large();
+  }
+
+  &.long {
+    @include phrase_font_small();
+  }
+
+  .base_content_block__content {
+    width: calc(100% - 70px);
+    padding: 0 35px;
   }
 
   @include desktop {
     @include phrase_font_desktop();
     padding-left: $padding;
 
-    &:before {
-      left: 33%;
-      width: calc(67% - #{$padding});
+    &.short {
+      @include phrase_font_desktop_large();
+    }
+
+    &.long {
+      @include phrase_font_desktop_small();
     }
 
     &.expand_top {
       padding-top: $padding * 1.5!important;
-    }
-
-    .content_editable {
-      margin-left: 33%;
     }
   }
 }

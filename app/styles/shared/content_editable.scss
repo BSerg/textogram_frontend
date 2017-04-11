@@ -18,7 +18,6 @@
   }
 
   &.inline.empty:after, &.empty .empty_tag:last-child:after {
-  //&.empty .empty_tag:last-child:after {
     content: attr(data-placeholder);
     position: absolute;
     top: 0;
