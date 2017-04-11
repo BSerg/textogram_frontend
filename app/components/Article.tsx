@@ -113,6 +113,16 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
         return article;
     }
 
+    processQuote() {
+        let quotes = document.getElementsByTagName('blockquote');
+        for (let i in quotes) {
+            let quote = quotes[i] as HTMLElement;
+            if (quote.innerText.length > 500) {
+                quote.classList.add('long');
+            }
+        }
+    }
+
     processEmbed() {
         let videoEmbeds = document.getElementsByClassName('embed video');
         for (let i in videoEmbeds) {
@@ -216,6 +226,7 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
             window.setTimeout(() => {
                 this.processPhoto();
                 this.processEmbed();
+                this.processQuote();
             }, 50);
             if (this.state.article.ads_enabled) {
                 api.get('/banners/250x400/').then((response: any) => {

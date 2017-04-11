@@ -187,9 +187,16 @@ $block_margin_desktop: 25px;
     blockquote {
       @include quote_font();
       position: relative;
-      margin: 25px 0;
+      width: calc(100% - #{$basic_mobile_offset} * 3);
+      margin: 25px 0 25px $basic_mobile_offset;
+      padding: 0 0 0 $basic_mobile_offset;
+      border-left: 2px solid $color;
 
-      & > p:before {
+      & > p:not(:last-child) {
+        margin-bottom: 20px;
+      }
+
+      &:before {
         content: '';
         display: inline-block;
         background: url('../assets/images/pub_quote.svg') no-repeat center center;
@@ -197,21 +204,31 @@ $block_margin_desktop: 25px;
         width: 30px;
         height: 30px;
         margin-right: 10px;
-        margin-bottom: -5px;
+        margin-top: -6px;
+        float: left;
       }
 
       &.personal {
-        margin-top: 60px;
-        padding-top: 40px;
+        margin-top: 105px;
 
         img {
           position: absolute;
-          width: 70px;
-          height: 70px;
-          top: -35px;
-          left: calc(50% - 35px);
-          @include border_radius(70px);
+          width: 60px;
+          height: 60px;
+          top: -80px;
+          left: calc(50% - 30px);
+          @include border_radius(60px);
           object-fit: cover;
+        }
+      }
+
+      &.long {
+        @include quote_font_small();
+
+        &:before {
+          background-size: 28px;
+          width: 20px;
+          height: 20px;
         }
       }
     }
@@ -571,6 +588,7 @@ $block_margin_desktop: 25px;
       }
     }
 
+    // DESKTOP
     @include desktop {
       width: 650px;
       margin: 0 auto;
@@ -603,29 +621,26 @@ $block_margin_desktop: 25px;
 
       blockquote {
         @include quote_font_desktop();
-        margin-top: 25px;
-        margin-bottom: 25px;
-
-        &:not(.personal) > p {
-          padding-left: 70px;
-        }
+        width: 500px - $basic_desktop_offset;
+        margin: 25px auto;
+        padding-left: $basic_desktop_offset;
 
         &.personal {
-          display: flex;
-          flex-direction: row;
-          align-items: center;
-          padding: 0;
-          margin-top: 25px;
+          margin-top: 155px;
 
           img {
-            position: unset;
-            min-width: 100px;
-            width: 100px;
-            height: 100px;
-            @include border_radius(100px);
-            object-fit: cover;
-            margin-top: unset!important;
-            margin-right: 65px;
+            @include border_radius(80px);
+            width: 80px;
+            height: 80px;
+            top: -105px;
+          }
+        }
+
+        &.long {
+          @include quote_font_desktop_small();
+
+          &:before {
+            margin-top: 0;
           }
         }
       }
