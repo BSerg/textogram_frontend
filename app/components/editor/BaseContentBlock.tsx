@@ -180,7 +180,9 @@ export default class BaseContentBlock extends React.Component<IBaseContnentBlock
         if (this.state.expandBottom) className += ' expand_bottom';
         return (
             <div id={this.props.id.toString()} className={className} onClick={this.handleClick.bind(this)}>
-                {this.props.children}
+                <div className="base_content_block__content">
+                    {this.props.children}
+                </div>
                 {this.state.isDesktop && this.state.isActive ?
                     <div className="base_content_block__tools">
                         <div className="base_content_block__delete"

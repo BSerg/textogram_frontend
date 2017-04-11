@@ -458,7 +458,6 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
                                         : null
                                 }
                             </div>,
-                            <div key="add_content_help" className="add_content_help"></div>,
                             (this.state.article.status == ArticleStatuses.DRAFT ?
                                 <div key="publish_button"
                                      className={"editor__publish" + (!this.state.isValid ? ' disabled': '')}
@@ -470,12 +469,6 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
                                      className={"editor__publish" + (!this.state.isValid ? ' disabled': '')}
                                      onClick={this.state.isValid && this.updateArticle.bind(this, true)}>
                                     Обновить публикацию
-                                </div> : null),
-                            (this.state.article.status == ArticleStatuses.SHARED ?
-                                <div key="save_button"
-                                     className={"editor__publish" + (!this.state.isValid ? ' disabled': '')}
-                                     onClick={this.state.isValid && this.resetContent.bind(this, true)}>
-                                    Сохранить
                                 </div> : null),
                             this.state.isDesktop && this.state.article.status == ArticleStatuses.DRAFT && this.state.article.id ?
                                 <div className="tools_panel">

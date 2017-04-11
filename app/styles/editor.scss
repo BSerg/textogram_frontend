@@ -8,27 +8,7 @@
 
 .editor__content {
   width: 100%;
-  max-width: 650px + $padding * 2;
   margin: 0 auto;
-}
-
-.title {
-  $font-size: 32px;
-  font-size: $font-size;
-  &.empty:after {
-    font-size: $font-size;
-  }
-}
-
-.add_content_help {
-  padding: $padding;
-  margin-top: $margin;
-  font-family: $family_open_sans;
-  font-size: 12px;
-  line-height: 20px;
-  text-align: center;
-  color: $color5;
-  letter-spacing: 1px;
 }
 
 .editor__wrapper .base_content_block:last-child {
@@ -123,6 +103,10 @@
 }
 
 @include desktop {
+  .editor__content {
+    max-width: 650px + $basic_desktop_offset * 2;
+  }
+
   .add_content_help {
     margin-top: 50px;
   }
