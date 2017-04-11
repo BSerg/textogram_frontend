@@ -117,8 +117,23 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
         let quotes = document.getElementsByTagName('blockquote');
         for (let i in quotes) {
             let quote = quotes[i] as HTMLElement;
-            if (quote.innerText.length > 500) {
+            if (quote.innerText && quote.innerText.length > 500) {
                 quote.classList.add('long');
+            }
+        }
+    }
+
+    processPhrase() {
+        let phrases = document.getElementsByClassName('phrase');
+        for (let i in phrases) {
+            let phrase = phrases[i] as HTMLElement;
+            console.log('PHRASE', phrase)
+            if (phrase && phrase.innerText) {
+                if (phrase.innerText.length <= 70) {
+                    phrase.classList.add('short');
+                } else if (phrase.innerText.length > 200) {
+                    phrase.classList.add('long');
+                }
             }
         }
     }
@@ -227,6 +242,7 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
                 this.processPhoto();
                 this.processEmbed();
                 this.processQuote();
+                this.processPhrase();
             }, 50);
             if (this.state.article.ads_enabled) {
                 api.get('/banners/250x400/').then((response: any) => {
