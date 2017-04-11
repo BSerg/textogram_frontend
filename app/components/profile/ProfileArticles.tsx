@@ -6,7 +6,7 @@ import ArticlePreview from '../shared/ArticlePreview';
 import Loading from '../shared/Loading';
 
 interface IArticlesProps {
-    userId: number;
+    userId?: number;
     section: string;
     isSelf?: boolean;
 }
@@ -90,7 +90,6 @@ export default class ProfileArticles extends React.Component<IArticlesProps, IAr
         if ((rect.bottom <= window.innerHeight) && !this.state.isLoading && this.state.nextUrl) {
             this.loadArticles(true);
         }
-
     }
 
     componentWillReceiveProps(nextProps: IArticlesProps) {
@@ -115,7 +114,7 @@ export default class ProfileArticles extends React.Component<IArticlesProps, IAr
     render() {
 
         let isFeed = this.state.section == this.SECTION_FEED;
-        let isOwner = this.state.isSelf && (this.state.section == this.SECTION_ARTICLES);
+        let isOwner = this.state.section == this.SECTION_DRAFTS || (this.state.isSelf && (this.state.section == this.SECTION_ARTICLES));
 
         return (
             <div className="profile__articles" ref="main">

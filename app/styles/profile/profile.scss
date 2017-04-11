@@ -44,13 +44,16 @@
     box-sizing: border-box;
   }
 
+  .profile_avatar {
+    margin: $margin 0;
+  }
+
   .profile_avatar, .profile_avatar_dummy {
     width: 70px;
     min-width: 70px;
     height: 70px;
     @include border_radius(50%);
     background-color: $color5;
-    margin: $margin 0;
 
     img {
       width: 100%;
@@ -105,22 +108,90 @@
     background-color: $color4;
   }
 
+  .desktop_subscription {
+    width: 185px;
+    height: 40px;
+
+    //display: flex;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 9px;
+    text-transform: uppercase;
+    color: $color;
+    margin-top: $margin * 2;
+    letter-spacing: 1px;
+    font-weight: $font-weight-bold;
+
+    &>div {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      font-family: $family-open-sans;
+      position: relative;
+
+      svg {
+        position: absolute;
+        left: 15px;
+        top: calc(50% - 10px);
+        width: 20px;
+        height: 20px;
+        fill: $color;
+        margin-right: 10px;
+      }
+
+      &.hover {
+        display: none;
+        background-color: $color;
+        color: #FFFFFF;
+        svg {
+          top: calc(50% - 5px);
+          left: 20px;
+          width: 10px;
+          height: 10px;
+          margin-right: 25px;
+          fill: #FFFFFF;
+        }
+      }
+    }
+
+    &:hover {
+      background-color: $color4;
+      &>div {
+        display: none;
+        &.hover {
+          display: flex;
+        }
+      }
+    }
+  }
+
   .subscription {
     display: flex;
     flex-direction: row;
     align-items: center;
-
+    height: 20px;
     margin: $margin 0;
 
     &>div {
       display: flex;
       flex-direction: row;
       align-items: center;
+      justify-content: center;
 
       font-size: 10px;
       margin: 0 10px;
 
       cursor: pointer;
+
+      svg {
+        width: 20px;
+        height: 20px;
+      }
 
       span {
         font-weight: $font-weight-bold;
@@ -157,6 +228,20 @@
         color: $color;
       }
     }
+
+    .menu_drafts {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      cursor: pointer;
+
+      span {
+        font-weight: $font-weight-bold;
+        //color: #000000;
+        margin-left: 10px;
+      }
+    }
   }
 
   .profile__articles {
@@ -172,7 +257,7 @@
     width: 50px;
     height: 50px;
     background-color: #FFFFFF;
-    z-index: 10;
+    z-index: 11;
     display: none;
     @include box_shadow();
 
@@ -270,6 +355,10 @@
       &>div {
         font-size: 13px;
       }
+    }
+
+    .desktop_subscription {
+      display: flex;
     }
     
     .profile_new_article {

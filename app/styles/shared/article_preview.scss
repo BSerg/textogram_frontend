@@ -1,18 +1,21 @@
 @import "../contstants";
 @import "../mixins";
 
-.article_preview {
-
-  box-sizing: border-box;
-  background-color: #FFFFFF;
-  padding: $padding/2;
+.article_preview, .article_preview_deleted {
   width: 100%;
   max-width: 600px;
+  background-color: #FFFFFF;
+  box-sizing: border-box;
   margin-bottom: $margin;
 
   &:first-child {
     margin-top: $margin;
   }
+
+}
+
+.article_preview {
+  padding: $padding/2;
 
   .filler {
     flex-grow: 1;
@@ -117,10 +120,61 @@
 }
 
 
-@media (min-width: 1024px) {
-  .article_preview {
-    max-width: 800px;
+.article_preview_deleted {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  height: 50px;
+  position: relative;
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: $color5;
 
+  span {
+    text-decoration: underline;
+    cursor: pointer;
+    margin-left: 10px;
+  }
+
+  .close {
+    position: absolute;
+    right: 15px;
+    top: calc(50% - 11px);
+    padding: 5px;
+    //height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+
+    svg {
+      width: 12px;
+      height: 12px;
+      fill: $color3;
+    }
+
+    &:hover {
+      svg {
+        fill: $color;
+      }
+    }
+  }
+}
+
+
+@media (min-width: 1024px) {
+
+  .article_preview, .article_preview_deleted {
+    max-width: 800px;
+  }
+
+  .article_preview_deleted {
+    font-size: 12px;
+    height: 60px;
+  }
+
+  .article_preview {
     display: flex;
     flex-direction: row;
 

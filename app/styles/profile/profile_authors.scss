@@ -3,47 +3,43 @@
 
 
 .profile_authors {
-
-  width: 100%;
-  background-color: #FFFFFF;
-  position: fixed;
-  top: 0;
-  left: 0;
-  box-sizing: border-box;
-  height: 100%;
-  max-height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  z-index: 1;
-  //max-width: 700px;
+  background-color: #F7F7F7;
 
   .profile_authors_close {
-    cursor: pointer;
-    width: 25px;
-    min-width: 25px;
-    height: 25px;
+
+  }
+
+  .profile_authors_input {
+    width: 100%;
     display: flex;
+    flex-direction: row;
     align-items: center;
     justify-content: center;
-
     position: absolute;
-    top: 5px;
-    right: 5px;
-    svg {
-      width: 15px;
-      height: 15px;
-      fill: $color3;
-    }
+    left: 0;
+    bottom: 0;
+    background-color: transparent;
+    padding: 10px 0;
 
-    &:hover {
-      svg {
-        fill: $color;
-      }
+    input {
+      max-width: 500px;
+      text-align: center;
+      height: 40px;
+      width: 100%;
+      padding: 0 10px;
+      font-size: 12px;
+      font-family: $family-open-sans;
+      letter-spacing: 1px;
+      margin: 0;
+      outline: none;
+      border: none;
+      border-bottom: 1px solid #BCBCBC;
+      background-color: transparent;
     }
   }
 
   .profile_author {
+    background-color: #FFFFFF;
     text-decoration: none;
     color: $color;
     display: flex;
@@ -96,13 +92,35 @@
 
 @media (min-width: 1024px) {
   .profile_authors {
-    position: relative;
-    max-width: 700px;
-    padding: 15px 50px;
-    margin: 0 100px 0 $margin * 2;
+    background-color: #FFFFFF;
+  }
+  //.profile_authors {
+  //  background-color: #FFFFFF;
+  //  left: 340px;
+  //  @include transition(200ms);
 
-    .profile_authors_close {
-      right: -35px;
+    //&.adjusted {
+    //  top: 55px;
+    //  height: calc(100% - 55px);
+    //  min-height: calc(100% - 55px);
+    //  @include transition(200ms);
+    //}
+    //position: relative;
+
+    //width: calc(100% - 440px);
+    //padding: 15px 50px;
+    //margin: 0 100px 0 $margin * 2;
+    //
+    //.profile_authors_close {
+    //  right: -35px;
+    //}
+  //}
+
+  .profile_authors_input {
+    //max-width: 500px;
+    input {
+      max-width: 500px;
+      font-size: 13px;
     }
   }
 }

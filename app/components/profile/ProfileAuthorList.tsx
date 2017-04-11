@@ -6,6 +6,8 @@ import {api} from '../../api';
 import '../../styles/profile/profile_authors.scss';
 import Loading from '../shared/Loading';
 
+import {MenuAction, TOGGLE} from '../../actions/MenuAction';
+
 const CloseIcon = require('babel!svg-react!../../assets/images/close.svg?name=CloseIcon');
 
 
@@ -23,13 +25,19 @@ interface ISubscribersState {
     nextUrl?: string;
     cancelSource?: any;
     isLoading?: boolean;
+    menuOpen?: boolean;
 }
 
 export default class ProfileAuthorList extends React.Component<ISubscribersProps, ISubscribersState> {
 
+    refs: {
+        container: HTMLDivElement;
+    };
+
     constructor() {
         super();
-        this.state = {searchString: "", nextUrl: null, cancelSource: null, items: [], isLoading: false};
+        this.state = {searchString: "", nextUrl: null, cancelSource: null, items: [], isLoading: false, menuOpen: MenuAction.getStore().open};
+        this.setMenuOpen = this.setMenuOpen.bind(this);
     }
 
     loadItems(more: boolean = false) {
@@ -72,15 +80,29 @@ export default class ProfileAuthorList extends React.Component<ISubscribersProps
         })
     }
 
+    handleScroll(e: any) {
+        let rect: ClientRect = this.refs.container.getBoundingClientRect();
+        if ((rect.height + this.refs.container.scrollTop) >= this.refs.container.scrollHeight && (this.state.nextUrl && !this.state.isLoading)) {
+            // console.log('LooD');
+            this.loadItems(true);
+        }
+    }
+
+    setMenuOpen() {
+        this.setState({menuOpen: MenuAction.getStore().open});
+    }
+
     componentWillReceiveProps(nextProps: any) {
         this.loadItems();
     }
 
     componentDidMount() {
+        MenuAction.onChange([TOGGLE], this.setMenuOpen);
         this.loadItems();
     }
 
     componentWillUnmount() {
+        MenuAction.unbind([TOGGLE], this.setMenuOpen);
         if (this.state.cancelSource) {
             this.state.cancelSource.cancel();
         }
@@ -88,34 +110,38 @@ export default class ProfileAuthorList extends React.Component<ISubscribersProps
 
     render() {
 
-        console.log(this.state.items);
+        // console.log(this.state.items);
 
         return (
-            <div className="profile_authors">
+            <div className={"profile_additional profile_authors" + (this.state.menuOpen ? " adjusted" : "")}>
 
-                { this.props.closeCallback ? (<div onClick={this.props.closeCallback} className="profile_authors_close">
+                { this.props.closeCallback ? (<div onClick={this.props.closeCallback} className="profile_additional_close">
                     <CloseIcon />
                 </div>) : null }
 
-                {
-                    this.state.items.map((item: any, index: number) => {
-                        return (
-                            <Link to={'/profile/' + item.id + '/'} key={index} className="profile_author">
-                                <div className="author_avatar"><img src={item.avatar} /></div>
-                                <div className="author_username">{ item.first_name + " " + item.last_name }</div>
-                                <div>{ item.number_of_articles }</div>
-                                <div>{ item.is_subscribed ? 'd' : 'n' }</div>
+                <div className="profile_additional_container" onScroll={this.handleScroll.bind(this)} ref="container">
+                    {
+                        this.state.items.map((item: any, index: number) => {
+                            return (
+                                <Link to={'/profile/' + item.id + '/'} key={index} className="profile_author">
+                                    <div className="author_avatar"><img src={item.avatar} /></div>
+                                    <div className="author_username">{ item.first_name + " " + item.last_name }</div>
+                                    <div>{ item.number_of_articles }</div>
+                                    <div>{ item.is_subscribed ? 'd' : 'n' }</div>
 
-                            </Link>)
-                    })
-                }
-
+                                </Link>)
+                        })
+                    }
+                </div>
                 {
                     this.state.isLoading ? (<Loading />) : null
                 }
 
-                <input type="text" value={this.state.searchString} placeholder="search"
-                       onChange={this.setSearchString.bind(this)}/>
+                <div className="profile_authors_input">
+                    <input type="text" value={this.state.searchString} placeholder="Быстрый поиск по имени"
+                           onChange={this.setSearchString.bind(this)}/>
+                </div>
+
 
             </div>)
     }

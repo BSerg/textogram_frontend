@@ -4,10 +4,12 @@ import {Link} from 'react-router';
 
 import '../../styles/common.scss';
 import '../../styles/profile/profile.scss';
+import '../../styles/profile/profile_additional_page.scss';
 
 import ProfileArticles from './ProfileArticles';
 import ProfileAuthors from './ProfileAuthors';
 import ProfileAuthorList from './ProfileAuthorList';
+import ProfileDrafts from "./ProfileDrafts";
 
 import Loading from '../shared/Loading';
 
@@ -33,12 +35,13 @@ interface IProfileState {
     user?: any;
     error?: any;
     isSelf?: boolean;
+    selfDrafts?: number;
     isDesktop?: boolean;
     showSubscribers?: boolean;
     currentSection?: string;
     isLoading?: boolean;
     canSubscribe?: boolean;
-    authorsPage?: any;
+    additionalPage?: any;
 }
 
 export default class Profile extends React.Component<any, IProfileState> {
@@ -49,8 +52,8 @@ export default class Profile extends React.Component<any, IProfileState> {
 
     constructor(props: any) {
         super(props);
-        this.state = {user: null, error: null, isLoading: false, isSelf: false, showSubscribers: true,
-            isDesktop: MediaQuerySerice.getIsDesktop(), canSubscribe: false, authorsPage: null};
+        this.state = {user: null, error: null, isLoading: false, isSelf: false, selfDrafts: 0, showSubscribers: true,
+            isDesktop: MediaQuerySerice.getIsDesktop(), canSubscribe: false, additionalPage: null};
         this.checkIsSelf = this.checkIsSelf.bind(this);
         this.checkDesktop = this.checkDesktop.bind(this);
     }
@@ -60,13 +63,15 @@ export default class Profile extends React.Component<any, IProfileState> {
         let stateData: any = { canSubscribe: Boolean(UserAction.getStore().user && !isSelf) };
         stateData.isSelf = isSelf;
         stateData.currentSection = isSelf ? this.SECTION_FEED : this.SECTION_ARTICLES;
+        stateData.selfDrafts = isSelf ? UserAction.getStore().user.drafts || 0 : 0;
+        stateData.additionalPage = null;
         if (stateData.isSelf != this.state.isSelf || stateData.canSubscribe != this.state.canSubscribe ) {
             this.setState(stateData);
         }
     }
 
     getUserData(userId: string) {
-        this.setState({error: null, isLoading: true, authorsPage: null}, () => {
+        this.setState({error: null, isLoading: true, additionalPage: null}, () => {
             api.get('/users/' + userId + '/').then((response: any) => {
                 let isSelf: boolean = Boolean(response.data && UserAction.getStore().user && (UserAction.getStore().user.id == response.data.id));
                 let canSubscribe: boolean = Boolean(UserAction.getStore().user && !isSelf);
@@ -77,6 +82,8 @@ export default class Profile extends React.Component<any, IProfileState> {
                     currentSection: isSelf ? this.SECTION_FEED : this.SECTION_ARTICLES,
                     isLoading: false,
                     canSubscribe: canSubscribe,
+                    selfDrafts: isSelf ? UserAction.getStore().user.drafts || 0 : 0,
+                    additionalPage: null
 
                 }, () => {});
             }).catch((error) => {
@@ -93,8 +100,6 @@ export default class Profile extends React.Component<any, IProfileState> {
             this.setState({currentSection: this.SECTION_ARTICLES})
         }
     }
-
-
 
     subscribe() {
         api.post('/users/' + this.state.user.id + '/subscribe/').then((response) => {
@@ -139,10 +144,14 @@ export default class Profile extends React.Component<any, IProfileState> {
         }
     }
 
+    showDrafts() {
+        this.setState({additionalPage: <ProfileDrafts closeCallback={ () => { this.setState({additionalPage: null}) } } />});
+    }
+
     showAuthors(subscribedTo: boolean = false) {
-        this.setState({authorsPage: <ProfileAuthorList userId={this.state.user.id} isDesktop={this.state.isDesktop}
-                                                       closeCallback={ () => { this.setState({authorsPage: null}) } }
-                                                       subscribedTo={subscribedTo} />})
+        this.setState({additionalPage: <ProfileAuthorList userId={this.state.user.id} isDesktop={this.state.isDesktop}
+                                                          closeCallback={ () => { this.setState({additionalPage: null}) } }
+                                                          subscribedTo={subscribedTo} />});
     }
 
     componentDidMount() {
@@ -214,7 +223,7 @@ export default class Profile extends React.Component<any, IProfileState> {
                              {
                                  (!this.state.isDesktop && this.state.canSubscribe) ? (
                                     this.state.user.is_subscribed ? (
-                                        <div onClick={this.unSubscribe.bind(this)}>{Captions.profile.subscribed}</div>) :
+                                        <div onClick={this.unSubscribe.bind(this)}><ConfirmIcon /> {Captions.profile.subscribed}</div>) :
                                         (<div onClick={this.subscribe.bind(this)}>{ Captions.profile.subscribe }</div>)
                                  ) : null
                              }
@@ -229,7 +238,8 @@ export default class Profile extends React.Component<any, IProfileState> {
                          { this.state.isDesktop && this.state.canSubscribe ? (
                              this.state.user.is_subscribed ? (
                                 <div className="desktop_subscription" onClick={this.unSubscribe.bind(this)}>
-                                    {Captions.profile.subscribed}
+                                    <div><ConfirmIcon /> {Captions.profile.subscribed}</div>
+                                    <div className="hover"><CloseIcon /> {Captions.profile.unSubscribe}</div>
 
                                 </div>) :
                                 (<div  className="desktop_subscription" onClick={this.subscribe.bind(this)}>
@@ -242,8 +252,8 @@ export default class Profile extends React.Component<any, IProfileState> {
                      <div className="profile_content_filler"></div>
 
                      {
-                         this.state.authorsPage ? (
-                             this.state.authorsPage
+                         this.state.additionalPage ? (
+                             this.state.additionalPage
                          ) : (
                              <div className="profile_content_data">
                                  {
@@ -258,6 +268,14 @@ export default class Profile extends React.Component<any, IProfileState> {
                                              }) }
 
                                              { this.state.isDesktop ? (<div className="filler"></div>) : null }
+
+                                             {
+                                                 this.state.isDesktop && this.state.isSelf && this.state.selfDrafts ? (
+                                                     <div className="menu_drafts" onClick={this.showDrafts.bind(this)}>
+                                                         Черновиков: <span>{this.state.selfDrafts}</span>
+                                                     </div>
+                                                 ) : null
+                                             }
                                          </div>
                                      ) : null
                                  }

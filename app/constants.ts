@@ -65,6 +65,7 @@ export namespace Captions {
     export const profile = {
         subscribe: 'Подписаться',
         subscribed: 'Вы подписаны',
+        unSubscribe: 'Отписаться',
         menuSubscriptions: "Подписки",
         menuArticles: "Мои тексты",
         menuDrafts: "Черновики",

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import {withRouter, Link} from 'react-router';
+import {api} from '../../api';
 
 import * as moment from 'moment';
 
@@ -18,6 +19,7 @@ import {MediaQuerySerice} from '../../services/MediaQueryService';
 
 interface IControlProps {
     item: any,
+    deleteCallback: () => void,
 }
 
 class ControlMenu extends React.Component<IControlProps, any> {
@@ -34,7 +36,7 @@ class ControlMenu extends React.Component<IControlProps, any> {
 
                 <div className="control_controls">
                     <div><Link to={ '/articles/' + this.props.item.id + '/edit/'} >Редактировать</Link></div>
-                    <div>Удалить</div>
+                    <div onClick={this.props.deleteCallback}>Удалить</div>
                 </div>
             </div>)
     }
@@ -69,8 +71,27 @@ class ArticlePreviewClass extends React.Component<IArticlePreviewPropsInterface,
         this.setNotNew = this.setNotNew.bind(this);
     }
 
-    toggleMenu(open: boolean) {
-        // this.setState({menuOpen: open});
+    deleteArticle() {
+        api.delete('/articles/editor/' + this.props.item.id + '/').then((response) => {
+            this.setState({deleted: true});
+        }).catch((error) => {});
+
+        // this.setState({deleted: true});
+    }
+
+    restore() {
+        console.log(this.props.item);
+
+        if (!this.state.deleted) {
+            return;
+        }
+
+        api.post('/articles/editor/' + this.props.item.id + ( this.props.item.is_draft ? '/restore_draft/' : '/restore_published/')).then(
+            (response) => { this.setState({deleted: false}) }).catch((error) => {  });
+
+
+
+        // this.setState({deleted: false});
     }
 
     checkDesktop(isDesktop: boolean) {
@@ -102,16 +123,6 @@ class ArticlePreviewClass extends React.Component<IArticlePreviewPropsInterface,
         return '';
     }
 
-    deleteArticle() {
-
-        if (this.props.onClickDelete) {
-
-            if (confirm()) {
-                this.props.onClickDelete(this.props.item.id, this.props.index);
-            }
-        }
-    }
-
     setNotNew() {
         this.setState({isNew: false})
     }
@@ -130,15 +141,18 @@ class ArticlePreviewClass extends React.Component<IArticlePreviewPropsInterface,
     render() {
 
         let date = this.getDateString(this.props.item.is_draft ? this.props.item.last_modified : this.props.item.published_at);
-        // let views = this.getViewsString(this.props.item.views || 0);
-        // let coverStyle = { background: `url('${this.props.item.cover}') no-repeat center center` };
         let coverStyle = { backgroundImage: `url('${this.props.item.cover}')`};
+
+        if (this.state.deleted) {
+            return (<div className="article_preview_deleted">
+                Текст удален. <span onClick={this.restore.bind(this)}>Восстановить</span> <div className="close"><CloseIcon /></div></div>);
+        }
 
         if (this.state.isDesktop) {
             return (
-                <div className={"article_preview" + (this.state.isNew ? " new" : "")} onMouseLeave={this.toggleMenu.bind(this, false)}>
+                <div className={"article_preview" + (this.state.isNew ? " new" : "")} >
                     {
-                        !this.props.isOwner ? (
+                        !this.props.isOwner && !this.props.item.is_draft ? (
                             <div className="article_preview__avatar" key="avatar">
                                 <Link to={"/profile/" + this.props.item.owner.id} >
                                     <img src={this.props.item.owner.avatar}/>
@@ -189,7 +203,12 @@ class ArticlePreviewClass extends React.Component<IArticlePreviewPropsInterface,
                                      </div>
                                  ]
 
-                            : null
+                            : (<div className="article_preview__text" key="date">
+                                <Link to={this.props.item.is_draft ? ("/articles/" + this.props.item.id + "/edit/") :
+                                    ("/articles/" + this.props.item.slug + "/")}>
+                                        {date}
+                                    </Link>
+                                </div>)
                         }
 
                         </div>
@@ -206,7 +225,7 @@ class ArticlePreviewClass extends React.Component<IArticlePreviewPropsInterface,
                     }
 
                     {
-                        this.props.isOwner ? (<ControlMenu item={this.props.item} />) : null
+                        this.props.isOwner ? (<ControlMenu item={this.props.item } deleteCallback={this.deleteArticle.bind(this)} />) : null
                     }
                 </div>);
         }
@@ -244,11 +263,18 @@ class ArticlePreviewClass extends React.Component<IArticlePreviewPropsInterface,
 
                                      <div className="filler" key="filler"></div>,
 
-                                     this.props.isOwner ? <ControlMenu item={this.props.item} key="control" /> : null
+                                     this.props.isOwner ? <ControlMenu item={this.props.item}
+                                                                       deleteCallback={this.deleteArticle.bind(this)} key="control" /> : null
 
                                  ]
 
-                            : null
+                            : (<div className="article_preview__text" key="date">
+
+                                    <Link to={this.props.item.is_draft ? ("/articles/" + this.props.item.id + "/edit/") :
+                                        ("/articles/" + this.props.item.slug + "/")}>
+                                         {date}
+                                    </Link>
+                                 </div>)
                         }
 
                     </div>
