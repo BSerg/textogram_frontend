@@ -4,7 +4,7 @@ import {api} from '../api';
 
 import {MenuAction, TOGGLE} from '../actions/MenuAction';
 import {UserAction, GET_ME, LOGIN, LOGOUT, SAVE_USER, UPDATE_USER} from '../actions/user/UserAction';
-import {NotificationAction, CHECK} from '../actions/NotificationAction'
+import {UserNotificationAction, CHECK_NOTIFICATIONS, DECREASE_NOTIFICATIONS_NUMBER} from '../actions/user/UserNotificationAction';
 import {ModalAction, OPEN_MODAL} from '../actions/shared/ModalAction';
 import Registration from './Registration';
 import {Captions} from '../constants';
@@ -245,7 +245,7 @@ class NotificationBlock extends React.Component<NotificationBlockPropsInterface,
     }
 
     checkNotifications() {
-        this.setState({ count: NotificationAction.getStore().count, last: NotificationAction.getStore().last });
+        this.setState({ count: UserNotificationAction.getStore().count, last: UserNotificationAction.getStore().last });
     }
 
     openNotifications() {
@@ -255,11 +255,11 @@ class NotificationBlock extends React.Component<NotificationBlockPropsInterface,
 
     componentDidMount() {
         this.checkNotifications();
-        NotificationAction.onChange(CHECK, this.checkNotifications);
+        UserNotificationAction.onChange([CHECK_NOTIFICATIONS, DECREASE_NOTIFICATIONS_NUMBER], this.checkNotifications);
     }
 
     componentWillUnmount() {
-        NotificationAction.unbind(CHECK, this.checkNotifications);
+        UserNotificationAction.unbind([CHECK_NOTIFICATIONS, DECREASE_NOTIFICATIONS_NUMBER], this.checkNotifications);
     }
 
     render() {

@@ -1,0 +1,72 @@
+@import "../contstants";
+@import "../mixins";
+
+
+.profile_notification {
+  display: flex;
+  flex-direction: row;
+  padding: $padding / 2;
+  font-family: $family_open_sans;
+  width: 100%;
+  box-sizing: border-box;
+  max-width: 750px;
+  margin-bottom: $margin;
+  line-height: 19px;
+
+  color: #000000;
+  letter-spacing: 1px;
+
+  background-color: #FFFFFF;
+
+  opacity: 1;
+
+  @include transition(300ms);
+
+  &:first-child {
+    margin-top: $margin;
+  }
+
+  &.unread {
+    background-color: $color4;
+  }
+
+  &.new {
+    opacity: 0.3;
+  }
+
+
+
+  .notification_date {
+    flex-grow: 1;
+    width: 90px;
+    max-width: 90px;
+    min-width: 90px;
+    font-size: 9px;
+  }
+
+  .notification_text {
+    font-size: 10px;
+
+    a {
+      color: #000000;
+    }
+  }
+}
+
+@media (min-width: 1024px) {
+  .profile_notification {
+
+    padding: $padding 40px;
+
+    .notification_date {
+      font-size: 11px;
+      width: 140px;
+      max-width: 140px;
+      min-width: 140px;
+    }
+
+    .notification_text {
+      font-size: 12px;
+    }
+  }
+}

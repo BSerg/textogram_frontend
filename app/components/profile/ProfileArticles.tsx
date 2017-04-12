@@ -16,9 +16,9 @@ interface IArticlesState {
     section?: string;
     isSelf?: boolean;
     items?: any[];
-    nextUrl?: string,
-    isLoading?: boolean,
-    cancelSource?: any,
+    nextUrl?: string;
+    isLoading?: boolean;
+    cancelSource?: any;
 }
 
 export default class ProfileArticles extends React.Component<IArticlesProps, IArticlesState> {

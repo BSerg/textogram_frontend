@@ -7,6 +7,7 @@ export const LOGIN = 'login';
 export const LOGOUT = 'logout';
 export const UPDATE_USER = 'update';
 export const SAVE_USER = 'save';
+export const USER_REJECT = 'reject';
 export const UPDATE_USER_DRAFTS = 'update_drafts';
 
 
@@ -23,6 +24,8 @@ UserAction.register(SAVE_USER, (store, data: any) => {
     localStorage.setItem('authToken', data.token);
 });
 
+UserAction.register(USER_REJECT, (store, data: any) => {});
+
 UserAction.register(UPDATE_USER_DRAFTS, (store, addAmount: number = 1) => {
     if (!store.user) {
         return;
@@ -38,13 +41,11 @@ UserAction.registerAsync(GET_ME, (store, data: any) => {
 
     return new Promise((resolve, reject) => {
         api.get('/users/me/').then((response: any) => {
-            console.log(response.data);
             store.user = response.data;
             localStorage.setItem('authToken', response.data.token);
             resolve(response.data);
         }).catch((error) => {
-            // localStorage.removeItem('authToken');
-            store.user = null;
+            UserAction.do(USER_REJECT, null);
             reject(error);
         });
     });
