@@ -1,0 +1,33 @@
+@import "../contstants";
+@import "../mixins";
+
+.image_editor_simple {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 $basic_mobile_offset;
+
+  canvas {
+    cursor: url('../../assets/images/move.svg') 12.5 12.5, move;
+  }
+
+  .image_editor_simple__control {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin-top: 20px;
+    cursor: auto;
+
+    input[type="range"] {
+      width: 100%;
+      background: transparent;
+      cursor: pointer;
+      @include input-range-thumb($color, 13px, 13px, 50%, -5.5px, 2px solid $color3);
+      @include input-range-track($color3, 100%, 2px, none, 2px);
+    }
+
+  }
+}

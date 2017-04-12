@@ -1,10 +1,10 @@
 import * as React from "react";
-import {Captions, BlockContentTypes, Constants, Validation} from "../../constants";
+import {Captions, BlockContentTypes, Validation} from "../../constants";
 import ContentEditable from "../shared/ContentEditable";
 import BaseContentBlock from "./BaseContentBlock";
 import {ContentBlockAction, ACTIVATE_CONTENT_BLOCK} from "../../actions/editor/ContentBlockAction";
 import {ContentAction, UPDATE_CONTENT_BLCK, IContentData} from "../../actions/editor/ContentAction";
-import {UploadImageAction, UPLOAD_IMAGE, UPDATE_PROGRESS} from "../../actions/editor/UploadImageAction";
+import {UploadImageAction, UPLOAD_IMAGE_BASE64} from "../../actions/editor/UploadImageAction";
 import ProgressBar, {PROGRESS_BAR_TYPE} from "../shared/ProgressBar";
 import {Validator} from "./utils";
 import {SHOW_NOTIFICATION, NotificationAction} from "../../actions/shared/NotificationAction";
@@ -12,6 +12,8 @@ import * as toMarkdown from "to-markdown";
 import * as marked from "marked";
 import "../../styles/editor/quote_content_block.scss";
 import {MediaQuerySerice} from "../../services/MediaQueryService";
+import {ModalAction, OPEN_MODAL} from "../../actions/shared/ModalAction";
+import EditableImageModal from "../shared/EditableImageModal";
 
 interface IQuoteContent {
     id: string
@@ -110,6 +112,7 @@ export default class QuoteContentBlock extends React.Component<IQuoteContentBloc
 
     openFileDialog() {
         this.refs.inputUpload.click();
+        this.closePhotoMenu();
     }
 
     handleUploadProgress(fileName: string) {
@@ -121,32 +124,31 @@ export default class QuoteContentBlock extends React.Component<IQuoteContentBloc
     }
 
     updateImage() {
-        let file = this.refs.inputUpload.files[0];
+        let file: any = this.refs.inputUpload.files[0];
         if (!file) {
             this.refs.inputUpload.value = "";
             return;
         }
-        this.setState({loadingImage: true, menuOpened: false});
-        let tempURL = window.URL.createObjectURL(file);
-        let oldImage = this.state.content.image;
-        this.state.content.image = {id: null, image: tempURL};
-        const handlerUploadProgress = this.handleUploadProgress.bind(this, file.name);
-        this.setState({content: this.state.content}, () => {
-            UploadImageAction.onChange(UPDATE_PROGRESS, handlerUploadProgress);
-            UploadImageAction.doAsync(UPLOAD_IMAGE, {articleId: this.props.articleId, image: file}).then(() => {
-                UploadImageAction.unbind(UPDATE_PROGRESS, handlerUploadProgress);
-                let store = UploadImageAction.getStore();
-                this.state.content.image = store.image;
+        let handleConfirm = (imageBase64: string) => {
+            UploadImageAction.doAsync(
+                UPLOAD_IMAGE_BASE64,
+                {articleId: this.props.articleId, image: imageBase64}
+            ).then((data: any) => {
+                console.log(data);
+                this.state.content.image = data;
                 this.setState({content: this.state.content, loadingImage: false, loadingProgress: null}, () => {
                     ContentAction.do(UPDATE_CONTENT_BLCK, {contentBlock: this.state.content});
-                    this.closePhotoMenu();
                 });
-            }).catch((err) => {
-                UploadImageAction.unbind(UPDATE_PROGRESS, handlerUploadProgress);
-                 this.state.content.image = oldImage;
-                this.setState({loadingImage: false, loadingProgress: null, content: this.state.content});
-            })
-        });
+            });
+        };
+
+        let img = new Image();
+        img.onload = () => {
+            let modalContent = <EditableImageModal image={img} width={250} height={250} foregroundColor="#7F7F7F"
+                                                   foregroundShape="circle" onConfirm={handleConfirm}/>;
+            ModalAction.do(OPEN_MODAL, {content: modalContent});
+        };
+        img.src = window.URL.createObjectURL(file);
     }
 
     deleteImage() {
@@ -154,6 +156,7 @@ export default class QuoteContentBlock extends React.Component<IQuoteContentBloc
         this.setState({content: this.state.content}, () => {
             ContentAction.do(UPDATE_CONTENT_BLCK, {contentBlock: this.state.content});
         });
+        this.closePhotoMenu();
     }
 
     handleClickPhoto() {
@@ -176,14 +179,6 @@ export default class QuoteContentBlock extends React.Component<IQuoteContentBloc
             this.setState({isDesktop: isDesktop});
         }
     }
-
-    // shouldComponentUpdate(nextProps: any, nextState: any) {
-    //     if (nextState.updateComponent) {
-    //         delete nextState.updateComponent;
-    //         return false;
-    //     }
-    //     return true;
-    // }
 
     componentDidMount() {
         ContentBlockAction.onChange(ACTIVATE_CONTENT_BLOCK, this.handleActivate);
