@@ -134,7 +134,6 @@ export default class QuoteContentBlock extends React.Component<IQuoteContentBloc
                 UPLOAD_IMAGE_BASE64,
                 {articleId: this.props.articleId, image: imageBase64}
             ).then((data: any) => {
-                console.log(data);
                 this.state.content.image = data;
                 this.setState({content: this.state.content, loadingImage: false, loadingProgress: null}, () => {
                     ContentAction.do(UPDATE_CONTENT_BLCK, {contentBlock: this.state.content});

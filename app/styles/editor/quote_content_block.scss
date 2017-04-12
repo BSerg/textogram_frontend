@@ -105,11 +105,11 @@ $desktop_photo_size: 80px;
 
   .content_block_quote__menu {
     position: absolute;
-    top: $photo_size/2 + $padding/2;
-    left: calc(50% - 65px);
+    top: 70px;
     width: 130px;
     background-color: $color;
-    font-size: $font-size5;
+    font-family: $family_open_sans;
+    font-size: $font-size-small;
     letter-spacing: 1px;
     text-transform: uppercase;
     text-align: center;

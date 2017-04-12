@@ -8,7 +8,7 @@
 
 .editor__content {
   width: 100%;
-  margin: 0 auto;
+  margin: 0 auto 120px auto;
 }
 
 .editor__wrapper .base_content_block:last-child {
@@ -16,17 +16,19 @@
 }
 
 .editor__publish {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
   display:flex;
   align-items: center;
   justify-content: center;
   height: 50px;
-  color: $color;
+  color: white;
   text-transform: uppercase;
   letter-spacing: 2px;
-  background-color: $color4;
+  background-color: $color;
   font-size: 10px;
   z-index: 10;
-  margin: $margin;
   cursor: pointer;
 
   &.disabled {
@@ -112,6 +114,7 @@
   }
 
   .editor__publish {
+    position: relative;
     width: 600px;
     margin: 0 auto 64px auto;
     font-size: 15px;
