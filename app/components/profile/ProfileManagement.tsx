@@ -2,11 +2,11 @@ import * as React from 'react';
 import {Captions} from '../../constants';
 
 import ProfileManagementNotifications from './ProfileManagementNotifications';
+import ProfileManagementAccount from './ProfileManagementAccount';
 
 import Loading from '../shared/Loading';
-// import {Error} from '../Error';
 
-import {UserAction, GET_ME, LOGOUT, LOGIN, UPDATE_USER, USER_REJECT} from '../../actions/user/UserAction';
+import {UserAction, GET_ME, LOGOUT, LOGIN, SAVE_USER, UPDATE_USER, USER_REJECT} from '../../actions/user/UserAction';
 import Error from "../Error";
 
 interface IManagementState {
@@ -23,7 +23,7 @@ export default class ProfileManagement extends React.Component<any, IManagementS
 
     constructor() {
         super();
-        this.state = {currentSection: 'notifications', isDesktop: false,
+        this.state = {currentSection: 'account', isDesktop: false,
             user: UserAction.getStore().user ? JSON.parse(JSON.stringify(UserAction.getStore().user)) : null};
         this.setUser = this.setUser.bind(this);
         this.setError = this.setError.bind(this);
@@ -45,11 +45,11 @@ export default class ProfileManagement extends React.Component<any, IManagementS
     }
 
     componentDidMount() {
-        UserAction.onChange([GET_ME, LOGIN, LOGOUT, UPDATE_USER, USER_REJECT], this.setUser);
+        UserAction.onChange([GET_ME, LOGIN, LOGOUT, SAVE_USER, UPDATE_USER, USER_REJECT], this.setUser);
     }
 
     componentWillUnmount() {
-        UserAction.unbind([GET_ME, LOGIN, LOGOUT, UPDATE_USER, USER_REJECT], this.setUser);
+        UserAction.unbind([GET_ME, LOGIN, LOGOUT, SAVE_USER, UPDATE_USER, USER_REJECT], this.setUser);
     }
 
     render() {
@@ -70,6 +70,15 @@ export default class ProfileManagement extends React.Component<any, IManagementS
 
         if (this.state.currentSection == this.SECTION_NOTIFICATIONS) {
             section = <ProfileManagementNotifications/>;
+        }
+
+        switch (this.state.currentSection) {
+            case (this.SECTION_ACCOUNT):
+                section = <ProfileManagementAccount/>;
+                break;
+            case (this.SECTION_NOTIFICATIONS):
+                section = <ProfileManagementNotifications/>;
+                break;
         }
 
         return (
