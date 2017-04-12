@@ -11,6 +11,8 @@ import ProfileAuthors from './ProfileAuthors';
 import ProfileAuthorList from './ProfileAuthorList';
 import ProfileDrafts from "./ProfileDrafts";
 
+import ProfileSocialLinksList from './ProfileSocialLinkList';
+
 import Loading from '../shared/Loading';
 
 import {api} from '../../api';
@@ -22,6 +24,7 @@ import SocialIcon from './../shared/SocialIcon';
 
 import {ModalAction, OPEN_MODAL} from '../../actions/shared/ModalAction';
 import {MediaQuerySerice} from '../../services/MediaQueryService';
+import ProfileSocialLinkList from "./ProfileSocialLinkList";
 
 const VKIcon = require('babel!svg-react!../../assets/images/profile_social_icon_vk.svg?name=VKIcon');
 const FBIcon = require('babel!svg-react!../../assets/images/profile_social_icon_fb.svg?name=FBIcon');
@@ -209,20 +212,7 @@ export default class Profile extends React.Component<any, IProfileState> {
                          </div>
                          <div className="description">{ this.state.user.description }</div>
 
-                         {
-                             this.state.user.social_links.length ? (
-                                 <div className="social_links_list">
-                                     { this.state.user.social_links.map((social_link: any, index: number) => {
-                                         return (
-                                             <div key={index}>
-                                                 <Link to={social_link.url} target="_blank" >
-                                                     <SocialIcon social={social_link.social} />
-                                                 </Link>
-                                            </div>)
-                                     }) }
-                                 </div>
-                             ) : null
-                         }
+                         <ProfileSocialLinkList items={this.state.user.social_links}/>
 
                          <div className="divider"></div>
 
@@ -293,8 +283,6 @@ export default class Profile extends React.Component<any, IProfileState> {
                              </div>
                          )
                      }
-
-
                  </div>
              </div>
         )

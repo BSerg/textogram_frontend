@@ -46,6 +46,10 @@
 
   .profile_avatar {
     margin: $margin 0;
+
+    &.profile_avatar_editable {
+      cursor: pointer;
+    }
   }
 
   .profile_avatar, .profile_avatar_dummy {

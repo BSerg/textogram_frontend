@@ -58,7 +58,7 @@ class ProfileSocialLink extends React.Component<IProfileSocialLinkProps, IProfil
                     UserAction.do(SAVE_USER, user);
                 });
             }).catch((error) => {
-                this.setState({isLoading: false, urlError: true});
+                this.setState({isLoading: false, urlError: true, newUrl: ''});
             });
         });
     }
@@ -81,10 +81,11 @@ class ProfileSocialLink extends React.Component<IProfileSocialLinkProps, IProfil
                     let user: any = UserAction.getStore().user;
                     let socialLinks: any[] = [];
                     user.social_links.forEach((sl: ISocialLink) => {
-                        if (sl.id != itemId) {
+                        if (sl.id && (sl.id != itemId)) {
                             socialLinks.push(sl);
                         }
                     });
+
                     user.social_links = socialLinks;
                     UserAction.do(SAVE_USER, user);
                 });
@@ -119,8 +120,8 @@ class ProfileSocialLink extends React.Component<IProfileSocialLinkProps, IProfil
 
             {
                 this.state.item.url ? [
-                    <div className="url">
-                        <Link to={this.state.item.url} key="value" target="_blank">
+                    <div className="url" key="value">
+                        <Link to={this.state.item.url} target="_blank">
                             { this.state.item.url }
                         </Link>
                     </div>,

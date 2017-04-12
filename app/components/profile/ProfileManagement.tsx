@@ -4,10 +4,13 @@ import {Captions} from '../../constants';
 import ProfileManagementNotifications from './ProfileManagementNotifications';
 import ProfileManagementAccount from './ProfileManagementAccount';
 
+import ProfileSocialLinksList from './ProfileSocialLinkList';
+
 import Loading from '../shared/Loading';
 
 import {UserAction, GET_ME, LOGOUT, LOGIN, SAVE_USER, UPDATE_USER, USER_REJECT} from '../../actions/user/UserAction';
 import Error from "../Error";
+import ProfileSocialLinkList from "./ProfileSocialLinkList";
 
 interface IManagementState {
     user?: any;
@@ -85,6 +88,12 @@ export default class ProfileManagement extends React.Component<any, IManagementS
             <div id="profile">
                 <div id="profile_content">
                     <div className="profile_content_main">
+                        <div className="profile_avatar profile_avatar_editable" key="avatar">
+                             { this.state.user.avatar ? (<img src={this.state.user.avatar}/>) : (
+                                 <div className="profile_avatar_dummy"></div>) }
+                        </div>
+
+                        <ProfileSocialLinkList items={this.state.user.social_links}/>
 
                     </div>
                     <div className="profile_content_filler"></div>
