@@ -12,8 +12,10 @@ import {
 import {PopupPanelAction, OPEN_POPUP} from "../../actions/shared/PopupPanelAction";
 import ContentBlockPopup from "./ContentBlockPopup";
 import "../../styles/editor/dialog_content_block.scss";
-import {UploadImageAction, UPLOAD_IMAGE} from "../../actions/editor/UploadImageAction";
+import {UploadImageAction, UPLOAD_IMAGE, UPLOAD_IMAGE_BASE64} from "../../actions/editor/UploadImageAction";
 import {DesktopBlockToolsAction, UPDATE_TOOLS} from "../../actions/editor/DesktopBlockToolsAction";
+import EditableImageModal from "../shared/EditableImageModal";
+import {ModalAction, OPEN_MODAL} from "../../actions/shared/ModalAction";
 
 const AddButton = require('babel!svg-react!../../assets/images/redactor_icon_popup_add.svg?name=AddButton');
 
@@ -174,13 +176,30 @@ export default class DialogContentBlock extends React.Component<IDialogContentBl
     uploadImage() {
         if (this.__recipientId && this.state.content.participantsMap[this.__recipientId]) {
             let file = this.refs.inputUpload.files[0];
-            UploadImageAction.doAsync(UPLOAD_IMAGE, {articleId: this.props.articleId, image: file}).then(() => {
-                let image = UploadImageAction.getStore().image;
-                this.state.content.participantsMap[this.__recipientId].avatar = image;
-                this.setState({content: this.state.content}, () => {
-                    this.updateContent();
+            if (!file) {
+                this.refs.inputUpload.value = "";
+                return;
+            }
+
+            let handleConfirm = (imageBase64: string) => {
+                UploadImageAction.doAsync(
+                    UPLOAD_IMAGE_BASE64,
+                    {articleId: this.props.articleId, image: imageBase64}
+                ).then((data: any) => {
+                    this.state.content.participantsMap[this.__recipientId].avatar = data;
+                    this.setState({content: this.state.content}, () => {
+                        this.updateContent();
+                    });
                 });
-            })
+            };
+
+            let img = new Image();
+            img.onload = () => {
+                let modalContent = <EditableImageModal image={img} width={250} height={250} foregroundColor="#7F7F7F"
+                                                       foregroundShape="circle" onConfirm={handleConfirm}/>;
+                ModalAction.do(OPEN_MODAL, {content: modalContent});
+            };
+            img.src = window.URL.createObjectURL(file);
         }
     }
 
