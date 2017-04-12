@@ -213,7 +213,7 @@ export default class QuoteContentBlock extends React.Component<IQuoteContentBloc
                 {this.state.content.image ?
                     this.state.isDesktop ?
                         <div key="photo"
-                             onClick={this.state.isActive && this.deleteImage.bind(this)}
+                             onClick={this.state.isActive ? this.deleteImage.bind(this) : this.handleFocus.bind(this)}
                              className="content_block_quote__photo"
                              style={imageStyle}>
                             {this.state.isActive ?
@@ -221,7 +221,7 @@ export default class QuoteContentBlock extends React.Component<IQuoteContentBloc
                             }
                         </div> :
                         [
-                            <div onClick={this.openPhotoMenu.bind(this)}
+                            <div onClick={this.state.isActive ? this.openPhotoMenu.bind(this) : this.handleFocus.bind(this)}
                                  key="photo"
                                  className="content_block_quote__photo"
                                  style={imageStyle}/>,
