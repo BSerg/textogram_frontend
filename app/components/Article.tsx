@@ -127,12 +127,23 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
         let phrases = document.getElementsByClassName('phrase');
         for (let i in phrases) {
             let phrase = phrases[i] as HTMLElement;
-            console.log('PHRASE', phrase)
             if (phrase && phrase.innerText) {
                 if (phrase.innerText.length <= 70) {
                     phrase.classList.add('short');
                 } else if (phrase.innerText.length > 200) {
                     phrase.classList.add('long');
+                }
+            }
+        }
+    }
+
+    processColumn() {
+        let columns = document.getElementsByClassName('column');
+        for (let i in columns) {
+            let column = columns[i] as HTMLElement;
+            if (column && column.innerText) {
+                if (column.innerText.length > 500) {
+                    column.classList.add('long');
                 }
             }
         }

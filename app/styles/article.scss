@@ -256,6 +256,10 @@ $block_margin_desktop: 25px;
       position: relative;
       padding-top: 45px;
 
+      &.long {
+        @include columns_font_small();
+      }
+
       &:after {
         content: '';
         display: block;
@@ -272,16 +276,16 @@ $block_margin_desktop: 25px;
       }
 
       .column:first-child {
-        width: 38%;
+        width: 70px;
 
         img {
-          width: 100%;
-          margin-top: 7.5px;
+          width: 70px;
+          height: 70px;
         }
       }
 
       .column:not(:first-child) {
-        width: calc(62% - #{$margin});
+        width: calc(100% - 70px - #{$margin});
         margin-left: $margin;
       }
     }
@@ -649,8 +653,21 @@ $block_margin_desktop: 25px;
         @include columns_font_desktop();
         padding-top: 25px;
 
+        &.long {
+          @include columns_font_desktop_small();
+        }
+
+        .column:first-child {
+          width: 200px;
+
+          img {
+            width: 200px;
+            height: 200px;
+          }
+        }
+
         .column:not(:first-child) {
-          width: calc(62% - 30px);
+          width: calc(100% - 200px - 30px);
           margin-left: 30px;
         }
 

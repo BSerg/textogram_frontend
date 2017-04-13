@@ -49,7 +49,7 @@ export default class LeadContentBlock extends React.Component<ILeadContentBlockP
         this.state.content.value = toMarkdown(content);
         let isValid = this.isValid(this.state.content);
         if (!isValid) {
-            NotificationAction.do(SHOW_NOTIFICATION, {content: Validation.LEAD.value.message});
+            // NotificationAction.do(SHOW_NOTIFICATION, {content: Validation.LEAD.value.message});
         }
         this.state.content.__meta = {is_valid: isValid};
         this.setState({content: this.state.content, isValid: isValid}, () => {
