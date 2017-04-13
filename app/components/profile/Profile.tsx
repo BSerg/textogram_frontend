@@ -217,8 +217,8 @@ export default class Profile extends React.Component<any, IProfileState> {
                          <div className="divider"></div>
 
                          <div className="subscription">
-                             <div onClick={this.showAuthors.bind(this, false)}><span>{ this.state.user.subscriptions }</span> читает</div>
-                             <div onClick={this.showAuthors.bind(this, true)}><span>{ this.state.user.subscribers }</span> подписано</div>
+                             <div onClick={this.showAuthors.bind(this, true)}><span>{ this.state.user.subscribers }</span> читателей</div>
+                             <div onClick={this.showAuthors.bind(this, false)}><span>{ this.state.user.subscriptions }</span> подписок</div>
                              {
                                  (!this.state.isDesktop && this.state.canSubscribe) ? (
                                     this.state.user.is_subscribed ? (

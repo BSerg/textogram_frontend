@@ -8,6 +8,8 @@ import Menu from './Menu';
 import {UserAction, GET_ME, LOGIN, LOGOUT} from '../actions/user/UserAction';
 import {UserNotificationAction, CHECK_NOTIFICATIONS} from '../actions/user/UserNotificationAction';
 
+import {MenuAction, TOGGLE} from '../actions/MenuAction';
+
 import {Constants} from '../constants';
 
 import '../styles/base.scss';
@@ -20,10 +22,13 @@ export default class Base extends React.Component<any, any> {
         super(props);
         this.state = {
             userNotificationsInterval: null,
-            isDesktop: MediaQuerySerice.getIsDesktop()
+            isDesktop: MediaQuerySerice.getIsDesktop(),
+            menuOpen: false,
         };
         this.handleMediaQuery = this.handleMediaQuery.bind(this);
         this.handleNotifications = this.handleNotifications.bind(this);
+        this.setMenuOpen = this.setMenuOpen.bind(this);
+
     }
 
     handleNotifications() {
@@ -40,6 +45,10 @@ export default class Base extends React.Component<any, any> {
         }
     }
 
+    setMenuOpen() {
+        this.setState({ menuOpen: MenuAction.getStore().open });
+    }
+
     // stopNotifications() {
     //
     // }
@@ -52,11 +61,13 @@ export default class Base extends React.Component<any, any> {
 
     componentDidMount() {
         UserAction.onChange([GET_ME, LOGIN, LOGOUT], this.handleNotifications);
+        MenuAction.onChange(TOGGLE, this.setMenuOpen);
         MediaQuerySerice.listen(this.handleMediaQuery);
     }
 
     componentWillUnmount() {
         UserAction.unbind([GET_ME, LOGIN, LOGOUT], this.handleNotifications);
+        MenuAction.unbind(TOGGLE, this.setMenuOpen);
         MediaQuerySerice.unbind(this.handleMediaQuery);
     }
 
@@ -64,7 +75,7 @@ export default class Base extends React.Component<any, any> {
         return (
             <div className="container">
                 <Menu />
-                <div className="content">
+                <div className={"content" + (this.state.menuOpen ? " content_menu_open" : "")}>
                     {this.props.children}
                 </div>
                 <MenuButton/>

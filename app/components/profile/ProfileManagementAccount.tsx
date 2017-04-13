@@ -9,15 +9,23 @@ import {api} from '../../api';
 
 import '../../styles/profile/profile_management_account.scss';
 
+const ConfirmIcon = require('babel!svg-react!../../assets/images/redactor_icon_confirm.svg?name=ConfirmIcon');
+const CloseIcon = require('babel!svg-react!../../assets/images/close.svg?name=CloseIcon');
+
+const VisibilityIcon = require('babel!svg-react!../../assets/images/profile_visibility_icon.svg?name=VisibilityIcon');
+const VisibilityOffIcon = require('babel!svg-react!../../assets/images/profile_visibility_off_icon.svg?name=VisibilityOffIcon');
+
 interface ISocialLink {
     id: number | null;
     social: string;
     url: string;
     is_auth?: boolean;
+    is_hidden?: boolean;
 }
 
 interface  IProfileSocialLinkProps {
     item: ISocialLink;
+    isAuth?: boolean;
 }
 
 
@@ -26,6 +34,7 @@ interface  IProfileSocialLinkState {
     newUrl?: string;
     urlError?: boolean;
     isLoading?: boolean;
+    isActive?: boolean;
     placeholder?: string;
 }
 
@@ -33,7 +42,9 @@ class ProfileSocialLink extends React.Component<IProfileSocialLinkProps, IProfil
 
     constructor() {
         super();
-        this.state = {item: {id: null, social: '', url: ''}, newUrl: '', urlError: false, isLoading: false, placeholder: ''};
+        this.state = {item: {id: null, social: '', url: ''}, newUrl: '', urlError: false, isLoading: false, placeholder: '',
+            isActive: false
+        };
     }
 
     changeUrl(e: any) {
@@ -96,16 +107,62 @@ class ProfileSocialLink extends React.Component<IProfileSocialLinkProps, IProfil
         })
     }
 
-    setPlaceholder() {
-        this.setState({placeholder: 'Вставьте ссылку'});
+    toggleHidden() {
+        let hidden = !this.state.item.is_hidden;
+
+        api.patch('/social_links/' + this.state.item.id + '/', {is_hidden: hidden}).then((response: any) => {
+            let item = this.state.item;
+            item.is_hidden = response.data.is_hidden;
+            this.setState({item: item}, () => {
+                let user = UserAction.getStore().user;
+                user.social_links.forEach((sl: ISocialLink) => {
+                   if (sl.id == this.state.item.id) {
+                       sl.is_hidden = this.state.item.is_hidden;
+                   }
+                });
+                UserAction.do(SAVE_USER, user);
+            });
+        });
     }
 
-    removePlaceholder() {
-        this.setState({placeholder: 'Акк'});
+    setActive(active: boolean) {
+        this.setState({isActive: active, placeholder: active ? 'Вставьте ссылку' : this.getPlaceholder()});
+    }
+
+    getPlaceholder():string {
+
+        let placeholderValue: string;
+
+        switch (this.props.item.social) {
+            case ('vk'):
+                placeholderValue = 'Аккаунт ВКонтатке';
+                break;
+            case ('fb'):
+                placeholderValue = 'Аккаунт Facebook';
+                break;
+            case ('twitter'):
+                placeholderValue = 'Аккаунт Twitter';
+                break;
+            case ('instagram'):
+                placeholderValue = 'Instagram';
+                break;
+            case ('telegram'):
+                placeholderValue = 'Канал в Telegram';
+                break;
+            case ('google'):
+                placeholderValue = 'Google+';
+                break;
+            case ('web'):
+                placeholderValue = 'Личный сайт';
+                break;
+
+        }
+
+        return placeholderValue || '';
     }
 
     componentDidMount() {
-        this.setState({item: this.props.item, newUrl: this.props.item.url, placeholder: 'Аккк'});
+        this.setState({item: this.props.item, newUrl: this.props.item.url, placeholder: this.getPlaceholder()});
     }
 
     render() {
@@ -125,17 +182,26 @@ class ProfileSocialLink extends React.Component<IProfileSocialLinkProps, IProfil
                             { this.state.item.url }
                         </Link>
                     </div>,
-                    <div key="delete" className="delete" onClick={this.deleteUrl.bind(this)}>x</div>,
+
+                        this.state.item.is_auth ?
+                            <div key="toggle" className="confirm" onClick={this.toggleHidden.bind(this)}>
+                                {
+                                    this.state.item.is_hidden ? (<VisibilityOffIcon />) : (<VisibilityIcon />)
+                                }
+                            </div>
+                            :
+
+                        <div key="delete" className="delete" onClick={this.deleteUrl.bind(this)}><CloseIcon /></div>,
                 ] : [
 
                     <form key="input" className="input" onSubmit={this.formSubmit.bind(this)}>
                         <input type="text" name="url" value={this.state.newUrl}
                                placeholder={this.state.placeholder}
-                               onFocus={this.setPlaceholder.bind(this)}
-                               onBlur={this.removePlaceholder.bind(this)}
+                               onFocus={this.setActive.bind(this, true)}
+                               onBlur={this.setActive.bind(this, false)}
                                onChange={this.changeUrl.bind(this)} />
                     </form>,
-                    <div key="save" className="confirm" onClick={this.saveUrl.bind(this) }  >v</div>
+                    this.state.isActive ? <div key="save" className="confirm" onClick={this.saveUrl.bind(this) }  ><ConfirmIcon /></div> : null
                 ]
             }
         </div>);
@@ -163,6 +229,8 @@ export default class ProfileManagementAccount extends React.Component<any, IAcco
             return;
         }
 
+        let authAccount: ISocialLink = null;
+
         let links: ISocialLink[] = [];
 
         this.ACCOUNT_TYPES.forEach((social: string) => {
@@ -174,11 +242,14 @@ export default class ProfileManagementAccount extends React.Component<any, IAcco
                     item.id = sl.id;
                     item.url = sl.url;
                 }
+                else if (sl.is_auth) {
+                    authAccount = sl;
+                }
             });
             links.push(item);
         });
 
-        this.setState({socialLinks: links});
+        this.setState({socialLinks: links, authAccount: authAccount});
     }
 
     componentDidMount() {
@@ -188,9 +259,26 @@ export default class ProfileManagementAccount extends React.Component<any, IAcco
     render() {
         return (<div>
 
+            {
+                this.state.authAccount ? (
+                    <div className="profile_management_links">
+                        <div className="title">
+                            Аккаунт авторизации:
+                        </div>
+                        <div className="main">
+
+                            <ProfileSocialLink item={this.state.authAccount} />
+
+                        </div>
+                    </div>
+                ) : null
+            }
+
+
+
             <div className="profile_management_links">
                 <div className="title">
-                    Дополнительные аккаунты:
+                    Дополнительные связи:
                 </div>
                 <div className="main">
                     {

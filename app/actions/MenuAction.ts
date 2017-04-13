@@ -16,4 +16,5 @@ export const MenuAction = new MenuActionClass();
 MenuAction.register(TOGGLE, (store, open: boolean = false) => {
     store.open = open;
     document.body.style.marginTop = (open && MediaQuerySerice.getIsDesktop()) ? '55px' : '0';
+    document.body.style.height = (open && MediaQuerySerice.getIsDesktop()) ? 'calc(100% - 55px)' : '100%';
 });

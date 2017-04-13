@@ -285,6 +285,11 @@
 
 @media (min-width: 1024px) {
 
+  .content_menu_open #profile {
+    //min-height: calc(100% - 55px);
+    //@include transition(200ms);
+  }
+
   #profile {
 
     $content-main-width: 340px;

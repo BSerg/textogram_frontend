@@ -5,8 +5,12 @@
   padding: $padding;
   background-color: #FFFFFF;
   width: 100%;
-  max-width: 700px;
+  max-width: 800px;
   box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+
+  margin-bottom: $margin;
 
   &:first-child {
     margin-top: $margin;
@@ -40,6 +44,7 @@
   font-family: $family_open_sans;
   font-size: 10px;
 
+
   .social_link_icon {
     @include border_radius(50%);
 
@@ -71,6 +76,7 @@
     flex-grow: 1;
     overflow: hidden;
     text-overflow: ellipsis;
+    padding-right: $padding;
 
   }
 
@@ -80,8 +86,8 @@
 
   .url, form {
     box-sizing: border-box;
-    padding-right: $padding;
   }
+
 
   input {
     outline: none;
@@ -90,7 +96,7 @@
     border: none;
     width: 100%;
     min-width: unset;
-    height: 15px;
+    height: 20px;
     font-family: $family_open_sans;
     letter-spacing: 1px;
     &:focus {
@@ -98,5 +104,60 @@
     }
   }
 
+  .delete, .confirm {
+    cursor: pointer;
+  }
 
+  .delete {
+    svg {
+      fill: #BCBCBC;
+      width: 10px;
+      height: 10px;
+    }
+
+    &:hover {
+      svg {
+        fill: #000000;
+      }
+    }
+  }
+
+  .confirm {
+    position: absolute;
+    right: -10px;
+
+    svg {
+      width: 25px;
+      height: 25px;
+      fill: #000000;
+    }
+  }
+
+}
+
+@media (min-width: 1024px) {
+  .profile_management_links {
+    flex-direction: row;
+    padding: $padding $padding * 2;
+    margin-bottom: $margin * 2;
+
+    &:first-child {
+      margin-top: $margin * 2;
+    }
+
+    .title {
+      margin: $margin / 2 $margin * 4 0 0;
+      font-size: 10px;
+      width: 170px;
+    }
+
+  }
+
+  .profile_management_social_link {
+    max-width: 250px;
+
+    &, input {
+      font-size: 12px;
+    }
+  }
 }

@@ -5,6 +5,7 @@ const FBIcon = require('babel!svg-react!../../assets/images/profile_social_icon_
 const TwitterIcon = require('babel!svg-react!../../assets/images/profile_social_icon_twitter.svg?name=TwitterIcon');
 const GoogleIcon = require('babel!svg-react!../../assets/images/profile_social_icon_google.svg?name=GoogleIcon');
 const UrlIcon = require('babel!svg-react!../../assets/images/profile_web_link_icon.svg?name=UrlIcon');
+const SiteIcon = require('babel!svg-react!../../assets/images/site.svg?name=SiteIcon');
 const TelegramIcon = require('babel!svg-react!../../assets/images/telegram.svg?name=TelegramIcon');
 const InstagramIcon = require('babel!svg-react!../../assets/images/profile_social_icon_instagram.svg?name=InstagramIcon');
 const WhatsappIcon = require('babel!svg-react!../../assets/images/whatsapp.svg?name=WhatsappIcon');
@@ -34,7 +35,7 @@ export default class SocialIcon extends React.Component<ISocialIconProps, any> {
 
     getIcon(): any {
         let Icon = this.ICONS[this.props.social];
-        return Icon ? Icon : UrlIcon;
+        return Icon ? Icon : SiteIcon;
     }
 
     render() {
