@@ -8,6 +8,11 @@
 .content_editable {
   position: relative;
 
+  span {
+    display: inline-block;
+    width: 100%;
+  }
+
   .empty_tag {
     position: relative;
   }
@@ -20,6 +25,7 @@
     right: 0;
     color: $color3;
     cursor: text;
+    @include no-select();
 
     &.center {
       text-align: center;

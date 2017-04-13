@@ -4,12 +4,13 @@ import {
     ACTIVATE_CONTENT_BLOCK,
     DEACTIVATE_CONTENT_BLOCK
 } from "../../actions/editor/ContentBlockAction";
-import {ContentAction, DELETE_CONTENT} from "../../actions/editor/ContentAction";
+import {ContentAction, DELETE_CONTENT_BLCK} from "../../actions/editor/ContentAction";
 import {PopupPanelAction, OPEN_POPUP, CLOSE_POPUP} from "../../actions/shared/PopupPanelAction";
 import ContentBlockPopup from "./ContentBlockPopup";
 import "../../styles/editor/base_content_block.scss";
 import {
-    BlockHandlerAction, ACTIVATE_BLOCK_HANDLER,
+    BlockHandlerAction,
+    ACTIVATE_BLOCK_HANDLER,
     DEACTIVATE_BLOCK_HANDLER
 } from "../../actions/editor/BlockHandlerAction";
 import {MediaQuerySerice} from "../../services/MediaQueryService";
@@ -114,7 +115,7 @@ export default class BaseContentBlock extends React.Component<IBaseContnentBlock
     }
 
     handleDelete() {
-        ContentAction.do(DELETE_CONTENT, {id: this.props.id});
+        ContentAction.do(DELETE_CONTENT_BLCK, {id: this.props.id});
         ContentBlockAction.do(DEACTIVATE_CONTENT_BLOCK, null);
         PopupPanelAction.do(CLOSE_POPUP, null);
     }
@@ -179,7 +180,9 @@ export default class BaseContentBlock extends React.Component<IBaseContnentBlock
         if (this.state.expandBottom) className += ' expand_bottom';
         return (
             <div id={this.props.id.toString()} className={className} onClick={this.handleClick.bind(this)}>
-                {this.props.children}
+                <div className="base_content_block__content">
+                    {this.props.children}
+                </div>
                 {this.state.isDesktop && this.state.isActive ?
                     <div className="base_content_block__tools">
                         <div className="base_content_block__delete"

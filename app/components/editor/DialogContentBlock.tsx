@@ -2,7 +2,7 @@ import * as React from "react";
 import {Captions, BlockContentTypes, Validation} from "../../constants";
 import ContentEditable from "../shared/ContentEditable";
 import BaseContentBlock from "./BaseContentBlock";
-import {IContentData, ContentAction, DELETE_CONTENT, UPDATE_CONTENT} from "../../actions/editor/ContentAction";
+import {IContentData, ContentAction, DELETE_CONTENT_BLCK, UPDATE_CONTENT_BLCK} from "../../actions/editor/ContentAction";
 import {Validator} from "./utils";
 import {IPhoto} from "../../actions/editor/PhotoContentBlockAction";
 import {
@@ -12,8 +12,10 @@ import {
 import {PopupPanelAction, OPEN_POPUP} from "../../actions/shared/PopupPanelAction";
 import ContentBlockPopup from "./ContentBlockPopup";
 import "../../styles/editor/dialog_content_block.scss";
-import {UploadImageAction, UPLOAD_IMAGE} from "../../actions/editor/UploadImageAction";
+import {UploadImageAction, UPLOAD_IMAGE, UPLOAD_IMAGE_BASE64} from "../../actions/editor/UploadImageAction";
 import {DesktopBlockToolsAction, UPDATE_TOOLS} from "../../actions/editor/DesktopBlockToolsAction";
+import EditableImageModal from "../shared/EditableImageModal";
+import {ModalAction, OPEN_MODAL} from "../../actions/shared/ModalAction";
 
 const AddButton = require('babel!svg-react!../../assets/images/redactor_icon_popup_add.svg?name=AddButton');
 
@@ -98,7 +100,7 @@ export default class DialogContentBlock extends React.Component<IDialogContentBl
     }
 
     handleDelete() {
-        ContentAction.do(DELETE_CONTENT, {id: this.state.content.id});
+        ContentAction.do(DELETE_CONTENT_BLCK, {id: this.state.content.id});
         ContentBlockAction.do(DEACTIVATE_CONTENT_BLOCK, null);
     }
 
@@ -163,7 +165,7 @@ export default class DialogContentBlock extends React.Component<IDialogContentBl
     }
 
     updateContent() {
-        ContentAction.do(UPDATE_CONTENT, {contentBlock: this.state.content});
+        ContentAction.do(UPDATE_CONTENT_BLCK, {contentBlock: this.state.content});
     }
 
     openFileDialog(participantId: number) {
@@ -174,13 +176,33 @@ export default class DialogContentBlock extends React.Component<IDialogContentBl
     uploadImage() {
         if (this.__recipientId && this.state.content.participantsMap[this.__recipientId]) {
             let file = this.refs.inputUpload.files[0];
-            UploadImageAction.doAsync(UPLOAD_IMAGE, {articleId: this.props.articleId, image: file}).then(() => {
-                let image = UploadImageAction.getStore().image;
-                this.state.content.participantsMap[this.__recipientId].avatar = image;
-                this.setState({content: this.state.content}, () => {
-                    this.updateContent();
+            if (!file) {
+                this.refs.inputUpload.value = "";
+                return;
+            }
+
+            let handleConfirm = (imageBase64: string) => {
+                UploadImageAction.doAsync(
+                    UPLOAD_IMAGE_BASE64,
+                    {articleId: this.props.articleId, image: imageBase64}
+                ).then((data: any) => {
+                    this.state.content.participantsMap[this.__recipientId].avatar = data;
+                    this.setState({content: this.state.content}, () => {
+                        this.updateContent();
+                    });
                 });
-            })
+            };
+
+            let img = new Image();
+            img.onload = () => {
+                let modalContent = <EditableImageModal image={img}
+                                                       outputWidth={64}
+                                                       outputHeight={64}
+                                                       foregroundColor="rgba(0, 0, 0, 0.5)"
+                                                       foregroundShape="circle" onConfirm={handleConfirm}/>;
+                ModalAction.do(OPEN_MODAL, {content: modalContent});
+            };
+            img.src = window.URL.createObjectURL(file);
         }
     }
 

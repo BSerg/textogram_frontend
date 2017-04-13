@@ -14,10 +14,11 @@ $block_margin_desktop: 25px;
     align-items: center;
     justify-content: center;
     width: 100%;
-    padding: 100px 0;
+    min-height: 330px;
+    height: 60vh;
+    max-height: 400px;
     background-size: cover!important;
     text-align: center;
-    //background-color: $color4;
     border-bottom: 1px solid $color3;
     margin-bottom: 25px;
 
@@ -26,26 +27,27 @@ $block_margin_desktop: 25px;
       position: absolute;
       width: 100%;
       height: 20px;
-      top: 30px;
+      top: 50px;
       text-align: center;
       font-size: 12px;
       line-height: 14px;
       font-family: $family_open_sans;
       letter-spacing: 1px;
-      text-transform: uppercase;
-      text-decoration: underline;
       color: $color;
       cursor: pointer;
+
+      a, a:visited {
+        color: $color;
+      }
     }
 
     h1 {
       @include title_font();
-      width: calc(100% - #{$padding}*2);
-      max-width: 600px - $padding * 2;
+      width: calc(100% - #{$basic_mobile_offset}*2);
+      max-width: 600px - $basic_mobile_offset * 2;
       margin: 0 auto;
       position: relative;
       word-wrap: break-word;
-      margin-top: -30px;
     }
 
     .article__stats {
@@ -115,7 +117,11 @@ $block_margin_desktop: 25px;
       }
 
       .article__author {
-        color: white
+        color: white;
+
+        a, a:visited {
+          color: white;
+        }
       }
     }
 
@@ -128,7 +134,7 @@ $block_margin_desktop: 25px;
 
       h1 {
         @include title_font_desktop();
-        width: 600px;
+        width: 650px;
         margin: 0 auto;
       }
 
@@ -152,7 +158,7 @@ $block_margin_desktop: 25px;
     position: relative;
 
     & > p, h2, blockquote, ul, .lead, .phrase, .columns, .embed, .photos, .dialogue, .single_photo {
-      padding: $padding/4 $padding;
+      margin: 20px $basic_mobile_offset
     }
 
     iframe {
@@ -161,18 +167,15 @@ $block_margin_desktop: 25px;
 
     h2 {
       @include header_font();
-      margin-top: 20px;
+      margin-top: 30px;
     }
 
     & > p {
       @include text_font();
-      line-height: 29px;
     }
 
     ul {
       list-style: disc outside;
-      font-size: 18px;
-      line-height: 29px;
 
       li {
         margin-left: 15px;
@@ -183,9 +186,17 @@ $block_margin_desktop: 25px;
     blockquote {
       @include quote_font();
       position: relative;
-      margin: 25px 0;
+      width: calc(100% - #{$basic_mobile_offset} * 3);
+      margin-top: 30px;
+      margin-bottom: 30px;
+      padding: 0 0 0 $basic_mobile_offset;
+      border-left: 2px solid $color;
 
-      & > p:before {
+      & > p:not(:last-child) {
+        margin-bottom: 20px;
+      }
+
+      &:before {
         content: '';
         display: inline-block;
         background: url('../assets/images/pub_quote.svg') no-repeat center center;
@@ -193,21 +204,31 @@ $block_margin_desktop: 25px;
         width: 30px;
         height: 30px;
         margin-right: 10px;
-        margin-bottom: -5px;
+        margin-top: -6px;
+        float: left;
       }
 
       &.personal {
-        margin-top: 60px;
-        padding-top: 40px;
+        margin-top: 20px + 60px + 30px;
 
         img {
           position: absolute;
-          width: 70px;
-          height: 70px;
-          top: -35px;
-          left: calc(50% - 35px);
-          @include border_radius(70px);
+          width: 60px;
+          height: 60px;
+          top: -80px;
+          left: calc(50% - 30px);
+          @include border_radius(60px);
           object-fit: cover;
+        }
+      }
+
+      &.long {
+        @include quote_font_small();
+
+        &:before {
+          background-size: 28px;
+          width: 20px;
+          height: 20px;
         }
       }
     }
@@ -235,6 +256,10 @@ $block_margin_desktop: 25px;
       position: relative;
       padding-top: 45px;
 
+      &.long {
+        @include columns_font_small();
+      }
+
       &:after {
         content: '';
         display: block;
@@ -251,35 +276,31 @@ $block_margin_desktop: 25px;
       }
 
       .column:first-child {
-        width: 38%;
+        width: 70px;
 
         img {
-          width: 100%;
-          margin-top: 7.5px;
+          width: 70px;
+          height: 70px;
         }
       }
 
       .column:not(:first-child) {
-        width: calc(62% - #{$margin});
+        width: calc(100% - 70px - #{$margin});
         margin-left: $margin;
       }
     }
 
     .phrase {
       @include phrase_font();
-      position: relative;
-      text-align: right;
-      padding-top: 45px;
-      padding-left: 25%;
+      margin: 40px 35px;
+      text-align: center;
 
-      &:after {
-        content: '';
-        position: absolute;
-        top: 30px;
-        left: 25%;
-        width: calc(75% - 30px);
-        height: 3px;
-        background-color: $color;
+      &.short {
+        @include phrase_font_large();
+      }
+
+      &.long {
+        @include phrase_font_small();
       }
     }
 
@@ -567,8 +588,9 @@ $block_margin_desktop: 25px;
       }
     }
 
+    // DESKTOP
     @include desktop {
-      width: 600px;
+      width: 650px;
       margin: 0 auto;
 
       & > p, h2, blockquote, ul, .lead, .phrase, .columns, .embed, .photos, .dialogue, .single_photo {
@@ -599,29 +621,26 @@ $block_margin_desktop: 25px;
 
       blockquote {
         @include quote_font_desktop();
-        margin-top: 25px;
-        margin-bottom: 25px;
-
-        &:not(.personal) > p {
-          padding-left: 70px;
-        }
+        width: 500px - $basic_desktop_offset;
+        margin: 25px auto;
+        padding-left: $basic_desktop_offset;
 
         &.personal {
-          display: flex;
-          flex-direction: row;
-          align-items: center;
-          padding: 0;
-          margin-top: 25px;
+          margin-top: 155px;
 
           img {
-            position: unset;
-            min-width: 100px;
-            width: 100px;
-            height: 100px;
-            @include border_radius(100px);
-            object-fit: cover;
-            margin-top: unset!important;
-            margin-right: 65px;
+            @include border_radius(80px);
+            width: 80px;
+            height: 80px;
+            top: -105px;
+          }
+        }
+
+        &.long {
+          @include quote_font_desktop_small();
+
+          &:before {
+            margin-top: 0;
           }
         }
       }
@@ -634,8 +653,21 @@ $block_margin_desktop: 25px;
         @include columns_font_desktop();
         padding-top: 25px;
 
+        &.long {
+          @include columns_font_desktop_small();
+        }
+
+        .column:first-child {
+          width: 200px;
+
+          img {
+            width: 200px;
+            height: 200px;
+          }
+        }
+
         .column:not(:first-child) {
-          width: calc(62% - 30px);
+          width: calc(100% - 200px - 30px);
           margin-left: 30px;
         }
 
@@ -648,14 +680,22 @@ $block_margin_desktop: 25px;
 
       .phrase {
         @include phrase_font_desktop();
-        width: 67%;
-        padding-top: 35px;
-        padding-left: 33%;
+        width: 500px;
+        margin-left: auto;
+        margin-right: auto;
 
         &:after {
           top: 20px;
           left: 33%;
           width: 67%;
+        }
+
+        &.short {
+          @include phrase_font_desktop_large();
+        }
+
+        &.long {
+          @include phrase_font_desktop_small();
         }
       }
 

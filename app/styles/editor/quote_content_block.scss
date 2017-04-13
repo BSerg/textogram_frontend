@@ -1,15 +1,13 @@
 @import "../contstants";
 @import "../mixins";
 
-$photo_size: 70px;
-$desktop_photo_size: 100px;
+$photo_size: 60px;
+$desktop_photo_size: 80px;
 
 .content_block_quote {
   @include quote_font();
-  display: flex;
   position: relative;
-  flex-direction: column;
-  align-items: center;
+  padding: $basic_mobile_offset;
 
   b, strong {
     font-weight: $font-weight-bold;
@@ -25,10 +23,24 @@ $desktop_photo_size: 100px;
     text-decoration: underline;
   }
 
+  .base_content_block__content {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .content_block_quote__quote {
+    width: calc(100% - 18px);
+    padding-left: 18px;
+    border-left: 2px solid $color;
+  }
+
   .content_editable {
+    position: relative;
     width: 100%;
 
-    p:first-child:before {
+    &:before {
       content: '';
       display: inline-block;
       background: url('../../assets/images/pub_quote.svg') no-repeat center center;
@@ -36,12 +48,28 @@ $desktop_photo_size: 100px;
       width: 30px;
       height: 30px;
       margin-right: 10px;
-      margin-bottom: -5px;
+      margin-top: -6px;
+      float: left;
+    }
+
+    p:not(:last-child) {
+      margin-bottom: 20px;
     }
   }
 
-  .content_editable.empty:empty:after, .content_editable.empty .empty_tag:last-child:after {
-    padding-left: 40px;
+  &.long {
+    @include quote_font_small();
+
+    .content_editable:before {
+      width: 20px;
+      height: 20px;
+      background-size: 28px;
+    }
+  }
+
+  .content_editable.empty .empty_tag {
+    display: inline-block;
+    width: calc(100% - 40px);
   }
 
   &.active {
@@ -55,6 +83,7 @@ $desktop_photo_size: 100px;
     @include border_radius($photo_size);
     width: $photo_size;
     height: $photo_size;
+    margin-bottom: 20px;
   }
 
   .content_block_quote__photo {
@@ -66,28 +95,21 @@ $desktop_photo_size: 100px;
     display: none;
     background: $color3 url('../../assets/images/redactor_icon_person.svg') no-repeat center center;
     background-size: 30px;
-    margin-top: -($photo_size/2 + $padding/2);
   }
 
   &.active {
-    margin-top: $photo_size/2 + $padding/2;
-
     .content_block_quote__empty_photo {
       display: block;
-    }
-
-    .content_block_quote__photo {
-        margin-top: -($photo_size/2 + $padding/2);
     }
   }
 
   .content_block_quote__menu {
     position: absolute;
-    top: $photo_size/2 + $padding/2;
-    left: calc(50% - 65px);
+    top: 70px;
     width: 130px;
     background-color: $color;
-    font-size: $font-size5;
+    font-family: $family_open_sans;
+    font-size: $font-size-small;
     letter-spacing: 1px;
     text-transform: uppercase;
     text-align: center;
@@ -127,11 +149,19 @@ $desktop_photo_size: 100px;
 
   @include desktop {
     @include quote_font_desktop();
-    flex-direction: row;
-    align-items: center;
+    padding: $basic_desktop_offset;
 
-    &:not(.personal):not(.active) .content_editable {
-      padding-left: 70px;
+    &.long {
+      @include quote_font_desktop_small();
+
+      .content_editable:before {
+        margin-top: 0px;
+      }
+    }
+
+    .base_content_block__content {
+      width: 500px;
+      padding: 0 75px;
     }
 
     .content_block_quote__photo,
@@ -140,7 +170,6 @@ $desktop_photo_size: 100px;
       min-width: $desktop_photo_size;
       height: $desktop_photo_size;
       margin-top: unset!important;
-      margin-right: 65px;
       cursor: pointer;
 
       .content_block_quote__foreground {

@@ -3,14 +3,19 @@ import {Captions, Constants, BlockContentTypes, Validation} from "../../constant
 import ContentEditable from "../shared/ContentEditable";
 import BaseContentBlock from "./BaseContentBlock";
 import {ContentBlockAction, ACTIVATE_CONTENT_BLOCK} from "../../actions/editor/ContentBlockAction";
-import {ContentAction, UPDATE_CONTENT, IContentData} from "../../actions/editor/ContentAction";
+import {ContentAction, UPDATE_CONTENT_BLCK, IContentData} from "../../actions/editor/ContentAction";
 import * as toMarkdown from "to-markdown";
 import * as marked from "marked";
-import {UploadImageAction, UPLOAD_IMAGE, UPDATE_PROGRESS} from "../../actions/editor/UploadImageAction";
+import {
+    UploadImageAction, UPLOAD_IMAGE, UPDATE_PROGRESS,
+    UPLOAD_IMAGE_BASE64
+} from "../../actions/editor/UploadImageAction";
 import ProgressBar, {PROGRESS_BAR_TYPE} from "../shared/ProgressBar";
 import {Validator} from "./utils";
 import {NotificationAction, SHOW_NOTIFICATION} from "../../actions/shared/NotificationAction";
 import "../../styles/editor/column_content_block.scss";
+import EditableImageModal from "../shared/EditableImageModal";
+import {ModalAction, OPEN_MODAL} from "../../actions/shared/ModalAction";
 
 interface IColumnContent {
     id: string
@@ -27,10 +32,12 @@ interface IColumnContentBlockProps {
 }
 
 interface IColumnContentBlockState {
-    isActive?: boolean
-    content?: IColumnContent
-    updateComponent?: boolean
-    uploadImageProgress?: {progress: number, total: number} | null
+    isActive?: boolean;
+    content?: IColumnContent;
+    contentIsLong?: boolean;
+    firstLetter?: string;
+    updateComponent?: boolean;
+    uploadImageProgress?: {progress: number, total: number} | null;
 }
 
 export default class ColumnContentBlock extends React.Component<IColumnContentBlockProps, IColumnContentBlockState> {
@@ -39,6 +46,8 @@ export default class ColumnContentBlock extends React.Component<IColumnContentBl
         this.state = {
             isActive: false,
             content: this.props.content as IColumnContent,
+            contentIsLong: this.checkContentIsLong((this.props.content as IColumnContent).value),
+            firstLetter: this.getFirstLetter(this.props.content as IColumnContent),
             uploadImageProgress: null,
         };
         this.handleActive = this.handleActive.bind(this);
@@ -66,6 +75,7 @@ export default class ColumnContentBlock extends React.Component<IColumnContentBl
 
     handleChange(content: string, contentText: string) {
         this.state.content.value = toMarkdown(content);
+        this.state.firstLetter = contentText.length ? contentText[0] : '';
         let validationState = this.updateValidationState();
         if (!validationState.isValid) {
             NotificationAction.do(
@@ -74,9 +84,29 @@ export default class ColumnContentBlock extends React.Component<IColumnContentBl
             );
         }
         this.state.content.__meta = {is_valid: validationState.isValid};
-        this.setState({content: this.state.content}, () => {
-            ContentAction.do(UPDATE_CONTENT, {contentBlock: this.state.content});
+        this.setState({
+            content: this.state.content,
+            contentIsLong: this.checkContentIsLong(this.state.content.value),
+            firstLetter: this.state.firstLetter
+        }, () => {
+            ContentAction.do(UPDATE_CONTENT_BLCK, {contentBlock: this.state.content});
         });
+    }
+
+    getFirstLetter(content: IColumnContent) {
+        if (content.value.length) {
+            let el = document.createElement('div');
+            el.innerHTML = marked(content.value);
+            return el.innerText ? el.innerText[0] : ''
+        } else {
+            return '';
+        }
+    }
+
+    private checkContentIsLong(value: string) {
+        let el = document.createElement('div');
+        el.innerHTML = marked(value);
+        return el.innerText.length > 500;
     }
 
     handleClickImage() {
@@ -103,45 +133,33 @@ export default class ColumnContentBlock extends React.Component<IColumnContentBl
             this.refs.inputUpload.value = '';
             return;
         }
-        if (file.size > Constants.maxImageSize) {
-            NotificationAction.do(
-                SHOW_NOTIFICATION,
-                {content: `Размер изображения не может превышать ${Constants.maxImageSize/1024/1024}Mb`}
-            );
-            return;
-        }
-        let tempURL = window.URL.createObjectURL(file);
-        this.state.content.image = {id: null, image: tempURL};
-        const handlerProgress = this.handleUploadProgress.bind(this, file.name);
-        this.setState({
-            content: this.state.content,
-            updateComponent: true,
-        }, () => {
-            UploadImageAction.onChange(UPDATE_PROGRESS, handlerProgress);
-            UploadImageAction.doAsync(UPLOAD_IMAGE, {articleId: this.props.articleId, image: file}).then(() => {
-                let store = UploadImageAction.getStore();
-                this.state.content.image = store.image;
+
+        let handleConfirm = (imageBase64: string) => {
+            UploadImageAction.doAsync(
+                UPLOAD_IMAGE_BASE64,
+                {articleId: this.props.articleId, image: imageBase64}
+            ).then((data: any) => {
+                this.state.content.image = data;
                 this.setState({
                     content: this.state.content,
                     updateComponent: true,
                     uploadImageProgress: null,
                 }, () => {
-                    UploadImageAction.unbind(UPDATE_PROGRESS, handlerProgress);
-                    ContentAction.do(UPDATE_CONTENT, {contentBlock: this.state.content});
+                    ContentAction.do(UPDATE_CONTENT_BLCK, {contentBlock: this.state.content});
                     this.updateValidationState();
                 });
-            }).catch((error) => {
-                UploadImageAction.unbind(UPDATE_PROGRESS, handlerProgress);
-                this.setState({
-                    updateComponent: true,
-                    uploadImageProgress: null,
-                });
-                NotificationAction.do(
-                    SHOW_NOTIFICATION,
-                    {content: `Ошибка при загрузке изображения`}
-                );
-            })
-        });
+            });
+        };
+
+        let img = new Image();
+        img.onload = () => {
+            let modalContent = <EditableImageModal image={img}
+                                                   outputWidth={200}
+                                                   outputHeight={200}
+                                                   onConfirm={handleConfirm}/>;
+            ModalAction.do(OPEN_MODAL, {content: modalContent});
+        };
+        img.src = window.URL.createObjectURL(file);
     }
 
     handleActive() {
@@ -149,12 +167,6 @@ export default class ColumnContentBlock extends React.Component<IColumnContentBl
         if (this.state.isActive !== (store.id == this.state.content.id)) {
             this.setState({isActive: store.id == this.state.content.id})
         }
-    }
-
-    shouldComponentUpdate(nextProps: any, nextState: any) {
-        let update = nextState.updateComponent;
-        delete nextState.updateComponent;
-        return !!update;
     }
 
     componentDidMount() {
@@ -171,6 +183,7 @@ export default class ColumnContentBlock extends React.Component<IColumnContentBl
         if (this.props.className) {
             className += ' ' + this.props.className;
         }
+        if (this.state.contentIsLong) className += ' long';
         let imageClassName='content_block_column__image', imageStyle: any = {};
         if (!this.state.content.image) imageClassName += ' empty';
         if (this.state.uploadImageProgress) imageClassName += ' loading';
@@ -186,12 +199,12 @@ export default class ColumnContentBlock extends React.Component<IColumnContentBl
             <BaseContentBlock id={this.state.content.id} className={className}>
                 <div className="content_block_column__column content_block_column__column_left">
                     {this.state.content.image ?
-                        <img className={imageClassName}
-                             src={this.state.content.image.preview || this.state.content.image.image}
+                        <div className="content_block_column__image"
+                             style={imageStyle}
                              onClick={this.handleClickImage.bind(this)}/> :
                         <div className="content_block_column__image empty"
                              style={imageStyle}
-                             onClick={this.handleClickImage.bind(this)}/>
+                             onClick={this.handleClickImage.bind(this)}>{this.state.firstLetter}</div>
                     }
                 </div>
                 <ContentEditable className="content_block_column__column content_block_column__column_right"

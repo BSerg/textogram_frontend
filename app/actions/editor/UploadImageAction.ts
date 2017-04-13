@@ -64,7 +64,6 @@ UploadImageAction.registerAsync(UPLOAD_IMAGE, (store, data: {articleId: number, 
 });
 
 UploadImageAction.registerAsync(UPLOAD_IMAGE_BASE64, (store, data: {articleId: number, image: string}) => {
-    console.log(data);
     return new Promise((resolve, reject) => {
         if (data.image.length > Constants.maxImageSize) {
             NotificationAction.do(

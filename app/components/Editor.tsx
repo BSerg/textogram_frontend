@@ -12,13 +12,13 @@ import EmbedContentBlock from "./editor/EmbedContentBlock";
 import {
     ContentAction,
     RESET_CONTENT,
-    UPDATE_CONTENT,
-    DELETE_CONTENT,
-    CREATE_CONTENT,
+    UPDATE_CONTENT_BLCK,
+    DELETE_CONTENT_BLCK,
+    CREATE_CONTENT_BLCK,
     IContentData,
     UPDATE_COVER_CONTENT,
     UPDATE_TITLE_CONTENT,
-    SWAP_CONTENT
+    SWAP_CONTENT_BLCK
 } from "../actions/editor/ContentAction";
 import {Captions, BlockContentTypes, ArticleStatuses, Validation} from "../constants";
 import {ModalAction, OPEN_MODAL} from "../actions/shared/ModalAction";
@@ -119,35 +119,35 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
 
     validateContent(content: any, config: any) {
         let isValid = Validator.isValid(content, config);
-        // for (let index in content.blocks || []) {
-        //     let block = content.blocks[index], validationConfig;
-        //     switch (block.type) {
-        //         case BlockContentTypes.TEXT:
-        //             validationConfig = Validation.TEXT;
-        //             break;
-        //         case BlockContentTypes.HEADER:
-        //             validationConfig = Validation.HEADER;
-        //             break;
-        //         case BlockContentTypes.LEAD:
-        //             validationConfig = Validation.LEAD;
-        //             break;
-        //         case BlockContentTypes.QUOTE:
-        //             validationConfig = Validation.QUOTE;
-        //             break;
-        //         case BlockContentTypes.COLUMNS:
-        //             validationConfig = Validation.COLUMN;
-        //             break;
-        //         case BlockContentTypes.PHRASE:
-        //             validationConfig = Validation.PHRASE;
-        //             break;
-        //         case BlockContentTypes.LIST:
-        //             validationConfig = Validation.LIST;
-        //             break;
-        //     }
-        //     if (!Validator.isValid(block, validationConfig)) {
-        //         isValid = false;
-        //     }
-        // }
+        for (let index in content.blocks || []) {
+            let block = content.blocks[index], validationConfig;
+            switch (block.type) {
+                case BlockContentTypes.TEXT:
+                    validationConfig = Validation.TEXT;
+                    break;
+                case BlockContentTypes.HEADER:
+                    validationConfig = Validation.HEADER;
+                    break;
+                case BlockContentTypes.LEAD:
+                    validationConfig = Validation.LEAD;
+                    break;
+                case BlockContentTypes.QUOTE:
+                    validationConfig = Validation.QUOTE;
+                    break;
+                case BlockContentTypes.COLUMNS:
+                    validationConfig = Validation.COLUMN;
+                    break;
+                case BlockContentTypes.PHRASE:
+                    validationConfig = Validation.PHRASE;
+                    break;
+                case BlockContentTypes.LIST:
+                    validationConfig = Validation.LIST;
+                    break;
+            }
+            if (!Validator.isValid(block, validationConfig)) {
+                isValid = false;
+            }
+        }
         return isValid;
     }
 
@@ -299,9 +299,9 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
     }
 
     componentDidMount() {
-        ContentAction.onChange(UPDATE_CONTENT, this.updateContent);
+        ContentAction.onChange(UPDATE_CONTENT_BLCK, this.updateContent);
         ContentAction.onChange(
-            [CREATE_CONTENT, DELETE_CONTENT, UPDATE_COVER_CONTENT, UPDATE_TITLE_CONTENT, SWAP_CONTENT],
+            [CREATE_CONTENT_BLCK, DELETE_CONTENT_BLCK, UPDATE_COVER_CONTENT, UPDATE_TITLE_CONTENT, SWAP_CONTENT_BLCK],
             this.forceUpdateContent
         );
         ContentBlockAction.onChange([ACTIVATE_CONTENT_BLOCK, DEACTIVATE_CONTENT_BLOCK], this.handleActiveBlock);
@@ -310,17 +310,10 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
         MediaQuerySerice.listen(this.handleMediaQuery);
 
         if (this.state.newArticle) {
-            let newContent: any = {
-                title: '',
-                cover: null,
-                blocks: []
-            };
             this.setState({
-                article: {id: null, status: ArticleStatuses.DRAFT, content: newContent},
+                article: {id: null, status: ArticleStatuses.DRAFT, content: ContentAction.getStore().content},
                 autoSave: false,
-                isValid: this.validateContent(newContent, Validation.ROOT)
-            }, () => {
-                this.resetContent(false);
+                isValid: false
             });
         } else {
             this.loadArticle(this.props.params.articleId);
@@ -330,9 +323,9 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
     }
 
     componentWillUnmount() {
-        ContentAction.unbind(UPDATE_CONTENT, this.updateContent);
+        ContentAction.unbind(UPDATE_CONTENT_BLCK, this.updateContent);
         ContentAction.unbind(
-            [CREATE_CONTENT, DELETE_CONTENT, UPDATE_COVER_CONTENT, UPDATE_TITLE_CONTENT, SWAP_CONTENT],
+            [CREATE_CONTENT_BLCK, DELETE_CONTENT_BLCK, UPDATE_COVER_CONTENT, UPDATE_TITLE_CONTENT, SWAP_CONTENT_BLCK],
             this.forceUpdateContent
         );
         ContentBlockAction.unbind([ACTIVATE_CONTENT_BLOCK, DEACTIVATE_CONTENT_BLOCK], this.handleActiveBlock);
@@ -343,12 +336,18 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
     }
 
     render() {
+        let titleBlockKey = 'titleBlock';
+        if (this.props.newArticle) {
+            titleBlockKey += 'New';
+        } else if (this.state.article && this.state.article.id) {
+            titleBlockKey += this.state.article.id;
+        }
         return (
             <div ref="editor" onClick={this.handleDocumentClick.bind(this)} className="editor">
                 <div className="editor__wrapper">
                     {this.state.article && !this.state.error ?
                         [
-                            <TitleBlock key={"titleBlock" + (this.state.article && this.state.article.id ? this.state.article.id : '')}
+                            <TitleBlock key={titleBlockKey}
                                         articleSlug={this.state.article.id}
                                         title={this.state.article.content.title}
                                         cover={this.state.article.content.cover}
@@ -459,7 +458,6 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
                                         : null
                                 }
                             </div>,
-                            <div key="add_content_help" className="add_content_help"></div>,
                             (this.state.article.status == ArticleStatuses.DRAFT ?
                                 <div key="publish_button"
                                      className={"editor__publish" + (!this.state.isValid ? ' disabled': '')}
@@ -471,12 +469,6 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
                                      className={"editor__publish" + (!this.state.isValid ? ' disabled': '')}
                                      onClick={this.state.isValid && this.updateArticle.bind(this, true)}>
                                     Обновить публикацию
-                                </div> : null),
-                            (this.state.article.status == ArticleStatuses.SHARED ?
-                                <div key="save_button"
-                                     className={"editor__publish" + (!this.state.isValid ? ' disabled': '')}
-                                     onClick={this.state.isValid && this.resetContent.bind(this, true)}>
-                                    Сохранить
                                 </div> : null),
                             this.state.isDesktop && this.state.article.status == ArticleStatuses.DRAFT && this.state.article.id ?
                                 <div className="tools_panel">

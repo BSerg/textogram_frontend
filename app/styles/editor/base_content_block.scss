@@ -4,12 +4,12 @@
 
 .base_content_block {
   @include transition();
-  padding: $padding/2 $padding;
+  padding: 10px $basic_mobile_offset;
   background-color: white;
 
-  //&:last-child {
-  //  border: 1px solid red;
-  //}
+  .base_content_block__content {
+    width: 100%;
+  }
 
   &.active {
     background-color: $color4;
@@ -21,17 +21,7 @@
 
   &.invalid {
     position: relative;
-
-    &:after {
-      content: '';
-      display: block;
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 1px;
-      height: 100%;
-      background-color: #FF3333;
-    }
+    border-left: 3px solid $color-accent;
   }
 
   &.expand_top {
@@ -59,14 +49,13 @@
 @include desktop {
   .base_content_block {
     position: relative;
-    width: 600px;
     min-height: 50px;
-    padding: 25px $padding;
+    padding: 25px $basic_desktop_offset;
     margin-left: auto;
     margin-right: auto;
 
     &.active {
-      background-color: white;
+      //background-color: white;
     }
 
     .base_content_block__tools {

@@ -1,7 +1,5 @@
-import * as React from 'react';
-import Action from '../Action';
-import {ContentAction, DELETE_CONTENT} from './ContentAction';
-import {PopupPanelAction, OPEN_POPUP, CLOSE_POPUP} from '../shared/PopupPanelAction';
+import * as React from "react";
+import Action from "../Action";
 
 export const ACTIVATE_CONTENT_BLOCK = 'activate_content_block';
 export const DEACTIVATE_CONTENT_BLOCK = 'deactivate_content_block';

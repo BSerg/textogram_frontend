@@ -7,7 +7,7 @@ import {
     DEACTIVATE_CONTENT_BLOCK
 } from "../../actions/editor/ContentBlockAction";
 import {ModalAction, OPEN_MODAL} from "../../actions/shared/ModalAction";
-import {DELETE_CONTENT, ContentAction, IContentData, UPDATE_CONTENT} from "../../actions/editor/ContentAction";
+import {DELETE_CONTENT_BLCK, ContentAction, IContentData, UPDATE_CONTENT_BLCK} from "../../actions/editor/ContentAction";
 import ContentBlockPopup from "./ContentBlockPopup";
 import {PopupPanelAction, OPEN_POPUP, CLOSE_POPUP} from "../../actions/shared/PopupPanelAction";
 import {UploadImageAction, UPLOAD_IMAGE, UPDATE_PROGRESS} from "../../actions/editor/UploadImageAction";
@@ -163,7 +163,7 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
                         let movedPhoto = that.state.content.photos.splice(e.oldIndex, 1)[0];
                         that.state.content.photos.splice(e.newIndex, 0, movedPhoto);
                         that.setState({content: that.state.content}, () => {
-                            ContentAction.do(UPDATE_CONTENT, {contentBlock: that.state.content});
+                            ContentAction.do(UPDATE_CONTENT_BLCK, {contentBlock: that.state.content});
                         });
                     }
                 },
@@ -185,7 +185,7 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
     }
 
     deleteBlock() {
-        ContentAction.do(DELETE_CONTENT, {id: this.state.content.id});
+        ContentAction.do(DELETE_CONTENT_BLCK, {id: this.state.content.id});
         ContentBlockAction.do(DEACTIVATE_CONTENT_BLOCK, null);
         PopupPanelAction.do(CLOSE_POPUP, null);
     }
@@ -276,7 +276,7 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
                 this.setState({content: this.state.content, loadingImage: false}, () => {
                     PopupPanelAction.do(OPEN_POPUP, {content: this.getPopupContent()});
                     DesktopBlockToolsAction.do(UPDATE_TOOLS, {position: this.getPosition(), tools: this.getDesktopToolsContent()});
-                    ContentAction.do(UPDATE_CONTENT, {contentBlock: this.state.content});
+                    ContentAction.do(UPDATE_CONTENT_BLCK, {contentBlock: this.state.content});
                 });
             }).catch((err) => {
                 console.log(err);
@@ -298,7 +298,7 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
         this.setState({content: this.state.content}, () => {
             PopupPanelAction.do(OPEN_POPUP, {content: this.getPopupContent()});
             DesktopBlockToolsAction.do(UPDATE_TOOLS, {position: this.getPosition(), tools: this.getDesktopToolsContent()})
-            ContentAction.do(UPDATE_CONTENT, {contentBlock: this.state.content});
+            ContentAction.do(UPDATE_CONTENT_BLCK, {contentBlock: this.state.content});
         });
     }
 

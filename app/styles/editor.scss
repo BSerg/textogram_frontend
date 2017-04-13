@@ -8,27 +8,7 @@
 
 .editor__content {
   width: 100%;
-  max-width: 600px;
-  margin: 0 auto;
-}
-
-.title {
-  $font-size: 32px;
-  font-size: $font-size;
-  &.empty:after {
-    font-size: $font-size;
-  }
-}
-
-.add_content_help {
-  padding: $padding;
-  margin-top: $margin;
-  font-family: $family_open_sans;
-  font-size: 12px;
-  line-height: 20px;
-  text-align: center;
-  color: $color5;
-  letter-spacing: 1px;
+  margin: 0 auto 120px auto;
 }
 
 .editor__wrapper .base_content_block:last-child {
@@ -36,17 +16,19 @@
 }
 
 .editor__publish {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
   display:flex;
   align-items: center;
   justify-content: center;
   height: 50px;
-  color: $color;
+  color: white;
   text-transform: uppercase;
   letter-spacing: 2px;
-  background-color: $color4;
+  background-color: $color;
   font-size: 10px;
   z-index: 10;
-  margin: $margin;
   cursor: pointer;
 
   &.disabled {
@@ -123,11 +105,16 @@
 }
 
 @include desktop {
+  .editor__content {
+    max-width: 650px + $basic_desktop_offset * 2;
+  }
+
   .add_content_help {
     margin-top: 50px;
   }
 
   .editor__publish {
+    position: relative;
     width: 600px;
     margin: 0 auto 64px auto;
     font-size: 15px;

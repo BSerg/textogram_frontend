@@ -3,7 +3,7 @@ import {Captions, Constants, ListBlockContentTypes, BlockContentTypes} from '../
 import ContentEditable from '../shared/ContentEditable';
 import BaseContentBlock from './BaseContentBlock';
 import {ContentBlockAction, ACTIVATE_CONTENT_BLOCK} from '../../actions/editor/ContentBlockAction';
-import {ContentAction, UPDATE_CONTENT, IContentData} from '../../actions/editor/ContentAction';
+import {ContentAction, UPDATE_CONTENT_BLCK, IContentData} from '../../actions/editor/ContentAction';
 import * as toMarkdown from 'to-markdown';
 import '../../styles/editor/list_content_block.scss';
 import * as marked from 'marked';
@@ -40,7 +40,7 @@ export default class ListContentBlock extends React.Component<IListContentBlockP
         console.log(content, contentText);
         this.state.content.value = toMarkdown(content);
         this.setState({content: this.state.content}, () => {
-            ContentAction.do(UPDATE_CONTENT, {contentBlock: this.state.content});
+            ContentAction.do(UPDATE_CONTENT_BLCK, {contentBlock: this.state.content});
         });
     }
 

@@ -225,32 +225,32 @@ export namespace Embed {
 export namespace Validation {
     // isRequired means not null or empty value
     export const ROOT = {
-        title: {isRequired: true, maxLength: 150, message: `Заголовок обязателен и ограничен 150 символами`},
+        title: {isRequired: true, maxLength: 150, message: `Заголовок не может превышать 150 знаков`},
     };
 
     export const TEXT = {
-        value: {maxLength: 3000, message: `Рекомендуемая длина текста 3000 символов`}
+        // value: {maxLength: 3000, message: `Рекомендуемая длина текста 3000 символов`}
     };
 
     export const HEADER = {
-        value: {maxLength: 100, message: `Рекомендуемая длина заголовка 150 символов`}
+        value: {maxLength: 100, message: `Текст подзаголовка не может превышать 150 знаков`}
     };
 
     export const LEAD = {
-        value: {maxLength: 400, message: `Рекомендуемая длина лида 400 символов`}
+        // value: {maxLength: 400, message: `Рекомендуемая длина лида 400 символов`}
     };
 
     export const PHRASE = {
-        value: {maxLength: 200, message: `Рекомендуемая длина фразы 200 символами`}
+        value: {maxLength: 250, message: `Фраза не может превышать 250 знаков`}
     };
 
     export const QUOTE = {
-        value: {maxLength: 500, message: `Рекомендуемая длина цитаты 500 символов`}
+        value: {maxLength: 1000, message: `Цитата не может превышать 1000 знаков`}
     };
 
     export const COLUMN = {
-        image: {isRequired: true, message: `Добавьте изображение`},
-        value: {maxLength: 300, message: `Рекомендуемая длина колонки 300 символов`}
+        image: {isRequired: false},
+        value: {maxLength: 1000, message: `Текст в Колонках не может превышать 1000 знаков`}
     };
 
     export const LIST = {

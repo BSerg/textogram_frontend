@@ -10,7 +10,7 @@ $base_desktop_photo_height: 400px;
 
 
 .content_block_photo {
-  padding: $padding;
+  padding: $basic_mobile_offset;
   position: relative;
 
   .content_block_photo__delete {
@@ -194,6 +194,8 @@ $base_desktop_photo_height: 400px;
   }
 
   @include desktop {
+    padding: $basic_desktop_offset;
+
     .content_block_photo__photo {
       height: $base_desktop_photo_height/2;
 

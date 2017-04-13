@@ -1,10 +1,10 @@
 import * as React from "react";
-import {Captions, BlockContentTypes, Constants, Validation} from "../../constants";
+import {Captions, BlockContentTypes, Validation} from "../../constants";
 import ContentEditable from "../shared/ContentEditable";
 import BaseContentBlock from "./BaseContentBlock";
 import {ContentBlockAction, ACTIVATE_CONTENT_BLOCK} from "../../actions/editor/ContentBlockAction";
-import {ContentAction, UPDATE_CONTENT, IContentData} from "../../actions/editor/ContentAction";
-import {UploadImageAction, UPLOAD_IMAGE, UPDATE_PROGRESS} from "../../actions/editor/UploadImageAction";
+import {ContentAction, UPDATE_CONTENT_BLCK, IContentData} from "../../actions/editor/ContentAction";
+import {UploadImageAction, UPLOAD_IMAGE_BASE64} from "../../actions/editor/UploadImageAction";
 import ProgressBar, {PROGRESS_BAR_TYPE} from "../shared/ProgressBar";
 import {Validator} from "./utils";
 import {SHOW_NOTIFICATION, NotificationAction} from "../../actions/shared/NotificationAction";
@@ -12,6 +12,8 @@ import * as toMarkdown from "to-markdown";
 import * as marked from "marked";
 import "../../styles/editor/quote_content_block.scss";
 import {MediaQuerySerice} from "../../services/MediaQueryService";
+import {ModalAction, OPEN_MODAL} from "../../actions/shared/ModalAction";
+import EditableImageModal from "../shared/EditableImageModal";
 
 interface IQuoteContent {
     id: string
@@ -28,7 +30,8 @@ interface IQuoteContentBlockProps {
 }
 
 interface IQuoteContentBlockState {
-    content?: IQuoteContent
+    content?: IQuoteContent;
+    contentIsLong?: boolean;
     menuOpened?: boolean
     doNotUpdateComponent?: boolean
     isActive?: boolean
@@ -46,6 +49,7 @@ export default class QuoteContentBlock extends React.Component<IQuoteContentBloc
         super(props);
         this.state = {
             content: this.props.content as IQuoteContent,
+            contentIsLong: this.checkContentIsLong((this.props.content as IQuoteContent).value),
             menuOpened: false,
             loadingImage: false,
             isDesktop: MediaQuerySerice.getIsDesktop()
@@ -60,6 +64,12 @@ export default class QuoteContentBlock extends React.Component<IQuoteContentBloc
 
     private validate(content: IQuoteContent): any {
         return Validator.validate(content, Validation.QUOTE);
+    }
+
+    private checkContentIsLong(value: string) {
+        let el = document.createElement('div');
+        el.innerHTML = marked(value);
+        return el.innerText.length > 500;
     }
 
     handleActivate() {
@@ -94,14 +104,15 @@ export default class QuoteContentBlock extends React.Component<IQuoteContentBloc
             );
         }
         this.state.content.__meta = {is_valid: validationInfo.isValid};
-        this.setState({content: this.state.content, doNotUpdateComponent: true}, () => {
-            ContentAction.do(UPDATE_CONTENT, {contentBlock: this.state.content});
+        this.setState({content: this.state.content, contentIsLong: this.checkContentIsLong(content)}, () => {
+            ContentAction.do(UPDATE_CONTENT_BLCK, {contentBlock: this.state.content});
             this.updateValidationState();
         });
     }
 
     openFileDialog() {
         this.refs.inputUpload.click();
+        this.closePhotoMenu();
     }
 
     handleUploadProgress(fileName: string) {
@@ -113,39 +124,42 @@ export default class QuoteContentBlock extends React.Component<IQuoteContentBloc
     }
 
     updateImage() {
-        let file = this.refs.inputUpload.files[0];
+        let file: any = this.refs.inputUpload.files[0];
         if (!file) {
             this.refs.inputUpload.value = "";
             return;
         }
-        this.setState({loadingImage: true, menuOpened: false});
-        let tempURL = window.URL.createObjectURL(file);
-        let oldImage = this.state.content.image;
-        this.state.content.image = {id: null, image: tempURL};
-        const handlerUploadProgress = this.handleUploadProgress.bind(this, file.name);
-        this.setState({content: this.state.content}, () => {
-            UploadImageAction.onChange(UPDATE_PROGRESS, handlerUploadProgress);
-            UploadImageAction.doAsync(UPLOAD_IMAGE, {articleId: this.props.articleId, image: file}).then(() => {
-                UploadImageAction.unbind(UPDATE_PROGRESS, handlerUploadProgress);
-                let store = UploadImageAction.getStore();
-                this.state.content.image = store.image;
+        let handleConfirm = (imageBase64: string) => {
+            UploadImageAction.doAsync(
+                UPLOAD_IMAGE_BASE64,
+                {articleId: this.props.articleId, image: imageBase64}
+            ).then((data: any) => {
+                this.state.content.image = data;
                 this.setState({content: this.state.content, loadingImage: false, loadingProgress: null}, () => {
-                    ContentAction.do(UPDATE_CONTENT, {contentBlock: this.state.content});
-                    this.closePhotoMenu();
+                    ContentAction.do(UPDATE_CONTENT_BLCK, {contentBlock: this.state.content});
                 });
-            }).catch((err) => {
-                UploadImageAction.unbind(UPDATE_PROGRESS, handlerUploadProgress);
-                 this.state.content.image = oldImage;
-                this.setState({loadingImage: false, loadingProgress: null, content: this.state.content});
-            })
-        });
+            });
+        };
+
+        let img = new Image();
+        img.onload = () => {
+            let modalContent = <EditableImageModal image={img}
+                                                   outputWidth={100}
+                                                   outputHeight={100}
+                                                   foregroundColor="rgba(0, 0, 0, 0.5)"
+                                                   foregroundShape="circle"
+                                                   onConfirm={handleConfirm}/>;
+            ModalAction.do(OPEN_MODAL, {content: modalContent});
+        };
+        img.src = window.URL.createObjectURL(file);
     }
 
     deleteImage() {
         this.state.content.image = null;
         this.setState({content: this.state.content}, () => {
-            ContentAction.do(UPDATE_CONTENT, {contentBlock: this.state.content});
+            ContentAction.do(UPDATE_CONTENT_BLCK, {contentBlock: this.state.content});
         });
+        this.closePhotoMenu();
     }
 
     handleClickPhoto() {
@@ -169,14 +183,6 @@ export default class QuoteContentBlock extends React.Component<IQuoteContentBloc
         }
     }
 
-    shouldComponentUpdate(nextProps: any, nextState: any) {
-        if (nextState.updateComponent) {
-            delete nextState.updateComponent;
-            return false;
-        }
-        return true;
-    }
-
     componentDidMount() {
         ContentBlockAction.onChange(ACTIVATE_CONTENT_BLOCK, this.handleActivate);
         MediaQuerySerice.listen(this.handleMediaQuery);
@@ -193,6 +199,7 @@ export default class QuoteContentBlock extends React.Component<IQuoteContentBloc
         if (this.props.className) {
             className += ' ' + this.props.className;
         }
+        if (this.state.contentIsLong) className += ' long';
         let imageStyle: any = {};
         if (this.state.content.image) {
             className += ' personal';
@@ -209,7 +216,7 @@ export default class QuoteContentBlock extends React.Component<IQuoteContentBloc
                 {this.state.content.image ?
                     this.state.isDesktop ?
                         <div key="photo"
-                             onClick={this.state.isActive && this.deleteImage.bind(this)}
+                             onClick={this.state.isActive ? this.deleteImage.bind(this) : this.handleFocus.bind(this)}
                              className="content_block_quote__photo"
                              style={imageStyle}>
                             {this.state.isActive ?
@@ -217,7 +224,7 @@ export default class QuoteContentBlock extends React.Component<IQuoteContentBloc
                             }
                         </div> :
                         [
-                            <div onClick={this.openPhotoMenu.bind(this)}
+                            <div onClick={this.state.isActive ? this.openPhotoMenu.bind(this) : this.handleFocus.bind(this)}
                                  key="photo"
                                  className="content_block_quote__photo"
                                  style={imageStyle}/>,
@@ -234,14 +241,16 @@ export default class QuoteContentBlock extends React.Component<IQuoteContentBloc
                             )
                         ] : <div className="content_block_quote__empty_photo" onClick={this.openFileDialog.bind(this)}/>
                 }
-                <ContentEditable allowLineBreak={false}
-                                 onFocus={this.handleFocus.bind(this)}
-                                 onBlur={this.handleBlur.bind(this)}
-                                 onChange={this.handleChange.bind(this)}
-                                 onChangeDelay={0}
-                                 content={marked(this.state.content.value)}
-                                 enableTextFormat={true}
-                                 placeholder={Captions.editor.enter_quote}/>
+                <div className="content_block_quote__quote">
+                    <ContentEditable allowLineBreak={true}
+                                     onFocus={this.handleFocus.bind(this)}
+                                     onBlur={this.handleBlur.bind(this)}
+                                     onChange={this.handleChange.bind(this)}
+                                     onChangeDelay={0}
+                                     content={marked(this.state.content.value)}
+                                     enableTextFormat={true}
+                                     placeholder={Captions.editor.enter_quote}/>
+                </div>
                 {this.state.loadingProgress ?
                     <ProgressBar type={PROGRESS_BAR_TYPE.DETERMINATE}
                                  value={this.state.loadingProgress.progress}

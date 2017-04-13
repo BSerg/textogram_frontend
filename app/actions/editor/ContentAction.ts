@@ -5,13 +5,14 @@ import {BlockContentTypes, Captions} from "../../constants";
 import {NotificationAction, SHOW_NOTIFICATION} from "../shared/NotificationAction";
 const uuid4 = require('uuid/v4');
 
-export const SWAP_CONTENT = 'swap_content';
-export const CREATE_CONTENT = 'create_content';
 export const RESET_CONTENT = 'reset_content';
-export const UPDATE_CONTENT = 'update_content';
-export const DELETE_CONTENT = 'delete_content';
+export const SWAP_CONTENT_BLCK = 'swap_content';
+export const CREATE_CONTENT_BLCK = 'create_content';
+export const UPDATE_CONTENT_BLCK = 'update_content';
+export const DELETE_CONTENT_BLCK = 'delete_content';
 export const UPDATE_TITLE_CONTENT = 'update_title_content';
 export const UPDATE_COVER_CONTENT = 'update_cover_content';
+export const UPDATE_AUTO_SAVE = 'update_auto_save';
 
 export interface IContentData {
     id?: string
@@ -19,11 +20,19 @@ export interface IContentData {
     [prop: string]: any
 }
 
+interface IContent {
+    title: string|null,
+    cover: {id: number, image: string}|null,
+    blocks: IContentData[]
+}
+
 class ContentActionClass extends Action {
     private saveContentDelay: number;
 
     constructor() {
         super({
+            articleId: null,
+            autoSave: false,
             content: {title: null, cover: null, blocks: []},
             contentBlockMap: {}
         });
@@ -52,7 +61,13 @@ class ContentActionClass extends Action {
 
 export const ContentAction = new ContentActionClass();
 
-ContentAction.registerAsync(RESET_CONTENT, (store, data: {articleId: number, autoSave?: boolean, content: {title: string|null, cover: {id: number, image: string}|null, blocks: IContentData[]}}) => {
+ContentAction.register(UPDATE_AUTO_SAVE, (store, autoSave: boolean) => {
+   store.autoSave = autoSave;
+});
+
+ContentAction.registerAsync(RESET_CONTENT, (store, data: {articleId: number, autoSave?: boolean, content: IContent}) => {
+    store.articleId = data.articleId;
+    store.autoSave = data.autoSave;
     store.content = data.content;
     store.content.blocks.forEach((item: IContentData) => {
         store.contentBlockMap[item.id] = item;
@@ -60,7 +75,7 @@ ContentAction.registerAsync(RESET_CONTENT, (store, data: {articleId: number, aut
     return ContentAction.saveContent(store, {articleId: data.articleId, autoSave: data.autoSave});
 });
 
-ContentAction.register(CREATE_CONTENT, (store, data: {contentBlock: IContentData, position: number}) => {
+ContentAction.register(CREATE_CONTENT_BLCK, (store, data: {contentBlock: IContentData, position: number}) => {
     data.contentBlock.id = uuid4();
     store.content.blocks.splice(data.position, 0, data.contentBlock);
     store.content.blocks.forEach((item: IContentData) => {
@@ -68,13 +83,13 @@ ContentAction.register(CREATE_CONTENT, (store, data: {contentBlock: IContentData
     });
 });
 
-ContentAction.register(UPDATE_CONTENT, (store, data: {contentBlock: IContentData}) => {
+ContentAction.register(UPDATE_CONTENT_BLCK, (store, data: {contentBlock: IContentData}) => {
     if (store.contentBlockMap[data.contentBlock.id]) {
         Object.assign(store.contentBlockMap[data.contentBlock.id], data.contentBlock);
     }
 });
 
-ContentAction.register(DELETE_CONTENT, (store, data: {id: string}) => {
+ContentAction.register(DELETE_CONTENT_BLCK, (store, data: {id: string}) => {
     let deletingItem = store.contentBlockMap[data.id];
     if (deletingItem) {
         store.content.blocks.splice(store.content.blocks.indexOf(deletingItem), 1);
@@ -101,7 +116,7 @@ ContentAction.register(
     store.content.cover_clipped = data.coverClipped;
 });
 
-ContentAction.register(SWAP_CONTENT, (store, data: {position: number}) => {
+ContentAction.register(SWAP_CONTENT_BLCK, (store, data: {position: number}) => {
     if (data.position >= 1 && data.position < store.content.blocks.length) {
         let swappedBlock = store.content.blocks.splice(data.position, 1)[0];
         store.content.blocks.splice(data.position - 1, 0, swappedBlock);

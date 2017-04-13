@@ -45,6 +45,7 @@ export default class ImageEditor extends React.Component<IProps, IState> {
         this.handleMouseMove = this.handleMouseMove.bind(this);
         this.handleMouseDown = this.handleMouseDown.bind(this);
         this.handleMouseUp = this.handleMouseUp.bind(this);
+        this.handleTouch = this.handleTouch.bind(this);
     }
 
     static defaultProps = {
@@ -153,6 +154,23 @@ export default class ImageEditor extends React.Component<IProps, IState> {
         }
     }
 
+    handleTouch(e: TouchEvent) {
+        let touch = e.changedTouches[0];
+        let eventMap: any = {
+            touchstart: "mousedown",
+            touchmove: "mousemove",
+            touchend: "mouseup"
+        };
+        let simulatedEvent: any = document.createEvent("MouseEvent");
+        simulatedEvent.initMouseEvent(
+            eventMap[e.type], true, true, window, 1, touch.screenX, touch.screenY,
+            touch.clientX, touch.clientY, false, false, false, false, 0, null
+        );
+        touch.target.dispatchEvent(simulatedEvent);
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
     private _getBase64Image() {
         let tempCanvas = document.createElement('canvas');
         tempCanvas.width = this.state.width;
@@ -221,12 +239,20 @@ export default class ImageEditor extends React.Component<IProps, IState> {
     }
 
     componentDidMount() {
+        document.addEventListener("touchstart", this.handleTouch, true);
+        document.addEventListener("touchmove", this.handleTouch, true);
+        document.addEventListener("touchend", this.handleTouch, true);
+        document.addEventListener("touchcancel", this.handleTouch, true);
         this.initCanvas();
     }
 
     componentWillUnmount() {
         document.removeEventListener('mousemove', this.handleMouseMove);
         document.removeEventListener('mouseup', this.handleMouseUp);
+        document.removeEventListener("touchstart", this.handleTouch, true);
+        document.removeEventListener("touchmove", this.handleTouch, true);
+        document.removeEventListener("touchend", this.handleTouch, true);
+        document.removeEventListener("touchcancel", this.handleTouch, true);
     }
 
     componentWillReceiveProps(nextProps: IProps) {

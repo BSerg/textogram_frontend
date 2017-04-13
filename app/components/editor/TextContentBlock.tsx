@@ -3,7 +3,7 @@ import {Captions, Constants, BlockContentTypes, Validation} from '../../constant
 import ContentEditable from '../shared/ContentEditable';
 import BaseContentBlock from './BaseContentBlock';
 import {ContentBlockAction, ACTIVATE_CONTENT_BLOCK} from '../../actions/editor/ContentBlockAction';
-import {ContentAction, UPDATE_CONTENT, IContentData} from '../../actions/editor/ContentAction';
+import {ContentAction, UPDATE_CONTENT_BLCK, IContentData} from '../../actions/editor/ContentAction';
 import {NotificationAction, SHOW_NOTIFICATION, CLOSE_NOTIFICATION} from '../../actions/shared/NotificationAction';
 import {Validator} from "./utils";
 import * as toMarkdown from 'to-markdown';
@@ -52,7 +52,7 @@ export default class TextContentBlock extends React.Component<ITextContentBlockP
         }
         this.state.content.__meta = {is_valid: isValid};
         this.setState({content: this.state.content, isValid: isValid}, () => {
-            ContentAction.do(UPDATE_CONTENT, {contentBlock: this.state.content});
+            ContentAction.do(UPDATE_CONTENT_BLCK, {contentBlock: this.state.content});
         });
     }
 
