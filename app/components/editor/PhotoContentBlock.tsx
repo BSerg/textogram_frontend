@@ -19,12 +19,12 @@ import {MediaQuerySerice} from "../../services/MediaQueryService";
 import "../../styles/editor/photo_content_block.scss";
 import Sortable = require('sortablejs');
 
-const AddButton = require('babel!svg-react!../../assets/images/redactor_icon_popup_add.svg?name=AddButton');
-const DeleteButton = require('babel!svg-react!../../assets/images/close.svg?name=DeleteButton');
+const AddButton = require('babel!svg-react!../../assets/images/desktop_editor_icon_gallery.svg?name=AddButton');
+const DeleteButton = require('babel!svg-react!../../assets/images/editor_delete.svg?name=DeleteButton');
 const BackButton = require('babel!svg-react!../../assets/images/back.svg?name=BackButton');
 
-const ResizeBig = require('babel!svg-react!../../assets/images/resize_big.svg?name=ResizeBig');
-const ResizeSmall = require('babel!svg-react!../../assets/images/resize_small.svg?name=ResizeSmall');
+const ResizeBig = require('babel!svg-react!../../assets/images/desktop_editor_icon_fullsize.svg?name=ResizeBig');
+const ResizeSmall = require('babel!svg-react!../../assets/images/desktop_editor_icon_crop.svg?name=ResizeSmall');
 
 type PhotoSize = 'original' | 'cropped';
 
@@ -331,22 +331,34 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
                                   onDelete={this.handleDelete.bind(this)}/>;
     }
 
+    private getDesktopToolsButton(icon: any, placeholder: string, callback: () => any | null = null, disabled: boolean = false) {
+        return (
+            callback == null ?
+                <div className={"base_content_block__tools_button" + (disabled ? " disabled" : "")}
+                     placeholder={placeholder}>
+                    {icon}
+                </div> :
+                <div className={"base_content_block__tools_button" + (disabled ? " disabled" : "")}
+                     placeholder={placeholder}
+                     onClick={callback}>
+                    {icon}
+                </div>
+
+        )
+    }
+
     private getDesktopToolsContent() {
         let content = [];
         if (this.state.content.photos.length == 1) {
-            content.push(
-                <div onClick={this.resizePhoto.bind(this)}>
-                    {this.state.content.photos[0].size == 'cropped' ?
-                        <ResizeBig/> : <ResizeSmall/>
-                    }
-                </div>
-            );
+            this.state.content.photos[0].size == 'cropped' ?
+                content.push(this.getDesktopToolsButton(<ResizeBig/>, 'По высоте', this.resizePhoto.bind(this))) :
+                content.push(this.getDesktopToolsButton(<ResizeSmall/>, 'Обрезать', this.resizePhoto.bind(this)));
         }
         if (this.state.content.photos.length >= this.props.maxPhotoCount ||
             (this.state.imageUploadProgress && this.state.imageUploadProgress.progress != this.state.imageUploadProgress.total)) {
-            content.push(<div><AddButton className="disabled"/></div>)
+            content.push(this.getDesktopToolsButton(<AddButton/>, "", null, true));
         } else {
-            content.push(<div onClick={this.openFileDialog.bind(this)}><AddButton/></div>)
+            content.push(this.getDesktopToolsButton(<AddButton/>, "Добавить фото", this.openFileDialog.bind(this)));
         }
         return content;
     }

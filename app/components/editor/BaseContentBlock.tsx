@@ -4,7 +4,10 @@ import {
     ACTIVATE_CONTENT_BLOCK,
     DEACTIVATE_CONTENT_BLOCK
 } from "../../actions/editor/ContentBlockAction";
-import {ContentAction, DELETE_CONTENT_BLCK} from "../../actions/editor/ContentAction";
+import {
+    ContentAction, DELETE_CONTENT_BLCK, MOVE_UP_CONTENT_BLCK,
+    MOVE_DOWN_CONTENT_BLCK
+} from "../../actions/editor/ContentAction";
 import {PopupPanelAction, OPEN_POPUP, CLOSE_POPUP} from "../../actions/shared/PopupPanelAction";
 import ContentBlockPopup from "./ContentBlockPopup";
 import "../../styles/editor/base_content_block.scss";
@@ -17,7 +20,9 @@ import {MediaQuerySerice} from "../../services/MediaQueryService";
 import {DesktopBlockToolsAction, UPDATE_TOOLS} from "../../actions/editor/DesktopBlockToolsAction";
 import PopupPrompt from "../shared/PopupPrompt";
 
-const DeleteButton = require('babel!svg-react!../../assets/images/redactor_icon_delete.svg?name=DeleteButton');
+const DeleteButton = require('babel!svg-react!../../assets/images/editor_delete.svg?name=DeleteButton');
+const UpIcon = require('babel!svg-react!../../assets/images/editor_up.svg?name=UpIcon');
+const DownIcon = require('babel!svg-react!../../assets/images/editor_down.svg?name=DownIcon');
 
 interface IBaseContnentBlockProps {
     className?: string
@@ -34,7 +39,8 @@ interface IBaseContnentBlockState {
     expandTop?: boolean
     expandBottom?: boolean
     isDesktop?: boolean
-    desktopTools?: any | null
+    desktopTools?: any | null;
+    desktopFullTools?: any | null;
 }
 
 
@@ -46,7 +52,8 @@ export default class BaseContentBlock extends React.Component<IBaseContnentBlock
             expandTop: false,
             expandBottom: false,
             isDesktop: MediaQuerySerice.getIsDesktop(),
-            desktopTools: null
+            desktopTools: null,
+            desktopFullTools: null
         };
         this.handleActivate = this.handleActivate.bind(this);
         this.handleBlockHandlerActivate = this.handleBlockHandlerActivate.bind(this);
@@ -136,6 +143,14 @@ export default class BaseContentBlock extends React.Component<IBaseContnentBlock
         }
     }
 
+    handleMoveUp() {
+        ContentAction.do(MOVE_UP_CONTENT_BLCK, {id: this.props.id});
+    }
+
+    handleMoveDown() {
+        ContentAction.do(MOVE_DOWN_CONTENT_BLCK, {id: this.props.id});
+    }
+
     handleMediaQuery(isDesktop: boolean) {
         if (this.state.isDesktop != isDesktop) {
             this.setState({isDesktop: isDesktop});
@@ -185,10 +200,27 @@ export default class BaseContentBlock extends React.Component<IBaseContnentBlock
                 </div>
                 {this.state.isDesktop && this.state.isActive ?
                     <div className="base_content_block__tools">
-                        <div className="base_content_block__delete"
-                             onClick={this.handleDeleteWithConfirm.bind(this)}><DeleteButton/></div>
-                        <div className="base_content_block__extra">
-                            {this.state.desktopTools}
+                        <div className="base_content_block__tools_wrapper">
+                            {this.state.desktopFullTools ?
+                                this.state.desktopFullTools :
+                                [
+                                    <div key="tool_up" className="base_content_block__tools_button"
+                                         placeholder="Вверх" onClick={this.handleMoveUp.bind(this)}>
+                                        <UpIcon/>
+                                    </div>,
+                                    this.state.desktopTools,
+                                    <div key="tool_del" className="base_content_block__tools_button"
+                                         onClick={this.handleDeleteWithConfirm.bind(this)}
+                                         placeholder="Удалить">
+                                        <DeleteButton/>
+                                    </div>,
+                                    <div key="tool_down" className="base_content_block__tools_button"
+                                         placeholder="Вниз" onClick={this.handleMoveDown.bind(this)}>
+                                        <DownIcon/>
+                                    </div>
+                                ]
+                            }
+
                         </div>
                     </div> : null
                 }

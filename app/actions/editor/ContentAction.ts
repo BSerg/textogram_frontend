@@ -7,6 +7,8 @@ const uuid4 = require('uuid/v4');
 
 export const RESET_CONTENT = 'reset_content';
 export const SWAP_CONTENT_BLCK = 'swap_content';
+export const MOVE_UP_CONTENT_BLCK = 'move_up_content';
+export const MOVE_DOWN_CONTENT_BLCK = 'move_down_content';
 export const CREATE_CONTENT_BLCK = 'create_content';
 export const UPDATE_CONTENT_BLCK = 'update_content';
 export const DELETE_CONTENT_BLCK = 'delete_content';
@@ -122,3 +124,28 @@ ContentAction.register(SWAP_CONTENT_BLCK, (store, data: {position: number}) => {
         store.content.blocks.splice(data.position - 1, 0, swappedBlock);
     }
 });
+
+ContentAction.register(MOVE_UP_CONTENT_BLCK, (store, data: {id: string}) => {
+    if (store.contentBlockMap[data.id] != undefined) {
+        let contentBlock = store.contentBlockMap[data.id];
+        let position = store.content.blocks.indexOf(contentBlock);
+        if (position >= 1 && position <= store.content.blocks.length - 1) {
+            let swappedBlock = store.content.blocks.splice(position, 1)[0];
+            store.content.blocks.splice(position - 1, 0, swappedBlock);
+        }
+    }
+
+});
+
+ContentAction.register(MOVE_DOWN_CONTENT_BLCK, (store, data: {id: string}) => {
+    if (store.contentBlockMap[data.id] != undefined) {
+        let contentBlock = store.contentBlockMap[data.id];
+        let position = store.content.blocks.indexOf(contentBlock);
+        if (position >= 0 && position < store.content.blocks.length - 1) {
+            let swappedBlock = store.content.blocks.splice(position, 1)[0];
+            store.content.blocks.splice(position + 1, 0, swappedBlock);
+        }
+    }
+});
+
+

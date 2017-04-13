@@ -18,7 +18,7 @@ import {
     IContentData,
     UPDATE_COVER_CONTENT,
     UPDATE_TITLE_CONTENT,
-    SWAP_CONTENT_BLCK
+    SWAP_CONTENT_BLCK, MOVE_UP_CONTENT_BLCK, MOVE_DOWN_CONTENT_BLCK
 } from "../actions/editor/ContentAction";
 import {Captions, BlockContentTypes, ArticleStatuses, Validation} from "../constants";
 import {ModalAction, OPEN_MODAL} from "../actions/shared/ModalAction";
@@ -301,7 +301,10 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
     componentDidMount() {
         ContentAction.onChange(UPDATE_CONTENT_BLCK, this.updateContent);
         ContentAction.onChange(
-            [CREATE_CONTENT_BLCK, DELETE_CONTENT_BLCK, UPDATE_COVER_CONTENT, UPDATE_TITLE_CONTENT, SWAP_CONTENT_BLCK],
+            [
+                CREATE_CONTENT_BLCK, DELETE_CONTENT_BLCK, UPDATE_COVER_CONTENT, UPDATE_TITLE_CONTENT,
+                SWAP_CONTENT_BLCK, MOVE_UP_CONTENT_BLCK, MOVE_DOWN_CONTENT_BLCK
+            ],
             this.forceUpdateContent
         );
         ContentBlockAction.onChange([ACTIVATE_CONTENT_BLOCK, DEACTIVATE_CONTENT_BLOCK], this.handleActiveBlock);
@@ -325,7 +328,10 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
     componentWillUnmount() {
         ContentAction.unbind(UPDATE_CONTENT_BLCK, this.updateContent);
         ContentAction.unbind(
-            [CREATE_CONTENT_BLCK, DELETE_CONTENT_BLCK, UPDATE_COVER_CONTENT, UPDATE_TITLE_CONTENT, SWAP_CONTENT_BLCK],
+            [
+                CREATE_CONTENT_BLCK, DELETE_CONTENT_BLCK, UPDATE_COVER_CONTENT, UPDATE_TITLE_CONTENT,
+                SWAP_CONTENT_BLCK, MOVE_UP_CONTENT_BLCK, MOVE_DOWN_CONTENT_BLCK
+            ],
             this.forceUpdateContent
         );
         ContentBlockAction.unbind([ACTIVATE_CONTENT_BLOCK, DEACTIVATE_CONTENT_BLOCK], this.handleActiveBlock);
@@ -356,12 +362,7 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
                             <div className="editor__content">
                                 {this.state.article.content.blocks.map((contentBlock: IContentData, index: number) => {
                                     let blockHandlerButtons, block, isLast = index == this.state.article.content.blocks.length - 1;
-
-                                    if (index == 0) {
-                                        blockHandlerButtons = [BlockContentTypes.ADD]
-                                    } else {
-                                        blockHandlerButtons = [BlockContentTypes.SWAP_BLOCKS, BlockContentTypes.ADD]
-                                    }
+                                    blockHandlerButtons = [BlockContentTypes.ADD];
 
                                     switch (contentBlock.type) {
                                         case BlockContentTypes.TEXT:
