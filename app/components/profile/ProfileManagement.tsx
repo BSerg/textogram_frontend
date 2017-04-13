@@ -6,11 +6,16 @@ import ProfileManagementAccount from './ProfileManagementAccount';
 import ProfileAuthorList from './ProfileAuthorList';
 import {MediaQuerySerice} from '../../services/MediaQueryService';
 
+import EditableImageModal from '../shared/EditableImageModal';
+
 import ProfileSocialLinkList from "./ProfileSocialLinkList";
 
 import Loading from '../shared/Loading';
 
 import {UserAction, GET_ME, LOGOUT, LOGIN, SAVE_USER, UPDATE_USER, USER_REJECT} from '../../actions/user/UserAction';
+import {ModalAction, OPEN_MODAL} from '../../actions/shared/ModalAction';
+
+
 import Error from "../Error";
 
 
@@ -22,9 +27,17 @@ interface IManagementState {
     additionalPage?: any;
     newName?: string;
     newDescription?: string;
+    nameEdit?: boolean;
+    descriptionEdit?: boolean;
+    avatarUploading?: boolean;
 }
 
 export default class ProfileManagement extends React.Component<any, IManagementState> {
+
+    refs: {
+        inputAvatar: HTMLInputElement;
+    };
+
 
     SECTION_ACCOUNT = 'account';
     SECTION_NOTIFICATIONS = 'notifications';
@@ -33,7 +46,7 @@ export default class ProfileManagement extends React.Component<any, IManagementS
         super();
         this.state = {currentSection: 'account', additionalPage: null, isDesktop: MediaQuerySerice.getIsDesktop(),
             user: UserAction.getStore().user ? JSON.parse(JSON.stringify(UserAction.getStore().user)) : null,
-            newName: '', newDescription: ''
+            newName: '', newDescription: '', avatarUploading: false, nameEdit: false, descriptionEdit: false
         };
         this.setUser = this.setUser.bind(this);
         this.setError = this.setError.bind(this);
@@ -61,11 +74,101 @@ export default class ProfileManagement extends React.Component<any, IManagementS
                                                           subscribedTo={subscribedTo} />});
     }
 
+    formSubmit(type: string, e: any) {
+        e.preventDefault();
+        console.log(type);
+        this.saveUserData(type);
+    }
+
+    saveUserData(type: string) {
+        let fd = new FormData();
+        let stateData: any = {};
+        console.log(type);
+        if (type == 'name') {
+            stateData.nameEdit = false;
+
+            if (!this.state.newName) return;
+            let userNameArr = this.state.newName.split(' ');
+            fd.append('first_name', userNameArr[0]);
+
+            fd.append('last_name', userNameArr.length > 1 ? userNameArr.slice(1).join(' ') : '');
+        }
+        else if (type == 'description') {
+            stateData.descriptionEdit = false;
+            fd.append('description', this.state.newDescription);
+        }
+        console.log(fd);
+        UserAction.doAsync(UPDATE_USER, fd).then(() => {
+            this.setState(stateData);
+        }).catch(() => {this.setState(stateData)});
+    }
+
     checkDesktop(isDesktop: boolean) {
         if (isDesktop != this.state.isDesktop) {
             this.setState({isDesktop: isDesktop});
         }
     }
+
+    toggleEdit(type: string, edit: boolean) {
+        if (type == 'name') {
+            this.setState({nameEdit: edit, descriptionEdit: false, newName: this.state.user.first_name + ' ' + this.state.user.last_name});
+        }
+        else if (type == 'description') {
+            this.setState({descriptionEdit: edit, nameEdit: false, newDescription: this.state.user.description});
+        }
+    }
+
+    textEdit(type: string, e: any) {
+        let val: string = e.target.value;
+        if (type == 'name' ) {
+            this.setState({newName: val});
+        }
+        else if (type == 'description') {
+            this.setState({newDescription: val});
+        }
+    }
+
+    inputClick() {
+        this.refs.inputAvatar.click();
+    }
+
+    avatarSave(imageData: any) {
+        this.setState({avatarUploading: true}, () => {
+
+            let byteString = window.atob(imageData.split(',')[1]);
+            let ab = new ArrayBuffer(byteString.length);
+            let ia = new Uint8Array(ab);
+            for (let i = 0; i < byteString.length; i++) {
+                ia[i] = byteString.charCodeAt(i);
+            }
+            let file = new Blob([ia], {type: 'image/png'});
+
+            let fd = new FormData();
+            fd.append('avatar', file);
+
+            UserAction.doAsync(UPDATE_USER, fd).then(() => {
+                this.setState({avatarUploading: false});
+            }).catch(() => { this.setState({avatarUploading: false}) });
+        })
+    }
+
+    uploadAvatar() {
+        let file = this.refs.inputAvatar.files[0];
+        console.log(file);
+        if (!file) return;
+        let _URL = window.URL;
+        let img = new Image();
+        img.onload = () => {
+            this.refs.inputAvatar.value = '';
+            ModalAction.do(OPEN_MODAL, { content: <EditableImageModal width={400} height={400} outputWidth={400}
+                                                                          onConfirm={this.avatarSave.bind(this)}
+                                                                          foregroundShape="circle"
+                                                                          outputHeight={400} image={img} />});
+        };
+        img.src = _URL.createObjectURL(file);
+    }
+
+
 
     componentDidMount() {
         MediaQuerySerice.listen(this.checkDesktop);
@@ -110,15 +213,52 @@ export default class ProfileManagement extends React.Component<any, IManagementS
             <div id="profile">
                 <div id="profile_content">
                     <div className="profile_content_main">
-                        <div className="profile_avatar profile_avatar_editable" key="avatar">
+                        <div className={"profile_avatar profile_avatar_editable" + (this.state.avatarUploading ? " uploading" : "") }
+                             key="avatar" onClick={this.inputClick.bind(this)}>
                              { this.state.user.avatar ? (<img src={this.state.user.avatar}/>) : (
                                  <div className="profile_avatar_dummy"></div>) }
+
+                            {
+                                this.state.avatarUploading ? (<div className="avatar_upload"><Loading/></div>) : null
+                            }
+
                         </div>
 
+                        <input accept="image/jpeg,image/png" style={{visibility: 'hidden', position: 'fixed', top: '-1000px', left: '-1000px'}} type="file" ref="inputAvatar" onChange={this.uploadAvatar.bind(this)} />
+
                         <div key="username" className="username">
-                             {this.state.user.first_name} {this.state.user.last_name}
+                            {
+                                this.state.nameEdit ? (
+                                    <form onSubmit={this.formSubmit.bind(this, 'name')}>
+
+                                        <input type="text" value={this.state.newName}
+                                               onBlur={this.toggleEdit.bind(this, 'name', false)}
+                                               onChange={this.textEdit.bind(this, 'name') }/>
+                                        <input type="submit" style={{visibility: 'hidden'}}/>
+                                    </form>
+                                ) : (<span onClick={this.toggleEdit.bind(this, 'name', true)}>
+                                        {this.state.user.first_name} {this.state.user.last_name}
+                                </span>)
+                            }
+
                          </div>
-                         <div className="description">{ this.state.user.description }</div>
+                         <div className="description">
+
+                             {
+                                 this.state.descriptionEdit ? (
+                                     <form onSubmit={this.formSubmit.bind(this, 'description')}>
+
+                                        <input type="text" value={this.state.newDescription}
+                                               onBlur={this.toggleEdit.bind(this, 'description', false)}
+                                               onChange={this.textEdit.bind(this, 'description') }/>
+                                        <input type="submit" style={{visibility: 'hidden'}}/>
+                                    </form>
+                                 ) : (<span onClick={this.toggleEdit.bind(this, 'description', true)}>
+                                        { this.state.user.description }
+                                        </span>)
+                             }
+
+                         </div>
 
                         <ProfileSocialLinkList items={this.state.user.social_links}/>
 
@@ -154,20 +294,11 @@ export default class ProfileManagement extends React.Component<any, IManagementS
                                              </div>)
                                          }) }
                                     </div>
-
                                     {section}
-
-
                                 </div>
                             )
                     }
-
-
                 </div>
-
-
-
-
             </div>)
     }
 }
