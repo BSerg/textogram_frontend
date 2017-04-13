@@ -36,6 +36,8 @@ export default class ProfileManagement extends React.Component<any, IManagementS
 
     refs: {
         inputAvatar: HTMLInputElement;
+        inputName: HTMLInputElement;
+        inputDescription: HTMLInputElement;
     };
 
 
@@ -76,14 +78,12 @@ export default class ProfileManagement extends React.Component<any, IManagementS
 
     formSubmit(type: string, e: any) {
         e.preventDefault();
-        console.log(type);
         this.saveUserData(type);
     }
 
     saveUserData(type: string) {
         let fd = new FormData();
         let stateData: any = {};
-        console.log(type);
         if (type == 'name') {
             stateData.nameEdit = false;
 
@@ -97,7 +97,6 @@ export default class ProfileManagement extends React.Component<any, IManagementS
             stateData.descriptionEdit = false;
             fd.append('description', this.state.newDescription);
         }
-        console.log(fd);
         UserAction.doAsync(UPDATE_USER, fd).then(() => {
             this.setState(stateData);
         }).catch(() => {this.setState(stateData)});
@@ -110,12 +109,24 @@ export default class ProfileManagement extends React.Component<any, IManagementS
     }
 
     toggleEdit(type: string, edit: boolean) {
+
+        let stateData: any = {};
+
         if (type == 'name') {
-            this.setState({nameEdit: edit, descriptionEdit: false, newName: this.state.user.first_name + ' ' + this.state.user.last_name});
+            stateData = {nameEdit: edit, descriptionEdit: false, newName: this.state.user.first_name + ' ' + this.state.user.last_name}
+            // this.setState();
         }
         else if (type == 'description') {
-            this.setState({descriptionEdit: edit, nameEdit: false, newDescription: this.state.user.description});
+            stateData = {descriptionEdit: edit, nameEdit: false, newDescription: this.state.user.description}
         }
+        this.setState(stateData, () => {
+            if (type == 'name' && edit) {
+                this.refs.inputName.focus();
+            }
+            else if (type == 'description') {
+                this.refs.inputDescription.focus();
+            }
+        });
     }
 
     textEdit(type: string, e: any) {
@@ -231,7 +242,7 @@ export default class ProfileManagement extends React.Component<any, IManagementS
                                 this.state.nameEdit ? (
                                     <form onSubmit={this.formSubmit.bind(this, 'name')}>
 
-                                        <input type="text" value={this.state.newName}
+                                        <input ref="inputName" type="text" value={this.state.newName}
                                                onBlur={this.toggleEdit.bind(this, 'name', false)}
                                                onChange={this.textEdit.bind(this, 'name') }/>
                                         <input type="submit" style={{visibility: 'hidden'}}/>
@@ -248,7 +259,7 @@ export default class ProfileManagement extends React.Component<any, IManagementS
                                  this.state.descriptionEdit ? (
                                      <form onSubmit={this.formSubmit.bind(this, 'description')}>
 
-                                        <input type="text" value={this.state.newDescription}
+                                        <input ref="inputDescription" type="text" value={this.state.newDescription}
                                                onBlur={this.toggleEdit.bind(this, 'description', false)}
                                                onChange={this.textEdit.bind(this, 'description') }/>
                                         <input type="submit" style={{visibility: 'hidden'}}/>

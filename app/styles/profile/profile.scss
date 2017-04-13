@@ -319,6 +319,10 @@
 
     .profile__articles {
       align-items: flex-start;
+
+      &.drafts {
+        display: block;
+      }
     }
 
     #profile_content {

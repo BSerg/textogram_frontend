@@ -85,6 +85,10 @@ export default class ProfileArticles extends React.Component<IArticlesProps, IAr
 
     }
 
+    handleMainScroll() {
+        console.log('scrolll');
+    }
+
     handleScroll() {
         let rect: ClientRect = this.refs.main.getBoundingClientRect();
         if ((rect.bottom <= window.innerHeight) && !this.state.isLoading && this.state.nextUrl) {
@@ -115,9 +119,9 @@ export default class ProfileArticles extends React.Component<IArticlesProps, IAr
 
         let isFeed = this.state.section == this.SECTION_FEED;
         let isOwner = this.state.section == this.SECTION_DRAFTS || (this.state.isSelf && (this.state.section == this.SECTION_ARTICLES));
-
         return (
-            <div className="profile__articles" ref="main">
+            <div className={"profile__articles" + (this.props.section == this.SECTION_DRAFTS ? ' drafts' : '') }
+                 ref="main">
 
                 { this.state.items.map((item: any, index: number) => {
                     return (<ArticlePreview isFeed={isFeed} key={index} item={item} isOwner={isOwner}
