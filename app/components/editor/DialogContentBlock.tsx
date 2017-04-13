@@ -195,7 +195,10 @@ export default class DialogContentBlock extends React.Component<IDialogContentBl
 
             let img = new Image();
             img.onload = () => {
-                let modalContent = <EditableImageModal image={img} width={250} height={250} foregroundColor="#7F7F7F"
+                let modalContent = <EditableImageModal image={img}
+                                                       outputWidth={64}
+                                                       outputHeight={64}
+                                                       foregroundColor="rgba(0, 0, 0, 0.5)"
                                                        foregroundShape="circle" onConfirm={handleConfirm}/>;
                 ModalAction.do(OPEN_MODAL, {content: modalContent});
             };

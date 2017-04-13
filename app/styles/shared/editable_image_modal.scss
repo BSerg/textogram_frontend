@@ -24,7 +24,6 @@
 
   .editable_image_modal__content {
     position: relative;
-    flex: auto;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -36,6 +35,7 @@
     align-items: center;
     justify-content: center;
     height: 64px;
+    margin-top: 30px;
 
     .editable_image_modal__button {
       display: flex;
@@ -43,42 +43,19 @@
       align-items: center;
       justify-content: center;
       cursor: pointer;
+      font-size: 10px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
 
       &:not(:last-child) {
         margin-right: 30px;
       }
 
       svg {
-        width: 30px;
-        height: 30px;
+        width: 35px;
+        height: 35px;
         fill: white;
       }
-    }
-  }
-
-  .editable_image_modal__close {
-    position: absolute;
-    top: -15px;
-    right: -30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 50px;
-    height: 50px;
-    cursor: pointer;
-
-    svg {
-      fill: white;
-    }
-  }
-
-  @include desktop {
-    .editable_image_modal__content {
-      flex: none;
-    }
-
-    .editable_image_modal__footer {
-      margin-top: 30px;
     }
   }
 }

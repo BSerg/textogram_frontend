@@ -9,6 +9,8 @@ interface IProps {
     foregroundShape?: string;
     width: number;
     height: number;
+    outputWidth?: number;
+    outputHeight?: number;
     maxZoom?: number;
     onChange?: (imageBase64?: string) => any;
 }
@@ -41,7 +43,7 @@ export default class ImageEditorSimple extends React.Component<IProps, IState> {
         enableZoom: true,
         foregroundColor: 'rgba(0, 0, 0, 0.5)',
         foregroundShape: 'none',
-        maxZoom: 2
+        maxZoom: 2,
     };
 
     refs: {
@@ -149,7 +151,16 @@ export default class ImageEditorSimple extends React.Component<IProps, IState> {
             this.state.imageWidth,
             this.state.imageHeight
         );
-        return tempCanvas.toDataURL();
+        if (this.props.outputWidth && this.props.outputHeight) {
+            let outputCanvas = document.createElement('canvas');
+            outputCanvas.width = this.props.outputWidth;
+            outputCanvas.height = this.props.outputHeight;
+            let outputCtx = outputCanvas.getContext('2d');
+            outputCtx.drawImage(tempCanvas, 0, 0, this.props.outputWidth, this.props.outputHeight);
+            return outputCanvas.toDataURL();
+        } else {
+            return tempCanvas.toDataURL();
+        }
     }
 
     drawImage() {

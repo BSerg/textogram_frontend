@@ -7,8 +7,11 @@
   align-items: center;
   justify-content: center;
   padding: 0 $basic_mobile_offset;
+  box-sizing: border-box;
 
   canvas {
+    width: 100%;
+    height: auto;
     cursor: url('../../assets/images/move.svg') 12.5 12.5, move;
   }
 
@@ -18,15 +21,15 @@
     align-items: center;
     justify-content: center;
     width: 100%;
-    margin-top: 20px;
+    margin-top: 30px;
     cursor: auto;
 
     input[type="range"] {
       width: 100%;
       background: transparent;
       cursor: pointer;
-      @include input-range-thumb($color, 13px, 13px, 50%, -5.5px, 2px solid $color3);
-      @include input-range-track($color3, 100%, 2px, none, 2px);
+      @include input-range-thumb($color7, 13px, 13px, 50%, -5.5px, 1px solid $color4);
+      @include input-range-track($color4, 100%, 1px, none, 1px);
     }
 
   }

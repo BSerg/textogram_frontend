@@ -4,13 +4,15 @@ import '../../styles/shared/editable_image_modal.scss';
 import {ModalAction, CLOSE_MODAL} from "../../actions/shared/ModalAction";
 import {MediaQuerySerice} from "../../services/MediaQueryService";
 
-const CloseIcon = require('babel!svg-react!../../assets/images/close_small.svg?name=CloseIcon');
-const ConfirmIcon = require('babel!svg-react!../../assets/images/redactor_icon_confirm.svg?name=ConfirmIcon');
+const CloseIcon = require('babel!svg-react!../../assets/images/cancel_btn.svg?name=CloseIcon');
+const ConfirmIcon = require('babel!svg-react!../../assets/images/ok_btn.svg?name=ConfirmIcon');
 
 interface IEditableImageModalProps {
     image: HTMLImageElement;
-    width: number;
-    height: number;
+    width?: number;
+    height?: number;
+    outputWidth?: number;
+    outputHeight?: number;
     foregroundColor?: string;
     foregroundShape?: string;
     onConfirm?: (imageBase64: string) => any;
@@ -30,6 +32,11 @@ export default class EditableImageModal extends React.Component<IEditableImageMo
             isDesktop: MediaQuerySerice.getIsDesktop()
         }
     }
+
+    static defaultProps = {
+        width: 320,
+        height: 320
+    };
 
     handleMediaQuery(isDesktop: boolean) {
         if (this.state.isDesktop != isDesktop) {
@@ -53,34 +60,18 @@ export default class EditableImageModal extends React.Component<IEditableImageMo
     render() {
         return (
             <div className="editable_image_modal">
-                {!this.state.isDesktop ?
-                    <div className="editable_image_modal__head" onClick={this.close.bind(this)}>
-                        <CloseIcon/>
-                    </div> : null
-                }
                 <div className="editable_image_modal__content">
                     <ImageEditorSimple {...this.props} onChange={this.handleImage.bind(this)}/>
                 </div>
                 <div className="editable_image_modal__footer">
-                    {this.state.isDesktop ?
-                        [
-                            <div key="cancel" className="editable_image_modal__button"
-                                 onClick={this.close.bind(this)}>
-                                <CloseIcon/> Отмена
-                            </div>,
-                            <div key="confirm" className="editable_image_modal__button"
-                                 onClick={this.handleConfirm.bind(this)}>
-                                <ConfirmIcon/> Сохранить
-                            </div>
-                        ]:
-                        [
-                            <div className="editable_image_modal__button"
-                                 onClick={this.close.bind(this)}><CloseIcon/></div>,
-                            <div className="editable_image_modal__button"
-                                 onClick={this.handleConfirm.bind(this)}><ConfirmIcon/></div>
-                        ]
-
-                    }
+                    <div key="cancel" className="editable_image_modal__button"
+                         onClick={this.close.bind(this)}>
+                        <CloseIcon/> Отмена
+                    </div>
+                    <div key="confirm" className="editable_image_modal__button"
+                         onClick={this.handleConfirm.bind(this)}>
+                        <ConfirmIcon/> Применить
+                    </div>
                 </div>
             </div>
         );

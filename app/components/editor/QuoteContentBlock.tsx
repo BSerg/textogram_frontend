@@ -143,8 +143,12 @@ export default class QuoteContentBlock extends React.Component<IQuoteContentBloc
 
         let img = new Image();
         img.onload = () => {
-            let modalContent = <EditableImageModal image={img} width={250} height={250} foregroundColor="#7F7F7F"
-                                                   foregroundShape="circle" onConfirm={handleConfirm}/>;
+            let modalContent = <EditableImageModal image={img}
+                                                   outputWidth={100}
+                                                   outputHeight={100}
+                                                   foregroundColor="rgba(0, 0, 0, 0.5)"
+                                                   foregroundShape="circle"
+                                                   onConfirm={handleConfirm}/>;
             ModalAction.do(OPEN_MODAL, {content: modalContent});
         };
         img.src = window.URL.createObjectURL(file);
