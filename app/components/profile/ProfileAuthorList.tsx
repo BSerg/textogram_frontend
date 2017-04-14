@@ -9,6 +9,7 @@ import Loading from '../shared/Loading';
 import {MenuAction, TOGGLE} from '../../actions/MenuAction';
 
 const CloseIcon = require('babel!svg-react!../../assets/images/close.svg?name=CloseIcon');
+const ConfirmIcon = require('babel!svg-react!../../assets/images/redactor_icon_confirm.svg?name=ConfirmIcon');
 
 
 interface ISubscribersProps {
@@ -126,9 +127,9 @@ export default class ProfileAuthorList extends React.Component<ISubscribersProps
                                 <Link to={'/profile/' + item.id + '/'} key={index} className="profile_author">
                                     <div className="author_avatar"><img src={item.avatar} /></div>
                                     <div className="author_username">{ item.first_name + " " + item.last_name }</div>
-                                    <div>{ item.number_of_articles }</div>
-                                    <div>{ item.is_subscribed ? 'd' : 'n' }</div>
-
+                                    <div>{"Читатют " + item.subscribers }</div>
+                                    <div>{"Текстов " + item.number_of_articles }</div>
+                                    <div className="info">{ item.is_subscribed ? <ConfirmIcon /> : null }</div>
                                 </Link>)
                         })
                     }

@@ -59,6 +59,7 @@ interface IArticlePreviewStateInterface {
     isDesktop?: boolean;
     isNew?: boolean;
     timeout?: number;
+    removed?: boolean;
 }
 
 
@@ -67,7 +68,7 @@ class ArticlePreviewClass extends React.Component<IArticlePreviewPropsInterface,
 
     constructor() {
         super();
-        this.state = {menuOpen: true, isDesktop: MediaQuerySerice.getIsDesktop(), isNew: false};
+        this.state = {menuOpen: true, isDesktop: MediaQuerySerice.getIsDesktop(), isNew: false, removed: false};
         this.checkDesktop = this.checkDesktop.bind(this);
         this.setNotNew = this.setNotNew.bind(this);
     }
@@ -95,7 +96,7 @@ class ArticlePreviewClass extends React.Component<IArticlePreviewPropsInterface,
         api.post('/articles/editor/' + this.props.item.id + ( this.props.item.is_draft ? '/restore_draft/' : '/restore_published/')).then(
             (response) => {
                 if (this.props.item.is_draft) {
-                    UserAction.do(UPDATE_USER_DRAFTS, -1);
+                    UserAction.do(UPDATE_USER_DRAFTS, 1);
                 }
                 this.setState({deleted: false});
 
@@ -104,6 +105,12 @@ class ArticlePreviewClass extends React.Component<IArticlePreviewPropsInterface,
 
 
         // this.setState({deleted: false});
+    }
+
+    remove() {
+        if (this.state.deleted) {
+            this.setState({removed: true});
+        }
     }
 
     checkDesktop(isDesktop: boolean) {
@@ -151,13 +158,17 @@ class ArticlePreviewClass extends React.Component<IArticlePreviewPropsInterface,
     }
 
     render() {
+        if (this.state.removed) {
+            return null;
+        }
 
         let date = this.getDateString(this.props.item.is_draft ? this.props.item.last_modified : this.props.item.published_at);
         let coverStyle = { backgroundImage: `url('${this.props.item.cover}')`};
 
         if (this.state.deleted) {
             return (<div className="article_preview_deleted">
-                Текст удален. <span onClick={this.restore.bind(this)}>Восстановить</span> <div className="close"><CloseIcon /></div></div>);
+                Текст удален. <span onClick={this.restore.bind(this)}>Восстановить</span>
+                <div className="close" onClick={this.remove.bind(this)}><CloseIcon /></div></div>);
         }
 
         if (this.state.isDesktop) {

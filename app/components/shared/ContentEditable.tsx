@@ -170,6 +170,7 @@ export default class ContentEditable extends React.Component<ContentEditableProp
             PopupPanelAction.do(CLOSE_POPUP, {id: this.state.textFormatPopupId});
             this.state.textFormatPopupId = null;
         }
+        this.props.onBlur && this.props.onBlur();
     }
     handlePaste(e: any) {
         let content;

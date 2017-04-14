@@ -7,7 +7,11 @@ export const TOGGLE = 'toggle';
 class MenuActionClass extends Action{
 
     constructor() {
-        super({open: false});
+        super({open: Boolean(parseInt(localStorage.getItem('menuOpen')))});
+        let open = Boolean(parseInt(localStorage.getItem('menuOpen')));
+        document.body.style.marginTop = (open && MediaQuerySerice.getIsDesktop()) ? '55px' : '0';
+        document.body.style.height = (open && MediaQuerySerice.getIsDesktop()) ? 'calc(100% - 55px)' : '100%';
+
     }
 }
 
@@ -17,4 +21,6 @@ MenuAction.register(TOGGLE, (store, open: boolean = false) => {
     store.open = open;
     document.body.style.marginTop = (open && MediaQuerySerice.getIsDesktop()) ? '55px' : '0';
     document.body.style.height = (open && MediaQuerySerice.getIsDesktop()) ? 'calc(100% - 55px)' : '100%';
+
+    localStorage.setItem('menuOpen', open ? '1' : '0');
 });

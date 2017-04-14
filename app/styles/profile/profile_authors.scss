@@ -4,6 +4,7 @@
 
 .profile_authors {
   background-color: #F7F7F7;
+  padding-top: 70px;
 
   .profile_authors_close {
 
@@ -61,8 +62,17 @@
 
     &>div {
       margin-right: $margin;
+      text-align: center;
       &:last-child {
         margin-right: 0;
+      }
+
+      &.info {
+        min-width: 20px;
+        svg {
+          width: 20px;
+          height: 20px;
+        }
       }
     }
 
@@ -93,28 +103,15 @@
 @media (min-width: 1024px) {
   .profile_authors {
     background-color: #FFFFFF;
+    padding-top: $padding / 2;
   }
-  //.profile_authors {
-  //  background-color: #FFFFFF;
-  //  left: 340px;
-  //  @include transition(200ms);
 
-    //&.adjusted {
-    //  top: 55px;
-    //  height: calc(100% - 55px);
-    //  min-height: calc(100% - 55px);
-    //  @include transition(200ms);
-    //}
-    //position: relative;
-
-    //width: calc(100% - 440px);
-    //padding: 15px 50px;
-    //margin: 0 100px 0 $margin * 2;
-    //
-    //.profile_authors_close {
-    //  right: -35px;
-    //}
-  //}
+  .profile_authors .profile_author {
+    letter-spacing: 1px;
+    &>div {
+      text-align: left;
+    }
+  }
 
   .profile_authors_input {
     //max-width: 500px;

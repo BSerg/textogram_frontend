@@ -1,5 +1,6 @@
 import * as React from 'react';
 import {Captions} from '../../constants';
+import {withRouter} from 'react-router';
 
 import ProfileManagementNotifications from './ProfileManagementNotifications';
 import ProfileManagementAccount from './ProfileManagementAccount';
@@ -7,6 +8,8 @@ import ProfileAuthorList from './ProfileAuthorList';
 import {MediaQuerySerice} from '../../services/MediaQueryService';
 
 import EditableImageModal from '../shared/EditableImageModal';
+
+import ContentEditable from '../shared/ContentEditable';
 
 import ProfileSocialLinkList from "./ProfileSocialLinkList";
 
@@ -18,6 +21,9 @@ import {ModalAction, OPEN_MODAL} from '../../actions/shared/ModalAction';
 
 import Error from "../Error";
 
+interface IManagementProps {
+    router?: any;
+}
 
 interface IManagementState {
     user?: any;
@@ -32,7 +38,7 @@ interface IManagementState {
     avatarUploading?: boolean;
 }
 
-export default class ProfileManagement extends React.Component<any, IManagementState> {
+class ProfileManagementClass extends React.Component<IManagementProps, IManagementState> {
 
     refs: {
         inputAvatar: HTMLInputElement;
@@ -46,9 +52,10 @@ export default class ProfileManagement extends React.Component<any, IManagementS
 
     constructor() {
         super();
+        let user = UserAction.getStore().user ? JSON.parse(JSON.stringify(UserAction.getStore().user)) : null;
         this.state = {currentSection: 'account', additionalPage: null, isDesktop: MediaQuerySerice.getIsDesktop(),
-            user: UserAction.getStore().user ? JSON.parse(JSON.stringify(UserAction.getStore().user)) : null,
-            newName: '', newDescription: '', avatarUploading: false, nameEdit: false, descriptionEdit: false
+            user: user, newName: user ? (user.first_name + ' ' + user.last_name) : '', newDescription: user ? user.description : '',
+            avatarUploading: false, nameEdit: false, descriptionEdit: false
         };
         this.setUser = this.setUser.bind(this);
         this.setError = this.setError.bind(this);
@@ -56,9 +63,12 @@ export default class ProfileManagement extends React.Component<any, IManagementS
     }
 
     setUser() {
+        let user = UserAction.getStore().user ? JSON.parse(JSON.stringify(UserAction.getStore().user)) : null;
         this.setState({
-            user: UserAction.getStore().user ? JSON.parse(JSON.stringify(UserAction.getStore().user)) : null,
-            error: UserAction.getStore().user ? null : <Error/>
+            user: user,
+            error: UserAction.getStore().user ? null : <Error/>,
+            newName: user ? (user.first_name + ' ' + user.last_name) : '',
+            newDescription: user ? user.description : ''
         });
     }
 
@@ -113,20 +123,21 @@ export default class ProfileManagement extends React.Component<any, IManagementS
         let stateData: any = {};
 
         if (type == 'name') {
-            stateData = {nameEdit: edit, descriptionEdit: false, newName: this.state.user.first_name + ' ' + this.state.user.last_name}
+            stateData = {nameEdit: edit, descriptionEdit: false, newName: this.state.user.first_name + ' ' + this.state.user.last_name};
             // this.setState();
         }
         else if (type == 'description') {
-            stateData = {descriptionEdit: edit, nameEdit: false, newDescription: this.state.user.description}
+            stateData = {descriptionEdit: edit, nameEdit: false, newDescription: '' + this.state.user.description}
         }
         this.setState(stateData, () => {
             if (type == 'name' && edit) {
-                this.refs.inputName.focus();
+                this.refs.inputName && this.refs.inputName.focus();
             }
             else if (type == 'description') {
-                this.refs.inputDescription.focus();
+                // this.refs.inputDescription && this.refs.inputDescription.focus();
             }
         });
+        this.setState(stateData);
     }
 
     textEdit(type: string, e: any) {
@@ -141,6 +152,16 @@ export default class ProfileManagement extends React.Component<any, IManagementS
 
     inputClick() {
         this.refs.inputAvatar.click();
+    }
+
+    contentEdit(content: string, contentText: string ) {
+        this.setState({newDescription: contentText});
+    }
+
+    contentKeyDown(e: any) {
+        if (e.keyCode == 13) {
+            this.saveUserData('description');
+        }
     }
 
     avatarSave(imageData: any) {
@@ -165,7 +186,6 @@ export default class ProfileManagement extends React.Component<any, IManagementS
 
     uploadAvatar() {
         let file = this.refs.inputAvatar.files[0];
-        console.log(file);
         if (!file) return;
         let _URL = window.URL;
         let img = new Image();
@@ -179,9 +199,24 @@ export default class ProfileManagement extends React.Component<any, IManagementS
         img.src = _URL.createObjectURL(file);
     }
 
+    showNotifications() {
+        this.setState({ currentSection: this.SECTION_NOTIFICATIONS }, () => {
+            this.props.router.push('/manage/');
+        });
+    }
 
+    componentWillReceiveProps(nextProps: any) {
+        if (nextProps.router.location.query.show == 'notifications' ) {
+            this.showNotifications();
+        }
+    }
 
     componentDidMount() {
+
+        if (this.props.router.location.query.show == 'notifications') {
+            this.showNotifications();
+        }
+
         MediaQuerySerice.listen(this.checkDesktop);
         UserAction.onChange([GET_ME, LOGIN, LOGOUT, SAVE_USER, UPDATE_USER, USER_REJECT], this.setUser);
     }
@@ -253,33 +288,29 @@ export default class ProfileManagement extends React.Component<any, IManagementS
                             }
 
                          </div>
-                         <div className="description">
 
-                             {
-                                 this.state.descriptionEdit ? (
-                                     <form onSubmit={this.formSubmit.bind(this, 'description')}>
 
-                                        <input ref="inputDescription" type="text" value={this.state.newDescription}
-                                               onBlur={this.toggleEdit.bind(this, 'description', false)}
-                                               onChange={this.textEdit.bind(this, 'description') }/>
-                                        <input type="submit" style={{visibility: 'hidden'}}/>
-                                    </form>
-                                 ) : (<span onClick={this.toggleEdit.bind(this, 'description', true)}>
-                                        { this.state.user.description }
-                                        </span>)
-                             }
-
-                         </div>
+                        <div className={"description" + ( this.state.descriptionEdit ? " editable" : "")}
+                             onFocus={this.toggleEdit.bind(this, 'description', true)}>
+                            <ContentEditable
+                                content={this.state.newDescription}
+                                elementType="inline"
+                                placeholder="Введите описание"
+                                onKeyDown={this.contentKeyDown.bind(this)}
+                                forceUpdateContent={true}
+                                onChange={this.contentEdit.bind(this)}
+                                onBlur={this.toggleEdit.bind(this, 'description', false)}
+                                allowLineBreak={false}/>
+                        </div>
 
                         <ProfileSocialLinkList items={this.state.user.social_links}/>
 
-
                         <div className="divider"></div>
 
-                         <div className="subscription">
-                             <div onClick={this.showAuthors.bind(this, true)}><span>{ this.state.user.subscribers }</span> читателей</div>
-                             <div onClick={this.showAuthors.bind(this, false)}><span>{ this.state.user.subscriptions }</span> подписок</div>
-                         </div>
+                        <div className="subscription">
+                            <div onClick={this.showAuthors.bind(this, false)}>Читаемые <span>{ this.state.user.subscriptions }</span></div>
+                            <div onClick={this.showAuthors.bind(this, true)}>Читатели <span>{ this.state.user.subscribers }</span></div>
+                        </div>
 
                         {
                              this.state.isDesktop ? [
@@ -313,3 +344,7 @@ export default class ProfileManagement extends React.Component<any, IManagementS
             </div>)
     }
 }
+
+let ProfileManagement = withRouter(ProfileManagementClass);
+
+export default ProfileManagement;

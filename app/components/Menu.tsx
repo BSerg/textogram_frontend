@@ -3,7 +3,7 @@ import {Link, withRouter} from 'react-router';
 import {api} from '../api';
 
 import {MenuAction, TOGGLE} from '../actions/MenuAction';
-import {UserAction, GET_ME, LOGIN, LOGOUT, SAVE_USER, UPDATE_USER} from '../actions/user/UserAction';
+import {UserAction, GET_ME, LOGIN, LOGOUT, SAVE_USER, UPDATE_USER, UPDATE_USER_DRAFTS} from '../actions/user/UserAction';
 import {UserNotificationAction, CHECK_NOTIFICATIONS, DECREASE_NOTIFICATIONS_NUMBER} from '../actions/user/UserNotificationAction';
 import {ModalAction, OPEN_MODAL} from '../actions/shared/ModalAction';
 import Registration from './Registration';
@@ -122,68 +122,36 @@ class DefaultMenu extends React.Component<DefaultMenuPropsInterface, IDefaultMen
             <div className="menu__content main__menu_default" onClick={this.stopClosePropagation.bind(this)}>
 
                 <div onClick={this.closeMenu.bind(this)} className={this.props.isDesktop ? "menu__close" : "menu__close_mobile"}><CloseIcon /></div>
-                { !this.props.isDesktop ? (<div onClick={this.handleUrlClick.bind(this, '/info/')} className="menu__info"><InfoIcon /></div>) : null}
-
-                <div className="menu__user">
-                    {
-                            this.props.isDesktop ? (
-                                <div className="menu__user_avatar_dummy"  onClick={this.handleUrlClick.bind(this, '/')}>
-                                </div>
-                            ) : null
-                        }
-
-
-                    <div className="menu__user_username">
-                        <span  onClick={this.handleUrlClick.bind(this, '/')}>{Captions.main_menu.title}</span>
-                    </div>
-
-                </div>
-
 
                 {
-                    !this.props.isDesktop ? (
-                        <div className="menu__login">
-                            <form onSubmit={this.handleSubmit} className={this.state.loginError ? 'error': null}>
-                                <div className="login_element">
-                                    <input type="text"
-                                           name="phone"
-                                           placeholder={Captions.main_menu.inputPhonePlaceholder}
-                                           value={this.state.phone} onChange={this.phoneChange.bind(this)}/>
-                                    <div className="hint"><span>{Captions.main_menu.loginHint}</span></div>
-                                </div>
-                                <div className="login_element">
-                                    <input type="password" name="pwd"
-                                           placeholder={Captions.main_menu.inputPasswordPlaceholder}
-                                           value={this.state.password} onChange={this.passwordChange.bind(this)}/>
-                                    <div className="hint">
-                                        <span>{Captions.main_menu.passwordHint}</span>
-                                        <span className="forgot_password" onClick={this.registration.bind(this, true)}>
-                                            {Captions.main_menu.forgotPassword}
-                                        </span>
-                                    </div>
-                                </div>
-                                <button style={{position: 'absolute', opacity: 0}} type="submit">1</button>
-                            </form>
+                    this.props.isDesktop ? (<Link to="/" className="menu__user">
+                        <div className="menu__user_avatar_dummy"></div>
+                        <div className="menu__user_username">
+                            <span>{Captions.main_menu.title}</span>
                         </div>
-                    ) : null
+                    </Link>) : (
+
+                        <div className="menu__user" onClick={this.handleUrlClick.bind(this, '/')}>
+
+                            <div className="menu__user_username">
+                                <span>{Captions.main_menu.title}</span>
+                            </div>
+
+                        </div>
+                    )
                 }
+
+
+
 
                 {
                     !this.props.isDesktop ? (<div style={{color: '#FFFFFF', justifyContent: 'center'}}><LoginBlock /></div>) : null
                 }
 
-                { this.props.isDesktop ? (<div className="menu__about" onClick={this.handleUrlClick.bind(this, '/info/')}>
-                        {Captions.main_menu.help}
-                    </div>) : null}
-                { this.props.isDesktop ? (<div className="menu__about" onClick={this.registration.bind(this, false)}>{Captions.main_menu.register}</div>) : null}
-
                 {
-                    !this.props.isDesktop ? (<div className="menu__register" onClick={this.registration.bind(this, false)}>{Captions.main_menu.register}</div>) : null
+                    this.props.isDesktop ? (<div style={{flexGrow: 1}}></div>) : null
                 }
 
-                {
-                    !this.props.isDesktop ? (<div className="menu__about" onClick={this.handleUrlClick.bind(this, '/info/')}>{Captions.main_menu.about}</div>) : null
-                }
                 {
                     this.props.isDesktop ?
                         (this.state.isAuthorization ? (
@@ -216,8 +184,8 @@ class DefaultMenu extends React.Component<DefaultMenuPropsInterface, IDefaultMen
 
 
                             </div>) : (
-                            <div className="menu__authorization" onClick={this.authorize.bind(this)}>
-                                <div className="menu__authorization_caption">{Captions.main_menu.login}:</div>
+                            <div className="menu__authorization">
+                                <div className="menu__authorization_caption">Вход через соцсети:</div>
                                 <LoginBlock />
                             </div>))
                      : null
@@ -250,7 +218,9 @@ class NotificationBlock extends React.Component<NotificationBlockPropsInterface,
 
     openNotifications() {
         this.props.router.push('/manage/?show=notifications');
-        MenuAction.do(TOGGLE, false);
+        if (!MediaQuerySerice.getIsDesktop()) {
+            MenuAction.do(TOGGLE, false);
+        }
     }
 
     componentDidMount() {
@@ -315,7 +285,10 @@ class UserMenu extends React.Component<IUserMenuProps, any> {
     logout(e: any) {
         e.stopPropagation();
         UserAction.do(LOGOUT, null);
-        MenuAction.do(TOGGLE, null);
+        if (!this.props.isDesktop) {
+            MenuAction.do(TOGGLE, null);
+        }
+
     }
 
     stopClosePropagation(e: any) {
@@ -357,14 +330,19 @@ class UserMenu extends React.Component<IUserMenuProps, any> {
                 </div>
                 <div className="menu__links">
                     <div className="menu__link">
-                        <Link to={"/profile/" + this.props.user.id + "/?show=drafts"}>{ Captions.main_menu.drafts }</Link>
+                        <Link to={"/profile/" + this.props.user.id + "/?show=drafts"}>
+                            { Captions.main_menu.drafts }
+                            {
+                                this.props.user.drafts ? <span>({this.props.user.drafts})</span> : ""
+                            }
+                        </Link>
                     </div>
                 </div>
 
                 <div className="menu__controls">
                     <NotificationBlockWithRouter showZero={true} />
                     <div><Link to="/manage/"><SettingsIcon /></Link></div>
-                    <div><Link to="/info/"><InfoIcon /></Link></div>
+                    <div><Link to="/"><InfoIcon /></Link></div>
                     <div onClick={this.logout.bind(this)}><ExitIcon /></div>
                 </div>
 
@@ -389,6 +367,9 @@ class UserMenu extends React.Component<IUserMenuProps, any> {
                         </div>
                         <div className="menu__link" onClick={this.handleUrlClick.bind(this, '/profile/' + this.props.user.id + "/?show=drafts")}>
                             { Captions.main_menu.drafts }
+                            {
+                                this.props.user.drafts ? <span>({this.props.user.drafts})</span> : ""
+                            }
                         </div>
                     </div>
                     <div onClick={this.closeMenu.bind(this)} className="menu__close_mobile" ><CloseIcon /></div>
@@ -414,12 +395,13 @@ export default class Menu extends React.Component<any, IMenuStateInterface> {
     constructor() {
         super();
         this.state = {
-            open: false,
+            open: MenuAction.getStore().open || false,
             user: UserAction.getStore().user,
             isDesktop: MediaQuerySerice.getIsDesktop()
         };
         this.setUser = this.setUser.bind(this);
         this.setOpen = this.setOpen.bind(this);
+        this.checkOpen = this.checkOpen.bind(this);
     }
 
     setUser() {
@@ -428,6 +410,14 @@ export default class Menu extends React.Component<any, IMenuStateInterface> {
 
     toggleMenu() {
         MenuAction.do(TOGGLE, false);
+    }
+
+    checkOpen(isDesktop: boolean) {
+        if (isDesktop != this.state.isDesktop) {
+            this.setState({isDesktop: isDesktop}, () => {
+                MenuAction.do(TOGGLE,  isDesktop && Boolean( parseInt(localStorage.getItem('menuOpen'))));
+            });
+        }
     }
 
     setOpen() {
@@ -440,20 +430,18 @@ export default class Menu extends React.Component<any, IMenuStateInterface> {
 
     componentDidMount() {
 
-        MediaQuerySerice.listen((isDesktop: boolean) => {
-            if (isDesktop != this.state.isDesktop) {
-                this.setState({isDesktop: isDesktop});
-                MenuAction.do(TOGGLE, false);
-            }
-        });
+        MediaQuerySerice.listen(this.checkOpen);
 
         MenuAction.onChange(TOGGLE, this.setOpen);
-        UserAction.onChange([SAVE_USER, UPDATE_USER, GET_ME, LOGIN, LOGOUT], this.setUser);
+        UserAction.onChange([SAVE_USER, UPDATE_USER, GET_ME, LOGIN, LOGOUT, UPDATE_USER_DRAFTS], this.setUser);
+        // this.checkOpen();
+
     }
 
     componentWillUnmount() {
+        MediaQuerySerice.unbind(this.checkOpen);
         MenuAction.unbind(TOGGLE, this.setOpen);
-        UserAction.unbind([SAVE_USER, UPDATE_USER, GET_ME, LOGIN, LOGOUT], this.setUser);
+        UserAction.unbind([SAVE_USER, UPDATE_USER, GET_ME, LOGIN, LOGOUT, UPDATE_USER_DRAFTS], this.setUser);
     }
 
     render() {

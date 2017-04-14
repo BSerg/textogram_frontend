@@ -35,7 +35,7 @@ export default class ProfileDrafts extends React.Component<IDraftsProps, IDrafts
     }
 
     
-    componentWillUmount() {
+    componentWillUnmount() {
         MenuAction.unbind(TOGGLE, this.setMenuOpen);
     }
 

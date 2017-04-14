@@ -1,6 +1,7 @@
 @import "../contstants";
 @import "../mixins";
 
+$content-main-width: 340px;
 
 #profile {
 
@@ -91,6 +92,10 @@
     }
   }
 
+  .username, .description {
+    text-align: center;
+  }
+
   .username, .description, .subscription {
     font-family: $family_open_sans;
   }
@@ -98,19 +103,58 @@
   .username {
     padding: 0 $padding/2;
     text-transform: uppercase;
-    font-size: 13px;
-    line-height: 16px;
+
     margin: $margin 0;
+
+    &, form input {
+      font-size: 13px;
+      line-height: 16px;
+    }
   }
 
   .description {
-    font-size: 9px;
-    line-height: 14px;
 
     max-width: 200px;
-    text-align: center;
+    min-width: 200px;
     margin: $margin 0;
 
+    .content_editable {
+      min-width: 100%;
+      min-height: 100%;
+
+      border-bottom: 1px solid transparent;
+    }
+
+    &.editable {
+      .content_editable {
+        border-color: #000000;
+      }
+    }
+
+    &, form input, form textarea {
+      font-size: 9px;
+      line-height: 14px;
+    }
+
+  }
+
+  .username, .description {
+    span {
+      cursor: pointer;
+    }
+
+    form {
+      width: 100%;
+
+      input, textarea {
+        font-family: $family_open_sans;
+        width: 100%;
+        border: none;
+        border-bottom: 1px solid #000000;
+        text-align: center;
+        outline: none;
+      }
+    }
   }
 
   .social_links_list {
@@ -149,7 +193,14 @@
     color: $color;
     margin-top: $margin * 2;
     letter-spacing: 1px;
-    font-weight: $font-weight-bold;
+
+    &.unsubscribed {
+      font-weight: $font-weight-bold;
+      &:hover {
+        font-weight: $font-weight;
+      }
+
+    }
 
     &>div {
       width: 100%;
@@ -173,21 +224,22 @@
 
       &.hover {
         display: none;
-        background-color: $color;
-        color: #FFFFFF;
+        //background-color: $color;
+        //color: #FFFFFF;
         svg {
           top: calc(50% - 5px);
           left: 20px;
           width: 10px;
           height: 10px;
           margin-right: 25px;
-          fill: #FFFFFF;
+          fill: #000000;
         }
       }
     }
 
     &:hover {
       background-color: $color4;
+      font-weight: $font-weight;
       &>div {
         display: none;
         &.hover {
@@ -222,7 +274,7 @@
 
       span {
         font-weight: $font-weight-bold;
-        margin-right: 5px;
+        margin-left: 5px;
       }
     }
   }
@@ -315,10 +367,8 @@
 
   #profile {
 
-    $content-main-width: 340px;
-
     .profile__articles {
-      align-items: flex-start;
+      //align-items: flex-start;
 
       &.drafts {
         display: block;
@@ -365,21 +415,69 @@
       width: 90px;
       min-width: 90px;
       height: 90px;
-      margin-top: 0;
+      //margin-top: 0;
+      position: relative;
+
+      margin: 0 0 $margin * 2 0;
+
+      .profile_management_link {
+        //display: none;
+        position: absolute;
+        top: -20px;
+        right: -40px;
+        width: 50px;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        @include transition(200ms);
+
+        svg {
+          width: 50px;
+          height: 50px;
+          fill: $color;
+        }
+      }
     }
+
+    .profile_content_main:hover {
+      .profile_avatar, .profile_avatar_dummy {
+        .profile_management_link {
+          display: none;
+          opacity: 1;
+          @include transition(200ms);
+        }
+      }
+    }
+
+
 
     .username {
       padding: 0 $padding;
-      font-size: 17px;
-      line-height: 20px;
+      form {
+        height: 20px;
+      }
+
+      margin: $margin * 2 0;
+      &, form input {
+        font-size: 17px;
+        line-height: 20px;
+      }
+
     }
 
     .description {
-      line-height: 19px;
-      font-size: 12px;
+      margin: 0 0 $margin 0;
+
+      &, form input, form textarea {
+        line-height: 19px;
+        font-size: 12px;
+      }
     }
 
     .social_links_list {
+      margin: $margin * 2 0;
       svg {
         width: 26px;
         height: 26px;
@@ -388,6 +486,7 @@
     }
 
     .subscription {
+      margin: 25px 0;
       &>div {
         font-size: 13px;
       }
@@ -399,6 +498,44 @@
     
     .profile_new_article {
       display: flex;
+    }
+  }
+
+}
+
+@media (min-width: 1280px) {
+  #profile {
+
+
+    .profile__articles {
+      align-items: center;
+    }
+
+
+    .profile_content_data {
+      max-width: 850px;
+    }
+
+    .profile_additional {
+      left: calc(50% + 170px - 400px - 25px);
+      max-width: 800px;
+      margin: 0;
+    }
+
+    .profile_content_filler {
+      min-width: calc(50% + 170px - 400px - 25px);
+    }
+  }
+}
+
+@media (min-width: 1600px) {
+  #profile {
+    .profile_content_main {
+      left: calc(50% - 170px - 400px - 25px);
+    }
+
+    .profile_content_data {
+      padding-right: 0;
     }
   }
 

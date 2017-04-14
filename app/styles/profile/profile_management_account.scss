@@ -32,6 +32,10 @@
   box-sizing: border-box;
   align-items: center;
   margin-bottom: $margin;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
 }
 
 .profile_management_social_link_loading {

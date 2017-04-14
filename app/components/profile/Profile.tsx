@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import {Link} from 'react-router';
+import {Link, withRouter} from 'react-router';
 
 import '../../styles/common.scss';
 import '../../styles/profile/profile.scss';
@@ -11,16 +11,15 @@ import ProfileAuthors from './ProfileAuthors';
 import ProfileAuthorList from './ProfileAuthorList';
 import ProfileDrafts from "./ProfileDrafts";
 
-import ProfileSocialLinksList from './ProfileSocialLinkList';
-
 import Loading from '../shared/Loading';
 
 import {api} from '../../api';
+import axios from 'axios';
+
 import Error from '../Error';
 import {UserAction, GET_ME, LOGIN, LOGOUT, UPDATE_USER_DRAFTS} from "../../actions/user/UserAction";
 
 import {Captions} from '../../constants';
-import SocialIcon from './../shared/SocialIcon';
 
 import {ModalAction, OPEN_MODAL} from '../../actions/shared/ModalAction';
 import {MediaQuerySerice} from '../../services/MediaQueryService';
@@ -32,7 +31,12 @@ const ConfirmIcon = require('babel!svg-react!../../assets/images/redactor_icon_c
 const SubscriptionIcon = require('babel!svg-react!../../assets/images/profile_subscription_icon.svg?name=SubscriptionIcon');
 const EditIcon = require('babel!svg-react!../../assets/images/edit.svg?name=EditIcon');
 const CloseIcon = require('babel!svg-react!../../assets/images/close.svg?name=CloseIcon');
+const SettingsIcon = require('babel!svg-react!../../assets/images/settings.svg?name=SettingsIcon');
 
+interface IProfileProps {
+    router?: any;
+    params?: any;
+}
 
 interface IProfileState {
     user?: any;
@@ -45,9 +49,10 @@ interface IProfileState {
     isLoading?: boolean;
     canSubscribe?: boolean;
     additionalPage?: any;
+    cancelSource?: any;
 }
 
-export default class Profile extends React.Component<any, IProfileState> {
+class ProfileClass extends React.Component<IProfileProps, IProfileState> {
 
     SECTION_FEED: string = 'feed';
     SECTION_ARTICLES: string = 'articles';
@@ -56,10 +61,10 @@ export default class Profile extends React.Component<any, IProfileState> {
     constructor(props: any) {
         super(props);
         this.state = {user: null, error: null, isLoading: false, isSelf: false, selfDrafts: 0, showSubscribers: true,
-            isDesktop: MediaQuerySerice.getIsDesktop(), canSubscribe: false, additionalPage: null};
+            isDesktop: MediaQuerySerice.getIsDesktop(), canSubscribe: false, additionalPage: null, cancelSource: null};
         this.checkIsSelf = this.checkIsSelf.bind(this);
         this.checkDesktop = this.checkDesktop.bind(this);
-        this.serDrafts = this.serDrafts.bind(this);
+        this.setDrafts = this.setDrafts.bind(this);
     }
 
     checkIsSelf() {
@@ -74,15 +79,24 @@ export default class Profile extends React.Component<any, IProfileState> {
         }
     }
 
-    serDrafts() {
+    setDrafts() {
         if (this.state.isSelf) {
             this.setState({selfDrafts: UserAction.getStore().user.drafts || 0});
         }
     }
 
     getUserData(userId: string) {
+        if (this.state.isLoading) {
+            return;
+        }
+        if (this.state.cancelSource) {
+            this.state.cancelSource.cancel();
+        }
+
+        this.state.cancelSource =  axios.CancelToken.source();
+
         this.setState({error: null, isLoading: true, additionalPage: null}, () => {
-            api.get('/users/' + userId + '/').then((response: any) => {
+            api.get('/users/' + userId + '/', { cancelToken: this.state.cancelSource.token }).then((response: any) => {
                 let isSelf: boolean = Boolean(response.data && UserAction.getStore().user && (UserAction.getStore().user.id == response.data.id));
                 let canSubscribe: boolean = Boolean(UserAction.getStore().user && !isSelf);
                 this.setState({
@@ -95,9 +109,16 @@ export default class Profile extends React.Component<any, IProfileState> {
                     selfDrafts: isSelf ? UserAction.getStore().user.drafts || 0 : 0,
                     additionalPage: null
 
-                }, () => {});
+                }, () => {
+                    if (this.props.router.location.query.show == 'drafts') {
+                        this.showDrafts();
+                    }
+                });
             }).catch((error) => {
-                this.setState({error: <Error code={404} msg="page not found" />, isLoading: false });
+                if (!axios.isCancel(error)) {
+                    this.setState({error: <Error code={404} msg="page not found" />, isLoading: false });
+                }
+
             });
         });
     }
@@ -145,7 +166,15 @@ export default class Profile extends React.Component<any, IProfileState> {
     }
 
     componentWillReceiveProps(nextProps: any) {
-        this.getUserData(nextProps.params.userId);
+        if (nextProps.params.userId != this.props.params.userId) {
+            this.getUserData(nextProps.params.userId);
+        }
+        if ( this.state.isSelf
+            && (nextProps.params.userId == this.props.params.userId)
+            && (nextProps.router.location.query.show == 'drafts')) {
+
+            this.showDrafts();
+        }
     }
 
     checkDesktop(isDesktop: boolean) {
@@ -155,7 +184,10 @@ export default class Profile extends React.Component<any, IProfileState> {
     }
 
     showDrafts() {
-        this.setState({additionalPage: <ProfileDrafts closeCallback={ () => { this.setState({additionalPage: null}) } } />});
+        this.setState({additionalPage: <ProfileDrafts closeCallback={ () => {
+            this.props.router.push('/profile/' + this.state.user.id);
+            this.setState({additionalPage: null})
+        }} />});
     }
 
     showAuthors(subscribedTo: boolean = false) {
@@ -169,13 +201,17 @@ export default class Profile extends React.Component<any, IProfileState> {
 
         this.getUserData(this.props.params.userId);
         UserAction.onChange([GET_ME, LOGIN, LOGOUT], this.checkIsSelf);
-        UserAction.onChange(UPDATE_USER_DRAFTS, this.serDrafts);
+        UserAction.onChange(UPDATE_USER_DRAFTS, this.setDrafts);
     }
 
     componentWillUnmount() {
         UserAction.unbind([GET_ME, LOGIN, LOGOUT], this.checkIsSelf);
-        UserAction.unbind(UPDATE_USER_DRAFTS, this.serDrafts);
+        UserAction.unbind(UPDATE_USER_DRAFTS, this.setDrafts);
         MediaQuerySerice.unbind(this.checkDesktop);
+
+        if (this.state.cancelSource) {
+            this.state.cancelSource.cancel();
+        }
     }
 
     render() {
@@ -205,6 +241,11 @@ export default class Profile extends React.Component<any, IProfileState> {
                              { this.state.user.avatar ? (<img src={this.state.user.avatar}/>) : (
                                  <div className="profile_avatar_dummy"></div>) }
 
+                             {
+                                 (this.state.isDesktop && this.state.isSelf) ? (
+                                     <Link to="/manage/" className="profile_management_link" ><SettingsIcon /></Link>) : null
+                             }
+
                          </div>
 
                          <div key="username" className="username">
@@ -217,8 +258,8 @@ export default class Profile extends React.Component<any, IProfileState> {
                          <div className="divider"></div>
 
                          <div className="subscription">
-                             <div onClick={this.showAuthors.bind(this, true)}><span>{ this.state.user.subscribers }</span> читателей</div>
-                             <div onClick={this.showAuthors.bind(this, false)}><span>{ this.state.user.subscriptions }</span> подписок</div>
+                             <div onClick={this.showAuthors.bind(this, false)}>Читаемые <span>{ this.state.user.subscriptions }</span></div>
+                             <div onClick={this.showAuthors.bind(this, true)}>Читатели <span>{ this.state.user.subscribers }</span></div>
                              {
                                  (!this.state.isDesktop && this.state.canSubscribe) ? (
                                     this.state.user.is_subscribed ? (
@@ -232,8 +273,6 @@ export default class Profile extends React.Component<any, IProfileState> {
                              this.state.isDesktop ? (<div className="divider"></div>) : null
                          }
 
-
-
                          { this.state.isDesktop && this.state.canSubscribe ? (
                              this.state.user.is_subscribed ? (
                                 <div className="desktop_subscription" onClick={this.unSubscribe.bind(this)}>
@@ -241,12 +280,10 @@ export default class Profile extends React.Component<any, IProfileState> {
                                     <div className="hover"><CloseIcon /> {Captions.profile.unSubscribe}</div>
 
                                 </div>) :
-                                (<div  className="desktop_subscription" onClick={this.subscribe.bind(this)}>
+                                (<div  className="desktop_subscription unsubscribed" onClick={this.subscribe.bind(this)}>
                                     { Captions.profile.subscribe }
                                 </div>)
                          ) : <div className="desktop_subscription"></div> }
-
-
                      </div>
                      <div className="profile_content_filler"></div>
 
@@ -288,3 +325,7 @@ export default class Profile extends React.Component<any, IProfileState> {
         )
     }
 }
+
+let Profile = withRouter(ProfileClass);
+
+export default Profile;
