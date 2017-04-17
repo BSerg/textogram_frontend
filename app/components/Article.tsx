@@ -68,6 +68,10 @@ interface IArticleState {
 }
 
 export default class Article extends React.Component<IArticleProps, IArticleState> {
+    refs: {
+        ad_250x400: HTMLDivElement
+    };
+
     constructor(props: any) {
         super(props);
         this.state = {
@@ -246,14 +250,19 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
         }
     }
 
+    processes() {
+        this.processPhoto();
+        this.processEmbed();
+        this.processQuote();
+        this.processPhrase();
+        this.processAds();
+    }
+
     loadArticle(data: IArticle) {
         let isSelf = UserAction.getStore().user ? UserAction.getStore().user.id == data.owner.id : false;
         this.setState({article: this.processArticle(data), isSelf: isSelf}, () => {
             window.setTimeout(() => {
-                this.processPhoto();
-                this.processEmbed();
-                this.processQuote();
-                this.processPhrase();
+                this.processes();
             }, 50);
             if (this.state.article.ads_enabled) {
                 api.get('/banners/250x400/').then((response: any) => {
@@ -329,6 +338,19 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
         });
     }
 
+    processAds() {
+        if (this.refs.ad_250x400) {
+            console.log('PROCESS ADS');
+            try {
+                let script = this.refs.ad_250x400.getElementsByTagName('script')[0].innerText;
+                let f = new Function(script);
+                f();
+            } catch(err) {
+                console.log(err);
+            }
+        }
+    }
+
     componentDidMount() {
         MediaQuerySerice.listen(this.handleMediaQuery);
         UserAction.onChange([LOGIN, LOGOUT, UPDATE_USER, SAVE_USER], this.handleUser);
@@ -386,7 +408,9 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
                         <div className="article__content_wrapper">
                             <div className="article__content" dangerouslySetInnerHTML={{__html: this.state.article.html}}/>
                             {this.state.isDesktop && this.state.floatingBanner ?
-                                <FloatingPanel className="ad_250x400" fixed={true} content={this.state.floatingBanner}/> : null
+                                <FloatingPanel className="ad_250x400" fixed={true}>
+                                    <div ref="ad_250x400" dangerouslySetInnerHTML={{__html: this.state.floatingBanner}}></div>
+                                </FloatingPanel> : null
                             }
                         </div>
 

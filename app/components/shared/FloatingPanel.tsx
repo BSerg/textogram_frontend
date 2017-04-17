@@ -4,7 +4,7 @@ import '../../styles/shared/floating_panel.scss';
 
 interface IFloatingPanel {
     fixed?: boolean
-    content: any
+    content?: any
     className?: string
 }
 
@@ -77,8 +77,9 @@ export default class FloatingPanel extends React.Component<IFloatingPanel, IFloa
         return (
             <div ref="element"
                  className={className}
-                 style={style}
-                 dangerouslySetInnerHTML={{__html: this.props.content}}/>
+                 style={style}>
+                {this.props.children}
+            </div>
         )
     }
 }
