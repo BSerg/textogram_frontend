@@ -18,6 +18,7 @@ import {PhotoModal} from "./PhotoModal";
 import {MediaQuerySerice} from "../../services/MediaQueryService";
 import "../../styles/editor/photo_content_block.scss";
 import Sortable = require('sortablejs');
+import ContentEditable from "../shared/ContentEditable";
 
 const AddButton = require('babel!svg-react!../../assets/images/desktop_editor_icon_gallery.svg?name=AddButton');
 const DeleteButton = require('babel!svg-react!../../assets/images/editor_delete.svg?name=DeleteButton');
@@ -311,7 +312,9 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
                 photo.size = 'original';
             }
         }
-        this.setState({content: this.state.content});
+        this.setState({content: this.state.content}, () => {
+            ContentAction.do(UPDATE_CONTENT_BLCK, {contentBlock: this.state.content});
+        });
     }
 
     private openFileDialog() {
@@ -413,8 +416,20 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
                                           showOriginal={this.state.content.photos.length == 1}/>
                         }) : null
                     }
-                    {!this.state.isActive && this.state.content.photos.length == 1 && this.state.content.photos[0].caption ?
-                        <div className="content_block_photo__caption">{this.state.content.photos[0].caption}</div> : null
+                    {this.state.content.photos.length == 1 ?
+                        <div className="content_block_photo__caption">
+                            {this.state.isActive ?
+                                <ContentEditable elementType="inline"
+                                                 allowLineBreak={false}
+                                                 onChange={(content, contentText) => {
+                                                    this.state.content.photos[0].caption = contentText;
+                                                    this.setState({});
+                                                    ContentAction.do(UPDATE_CONTENT_BLCK, {contentBlock: this.state.content});
+                                                 }}
+                                                 content={this.state.content.photos[0].caption}/> :
+                                this.state.content.photos[0].caption
+                            }
+                        </div> : null
                     }
 
                     {!this.state.isActive && this.state.content.photos.length > 6 ?

@@ -58,7 +58,7 @@ $base_desktop_photo_height: 400px;
       height: $base_photo_height;
       margin: 0;
       background: $color4 url('../../assets/images/image.svg') no-repeat center center;
-      background-size: 64px;
+      background-size: 128px!important;
       cursor: pointer;
     }
 
@@ -323,6 +323,7 @@ $base_desktop_photo_height: 400px;
   letter-spacing: 1px;
   text-align: center;
   color: $color5;
+  word-wrap: break-word;
 }
 
 .content_block_photo__help {
