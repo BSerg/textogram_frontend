@@ -6,7 +6,10 @@ import {
     ContentBlockAction, ACTIVATE_CONTENT_BLOCK,
     DEACTIVATE_CONTENT_BLOCK
 } from "../../actions/editor/ContentBlockAction";
-import {ContentAction, UPDATE_CONTENT_BLCK, IContentData} from "../../actions/editor/ContentAction";
+import {
+    ContentAction, UPDATE_CONTENT_BLCK, IContentData,
+    DELETE_CONTENT_BLCK
+} from "../../actions/editor/ContentAction";
 import * as toMarkdown from "to-markdown";
 import * as marked from "marked";
 import {
@@ -19,8 +22,10 @@ import {NotificationAction, SHOW_NOTIFICATION} from "../../actions/shared/Notifi
 import "../../styles/editor/column_content_block.scss";
 import EditableImageModal from "../shared/EditableImageModal";
 import {ModalAction, OPEN_MODAL} from "../../actions/shared/ModalAction";
-import {PopupPanelAction, OPEN_POPUP} from "../../actions/shared/PopupPanelAction";
+import {PopupPanelAction, OPEN_POPUP, CLOSE_POPUP} from "../../actions/shared/PopupPanelAction";
 import {DesktopBlockToolsAction, UPDATE_TOOLS} from "../../actions/editor/DesktopBlockToolsAction";
+import ContentBlockPopup from "./ContentBlockPopup";
+import PopupPrompt from "../shared/PopupPrompt";
 
 const ClearPhotoIcon = require('babel!svg-react!../../assets/images/desktop_editor_icon_clear_square.svg?name=ClearPhotoIcon');
 
@@ -64,6 +69,22 @@ export default class ColumnContentBlock extends React.Component<IColumnContentBl
     refs: {
         inputUpload: HTMLInputElement
     };
+
+    deleteBlock() {
+        ContentAction.do(DELETE_CONTENT_BLCK, {id: this.state.content.id});
+        ContentBlockAction.do(DEACTIVATE_CONTENT_BLOCK, null);
+        PopupPanelAction.do(CLOSE_POPUP, null);
+    }
+
+    handleDelete() {
+        let content = <PopupPrompt confirmLabel="Удалить"
+                                   confirmClass="warning"
+                                   onConfirm={this.deleteBlock.bind(this)}/>;
+        PopupPanelAction.do(
+            OPEN_POPUP,
+            {content: content}
+        );
+    }
 
     getPosition() {
         let blocks = ContentAction.getStore().content.blocks;
@@ -182,23 +203,30 @@ export default class ColumnContentBlock extends React.Component<IColumnContentBl
         img.src = window.URL.createObjectURL(file);
     }
 
-    getPopupContent() {}
+    deleteImage() {
+        console.log('HDHDHHD')
+        this.state.content.image = null;
+        this.setState({content: this.state.content}, () => {
+            ContentAction.do(UPDATE_CONTENT_BLCK, {contentBlock: this.state.content});
+            PopupPanelAction.do(OPEN_POPUP, {content: this.getPopupContent()});
+            DesktopBlockToolsAction.do(UPDATE_TOOLS, {position: this.getPosition(), tools: this.getDesktopToolsContent()});
+        });
+    }
+
+    getPopupContent() {
+        let extraContent = this.state.content.image ?
+            <div onClick={this.deleteImage.bind(this)}><ClearPhotoIcon/></div> : null;
+        return <ContentBlockPopup extraContent={extraContent} onDelete={this.handleDelete.bind(this)}/>;
+
+
+    }
 
     getDesktopToolsContent() {
-        let onClickAction = () => {
-            console.log('HDHDHHD')
-            this.state.content.image = null;
-            this.setState({content: this.state.content}, () => {
-                ContentAction.do(UPDATE_CONTENT_BLCK, {contentBlock: this.state.content});
-                PopupPanelAction.do(OPEN_POPUP, {content: this.getPopupContent()});
-                DesktopBlockToolsAction.do(UPDATE_TOOLS, {position: this.getPosition(), tools: this.getDesktopToolsContent()});
-            });
-        };
         return this.state.content.image ?
             (
                 <div className="base_content_block__tools_button"
                      placeholder="Удалить фото"
-                     onClick={onClickAction}>
+                     onClick={this.deleteImage.bind(this)}>
                     <ClearPhotoIcon/>
                 </div>
             ) : null
@@ -243,7 +271,7 @@ export default class ColumnContentBlock extends React.Component<IColumnContentBl
             }
         }
         return (
-            <BaseContentBlock id={this.state.content.id} className={className}>
+            <BaseContentBlock id={this.state.content.id} className={className} disableDefaultPopup={true}>
                 <div className="content_block_column__column content_block_column__column_left">
                     {this.state.content.image ?
                         <div className="content_block_column__image"
