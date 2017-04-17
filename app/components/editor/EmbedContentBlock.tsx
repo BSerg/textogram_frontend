@@ -123,7 +123,7 @@ export default class EmbedContentBlock extends React.Component<IEmbedContentBloc
 
     private getDesktopToolsContent() {
         return (
-            <div onClick={() => {
+            <div className="base_content_block__tools_button" placeholder="Изменить" onClick={() => {
                 this.setState({hide: true}, () => {
                     InlineBlockAction.do(
                         OPEN_INLINE_BLOCK,

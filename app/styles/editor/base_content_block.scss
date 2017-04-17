@@ -77,6 +77,7 @@
       }
 
       .base_content_block__tools_button {
+        @include transition();
         position: relative;
         display: flex;
         align-items: center;

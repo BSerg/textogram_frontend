@@ -4,9 +4,9 @@
 	 viewBox="0 0 44 44" style="enable-background:new 0 0 44 44;" xml:space="preserve">
 <g>
 	<path d="M14.9,29.1h14.2V14.9H14.9V29.1z M26.9,17.1v9.8h-9.8l0-9.8H26.9z"/>
-	<rect x="8" y="15" class="st1" width="5.5" height="2.2"/>
-	<rect x="15" y="8" class="st1" width="2.2" height="5.5"/>
-	<rect x="30.6" y="26.8" class="st1" width="5.5" height="2.2"/>
-	<rect x="26.9" y="30.5" class="st1" width="2.2" height="5.5"/>
+	<rect x="8" y="15" width="5.5" height="2.2"/>
+	<rect x="15" y="8" width="2.2" height="5.5"/>
+	<rect x="30.6" y="26.8" width="5.5" height="2.2"/>
+	<rect x="26.9" y="30.5" width="2.2" height="5.5"/>
 </g>
 </svg>
