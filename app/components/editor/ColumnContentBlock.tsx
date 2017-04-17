@@ -2,7 +2,10 @@ import * as React from "react";
 import {Captions, Constants, BlockContentTypes, Validation} from "../../constants";
 import ContentEditable from "../shared/ContentEditable";
 import BaseContentBlock from "./BaseContentBlock";
-import {ContentBlockAction, ACTIVATE_CONTENT_BLOCK} from "../../actions/editor/ContentBlockAction";
+import {
+    ContentBlockAction, ACTIVATE_CONTENT_BLOCK,
+    DEACTIVATE_CONTENT_BLOCK
+} from "../../actions/editor/ContentBlockAction";
 import {ContentAction, UPDATE_CONTENT_BLCK, IContentData} from "../../actions/editor/ContentAction";
 import * as toMarkdown from "to-markdown";
 import * as marked from "marked";
@@ -16,6 +19,11 @@ import {NotificationAction, SHOW_NOTIFICATION} from "../../actions/shared/Notifi
 import "../../styles/editor/column_content_block.scss";
 import EditableImageModal from "../shared/EditableImageModal";
 import {ModalAction, OPEN_MODAL} from "../../actions/shared/ModalAction";
+import {PopupPanelAction, OPEN_POPUP} from "../../actions/shared/PopupPanelAction";
+import {DesktopBlockToolsAction, UPDATE_TOOLS} from "../../actions/editor/DesktopBlockToolsAction";
+
+const ClearPhotoIcon = require('babel!svg-react!../../assets/images/desktop_editor_icon_clear_square.svg?name=ClearPhotoIcon');
+
 
 interface IColumnContent {
     id: string
@@ -47,7 +55,7 @@ export default class ColumnContentBlock extends React.Component<IColumnContentBl
             isActive: false,
             content: this.props.content as IColumnContent,
             contentIsLong: this.checkContentIsLong((this.props.content as IColumnContent).value),
-            firstLetter: this.getFirstLetter(this.props.content as IColumnContent),
+            firstLetter: this.getFirstLetter(this.props.content as IColumnContent) || 'T',
             uploadImageProgress: null,
         };
         this.handleActive = this.handleActive.bind(this);
@@ -56,6 +64,17 @@ export default class ColumnContentBlock extends React.Component<IColumnContentBl
     refs: {
         inputUpload: HTMLInputElement
     };
+
+    getPosition() {
+        let blocks = ContentAction.getStore().content.blocks;
+        let index = -1;
+        blocks.forEach((block: any, i: number) => {
+            if (block.id == this.state.content.id) {
+                index = i;
+            }
+        });
+        return index;
+    }
 
     updateValidationState() {
         let validationState = this.isValid(this.state.content);
@@ -75,7 +94,7 @@ export default class ColumnContentBlock extends React.Component<IColumnContentBl
 
     handleChange(content: string, contentText: string) {
         this.state.content.value = toMarkdown(content);
-        this.state.firstLetter = contentText.length ? contentText[0] : '';
+        this.state.firstLetter = contentText.trim().length ? contentText[0] : 'T';
         let validationState = this.updateValidationState();
         if (!validationState.isValid) {
             NotificationAction.do(
@@ -146,7 +165,8 @@ export default class ColumnContentBlock extends React.Component<IColumnContentBl
                     uploadImageProgress: null,
                 }, () => {
                     ContentAction.do(UPDATE_CONTENT_BLCK, {contentBlock: this.state.content});
-                    this.updateValidationState();
+                    PopupPanelAction.do(OPEN_POPUP, {content: this.getPopupContent()});
+                    DesktopBlockToolsAction.do(UPDATE_TOOLS, {position: this.getPosition(), tools: this.getDesktopToolsContent()});
                 });
             });
         };
@@ -162,20 +182,47 @@ export default class ColumnContentBlock extends React.Component<IColumnContentBl
         img.src = window.URL.createObjectURL(file);
     }
 
+    getPopupContent() {}
+
+    getDesktopToolsContent() {
+        let onClickAction = () => {
+            console.log('HDHDHHD')
+            this.state.content.image = null;
+            this.setState({content: this.state.content}, () => {
+                ContentAction.do(UPDATE_CONTENT_BLCK, {contentBlock: this.state.content});
+                PopupPanelAction.do(OPEN_POPUP, {content: this.getPopupContent()});
+                DesktopBlockToolsAction.do(UPDATE_TOOLS, {position: this.getPosition(), tools: this.getDesktopToolsContent()});
+            });
+        };
+        return this.state.content.image ?
+            (
+                <div className="base_content_block__tools_button"
+                     placeholder="Удалить фото"
+                     onClick={onClickAction}>
+                    <ClearPhotoIcon/>
+                </div>
+            ) : null
+    }
+
     handleActive() {
         let store = ContentBlockAction.getStore();
         if (this.state.isActive !== (store.id == this.state.content.id)) {
-            this.setState({isActive: store.id == this.state.content.id})
+            this.setState({isActive: store.id == this.state.content.id}, () => {
+                if (this.state.isActive) {
+                    PopupPanelAction.do(OPEN_POPUP, {content: this.getPopupContent()});
+                    DesktopBlockToolsAction.do(UPDATE_TOOLS, {position: this.getPosition(), tools: this.getDesktopToolsContent()});
+                }
+            })
         }
     }
 
     componentDidMount() {
-        ContentBlockAction.onChange(ACTIVATE_CONTENT_BLOCK, this.handleActive);
+        ContentBlockAction.onChange([ACTIVATE_CONTENT_BLOCK, DEACTIVATE_CONTENT_BLOCK], this.handleActive);
         this.updateValidationState();
     }
 
     componentWillUnmount() {
-        ContentBlockAction.unbind(ACTIVATE_CONTENT_BLOCK, this.handleActive);
+        ContentBlockAction.unbind([ACTIVATE_CONTENT_BLOCK, DEACTIVATE_CONTENT_BLOCK], this.handleActive);
     }
 
     render() {
