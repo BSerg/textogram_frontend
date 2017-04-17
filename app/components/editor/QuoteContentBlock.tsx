@@ -2,8 +2,17 @@ import * as React from "react";
 import {Captions, BlockContentTypes, Validation} from "../../constants";
 import ContentEditable from "../shared/ContentEditable";
 import BaseContentBlock from "./BaseContentBlock";
-import {ContentBlockAction, ACTIVATE_CONTENT_BLOCK} from "../../actions/editor/ContentBlockAction";
-import {ContentAction, UPDATE_CONTENT_BLCK, IContentData} from "../../actions/editor/ContentAction";
+import {
+    ContentBlockAction,
+    ACTIVATE_CONTENT_BLOCK,
+    DEACTIVATE_CONTENT_BLOCK
+} from "../../actions/editor/ContentBlockAction";
+import {
+    ContentAction,
+    UPDATE_CONTENT_BLCK,
+    IContentData,
+    DELETE_CONTENT_BLCK
+} from "../../actions/editor/ContentAction";
 import {UploadImageAction, UPLOAD_IMAGE_BASE64} from "../../actions/editor/UploadImageAction";
 import ProgressBar, {PROGRESS_BAR_TYPE} from "../shared/ProgressBar";
 import {Validator} from "./utils";
@@ -14,6 +23,13 @@ import "../../styles/editor/quote_content_block.scss";
 import {MediaQuerySerice} from "../../services/MediaQueryService";
 import {ModalAction, OPEN_MODAL} from "../../actions/shared/ModalAction";
 import EditableImageModal from "../shared/EditableImageModal";
+import {CLOSE_POPUP, PopupPanelAction, OPEN_POPUP} from "../../actions/shared/PopupPanelAction";
+import PopupPrompt from "../shared/PopupPrompt";
+import ContentBlockPopup from "./ContentBlockPopup";
+import {UPDATE_TOOLS, DesktopBlockToolsAction} from "../../actions/editor/DesktopBlockToolsAction";
+
+const ClearPhotoIcon = require('babel!svg-react!../../assets/images/desktop_editor_icon_clear_round.svg?name=ClearPhotoIcon');
+
 
 interface IQuoteContent {
     id: string
@@ -72,15 +88,67 @@ export default class QuoteContentBlock extends React.Component<IQuoteContentBloc
         return el.innerText.length > 500;
     }
 
+    deleteBlock() {
+        ContentAction.do(DELETE_CONTENT_BLCK, {id: this.state.content.id});
+        ContentBlockAction.do(DEACTIVATE_CONTENT_BLOCK, null);
+        PopupPanelAction.do(CLOSE_POPUP, null);
+    }
+
+    handleDelete() {
+        let content = <PopupPrompt confirmLabel="Удалить"
+                                   confirmClass="warning"
+                                   onConfirm={this.deleteBlock.bind(this)}/>;
+        PopupPanelAction.do(
+            OPEN_POPUP,
+            {content: content}
+        );
+    }
+
+    getPosition() {
+        let blocks = ContentAction.getStore().content.blocks;
+        let index = -1;
+        blocks.forEach((block: any, i: number) => {
+            if (block.id == this.state.content.id) {
+                index = i;
+            }
+        });
+        return index;
+    }
+
+    getPopupContent() {
+        let extraContent = this.state.content.image ?
+            <div onClick={this.deleteImage.bind(this)}><ClearPhotoIcon/></div> : null;
+        return <ContentBlockPopup extraContent={extraContent} onDelete={this.handleDelete.bind(this)}/>;
+
+
+    }
+
+    getDesktopToolsContent() {
+        return this.state.content.image ?
+            (
+                <div className="base_content_block__tools_button"
+                     placeholder="Удалить фото"
+                     onClick={this.deleteImage.bind(this)}>
+                    <ClearPhotoIcon/>
+                </div>
+            ) : null
+    }
+
     handleActivate() {
         let store = ContentBlockAction.getStore();
         this.setState({isActive: store.id == this.props.content.id}, () => {
             this.updateValidationState();
+            if (this.state.isActive) {
+                PopupPanelAction.do(OPEN_POPUP, {content: this.getPopupContent()});
+                DesktopBlockToolsAction.do(UPDATE_TOOLS, {position: this.getPosition(), tools: this.getDesktopToolsContent()});
+            }
         });
     }
 
     handleFocus() {
         ContentBlockAction.do(ACTIVATE_CONTENT_BLOCK, {id: this.props.content.id});
+        // PopupPanelAction.do(OPEN_POPUP, {content: this.getPopupContent()});
+        // DesktopBlockToolsAction.do(UPDATE_TOOLS, {position: this.getPosition(), tools: this.getDesktopToolsContent()});
         this.closePhotoMenu();
     }
 
@@ -137,6 +205,8 @@ export default class QuoteContentBlock extends React.Component<IQuoteContentBloc
                 this.state.content.image = data;
                 this.setState({content: this.state.content, loadingImage: false, loadingProgress: null}, () => {
                     ContentAction.do(UPDATE_CONTENT_BLCK, {contentBlock: this.state.content});
+                    PopupPanelAction.do(OPEN_POPUP, {content: this.getPopupContent()});
+                    DesktopBlockToolsAction.do(UPDATE_TOOLS, {position: this.getPosition(), tools: this.getDesktopToolsContent()});
                 });
             });
         };
@@ -158,6 +228,8 @@ export default class QuoteContentBlock extends React.Component<IQuoteContentBloc
         this.state.content.image = null;
         this.setState({content: this.state.content}, () => {
             ContentAction.do(UPDATE_CONTENT_BLCK, {contentBlock: this.state.content});
+            PopupPanelAction.do(OPEN_POPUP, {content: this.getPopupContent()});
+            DesktopBlockToolsAction.do(UPDATE_TOOLS, {position: this.getPosition(), tools: this.getDesktopToolsContent()});
         });
         this.closePhotoMenu();
     }
@@ -212,34 +284,14 @@ export default class QuoteContentBlock extends React.Component<IQuoteContentBloc
             }
         }
         return (
-            <BaseContentBlock id={this.props.content.id} className={className}>
+            <BaseContentBlock id={this.props.content.id} className={className} disableDefaultPopup={true}>
                 {this.state.content.image ?
-                    this.state.isDesktop ?
-                        <div key="photo"
-                             onClick={this.state.isActive ? this.deleteImage.bind(this) : this.handleFocus.bind(this)}
-                             className="content_block_quote__photo"
-                             style={imageStyle}>
-                            {this.state.isActive ?
-                                <div className="content_block_quote__foreground"></div> : null
-                            }
-                        </div> :
-                        [
-                            <div onClick={this.state.isActive ? this.openPhotoMenu.bind(this) : this.handleFocus.bind(this)}
-                                 key="photo"
-                                 className="content_block_quote__photo"
-                                 style={imageStyle}/>,
-                            (
-                                this.state.menuOpened ?
-                                    <div key="photoMenu" className="content_block_quote__menu">
-                                        <div onClick={this.openFileDialog.bind(this)} className="content_block_quote__menu_item">
-                                            {Captions.editor.enter_quote_replace}
-                                        </div>
-                                        <div onClick={this.deleteImage.bind(this)} className="content_block_quote__menu_item">
-                                            {Captions.editor.enter_quote_delete}
-                                        </div>
-                                    </div> : null
-                            )
-                        ] : <div className="content_block_quote__empty_photo" onClick={this.openFileDialog.bind(this)}/>
+                    <div key="photo"
+                         onClick={this.state.isActive ? this.openFileDialog.bind(this) : this.handleFocus.bind(this)}
+                         className="content_block_quote__photo"
+                         style={imageStyle}></div> :
+                    <div className="content_block_quote__empty_photo"
+                         onClick={this.state.isActive && this.openFileDialog.bind(this)}/>
                 }
                 <div className="content_block_quote__quote">
                     <ContentEditable allowLineBreak={true}
