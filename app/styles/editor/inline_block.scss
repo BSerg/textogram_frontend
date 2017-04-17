@@ -3,9 +3,10 @@
 
 
 .inline_block {
+  box-sizing: border-box;
   position: relative;
-  width: 600px;
-  margin: 0 auto;
+  width: 100%;
+  padding: $basic_mobile_offset;
   border-top: 1px solid $color3;
   border-bottom: 1px solid $color3;
 
@@ -28,5 +29,9 @@
         fill: darken($color3, 10%);
       }
     }
+  }
+
+  @include mobile {
+    padding: $basic_desktop_offset;
   }
 }
