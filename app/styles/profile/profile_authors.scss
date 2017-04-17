@@ -1,0 +1,123 @@
+@import "../contstants";
+@import "../mixins";
+
+
+.profile_authors {
+  background-color: #F7F7F7;
+  padding-top: 70px;
+
+  .profile_authors_close {
+
+  }
+
+  .profile_authors_input {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    background-color: transparent;
+    padding: 10px 0;
+
+    input {
+      max-width: 500px;
+      text-align: center;
+      height: 40px;
+      width: 100%;
+      padding: 0 10px;
+      font-size: 12px;
+      font-family: $family-open-sans;
+      letter-spacing: 1px;
+      margin: 0;
+      outline: none;
+      border: none;
+      border-bottom: 1px solid #BCBCBC;
+      background-color: transparent;
+    }
+  }
+
+  .profile_author {
+    background-color: #FFFFFF;
+    text-decoration: none;
+    color: $color;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;
+    max-width: 500px;
+    box-sizing: border-box;
+    text-transform: uppercase;
+    height: 45px;
+    margin-bottom: 5px;
+    font-size: 9px;
+    padding: 0 10px;
+
+    &:hover {
+      background-color: #F7F7F7;
+    }
+
+    &>div {
+      margin-right: $margin;
+      text-align: center;
+      &:last-child {
+        margin-right: 0;
+      }
+
+      &.info {
+        min-width: 20px;
+        svg {
+          width: 20px;
+          height: 20px;
+        }
+      }
+    }
+
+    .author_avatar {
+      width: 35px;
+      height: 35px;
+      min-width: 35px;
+      background-color: $color5;
+
+      &, img {
+        @include border_radius(50%);
+      }
+
+      img {
+        width: 100%;
+        height: 100%;
+      }
+    }
+
+    .author_username {
+      flex-grow: 1;
+    }
+
+  }
+
+}
+
+@media (min-width: 1024px) {
+  .profile_authors {
+    background-color: #FFFFFF;
+    padding-top: $padding / 2;
+  }
+
+  .profile_authors .profile_author {
+    letter-spacing: 1px;
+    &>div {
+      text-align: left;
+    }
+  }
+
+  .profile_authors_input {
+    //max-width: 500px;
+    input {
+      max-width: 500px;
+      font-size: 13px;
+    }
+  }
+}

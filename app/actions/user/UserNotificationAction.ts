@@ -1,20 +1,29 @@
 import * as React from 'react';
-import Action from './Action';
-import {api} from '../api';
+import Action from '../Action';
+import {api} from '../../api';
 
-export const CHECK = 'check';
+export const CHECK_NOTIFICATIONS = 'check';
+export const DECREASE_NOTIFICATIONS_NUMBER = 'decrease';
 
 
-class NotificationActionClass extends Action {
+class UserNotificationActionClass extends Action {
     constructor() {
         super({ count: 0, last: null })
     }
 
 }
 
-export const NotificationAction = new NotificationActionClass();
+export const UserNotificationAction = new UserNotificationActionClass();
 
-NotificationAction.registerAsync(CHECK, (store, data) => {
+UserNotificationAction.register(DECREASE_NOTIFICATIONS_NUMBER, (store, data: any) => {
+    if (store.count) {
+        store.count--;
+        store.count = store.count < 0 ? 0 : store.count;
+    }
+});
+
+
+UserNotificationAction.registerAsync(CHECK_NOTIFICATIONS, (store, data) => {
     return new Promise((resolve, reject) => {
         api.get('/notifications/check_new/').then((response: any) => {
             if (store.count != response.data.count || store.last != response.data.last) {

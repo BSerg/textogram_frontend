@@ -65,6 +65,7 @@ export namespace Captions {
     export const profile = {
         subscribe: 'Подписаться',
         subscribed: 'Вы подписаны',
+        unSubscribe: 'Отписаться',
         menuSubscriptions: "Подписки",
         menuArticles: "Мои тексты",
         menuDrafts: "Черновики",
@@ -111,6 +112,7 @@ export namespace Captions {
     export const management = {
         title: "Управление профилем",
         usernamePlaceholder: "Введите имя",
+        sectionAccount: 'Аккаунт',
         sectionLinks: 'Связи',
         sectionLogin: 'Учетная запись',
         sectionNotifications: 'Уведомления',
