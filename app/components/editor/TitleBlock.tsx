@@ -211,7 +211,7 @@ export default class TitleBlock extends React.Component<TitleBlockPropsInterface
 
     render() {
         let className = 'title_block',
-            style = this.state.isDesktop && !this.state.cover && !this.state.cover.editable ? {} : {background: `url(${this.state.coverClipped && this.state.coverClipped.image || this.state.cover && this.state.cover.image}) no-repeat center center`};
+            style = this.state.isDesktop && !(this.state.cover && this.state.cover.editable) ? {} : {background: `url(${this.state.coverClipped && this.state.coverClipped.image || this.state.cover && this.state.cover.image}) no-repeat center center`};
         if (this.state.cover) {
             className += ' inverse';
         }
