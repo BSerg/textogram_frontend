@@ -421,6 +421,7 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
                             {this.state.isActive ?
                                 <ContentEditable elementType="inline"
                                                  allowLineBreak={false}
+                                                 placeholder="Описание"
                                                  onChange={(content, contentText) => {
                                                     this.state.content.photos[0].caption = contentText;
                                                     this.setState({});
