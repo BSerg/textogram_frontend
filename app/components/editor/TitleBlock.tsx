@@ -21,6 +21,7 @@ interface ICover {
     position_y?: number
     image_width?: number
     image_height?: number
+    editable?: boolean
 }
 
 interface ICoverClipped {
@@ -59,7 +60,7 @@ export default class TitleBlock extends React.Component<TitleBlockPropsInterface
             coverLoading: false,
             isActive: false,
             canvas: null,
-            isDesktop: MediaQuerySerice.getIsDesktop()
+            isDesktop: MediaQuerySerice.getIsDesktop(),
         };
         this.handleResize = this.handleResize.bind(this);
         this.handleMediaQuery = this.handleMediaQuery.bind(this);
@@ -67,7 +68,7 @@ export default class TitleBlock extends React.Component<TitleBlockPropsInterface
     }
 
     static defaultProps = {
-        autoSave: true
+        autoSave: true,
     };
 
     refs: {
@@ -108,6 +109,9 @@ export default class TitleBlock extends React.Component<TitleBlockPropsInterface
     uploadCover(articleId: string|null) {
         var file = this.refs.fileInput.files[0];
         UploadImageAction.doAsync(UPLOAD_IMAGE, {articleId: articleId, image: file}).then((data: any) => {
+            if (file.type != 'image/gif') {
+                data.editable = true;
+            }
             this.setState({cover: data, coverLoading: false}, () => {
                 ContentAction.do(UPDATE_COVER_CONTENT, {articleId: articleId, autoSave: this.props.autoSave, cover: data});
                 this.drawCanvas();
@@ -207,7 +211,7 @@ export default class TitleBlock extends React.Component<TitleBlockPropsInterface
 
     render() {
         let className = 'title_block',
-            style = this.state.isDesktop ? {} : {background: `url(${this.state.coverClipped && this.state.coverClipped.image || this.state.cover && this.state.cover.image}) no-repeat center center`};
+            style = this.state.isDesktop && !this.state.cover && !this.state.cover.editable ? {} : {background: `url(${this.state.coverClipped && this.state.coverClipped.image || this.state.cover && this.state.cover.image}) no-repeat center center`};
         if (this.state.cover) {
             className += ' inverse';
         }
@@ -238,7 +242,7 @@ export default class TitleBlock extends React.Component<TitleBlockPropsInterface
                        style={{display: 'none'}}
                        accept="image/jpeg,image/png,image/gif"
                        onChange={this.handleCover.bind(this)}/>
-                {this.state.isDesktop ? this.state.canvas : null}
+                {this.state.isDesktop && this.state.cover && this.state.cover.editable ? this.state.canvas : null}
             </div>
         )
     }
