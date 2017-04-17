@@ -124,11 +124,7 @@
       }
     }
 
-    &.last {
-      .base_content_block__tools {
-        height: calc(100% - #{$padding * 2  + 25px});
-      }
-    }
+    &.last {}
 
     &.invalid:after {
       display: none;
