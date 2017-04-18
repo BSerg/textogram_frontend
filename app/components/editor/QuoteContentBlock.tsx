@@ -11,7 +11,7 @@ import {
     ContentAction,
     UPDATE_CONTENT_BLCK,
     IContentData,
-    DELETE_CONTENT_BLCK
+    DELETE_CONTENT_BLCK, MOVE_DOWN_CONTENT_BLCK, MOVE_UP_CONTENT_BLCK
 } from "../../actions/editor/ContentAction";
 import {UploadImageAction, UPLOAD_IMAGE_BASE64} from "../../actions/editor/UploadImageAction";
 import ProgressBar, {PROGRESS_BAR_TYPE} from "../shared/ProgressBar";
@@ -104,6 +104,14 @@ export default class QuoteContentBlock extends React.Component<IQuoteContentBloc
         );
     }
 
+    handleMoveUp() {
+        ContentAction.do(MOVE_UP_CONTENT_BLCK, {id: this.state.content.id});
+    }
+
+    handleMoveDown() {
+        ContentAction.do(MOVE_DOWN_CONTENT_BLCK, {id: this.state.content.id});
+    }
+
     getPosition() {
         let blocks = ContentAction.getStore().content.blocks;
         let index = -1;
@@ -118,9 +126,10 @@ export default class QuoteContentBlock extends React.Component<IQuoteContentBloc
     getPopupContent() {
         let extraContent = this.state.content.image ?
             <div onClick={this.deleteImage.bind(this)}><ClearPhotoIcon/></div> : null;
-        return <ContentBlockPopup extraContent={extraContent} onDelete={this.handleDelete.bind(this)}/>;
-
-
+        return <ContentBlockPopup extraContent={extraContent}
+                                  onMoveUp={this.handleMoveUp.bind(this)}
+                                  onMoveDown={this.handleMoveDown.bind(this)}
+                                  onDelete={this.handleDelete.bind(this)}/>;
     }
 
     getDesktopToolsContent() {
@@ -259,6 +268,7 @@ export default class QuoteContentBlock extends React.Component<IQuoteContentBloc
         ContentBlockAction.onChange(ACTIVATE_CONTENT_BLOCK, this.handleActivate);
         MediaQuerySerice.listen(this.handleMediaQuery);
         this.updateValidationState();
+        this.handleActivate();
     }
 
     componentWillUnmount() {

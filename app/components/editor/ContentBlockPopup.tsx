@@ -1,19 +1,19 @@
-import * as React from 'react';
-import {PopupPanelAction, OPEN_POPUP, CLOSE_POPUP} from '../../actions/shared/PopupPanelAction';
-import {
-    ContentBlockAction, ACTIVATE_CONTENT_BLOCK,
-    DEACTIVATE_CONTENT_BLOCK
-} from '../../actions/editor/ContentBlockAction';
+import * as React from "react";
+import {PopupPanelAction, CLOSE_POPUP} from "../../actions/shared/PopupPanelAction";
+import {ContentBlockAction, DEACTIVATE_CONTENT_BLOCK} from "../../actions/editor/ContentBlockAction";
+import "../../styles/editor/content_block_popup.scss";
 
-import '../../styles/editor/content_block_popup.scss';
-
-const DeleteButton = require('babel!svg-react!../../assets/images/redactor_icon_delete.svg?name=DeleteButton');
-const ConfirmButton = require('babel!svg-react!../../assets/images/redactor_icon_confirm.svg?name=ConfirmButton');
+const DeleteButton = require('babel!svg-react!../../assets/images/editor_delete.svg?name=DeleteButton');
+const ConfirmButton = require('babel!svg-react!../../assets/images/editor_confirm.svg?name=ConfirmButton');
+const MoveUpIcon = require('babel!svg-react!../../assets/images/editor_up.svg?name=MoveUpIcon');
+const MoveDownIcon = require('babel!svg-react!../../assets/images/editor_down.svg?name=MoveDownIcon');
 
 interface IContentBlockPopupProps {
     extraContent?: JSX.Element|JSX.Element[]
     onConfirm?: () => any
     onDelete?: () => any
+    onMoveUp?: () => any
+    onMoveDown?: () => any
 }
 
 export default class ContentBlockPopup extends React.Component<IContentBlockPopupProps, any> {
@@ -30,13 +30,27 @@ export default class ContentBlockPopup extends React.Component<IContentBlockPopu
         this.props.onConfirm ? this.props.onConfirm() : PopupPanelAction.do(CLOSE_POPUP, null);
     }
 
+    handleMoveUp() {
+        this.props.onMoveUp && this.props.onMoveUp();
+    }
+
+    handleMoveDown() {
+        this.props.onMoveDown && this.props.onMoveDown();
+    }
+
     render() {
         return (
             <div className="content_block_popup">
                 <div onClick={this.handleDelete.bind(this)}>
                     <DeleteButton/>
                 </div>
+                <div onClick={this.handleMoveUp.bind(this)}>
+                    <MoveUpIcon/>
+                </div>
                 {this.props.extraContent ? this.props.extraContent : null}
+                <div onClick={this.handleMoveDown.bind(this)}>
+                    <MoveDownIcon/>
+                </div>
                 <div onClick={this.handleConfirm.bind(this)}>
                     <ConfirmButton/>
                 </div>

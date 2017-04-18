@@ -4,7 +4,10 @@ import {
     ContentBlockAction, ACTIVATE_CONTENT_BLOCK,
     DEACTIVATE_CONTENT_BLOCK
 } from "../../actions/editor/ContentBlockAction";
-import {IContentData, DELETE_CONTENT_BLCK, ContentAction, UPDATE_CONTENT_BLCK} from "../../actions/editor/ContentAction";
+import {
+    IContentData, DELETE_CONTENT_BLCK, ContentAction, UPDATE_CONTENT_BLCK,
+    MOVE_UP_CONTENT_BLCK, MOVE_DOWN_CONTENT_BLCK
+} from "../../actions/editor/ContentAction";
 import BaseContentBlock from "./BaseContentBlock";
 import ContentBlockPopup from "./ContentBlockPopup";
 import {PopupPanelAction, OPEN_POPUP, CLOSE_POPUP} from "../../actions/shared/PopupPanelAction";
@@ -92,6 +95,14 @@ export default class EmbedContentBlock extends React.Component<IEmbedContentBloc
         PopupPanelAction.do(CLOSE_POPUP, null);
     }
 
+    handleMoveUp() {
+        ContentAction.do(MOVE_UP_CONTENT_BLCK, {id: this.state.content.id});
+    }
+
+    handleMoveDown() {
+        ContentAction.do(MOVE_DOWN_CONTENT_BLCK, {id: this.state.content.id});
+    }
+
     handleDeleteContent() {
         let content = <PopupPrompt confirmLabel="Удалить"
                                    confirmClass="warning"
@@ -118,6 +129,8 @@ export default class EmbedContentBlock extends React.Component<IEmbedContentBloc
             </div>
         );
         return <ContentBlockPopup extraContent={extraContent}
+                                  onMoveUp={this.handleMoveUp.bind(this)}
+                                  onMoveDown={this.handleMoveDown.bind(this)}
                                   onDelete={this.handleDeleteContent.bind(this)}/>;
     }
 
@@ -199,6 +212,7 @@ export default class EmbedContentBlock extends React.Component<IEmbedContentBloc
         ContentBlockAction.onChange(ACTIVATE_CONTENT_BLOCK, this.handleActive);
         InlineBlockAction.onChange(CLOSE_INLINE_BLOCK, this.handleCloseInline);
         this.update(this.state.content);
+        this.handleActive();
     }
 
     componentWillUnmount() {

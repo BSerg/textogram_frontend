@@ -8,7 +8,7 @@ import {
 } from "../../actions/editor/ContentBlockAction";
 import {
     ContentAction, UPDATE_CONTENT_BLCK, IContentData,
-    DELETE_CONTENT_BLCK
+    DELETE_CONTENT_BLCK, MOVE_UP_CONTENT_BLCK, MOVE_DOWN_CONTENT_BLCK
 } from "../../actions/editor/ContentAction";
 import * as toMarkdown from "to-markdown";
 import * as marked from "marked";
@@ -84,6 +84,14 @@ export default class ColumnContentBlock extends React.Component<IColumnContentBl
             OPEN_POPUP,
             {content: content}
         );
+    }
+
+    handleMoveUp() {
+        ContentAction.do(MOVE_UP_CONTENT_BLCK, {id: this.state.content.id});
+    }
+
+    handleMoveDown() {
+        ContentAction.do(MOVE_DOWN_CONTENT_BLCK, {id: this.state.content.id});
     }
 
     getPosition() {
@@ -216,7 +224,10 @@ export default class ColumnContentBlock extends React.Component<IColumnContentBl
     getPopupContent() {
         let extraContent = this.state.content.image ?
             <div onClick={this.deleteImage.bind(this)}><ClearPhotoIcon/></div> : null;
-        return <ContentBlockPopup extraContent={extraContent} onDelete={this.handleDelete.bind(this)}/>;
+        return <ContentBlockPopup extraContent={extraContent}
+                                  onMoveUp={this.handleMoveUp.bind(this)}
+                                  onMoveDown={this.handleMoveDown.bind(this)}
+                                  onDelete={this.handleDelete.bind(this)}/>;
 
 
     }
@@ -247,6 +258,7 @@ export default class ColumnContentBlock extends React.Component<IColumnContentBl
     componentDidMount() {
         ContentBlockAction.onChange([ACTIVATE_CONTENT_BLOCK, DEACTIVATE_CONTENT_BLOCK], this.handleActive);
         this.updateValidationState();
+        this.handleActive();
     }
 
     componentWillUnmount() {

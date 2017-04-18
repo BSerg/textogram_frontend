@@ -2,7 +2,10 @@ import * as React from "react";
 import {Captions, BlockContentTypes, Validation} from "../../constants";
 import ContentEditable from "../shared/ContentEditable";
 import BaseContentBlock from "./BaseContentBlock";
-import {IContentData, ContentAction, DELETE_CONTENT_BLCK, UPDATE_CONTENT_BLCK} from "../../actions/editor/ContentAction";
+import {
+    IContentData, ContentAction, DELETE_CONTENT_BLCK, UPDATE_CONTENT_BLCK,
+    MOVE_UP_CONTENT_BLCK, MOVE_DOWN_CONTENT_BLCK
+} from "../../actions/editor/ContentAction";
 import {Validator} from "./utils";
 import {IPhoto} from "../../actions/editor/PhotoContentBlockAction";
 import {
@@ -104,6 +107,14 @@ export default class DialogContentBlock extends React.Component<IDialogContentBl
         ContentBlockAction.do(DEACTIVATE_CONTENT_BLOCK, null);
     }
 
+    handleMoveUp() {
+        ContentAction.do(MOVE_UP_CONTENT_BLCK, {id: this.state.content.id});
+    }
+
+    handleMoveDown() {
+        ContentAction.do(MOVE_DOWN_CONTENT_BLCK, {id: this.state.content.id});
+    }
+
     nextRecipient() {
         if (this.state.content.remarks.length) {
             let currentParticipantId = this.state.content.remarks[this.state.content.remarks.length - 1].participant_id;
@@ -142,6 +153,8 @@ export default class DialogContentBlock extends React.Component<IDialogContentBl
         PopupPanelAction.do(
             OPEN_POPUP,
             {content: <ContentBlockPopup extraContent={extraContent}
+                                         onMoveUp={this.handleMoveUp.bind(this)}
+                                         onMoveDown={this.handleMoveDown.bind(this)}
                                          onDelete={this.handleDelete.bind(this)}/>}
         )
     }
@@ -239,6 +252,7 @@ export default class DialogContentBlock extends React.Component<IDialogContentBl
 
     componentDidMount() {
         ContentBlockAction.onChange(ACTIVATE_CONTENT_BLOCK, this.handleActive);
+        this.handleActive();
     }
 
     componentWiilUnmount() {

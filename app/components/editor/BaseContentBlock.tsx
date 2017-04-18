@@ -77,10 +77,13 @@ export default class BaseContentBlock extends React.Component<IBaseContnentBlock
                 }
                 if (this.state.isActive && !this.props.disableDefaultPopup) {
                     if (!this.state.isDesktop) {
+                        let popupContent = <ContentBlockPopup onMoveUp={this.handleMoveUp.bind(this)}
+                                                              onMoveDown={this.handleMoveDown.bind(this)}
+                                                              onDelete={this.handleDeleteWithConfirm.bind(this)}/>;
                         PopupPanelAction.do(
                             OPEN_POPUP,
                             {
-                                content: this.props.popupContent || <ContentBlockPopup onDelete={this.handleDeleteWithConfirm.bind(this)}/>
+                                content: this.props.popupContent || popupContent
                             }
                         );
                     }
@@ -164,24 +167,18 @@ export default class BaseContentBlock extends React.Component<IBaseContnentBlock
         }
     }
 
-    handleKeyDown(e: KeyboardEvent) {
-        // if (e.keyCode == 27) {
-        //     ContentBlockAction.do(DEACTIVATE_CONTENT_BLOCK, null);
-        // }
-    }
+    handleKeyDown(e: KeyboardEvent) {}
 
     componentDidMount() {
         ContentBlockAction.onChange([ACTIVATE_CONTENT_BLOCK, DEACTIVATE_CONTENT_BLOCK], this.handleActivate);
-        // BlockHandlerAction.onChange([ACTIVATE_BLOCK_HANDLER, DEACTIVATE_BLOCK_HANDLER], this.handleBlockHandlerActivate);
         MediaQuerySerice.listen(this.handleMediaQuery);
         DesktopBlockToolsAction.onChange(UPDATE_TOOLS, this.handleUpdateTools);
-        // this.handleBlockHandlerActivate();
         window.addEventListener('keydown', this.handleKeyDown);
+        this.handleActivate();
     }
 
     componentWillUnmount() {
         ContentBlockAction.unbind([ACTIVATE_CONTENT_BLOCK, DEACTIVATE_CONTENT_BLOCK], this.handleActivate);
-        // BlockHandlerAction.unbind([ACTIVATE_BLOCK_HANDLER, DEACTIVATE_BLOCK_HANDLER], this.handleBlockHandlerActivate);
         MediaQuerySerice.unbind(this.handleMediaQuery);
         DesktopBlockToolsAction.unbind(UPDATE_TOOLS, this.handleUpdateTools);
         window.removeEventListener('keydown', this.handleKeyDown);

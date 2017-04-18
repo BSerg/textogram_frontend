@@ -7,7 +7,10 @@ import {
     DEACTIVATE_CONTENT_BLOCK
 } from "../../actions/editor/ContentBlockAction";
 import {ModalAction, OPEN_MODAL} from "../../actions/shared/ModalAction";
-import {DELETE_CONTENT_BLCK, ContentAction, IContentData, UPDATE_CONTENT_BLCK} from "../../actions/editor/ContentAction";
+import {
+    DELETE_CONTENT_BLCK, ContentAction, IContentData, UPDATE_CONTENT_BLCK,
+    MOVE_DOWN_CONTENT_BLCK, MOVE_UP_CONTENT_BLCK
+} from "../../actions/editor/ContentAction";
 import ContentBlockPopup from "./ContentBlockPopup";
 import {PopupPanelAction, OPEN_POPUP, CLOSE_POPUP} from "../../actions/shared/PopupPanelAction";
 import {UploadImageAction, UPLOAD_IMAGE, UPDATE_PROGRESS} from "../../actions/editor/UploadImageAction";
@@ -201,6 +204,14 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
         );
     }
 
+    handleMoveUp() {
+        ContentAction.do(MOVE_UP_CONTENT_BLCK, {id: this.state.content.id});
+    }
+
+    handleMoveDown() {
+        ContentAction.do(MOVE_DOWN_CONTENT_BLCK, {id: this.state.content.id});
+    }
+
     handleBlockActive() {
         let store = ContentBlockAction.getStore();
         this.setState({isActive: store.id == this.state.content.id}, () => {
@@ -313,6 +324,8 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
             }
         }
         this.setState({content: this.state.content}, () => {
+            PopupPanelAction.do(OPEN_POPUP, {content: this.getPopupContent()});
+            DesktopBlockToolsAction.do(UPDATE_TOOLS, {position: this.getPosition(), tools: this.getDesktopToolsContent()})
             ContentAction.do(UPDATE_CONTENT_BLCK, {contentBlock: this.state.content});
         });
     }
@@ -323,14 +336,21 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
     }
 
     private getPopupContent() {
-        let extraContent;
+        let extraContent = [];
+        if (this.state.content.photos.length == 1) {
+            this.state.content.photos[0].size == 'cropped' ?
+                extraContent.push(<div onClick={this.resizePhoto.bind(this)}><ResizeBig/></div>):
+                extraContent.push(<div onClick={this.resizePhoto.bind(this)}><ResizeSmall/></div>)
+        }
         if (this.state.content.photos.length >= this.props.maxPhotoCount ||
             (this.state.imageUploadProgress && this.state.imageUploadProgress.progress != this.state.imageUploadProgress.total)) {
-            extraContent = <div><AddButton className="disabled"/></div>;
+            extraContent.push(<div><AddButton className="disabled"/></div>);
         } else {
-            extraContent = <div onClick={this.openFileDialog.bind(this)}><AddButton/></div>;
+            extraContent.push(<div onClick={this.openFileDialog.bind(this)}><AddButton/></div>);
         }
         return <ContentBlockPopup extraContent={extraContent}
+                                  onMoveUp={this.handleMoveUp.bind(this)}
+                                  onMoveDown={this.handleMoveDown.bind(this)}
                                   onDelete={this.handleDelete.bind(this)}/>;
     }
 
@@ -379,6 +399,7 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
             this.refs.inputUpload.click();
         }
         MediaQuerySerice.listen(this.handleMediaQuery);
+        this.handleBlockActive();
     }
 
     componentWillUnmount() {
@@ -408,7 +429,7 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
                                 photoStyle = {filter: 'grayscale(1)'}
                             }
                             return <Photo key={'photo' + photo.id}
-                                          className={'photo' + index}
+                                          className={'photo' + index + (this.state.content.photos.length == 1 ? ' photo_single' : '')}
                                           style={photoStyle}
                                           content={photo}
                                           onDelete={this.deletePhoto.bind(this)}

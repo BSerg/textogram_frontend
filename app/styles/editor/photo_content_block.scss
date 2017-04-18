@@ -71,126 +71,135 @@ $base_desktop_photo_height: 400px;
   }
 
   @include mobile {
-    &:not(.active) {
-    .content_block_photo__photo {
-      display: none;
-
-      &.photo0, &.photo1, &.photo2, &.photo3, &.photo4, &.photo5, &.content_block_photo__empty {
-        display: block;
-      }
-
-      &.photo0 {
-        width: calc(82% - #{$space}/2);
-        height: $base_photo_height;
-        margin-right: $space;
-      }
-
-      &.photo1, &.photo2, &.photo3, &.photo4, &.photo5 {
-        width: calc(18% - #{$space}/2);
-        height: ($base_photo_height - 4 * $space) / 5;
-        margin: 0;
-      }
-
-      &.photo1, &.photo2, &.photo3, &.photo4 {
-        margin-bottom: $space;
-      }
-    }
-
-    &.grid_1 .content_block_photo__photo.photo0 {
+    &.active .content_block_photo__photo.photo_single {
       width: 100%;
-      height: $base_photo_height;
+      height: inherit;
 
-      &.photo0 {
-        height: auto;
-      }
-
-      &.photo0.photo_cropped {
+      &.photo_cropped {
         height: $base_photo_height;
       }
     }
 
-    &.grid_2 .content_block_photo__photo{
-      width: calc(50% - #{$space}/2);
-      height: $base_photo_height;
-      margin: 0;
+    &:not(.active) {
+      .content_block_photo__photo {
+        display: none;
 
-      &.photo0 {
-        margin-right: $space;
+        &.photo0, &.photo1, &.photo2, &.photo3, &.photo4, &.photo5, &.content_block_photo__empty {
+          display: block;
+        }
+
+        &.photo0 {
+          width: calc(82% - #{$space} / 2);
+          height: $base_photo_height;
+          margin-right: $space;
+        }
+
+        &.photo1, &.photo2, &.photo3, &.photo4, &.photo5 {
+          width: calc(18% - #{$space} / 2);
+          height: ($base_photo_height - 4 * $space) / 5;
+          margin: 0;
+        }
+
+        &.photo1, &.photo2, &.photo3, &.photo4 {
+          margin-bottom: $space;
+        }
       }
-    }
 
-    &.grid_3 .content_block_photo__photo{
-      &.photo0 {
-        width: calc(62% - #{$space}/2);
+      &.grid_1 .content_block_photo__photo.photo0 {
+        width: 100%;
         height: $base_photo_height;
-        margin-right: $space;
+
+        &.photo0 {
+          height: auto;
+        }
+
+        &.photo0.photo_cropped {
+          height: $base_photo_height;
+        }
       }
 
-      &.photo1, &.photo2 {
-        width: calc(38% - #{$space});
-        height: ($base_photo_height - $space)/2;
+      &.grid_2 .content_block_photo__photo {
+        width: calc(50% - #{$space} / 2);
+        height: $base_photo_height;
         margin: 0;
+
+        &.photo0 {
+          margin-right: $space;
+        }
       }
 
-      &.photo1 {
-        margin-bottom: 10px;
+      &.grid_3 .content_block_photo__photo {
+        &.photo0 {
+          width: calc(62% - #{$space} / 2);
+          height: $base_photo_height;
+          margin-right: $space;
+        }
+
+        &.photo1, &.photo2 {
+          width: calc(38% - #{$space});
+          height: ($base_photo_height - $space)/2;
+          margin: 0;
+        }
+
+        &.photo1 {
+          margin-bottom: 10px;
+        }
+      }
+
+      &.grid_4 .content_block_photo__photo {
+        &.photo0 {
+          width: calc(75% - #{$space} / 2);
+          height: $base_photo_height;
+          margin-right: $space;
+        }
+
+        &.photo1, &.photo2, &.photo3 {
+          width: calc(25% - #{$space} / 2);
+          height: ($base_photo_height - 2 * $space) / 3;
+          margin: 0;
+        }
+
+        &.photo1, &.photo2 {
+          margin-bottom: $space;
+        }
+      }
+
+      &.grid_5 .content_block_photo__photo {
+        &.photo0 {
+          width: calc(80% - #{$space} / 2);
+          height: $base_photo_height;
+          margin-right: $space;
+        }
+
+        &.photo1, &.photo2, &.photo3, &.photo4 {
+          width: calc(20% - #{$space} / 2);
+          height: ($base_photo_height - 3 * $space) / 4;
+          margin: 0;
+        }
+
+        &.photo1, &.photo2, &.photo3 {
+          margin-bottom: $space;
+        }
+      }
+
+      &.grid_6 .content_block_photo__photo {
+        &.photo0 {
+          width: calc(82% - #{$space} / 2);
+          height: $base_photo_height;
+          margin-right: $space;
+        }
+
+        &.photo1, &.photo2, &.photo3, &.photo4, &.photo5 {
+          width: calc(18% - #{$space} / 2);
+          height: ($base_photo_height - 4 * $space) / 5;
+          margin: 0;
+        }
+
+        &.photo1, &.photo2, &.photo3, &.photo4 {
+          margin-bottom: $space;
+        }
       }
     }
-
-    &.grid_4 .content_block_photo__photo{
-      &.photo0 {
-        width: calc(75% - #{$space}/2);
-        height: $base_photo_height;
-        margin-right: $space;
-      }
-
-      &.photo1, &.photo2, &.photo3 {
-        width: calc(25% - #{$space}/2);
-        height: ($base_photo_height - 2 * $space) / 3;
-        margin: 0;
-      }
-
-      &.photo1, &.photo2 {
-        margin-bottom: $space;
-      }
-    }
-
-    &.grid_5 .content_block_photo__photo{
-      &.photo0 {
-        width: calc(80% - #{$space}/2);
-        height: $base_photo_height;
-        margin-right: $space;
-      }
-
-      &.photo1, &.photo2, &.photo3, &.photo4 {
-        width: calc(20% - #{$space}/2);
-        height: ($base_photo_height - 3 * $space) / 4;
-        margin: 0;
-      }
-
-      &.photo1, &.photo2, &.photo3 {
-        margin-bottom: $space;
-      }
-    }
-
-    &.grid_6 .content_block_photo__photo {
-      &.photo0 {
-        width: calc(82% - #{$space}/2);
-        height: $base_photo_height;
-        margin-right: $space;
-      }
-
-      &.photo1, &.photo2, &.photo3, &.photo4, &.photo5 {
-        width: calc(18% - #{$space}/2);
-        height: ($base_photo_height - 4 * $space) / 5;
-        margin: 0;
-      }
-
-      &.photo1, &.photo2, &.photo3, &.photo4 {
-        margin-bottom: $space;
-      }
-    }
-  }
   }
 
   @include desktop {
