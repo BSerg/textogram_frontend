@@ -18,7 +18,7 @@ import {
     IContentData,
     UPDATE_COVER_CONTENT,
     UPDATE_TITLE_CONTENT,
-    SWAP_CONTENT_BLCK, MOVE_UP_CONTENT_BLCK, MOVE_DOWN_CONTENT_BLCK
+    SWAP_CONTENT_BLCK, MOVE_UP_CONTENT_BLCK, MOVE_DOWN_CONTENT_BLCK, SOFT_DELETE_CONTENT_BLCK, RESTORE_CONTENT_BLCK
 } from "../actions/editor/ContentAction";
 import {Captions, BlockContentTypes, ArticleStatuses, Validation} from "../constants";
 import {ModalAction, OPEN_MODAL} from "../actions/shared/ModalAction";
@@ -42,6 +42,7 @@ import {NotificationAction, SHOW_NOTIFICATION} from "../actions/shared/Notificat
 import PopupPrompt from "./shared/PopupPrompt";
 import {UserAction} from "../actions/user/UserAction";
 import {Link} from 'react-router';
+import DeletedContentBlockInline from "./editor/DeletedContentBlockInline";
 
 const PreviewButton = require('babel!svg-react!../assets/images/preview.svg?name=PreviewButton');
 const PublishButton = require('babel!svg-react!../assets/images/publish.svg?name=PublishButton');
@@ -303,7 +304,8 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
         ContentAction.onChange(
             [
                 CREATE_CONTENT_BLCK, DELETE_CONTENT_BLCK, UPDATE_COVER_CONTENT, UPDATE_TITLE_CONTENT,
-                SWAP_CONTENT_BLCK, MOVE_UP_CONTENT_BLCK, MOVE_DOWN_CONTENT_BLCK
+                SWAP_CONTENT_BLCK, MOVE_UP_CONTENT_BLCK, MOVE_DOWN_CONTENT_BLCK, SOFT_DELETE_CONTENT_BLCK,
+                RESTORE_CONTENT_BLCK
             ],
             this.forceUpdateContent
         );
@@ -330,7 +332,8 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
         ContentAction.unbind(
             [
                 CREATE_CONTENT_BLCK, DELETE_CONTENT_BLCK, UPDATE_COVER_CONTENT, UPDATE_TITLE_CONTENT,
-                SWAP_CONTENT_BLCK, MOVE_UP_CONTENT_BLCK, MOVE_DOWN_CONTENT_BLCK
+                SWAP_CONTENT_BLCK, MOVE_UP_CONTENT_BLCK, MOVE_DOWN_CONTENT_BLCK, SOFT_DELETE_CONTENT_BLCK,
+                RESTORE_CONTENT_BLCK
             ],
             this.forceUpdateContent
         );
@@ -442,7 +445,8 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
                                                           articleId={this.state.article.id}
                                                           blockPosition={index}
                                                           items={blockHandlerButtons}/>,
-                                            block
+                                            contentBlock.__meta && contentBlock.__meta.deleted ?
+                                                <DeletedContentBlockInline content={contentBlock}/> : block
                                         ]
                                     }
                                 })}

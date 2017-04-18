@@ -55,6 +55,19 @@ export namespace Captions {
         loading_post: 'Загрузка поста',
         saving_error: 'Что-то пошло не так. Мы не можем сохранить эту публикацию.',
         article_created: 'Статья сохранена в черновиках',
+        deleted_text_block: 'Текстовый блок удален',
+        deleted_header_block: 'Заголовок удален',
+        deleted_lead_block: 'Лид удален',
+        deleted_phrase_block: 'Фраза удалена',
+        deleted_list_block: 'Список удален',
+        deleted_quote_block: 'Цитата удалена',
+        deleted_column_block: 'Колонка удалена',
+        deleted_dialog_block: 'Диалог удален',
+        deleted_video_block: 'Видео удалено',
+        deleted_audio_block: 'Аудио удалено',
+        deleted_post_block: 'Пост удален',
+        deleted_photo_block: 'Галерея удалена',
+        restore: 'Восстановить',
     };
 
     export const shared = {

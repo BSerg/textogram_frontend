@@ -3,6 +3,7 @@ import Action from "../Action";
 import {api} from "../../api";
 import {BlockContentTypes, Captions} from "../../constants";
 import {NotificationAction, SHOW_NOTIFICATION} from "../shared/NotificationAction";
+import {ContentBlockAction, ACTIVATE_CONTENT_BLOCK} from "./ContentBlockAction";
 const uuid4 = require('uuid/v4');
 
 export const RESET_CONTENT = 'reset_content';
@@ -11,6 +12,8 @@ export const MOVE_UP_CONTENT_BLCK = 'move_up_content';
 export const MOVE_DOWN_CONTENT_BLCK = 'move_down_content';
 export const CREATE_CONTENT_BLCK = 'create_content';
 export const UPDATE_CONTENT_BLCK = 'update_content';
+export const SOFT_DELETE_CONTENT_BLCK = 'soft_delete_content';
+export const RESTORE_CONTENT_BLCK = 'restore_content';
 export const DELETE_CONTENT_BLCK = 'delete_content';
 export const UPDATE_TITLE_CONTENT = 'update_title_content';
 export const UPDATE_COVER_CONTENT = 'update_cover_content';
@@ -19,6 +22,7 @@ export const UPDATE_AUTO_SAVE = 'update_auto_save';
 export interface IContentData {
     id?: string
     type: BlockContentTypes
+    __meta?: any
     [prop: string]: any
 }
 
@@ -83,11 +87,28 @@ ContentAction.register(CREATE_CONTENT_BLCK, (store, data: {contentBlock: IConten
     store.content.blocks.forEach((item: IContentData) => {
         store.contentBlockMap[item.id] = item;
     });
+    ContentBlockAction.do(ACTIVATE_CONTENT_BLOCK, {id: data.contentBlock.id});
 });
 
 ContentAction.register(UPDATE_CONTENT_BLCK, (store, data: {contentBlock: IContentData}) => {
     if (store.contentBlockMap[data.contentBlock.id]) {
         Object.assign(store.contentBlockMap[data.contentBlock.id], data.contentBlock);
+    }
+});
+
+ContentAction.register(SOFT_DELETE_CONTENT_BLCK, (store, data: {id: string}) => {
+    let deletingItem = store.contentBlockMap[data.id];
+    if (deletingItem) {
+        deletingItem.__meta = deletingItem.__meta || {};
+        deletingItem.__meta.deleted = true;
+    }
+});
+
+ContentAction.register(RESTORE_CONTENT_BLCK, (store, data: {id: string}) => {
+    let deletingItem = store.contentBlockMap[data.id];
+    if (deletingItem) {
+        deletingItem.__meta = deletingItem.__meta || {};
+        deletingItem.__meta.deleted = false;
     }
 });
 
@@ -97,7 +118,6 @@ ContentAction.register(DELETE_CONTENT_BLCK, (store, data: {id: string}) => {
         store.content.blocks.splice(store.content.blocks.indexOf(deletingItem), 1);
         delete store.contentBlockMap[data.id];
     }
-    console.log(store)
 });
 
 ContentAction.register(UPDATE_TITLE_CONTENT, (store, data: {articleId: number, title: string}) => {

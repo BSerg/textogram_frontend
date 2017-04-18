@@ -1,0 +1,45 @@
+@import "../contstants";
+@import "../mixins";
+
+.deleted_content_block_inline {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: calc(100% - #{$basic_mobile_offset} * 2);
+  height: 64px;
+  font-family: $family_open_sans;
+  font-size: 13px;
+  letter-spacing: 1px;
+  background-color: $color4;
+  margin: $basic_mobile_offset;
+
+  .deleted_content_block_inline__text {
+    margin-right: 10px;
+  }
+
+  .deleted_content_block_inline__restore {
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+  .deleted_content_block_inline__close {
+    position: absolute;
+    right: $basic_mobile_offset;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+
+    svg {
+      fill: $color;
+    }
+  }
+
+  @include desktop {
+    width: calc(100% - #{$basic_desktop_offset} * 2);
+    margin: $basic_desktop_offset;
+  }
+}

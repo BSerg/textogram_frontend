@@ -6,7 +6,7 @@ import {
 } from "../../actions/editor/ContentBlockAction";
 import {
     ContentAction, DELETE_CONTENT_BLCK, MOVE_UP_CONTENT_BLCK,
-    MOVE_DOWN_CONTENT_BLCK
+    MOVE_DOWN_CONTENT_BLCK, SOFT_DELETE_CONTENT_BLCK
 } from "../../actions/editor/ContentAction";
 import {PopupPanelAction, OPEN_POPUP, CLOSE_POPUP} from "../../actions/shared/PopupPanelAction";
 import ContentBlockPopup from "./ContentBlockPopup";
@@ -125,7 +125,8 @@ export default class BaseContentBlock extends React.Component<IBaseContnentBlock
     }
 
     handleDelete() {
-        ContentAction.do(DELETE_CONTENT_BLCK, {id: this.props.id});
+        ContentAction.do(SOFT_DELETE_CONTENT_BLCK, {id: this.props.id});
+        // ContentAction.do(DELETE_CONTENT_BLCK, {id: this.props.id});
         ContentBlockAction.do(DEACTIVATE_CONTENT_BLOCK, null);
         PopupPanelAction.do(CLOSE_POPUP, null);
     }
@@ -207,7 +208,7 @@ export default class BaseContentBlock extends React.Component<IBaseContnentBlock
                                     </div>,
                                     this.state.desktopTools,
                                     <div key="tool_del" className="base_content_block__tools_button"
-                                         onClick={this.handleDeleteWithConfirm.bind(this)}
+                                         onClick={this.handleDelete.bind(this)}
                                          placeholder="Удалить">
                                         <DeleteButton/>
                                     </div>,
