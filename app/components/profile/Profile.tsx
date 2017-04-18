@@ -16,7 +16,7 @@ import Loading from '../shared/Loading';
 import {api} from '../../api';
 import axios from 'axios';
 
-import Error from '../Error';
+import {Error404} from '../Error';
 import {UserAction, GET_ME, LOGIN, LOGOUT, UPDATE_USER_DRAFTS} from "../../actions/user/UserAction";
 
 import {Captions} from '../../constants';
@@ -116,7 +116,7 @@ class ProfileClass extends React.Component<IProfileProps, IProfileState> {
                 });
             }).catch((error) => {
                 if (!axios.isCancel(error)) {
-                    this.setState({error: <Error code={404} msg="page not found" />, isLoading: false });
+                    this.setState({error: <Error404 msg="page not found" />, isLoading: false });
                 }
 
             });
@@ -215,6 +215,9 @@ class ProfileClass extends React.Component<IProfileProps, IProfileState> {
     }
 
     render() {
+        if (process.env.IS_LENTACH && !this.state.isSelf) {
+            return (<Error404 />);
+        }
         if (this.state && this.state.error) {
             return (this.state.error);
         }

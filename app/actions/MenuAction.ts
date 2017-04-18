@@ -7,8 +7,8 @@ export const TOGGLE = 'toggle';
 class MenuActionClass extends Action{
 
     constructor() {
-        super({open: Boolean(parseInt(localStorage.getItem('menuOpen')))});
-        let open = Boolean(parseInt(localStorage.getItem('menuOpen')));
+        super({open: Boolean(parseInt(localStorage.getItem('menuOpen'))) && !process.env.IS_LENTACH });
+        let open = Boolean(parseInt(localStorage.getItem('menuOpen')) && !process.env.IS_LENTACH );
         document.body.style.marginTop = (open && MediaQuerySerice.getIsDesktop()) ? '55px' : '0';
         document.body.style.height = (open && MediaQuerySerice.getIsDesktop()) ? 'calc(100% - 55px)' : '100%';
 
