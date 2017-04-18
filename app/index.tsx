@@ -11,12 +11,15 @@ import Error from './components/Error';
 import ProfileManagement from'./components/profile/ProfileManagement';
 import Drafts from './components/Drafts';
 import TwitterAuth from './components/TwitterAuth';
+import UrlShortener from './components/UrlShortener';
 
 import {UserAction, GET_ME} from './actions/user/UserAction';
 
 import 'core-js/shim';
 import {NewArticleEditor} from "./components/Editor";
 import {ArticlePreview} from "./components/Article";
+import LoginPage from "./components/LoginPage";
+
 
 class App extends React.Component<any, any> {
 
@@ -80,6 +83,7 @@ class App extends React.Component<any, any> {
             <Router history={browserHistory}>
                 <Route path="/" component={Base}>
                     <IndexRoute component={IndexPage}/>
+                    <Route path="login" component={LoginPage} />
                     <Route path="home/:id" component={IndexPage} />
                     <Route path="profile/:userId" component={Profile}/>
                     <Route path="articles/new" component={NewArticleEditor}/>
@@ -88,6 +92,7 @@ class App extends React.Component<any, any> {
                     <Route path="articles/:articleSlug" component={Article}/>
                     <Route path="drafts" component={Drafts} />
                     <Route path="manage" component={ProfileManagement}/>
+                    <Route path="url_shorten" component={UrlShortener}/>
                     <Route path="auth/twitter/" component={TwitterAuth}/>
                 </Route>
                 <Route path="*" component={() => {return <Error code={404} msg="Page not found"/>}}/>

@@ -1,0 +1,91 @@
+@import "contstants";
+@import "mixins";
+
+.url_shortener {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  padding: $padding/2;
+
+  h1, h2 {
+    text-align: center;
+    margin-bottom: $margin * 2;
+    text-transform: uppercase;
+  }
+
+  form, input, .shortened {
+    width: 100%;
+    max-width: 600px;
+    box-sizing: border-box;
+  }
+
+  input {
+    height: 50px;
+    font-size: 13px;
+    padding: 0 $padding/2;
+    outline: none;
+    border: none;
+    border-bottom: 1px solid $color;
+    text-align: center;
+
+    &.error {
+      border-bottom: 1px solid $color-accent;
+    }
+  }
+
+  .shortened {
+    margin: 40px 0 $margin 0;
+    min-height: 200px;
+    @include transition(300ms);
+    opacity: 1;
+
+    &.new {
+      opacity: 0.3;
+    }
+
+    .shortened_url {
+      margin-bottom: $margin;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      input {
+        margin-bottom: $margin/2;
+      }
+      button {
+        width: 200px;
+        height: 50px;
+        background-color: #F7F7F7;
+        outline: none;
+        border-radius: 0;
+        border: none;
+        text-transform: uppercase;
+        cursor: pointer;
+        &:hover {
+          background-color: #DDDDDD;
+        }
+      }
+    }
+
+    .shortened_hint {
+      font-size: 13px;
+      text-align: center;
+    }
+  }
+
+}
+
+@media (min-width: 768px) {
+  .url_shortener {
+    input {
+      font-size: 16px;
+    }
+  }
+}

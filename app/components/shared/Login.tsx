@@ -7,6 +7,9 @@ const VisibilityIcon = require('babel!svg-react!../../assets/images/profile_visi
 const VisibilityOffIcon = require('babel!svg-react!../../assets/images/profile_visibility_off_icon.svg?name=VisibilityOffIcon');
 const CloseIcon = require('babel!svg-react!../../assets/images/close.svg?name=CloseIcon');
 
+interface ILoginProps {
+    onLogin?: () => any
+}
 
 interface ILoginStateInterface {
     phone?: string;
@@ -55,6 +58,7 @@ export default class Login extends React.Component<any, ILoginStateInterface> {
         phone = phone.replace('+', '');
         UserAction.doAsync(LOGIN, {phone: phone, password: this.state.password}).then(() => {
             ModalAction.do(CLOSE_MODAL, null);
+            this.props.onLogin && this.props.onLogin();
         }).catch((error) => { this.setState({phoneError: true, passwordError: true}); });
 
 
