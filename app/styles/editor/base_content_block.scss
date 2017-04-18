@@ -68,6 +68,8 @@
       left: -60px;
       width: 30px;
       height: 100%;
+      @include no_select();
+      @include no_drag();
 
       .base_content_block__tools_wrapper {
         display: flex;
@@ -78,6 +80,7 @@
 
       .base_content_block__tools_button {
         @include transition();
+        @include border_radius(35px);
         position: relative;
         display: flex;
         align-items: center;
@@ -101,7 +104,6 @@
         }
 
         &:not(.disabled):hover {
-          @include border_radius(35px);
           background-color: $color4;
 
           svg {
@@ -120,6 +122,14 @@
             top: calc(50% - 15px);
             right: 45px;
             white-space: nowrap;
+          }
+        }
+
+        &.active {
+          background-color: $color4;
+
+          svg {
+            fill: $color;
           }
         }
       }
@@ -145,6 +155,50 @@
     &.expand_bottom {
       padding-bottom: 25px;
       margin-bottom: 25px;
+    }
+  }
+
+  .base_content_block__url_button {
+    position: relative;
+
+    .base_content_block__url_input_close {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      svg {
+        width: 35px;
+        height: 35px;
+        fill: white!important;
+      }
+    }
+
+    .base_content_block__url_input {
+      @include force_select();
+      position: absolute;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      top: 0;
+      left: 45px;
+      width: 200px;
+      height: 35px;
+      background-color: $color;
+      color: white;
+
+      form {
+        flex: auto;
+      }
+
+      input {
+        width: 100%;
+        background: transparent;
+        text-align: center;
+        border: none;
+        outline: none;
+        color: white;
+        height: 45px;
+      }
     }
   }
 }

@@ -4,11 +4,10 @@ import ContentEditable from "../shared/ContentEditable";
 import BaseContentBlock from "./BaseContentBlock";
 import {ContentBlockAction, ACTIVATE_CONTENT_BLOCK} from "../../actions/editor/ContentBlockAction";
 import {ContentAction, UPDATE_CONTENT_BLCK, IContentData} from "../../actions/editor/ContentAction";
-import * as toMarkdown from 'to-markdown';
-import * as marked from 'marked';
+import * as toMarkdown from "to-markdown";
+import * as marked from "marked";
 import "../../styles/editor/lead_content_block.scss";
 import {Validator} from "./utils";
-import {NotificationAction, SHOW_NOTIFICATION} from "../../actions/shared/NotificationAction";
 
 interface ILeadContent {
     id: string
@@ -68,6 +67,7 @@ export default class LeadContentBlock extends React.Component<ILeadContentBlockP
                 <ContentEditable onFocus={this.handleFocus.bind(this)}
                                  onChange={this.handleChange.bind(this)}
                                  onChangeDelay={0}
+                                 enableTextFormat={true}
                                  content={marked(this.state.content.value)}
                                  placeholder={Captions.editor.enter_lead}/>
             </BaseContentBlock>

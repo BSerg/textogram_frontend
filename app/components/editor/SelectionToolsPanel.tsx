@@ -42,8 +42,8 @@ export default class SelectionToolsPanel extends React.Component<IProps, any> {
     };
 
     onBold(e: Event) {
-        e.preventDefault();
         e.stopPropagation();
+        e.preventDefault();
         this.setState({isBold: !this.state.isBold}, () => {
             this.props.onBold && this.props.onBold();
         });

@@ -19,10 +19,16 @@ import {
 import {MediaQuerySerice} from "../../services/MediaQueryService";
 import {DesktopBlockToolsAction, UPDATE_TOOLS} from "../../actions/editor/DesktopBlockToolsAction";
 import PopupPrompt from "../shared/PopupPrompt";
+import {ContentEditableAction, RESET_FORMAT_TOOL} from "../../actions/shared/ContentEditableAction";
 
 const DeleteButton = require('babel!svg-react!../../assets/images/editor_delete.svg?name=DeleteButton');
 const UpIcon = require('babel!svg-react!../../assets/images/editor_up.svg?name=UpIcon');
 const DownIcon = require('babel!svg-react!../../assets/images/editor_down.svg?name=DownIcon');
+const BoldIcon = require('babel!svg-react!../../assets/images/desktop_editor_icon_bold.svg?name=BoldIcon');
+const ItalicIcon = require('babel!svg-react!../../assets/images/desktop_editor_icon_italic.svg?name=ItalicIcon');
+const URLIcon = require('babel!svg-react!../../assets/images/desktop_editor_icon_link.svg?name=URLIcon');
+const CloseIcon = require('babel!svg-react!../../assets/images/close_small.svg?name=CloseIcon');
+
 
 interface IBaseContnentBlockProps {
     className?: string
@@ -60,6 +66,7 @@ export default class BaseContentBlock extends React.Component<IBaseContnentBlock
         this.handleMediaQuery = this.handleMediaQuery.bind(this);
         this.handleUpdateTools = this.handleUpdateTools.bind(this);
         this.handleKeyDown = this.handleKeyDown.bind(this);
+        this.handleFormatTool = this.handleFormatTool.bind(this);
     }
 
     static defaultProps = {
@@ -170,10 +177,21 @@ export default class BaseContentBlock extends React.Component<IBaseContnentBlock
 
     handleKeyDown(e: KeyboardEvent) {}
 
+    handleFormatTool() {
+        let formatTool = ContentEditableAction.getStore().formatTool;
+        if (this.state.isActive && formatTool) {
+            this.setState({desktopFullTools: <FormatTool formatTool={formatTool}/>});
+        }
+        if (this.state.desktopFullTools != null && formatTool == null) {
+            this.setState({desktopFullTools: null});
+        }
+    }
+
     componentDidMount() {
         ContentBlockAction.onChange([ACTIVATE_CONTENT_BLOCK, DEACTIVATE_CONTENT_BLOCK], this.handleActivate);
         MediaQuerySerice.listen(this.handleMediaQuery);
         DesktopBlockToolsAction.onChange(UPDATE_TOOLS, this.handleUpdateTools);
+        ContentEditableAction.onChange(RESET_FORMAT_TOOL, this.handleFormatTool);
         window.addEventListener('keydown', this.handleKeyDown);
         this.handleActivate();
     }
@@ -182,6 +200,7 @@ export default class BaseContentBlock extends React.Component<IBaseContnentBlock
         ContentBlockAction.unbind([ACTIVATE_CONTENT_BLOCK, DEACTIVATE_CONTENT_BLOCK], this.handleActivate);
         MediaQuerySerice.unbind(this.handleMediaQuery);
         DesktopBlockToolsAction.unbind(UPDATE_TOOLS, this.handleUpdateTools);
+        ContentEditableAction.unbind(RESET_FORMAT_TOOL, this.handleFormatTool);
         window.removeEventListener('keydown', this.handleKeyDown);
     }
 
@@ -222,6 +241,73 @@ export default class BaseContentBlock extends React.Component<IBaseContnentBlock
                         </div>
                     </div> : null
                 }
+            </div>
+        )
+    }
+}
+
+class FormatTool extends React.Component<any, any> {
+    constructor(props: any) {
+        super(props);
+        this.state = {
+            showURLInput: false
+        };
+    }
+
+    refs: {
+        urlInput: HTMLInputElement
+    };
+
+    onBold(e: any) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.props.formatTool.onBold();
+    }
+
+    onItalic(e: any) {
+        e.preventDefault();
+        e.stopPropagation();
+        this.props.formatTool.onItalic();
+    }
+
+    onURL(e: any) {
+        if (this.props.formatTool.isURL) {
+            this.props.formatTool.onRemoveURL();
+        } else {
+            this.setState({showURLInput: true});
+        }
+    }
+
+    updateURL(e: any) {
+        e.preventDefault();
+        if (this.refs.urlInput.value) {
+            this.props.formatTool.onURL(this.refs.urlInput.value);
+        }
+        this.closeURLInput();
+    }
+
+    closeURLInput() {
+        this.setState({showURLInput: false});
+    }
+
+    render() {
+        return (
+            <div>
+                <div className={"base_content_block__tools_button" + (this.props.formatTool.isBold ? ' active' : '')}
+                     onMouseDown={this.onBold.bind(this)}><BoldIcon/></div>
+                <div className={"base_content_block__tools_button" + (this.props.formatTool.isItalic ? ' active' : '')}
+                     onMouseDown={this.onItalic.bind(this)}><ItalicIcon/></div>
+                <div className={"base_content_block__tools_button base_content_block__url_button" + (this.props.formatTool.isURL ? ' active' : '')}
+                     onMouseDown={this.onURL.bind(this)}>
+                    <URLIcon/>
+                    {this.state.showURLInput ?
+                        <div className="base_content_block__url_input">
+                            <form onSubmit={this.updateURL.bind(this)}>
+                                <input ref="urlInput" type="text" placeholder="Вставьте ссылку"/>
+                            </form>
+                            <div className="base_content_block__url_input_close" onClick={this.closeURLInput.bind(this)}><CloseIcon/></div>
+                        </div> : null}
+                </div>
             </div>
         )
     }

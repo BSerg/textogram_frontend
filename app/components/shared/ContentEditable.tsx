@@ -1,17 +1,11 @@
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-import {
-    PopupPanelAction, OPEN_POPUP, BACK_POPUP, REPLACE_POPUP,
-    CLOSE_POPUP
-} from "../../actions/shared/PopupPanelAction";
-
-
-import '../../styles/shared/content_editable.scss';
+import * as React from "react";
+import {PopupPanelAction, OPEN_POPUP, CLOSE_POPUP} from "../../actions/shared/PopupPanelAction";
+import "../../styles/shared/content_editable.scss";
 import TextFormatPopup from "../editor/TextFormatPopup";
 import {ModalAction, OPEN_MODAL, CLOSE_MODAL} from "../../actions/shared/ModalAction";
 import URLModal from "../editor/URLModal";
 import {MediaQuerySerice} from "../../services/MediaQueryService";
-import SelectionToolsPanel from "../editor/SelectionToolsPanel";
+import {ContentEditableAction, RESET_FORMAT_TOOL} from "../../actions/shared/ContentEditableAction";
 
 type ElementType = 'inline' | 'p' | 'div' | 'ul' | 'ol';
 type AlignContent = 'left' | 'center' | 'right';
@@ -247,32 +241,62 @@ export default class ContentEditable extends React.Component<ContentEditableProp
         this.selection = window.getSelection();
         this.range = this.selection.getRangeAt(0);
         if (!this.selection.isCollapsed) {
-            let tools = <SelectionToolsPanel key={Math.random().toString().substr(2, 7)}
-                isBold={document.queryCommandState("bold")}
-                isItalic={document.queryCommandState("italic")}
-                isURL={this.detectURL()}
-                onBold={() => {document.execCommand('bold')}}
-                onItalic={() => {document.execCommand('italic')}}
-                onURL={(url: string) => {
+            ContentEditableAction.do(RESET_FORMAT_TOOL, {
+                isBold: document.queryCommandState("bold"),
+                isItalic: document.queryCommandState("italic"),
+                isURL: this.detectURL(),
+                onBold: () => {
+                    document.execCommand('bold');
+                    this.handleSelectDesktop();
+                },
+                onItalic: () => {
+                    document.execCommand('italic');
+                    this.handleSelectDesktop();
+                },
+                onURL: (url: string) => {
+                    let _selection = window.getSelection();
+                    _selection.removeAllRanges();
+                    _selection.addRange(this.range);
+                    document.execCommand('createLink', false, url);
+                    this.handleSelectDesktop();
+                },
+                onRemoveURL: () => {
                     if (this.detectURL()) {
                         document.execCommand("unlink", false, false);
-                    } else {
-                        let _selection = window.getSelection();
-                        _selection.removeAllRanges();
-                        _selection.addRange(this.range);
-                        document.execCommand('createLink', false, url);
                     }
                     this.handleSelectDesktop();
-                }}/>;
-
-            let sRect = this.range.getBoundingClientRect();
-            let sTools = document.getElementById('selection_tools');
-            sTools.style.top = sRect.top + window.pageYOffset - 65 + 'px';
-            sTools.style.left = sRect.left + window.pageXOffset + sRect.width / 2 - 75 + 'px';
-            ReactDOM.render(tools, sTools);
+                }
+            });
         } else {
-            document.getElementById('selection_tools').innerHTML = '';
+            ContentEditableAction.do(RESET_FORMAT_TOOL, null);
         }
+        // if (!this.selection.isCollapsed) {
+        //     let tools = <SelectionToolsPanel key={Math.random().toString().substr(2, 7)}
+        //         isBold={document.queryCommandState("bold")}
+        //         isItalic={document.queryCommandState("italic")}
+        //         isURL={this.detectURL()}
+        //         onBold={() => {document.execCommand('bold')}}
+        //         onItalic={() => {document.execCommand('italic')}}
+        //         onURL={(url: string) => {
+        //             if (this.detectURL()) {
+        //                 document.execCommand("unlink", false, false);
+        //             } else {
+        //                 let _selection = window.getSelection();
+        //                 _selection.removeAllRanges();
+        //                 _selection.addRange(this.range);
+        //                 document.execCommand('createLink', false, url);
+        //             }
+        //             this.handleSelectDesktop();
+        //         }}/>;
+        //
+        //     let sRect = this.range.getBoundingClientRect();
+        //     let sTools = document.getElementById('selection_tools');
+        //     sTools.style.top = sRect.top + window.pageYOffset - 65 + 'px';
+        //     sTools.style.left = sRect.left + window.pageXOffset + sRect.width / 2 - 75 + 'px';
+        //     ReactDOM.render(tools, sTools);
+        // } else {
+        //     document.getElementById('selection_tools').innerHTML = '';
+        // }
     }
 
     handleMediaQuery(isDestop: boolean) {

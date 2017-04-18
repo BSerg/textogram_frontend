@@ -46,6 +46,20 @@
   user-select: none;
 }
 
+@mixin force_select() {
+  -webkit-touch-callout: default;
+  -webkit-user-select: auto;
+  -khtml-user-select: auto;
+  -moz-user-select: all;
+  -ms-user-select: all;
+  user-select: all;
+}
+
+@mixin no_drag() {
+  user-drag: none;
+  -webkit-user-drag: none;
+}
+
 @mixin placeholder ($font, $size, $weight, $color) {
   ::-webkit-input-placeholder {font-family: $font; color:$color!important; font-weight: $weight; font-size: $size}
   ::-moz-placeholder          {font-family: $font; color:$color!important; font-weight: $weight; font-size: $size}

@@ -38,6 +38,12 @@
     }
   }
 
+  @include mobile {
+    .deleted_content_block_inline__text {
+      display: none;
+    }
+  }
+
   @include desktop {
     width: calc(100% - #{$basic_desktop_offset} * 2);
     margin: $basic_desktop_offset;
