@@ -337,6 +337,16 @@ class UserMenu extends React.Component<IUserMenuProps, any> {
                     </div>
                 </div>
 
+                {
+                    process.env.IS_LENTACH ? (
+                        <div className="menu__links">
+                            <div className="menu__link">
+                                <Link to={"/url_shorten/"}>Cокращалка</Link>
+                            </div>
+                        </div>
+                    ) : null
+                }
+
                 <div className="menu__controls">
                     <NotificationBlockWithRouter showZero={true} />
                     <div><Link to="/manage/"><SettingsIcon /></Link></div>
