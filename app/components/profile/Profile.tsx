@@ -71,7 +71,7 @@ class ProfileClass extends React.Component<IProfileProps, IProfileState> {
         let isSelf: boolean =  Boolean(this.state.user && UserAction.getStore().user && (UserAction.getStore().user.id == this.state.user.id));
         let stateData: any = { canSubscribe: Boolean(UserAction.getStore().user && !isSelf) };
         stateData.isSelf = isSelf;
-        stateData.currentSection = isSelf ? this.SECTION_FEED : this.SECTION_ARTICLES;
+        stateData.currentSection = process.env.IS_LENTACH ? this.SECTION_ARTICLES : (isSelf ? this.SECTION_FEED : this.SECTION_ARTICLES);
         stateData.selfDrafts = isSelf ? UserAction.getStore().user.drafts || 0 : 0;
         stateData.additionalPage = null;
         if (stateData.isSelf != this.state.isSelf || stateData.canSubscribe != this.state.canSubscribe ) {
@@ -103,7 +103,7 @@ class ProfileClass extends React.Component<IProfileProps, IProfileState> {
                     user: response.data,
                     showSubscribers: false,
                     isSelf: isSelf,
-                    currentSection: isSelf ? this.SECTION_FEED : this.SECTION_ARTICLES,
+                    currentSection: process.env.IS_LENTACH ? this.SECTION_ARTICLES : (isSelf ? this.SECTION_FEED : this.SECTION_ARTICLES),
                     isLoading: false,
                     canSubscribe: canSubscribe,
                     selfDrafts: isSelf ? UserAction.getStore().user.drafts || 0 : 0,
@@ -228,7 +228,7 @@ class ProfileClass extends React.Component<IProfileProps, IProfileState> {
 
         if (!this.state.user) return null;
 
-        let sections: {name: string, caption: string}[] = this.state.isSelf ? [
+        let sections: {name: string, caption: string}[] = (this.state.isSelf && !process.env.IS_LENTACH) ? [
             {name: this.SECTION_FEED, caption: Captions.profile.menuSubscriptions},
             {name: this.SECTION_ARTICLES, caption: Captions.profile.menuArticles}] : [];
 
