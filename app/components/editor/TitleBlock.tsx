@@ -109,9 +109,7 @@ export default class TitleBlock extends React.Component<TitleBlockPropsInterface
     uploadCover(articleId: string|null) {
         var file = this.refs.fileInput.files[0];
         UploadImageAction.doAsync(UPLOAD_IMAGE, {articleId: articleId, image: file}).then((data: any) => {
-            if (file.type != 'image/gif') {
-                data.editable = true;
-            }
+            data.editable = file.type != 'image/gif';
             this.setState({cover: data, coverLoading: false}, () => {
                 ContentAction.do(UPDATE_COVER_CONTENT, {articleId: articleId, autoSave: this.props.autoSave, cover: data});
                 this.drawCanvas();
@@ -211,7 +209,10 @@ export default class TitleBlock extends React.Component<TitleBlockPropsInterface
 
     render() {
         let className = 'title_block',
-            style = this.state.isDesktop && !(this.state.cover && this.state.cover.editable) ? {} : {background: `url(${this.state.coverClipped && this.state.coverClipped.image || this.state.cover && this.state.cover.image}) no-repeat center center`};
+            style = {};
+        if (!this.state.isDesktop || (this.state.cover && !this.state.cover.editable)) {
+            style = {background: `url(${this.state.coverClipped && this.state.coverClipped.image || this.state.cover && this.state.cover.image}) no-repeat center center`};
+        }
         if (this.state.cover) {
             className += ' inverse';
         }
