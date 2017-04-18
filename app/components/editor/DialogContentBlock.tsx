@@ -255,7 +255,7 @@ export default class DialogContentBlock extends React.Component<IDialogContentBl
         this.handleActive();
     }
 
-    componentWiilUnmount() {
+    componentWillUnmount() {
         ContentBlockAction.unbind(ACTIVATE_CONTENT_BLOCK, this.handleActive);
     }
 
