@@ -91,6 +91,9 @@ export default class DeletedContentBlockInline extends React.Component<IDeletedC
             case BlockContentTypes.POST:
                 text = Captions.editor.deleted_post_block;
                 break;
+            case BlockContentTypes.PHRASE:
+                text = Captions.editor.deleted_phrase_block;
+                break;
         }
         return (
             <div className="deleted_content_block_inline">

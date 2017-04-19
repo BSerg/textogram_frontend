@@ -6,7 +6,6 @@ import Error from "./Error";
 import {UserAction, LOGIN, LOGOUT, UPDATE_USER, SAVE_USER} from "../actions/user/UserAction";
 import {ModalAction, OPEN_MODAL, CLOSE_MODAL} from "../actions/shared/ModalAction";
 import * as moment from 'moment';
-import "../styles/article.scss";
 import SocialIcon from "./shared/SocialIcon";
 import {MediaQuerySerice} from "../services/MediaQueryService";
 import FloatingPanel from "./shared/FloatingPanel";
@@ -15,6 +14,7 @@ import * as Swapeable from 'react-swipeable';
 import PopupPrompt from "./shared/PopupPrompt";
 import {NotificationAction, SHOW_NOTIFICATION} from "../actions/shared/NotificationAction";
 import Loading from "./shared/Loading";
+import "../styles/article.scss";
 
 const EditButton = require('babel!svg-react!../assets/images/edit.svg?name=EditButton');
 const DeleteButton = require('babel!svg-react!../assets/images/redactor_icon_delete.svg?name=DeleteButton');
