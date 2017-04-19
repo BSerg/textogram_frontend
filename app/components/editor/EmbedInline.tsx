@@ -4,6 +4,7 @@ import {IContentData, ContentAction, UPDATE_CONTENT_BLCK, CREATE_CONTENT_BLCK} f
 import {IEmbedContent} from "./EmbedContentBlock";
 import "../../styles/editor/embed_inline.scss";
 import {InlineBlockAction, CLOSE_INLINE_BLOCK} from "../../actions/editor/InlineBlockAction";
+import {validateEmbed} from "./utils";
 
 const CloseButton = require('babel!svg-react!../../assets/images/close.svg?name=CloseButton');
 
@@ -57,27 +58,8 @@ export default class EmbedInline extends React.Component<IEmbedInlineProps, IEmb
         this.props.onSubmit && this.props.onSubmit();
     }
 
-    validate(url: string): boolean {
-        let isValid = false, testRegexps;
-        switch (this.state.content.type) {
-            case BlockContentTypes.VIDEO:
-                testRegexps = Embed.urlRegex.VIDEO;
-                break;
-            case BlockContentTypes.AUDIO:
-                testRegexps = Embed.urlRegex.AUDIO;
-                break;
-            case BlockContentTypes.POST:
-                testRegexps = Embed.urlRegex.POST;
-                break;
-        }
-        if (testRegexps) {
-            Object.values(testRegexps).forEach((regex) => {
-                if (regex.test(url)) {
-                    isValid = true;
-                }
-            });
-        }
-        return isValid;
+    validate(value: string): boolean {
+        return validateEmbed(this.state.content.type, value);
     }
 
     componentDidMount() {

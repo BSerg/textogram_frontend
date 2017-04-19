@@ -293,6 +293,13 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
         }
     }
 
+    b64EncodeUnicode (str: string) {
+        return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, function(match, p1) {
+            return p1;
+            // return String.fromCharCode('0x' + p1);
+        }));
+    }
+
     componentWillReceiveProps(nextProps: any) {
         if (this.props.params.articleId != nextProps.params.articleId) {
             this.loadArticle(nextProps.params.articleId);
@@ -342,6 +349,7 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
         InlineBlockAction.unbind(OPEN_INLINE_BLOCK, this.handleOpenInlineBlock);
         InlineBlockAction.unbind(CLOSE_INLINE_BLOCK, this.handleCloseInlineBlock);
         MediaQuerySerice.unbind(this.handleMediaQuery);
+        document.removeEventListener('click', this.handleDocumentClick);
     }
 
     render() {
@@ -415,7 +423,7 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
                                                                        content={contentBlock}/>;
                                             break;
                                         case BlockContentTypes.POST:
-                                            let hash = btoa((contentBlock as any).value);
+                                            let hash = this.b64EncodeUnicode((contentBlock as any).value);
                                             block = <EmbedContentBlock key={"content-" + contentBlock.id + '-' + hash}
                                                                        className={isLast ? 'last' : ''}
                                                                        content={contentBlock}/>;

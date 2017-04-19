@@ -1,3 +1,5 @@
+import {BlockContentTypes, Embed} from "../../constants";
+
 export class Validator {
     static isValid(content: any, validationConfig: any): boolean {
         let valid = true;
@@ -28,3 +30,36 @@ export class Validator {
 
     }
 }
+
+export let validateEmbed = (type: BlockContentTypes, value: string) => {
+    let isValid = false, testRegexps, testCodeRegexps;
+    switch (type) {
+        case BlockContentTypes.VIDEO:
+            testRegexps = Embed.urlRegex.VIDEO;
+            testCodeRegexps = Embed.embedRegex.VIDEO;
+            break;
+        case BlockContentTypes.AUDIO:
+            testRegexps = Embed.urlRegex.AUDIO;
+            testCodeRegexps = Embed.embedRegex.AUDIO;
+            break;
+        case BlockContentTypes.POST:
+            testRegexps = Embed.urlRegex.POST;
+            testCodeRegexps = Embed.embedRegex.POST;
+            break;
+    }
+    if (testRegexps) {
+        Object.values(testRegexps).forEach((regex) => {
+            if (regex.test(value)) {
+                isValid = true;
+            }
+        });
+    }
+    if (testCodeRegexps) {
+        Object.values(testCodeRegexps).forEach((regex) => {
+            if (regex.test(value)) {
+                isValid = true;
+            }
+        });
+    }
+    return isValid;
+};

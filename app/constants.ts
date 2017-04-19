@@ -21,7 +21,7 @@ export namespace Captions {
         enter_quote_replace: 'Заменить',
         enter_quote_delete: 'Удалить',
         enter_caption: 'Добавьте описание',
-        enter_embed_url: 'Вставьте ссылку',
+        enter_embed_url: 'Вставьте ссылку или код',
         content_text: 'Текст',
         content_header: 'Заголовок',
         content_lead: 'Лид',
@@ -41,7 +41,7 @@ export namespace Captions {
         error_embed_url: 'Некорректная ссылка',
         help_embed_video: 'Youtube, Vimeo, VK, Facebook',
         help_embed_audio: 'SoundCloud, Yandex Music, PromoDJ',
-        help_embed_post: 'Twitter, Facebook, Instagram',
+        help_embed_post: 'FACEBOOK, INSTAGRAM, TWITTER, VK (ТОЛЬКО КОД)',
         help_embed_empty: 'Нажмите на блок и вставьте ссылку',
         loading: 'Загрузка...',
         loading_image: 'Загрузка изображения',
@@ -232,7 +232,18 @@ export namespace Embed {
             propmodj: /^http:\/\/promodj\.com\/[\w\-.]+\/tracks\/\d+\/\w+$/,
             yandex: /^https:\/\/music\.yandex\.ru\/album\/\d+(\/track\/\d+)?$/
         }
-    }
+    };
+    export const embedRegex = {
+        POST: {
+            vk: /^<div id="vk_post_-?\d+_\d+"><\/div>\s*<script type="text\/javascript">[^<]+<\/script>$/,
+            twitter: /^<blockquote class="twitter-tweet" data-lang="\w+"><p lang="\w+" dir="ltr">.+<\/blockquote>\s*<script async src="\/\/platform\.twitter\.com\/widgets\.js" charset="utf-8"><\/script>$/
+        },
+        VIDEO: {
+            vk: /^<iframe src="\/\/vk\.com\/video_ext\.php\?oid=\d+&id=\d+&hash=\w+&hd=\d" width="\d+" height="\d+" frameborder="0" allowfullscreen><\/iframe>$/,
+            twitter: /^<blockquote class="twitter-video" data-lang="\w+"><p lang="\w+" dir="ltr">.+<\/blockquote>\s*<script async src="\/\/platform\.twitter\.com\/widgets\.js" charset="utf-8"><\/script>$/,
+        },
+        AUDIO: {}
+    };
 }
 
 export namespace Validation {

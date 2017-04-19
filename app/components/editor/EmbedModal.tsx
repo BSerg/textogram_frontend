@@ -13,6 +13,7 @@ import "../../styles/editor/embed_modal.scss";
 import {PopupPanelAction, OPEN_POPUP, CLOSE_POPUP} from "../../actions/shared/PopupPanelAction";
 import PopupPrompt from "../shared/PopupPrompt";
 import {ContentBlockAction, DEACTIVATE_CONTENT_BLOCK} from "../../actions/editor/ContentBlockAction";
+import {validateEmbed} from "./utils";
 
 const DeleteButton = require('babel!svg-react!../../assets/images/redactor_icon_delete.svg?name=DeleteButton');
 const ConfirmButton = require('babel!svg-react!../../assets/images/redactor_icon_confirm.svg?name=ConfirmButton');
@@ -77,7 +78,6 @@ export default class EmbedModal extends React.Component<IEmbedModalProps, IEmbed
     }
 
     handleDeleteContent() {
-        console.log('DELETE EMBED', this.state.content.id);
         if (this.state.content.id) {
             ModalAction.do(CLOSE_MODAL, null);
             let content = <PopupPrompt confirmLabel="Удалить"
@@ -88,26 +88,7 @@ export default class EmbedModal extends React.Component<IEmbedModalProps, IEmbed
     }
 
     validate(url: string): boolean {
-        let isValid = false, testRegexps;
-        switch (this.state.content.type) {
-            case BlockContentTypes.VIDEO:
-                testRegexps = Embed.urlRegex.VIDEO;
-                break;
-            case BlockContentTypes.AUDIO:
-                testRegexps = Embed.urlRegex.AUDIO;
-                break;
-            case BlockContentTypes.POST:
-                testRegexps = Embed.urlRegex.POST;
-                break;
-        }
-        if (testRegexps) {
-            Object.values(testRegexps).forEach((regex) => {
-                if (regex.test(url)) {
-                    isValid = true;
-                }
-            });
-        }
-        return isValid;
+        return validateEmbed(this.state.content.type, url);
     }
 
     componentDidMount() {

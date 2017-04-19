@@ -22,7 +22,7 @@ import EmbedInline from "./EmbedInline";
 import {DesktopBlockToolsAction, UPDATE_TOOLS} from "../../actions/editor/DesktopBlockToolsAction";
 import PopupPrompt from "../shared/PopupPrompt";
 
-const EditButton = require('babel!svg-react!../../assets/images/edit.svg?name=EditButton');
+const EditButton = require('babel!svg-react!../../assets/images/desktop_editor_icon_embed_edit.svg?name=EditButton');
 
 export interface IEmbedContent {
     id: string
@@ -79,7 +79,7 @@ export default class EmbedContentBlock extends React.Component<IEmbedContentBloc
 
     handleActive() {
         let store = ContentBlockAction.getStore();
-        if (this.state.isActive != (store.id == this.state.content.id)) {
+        if (this.state.isActive !== (store.id == this.state.content.id)) {
             this.setState({isActive: store.id == this.state.content.id}, () => {
                 if (this.state.isActive) {
                     PopupPanelAction.do(OPEN_POPUP, {content: this.getPopupContent()});
@@ -150,7 +150,16 @@ export default class EmbedContentBlock extends React.Component<IEmbedContentBloc
         )
     }
 
-    processEmbedElement(embed: HTMLElement) {
+    processEmbedCode(embed: HTMLDivElement) {
+        let script = embed.getElementsByTagName('script')[0];
+        console.log(script);
+        if (script) {
+            let f = new Function(script.innerText);
+            f();
+        }
+    }
+
+    processEmbedElement(embed: HTMLDivElement) {
         if (!embed || this.state.loaded) return;
         window.setTimeout(() => {
             if (this.state.content.type == BlockContentTypes.VIDEO) {
@@ -168,6 +177,8 @@ export default class EmbedContentBlock extends React.Component<IEmbedContentBloc
                     twttr.widgets && twttr.widgets.load(document.getElementById(this.props.content.id));
                     // INSTAGRAM LOAD EMBED
                     instgrm.Embeds.process();
+                    // EXEC EMBED SCRIPTS
+                    this.processEmbedCode(embed);
                 });
 
             }
@@ -190,14 +201,7 @@ export default class EmbedContentBlock extends React.Component<IEmbedContentBloc
                 console.log(response);
                 if (response.data.embed) {
                     content.__meta = {embed: response.data.embed};
-                    this.setState({content: content}, () => {
-                        window.setTimeout(() => {
-                            // TWITTER EMBED
-                            twttr.widgets && twttr.widgets.load(document.getElementById(content.id));
-                            // INSTAGRAM LOAD EMBED
-                            instgrm.Embeds.process();
-                        });
-                    });
+                    this.setState({content: content});
                 }
             })
         }
@@ -209,14 +213,15 @@ export default class EmbedContentBlock extends React.Component<IEmbedContentBloc
     }
 
     componentDidMount() {
-        ContentBlockAction.onChange(ACTIVATE_CONTENT_BLOCK, this.handleActive);
+        ContentBlockAction.onChange([ACTIVATE_CONTENT_BLOCK, DEACTIVATE_CONTENT_BLOCK], this.handleActive);
         InlineBlockAction.onChange(CLOSE_INLINE_BLOCK, this.handleCloseInline);
         this.update(this.state.content);
         this.handleActive();
+
     }
 
     componentWillUnmount() {
-        ContentBlockAction.unbind(ACTIVATE_CONTENT_BLOCK, this.handleActive);
+        ContentBlockAction.unbind([ACTIVATE_CONTENT_BLOCK, DEACTIVATE_CONTENT_BLOCK], this.handleActive);
         InlineBlockAction.unbind(CLOSE_INLINE_BLOCK, this.handleCloseInline);
     }
 
