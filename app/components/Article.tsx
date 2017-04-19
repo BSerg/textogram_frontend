@@ -414,29 +414,15 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
                             }
                         </div>
 
-                        <div className="article__share">
-                            <Link to={`/profile/${this.state.article.owner.id}`} className="article__author">
-                                {this.state.article.owner.avatar ?
-                                    <img className="article__avatar" src={this.state.article.owner.avatar}/> : null
-                                }
-                                {this.state.article.owner.first_name}&nbsp;{this.state.article.owner.last_name}
-                            </Link>
-                            {this.state.isDesktop ?
-                                <div className="article__shares">
-                                    <a href={"http://vk.com/share.php?url=" + this.state.article.url}
-                                       className="article__share_btn"><SocialIcon social="vk"/></a>
-                                    <a href={"https://www.facebook.com/sharer/sharer.php?u=" + this.state.article.url}
-                                       className="article__share_btn"><SocialIcon social="facebook"/></a>
-                                    <a href={"https://twitter.com/home?status=" + this.state.article.url}
-                                       className="article__share_btn"><SocialIcon social="twitter"/></a>
-                                    <a href={"https://telegram.me/share/url?url=" + this.state.article.url}
-                                       className="article__share_btn"><SocialIcon social="telegram"/></a>
-                                </div> :
-                                <div className="article__shares_btn" onClick={this.openSharePopup.bind(this)}>
-                                    <ShareButton/>Поделиться
-                                </div>
-                            }
-
+                        <div className="article__footer">
+                            <div className="article__footer_content">
+                                <Link to={`/profile/${this.state.article.owner.id}`} className="article__author">
+                                    {this.state.article.owner.avatar ?
+                                        <img className="article__avatar" src={this.state.article.owner.avatar}/> : null
+                                    }
+                                    {this.state.article.owner.first_name}&nbsp;{this.state.article.owner.last_name}
+                                </Link>
+                            </div>
                         </div>
                         {this.state.isDesktop ?
                             <ShareFloatingPanel articleUrl={this.state.article.url}/> : null}

@@ -20,7 +20,7 @@ import {DesktopBlockToolsAction, UPDATE_TOOLS} from "../../actions/editor/Deskto
 import EditableImageModal from "../shared/EditableImageModal";
 import {ModalAction, OPEN_MODAL} from "../../actions/shared/ModalAction";
 
-const AddButton = require('babel!svg-react!../../assets/images/redactor_icon_popup_add.svg?name=AddButton');
+const AddButton = require('babel!svg-react!../../assets/images/desktop_editor_icon_add.svg?name=AddButton');
 
 export interface IParticipant {
     id: number
@@ -161,7 +161,11 @@ export default class DialogContentBlock extends React.Component<IDialogContentBl
 
     private getDesktopToolsContent() {
         return (
-            <div onClick={this.addRemark.bind(this, this.state.content.remarks.length)}><AddButton/></div>
+            <div className="base_content_block__tools_button"
+                 placeholder="Добавить реплику"
+                 onClick={this.addRemark.bind(this, this.state.content.remarks.length)}>
+                <AddButton/>
+            </div>
         )
     }
 

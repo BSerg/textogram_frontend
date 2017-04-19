@@ -720,82 +720,57 @@ $block_margin_desktop: 25px;
   }
 }
 
-.article__share {
+.article__footer {
   display: flex;
   flex-direction: column;
   align-items: center;
   font-family: $family_open_sans;
-  padding: 50px 0 0 0;
+  width: 100%;
+  height: 50px;
+  margin: 50px 0;
 
-  .article__author {
+  .article__footer_content {
     display: flex;
     flex-direction: row;
     align-items: center;
-    font-size: 15px;
-    line-height: 20px;
-    color: $color;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    text-decoration: none;
+    justify-content: center;
+    width: calc(100% - #{$basic_mobile_offset} * 2);
 
-    &:hover {
-      text-decoration: underline;
-    }
-
-    .article__avatar {
-      width: 40px;
-      height: 40px;
-      object-fit: cover;
-      @include border_radius(40px);
-      margin-right: 20px;
-    }
-
-    .article__first_name {
-      font-weight: $font-weight-bold;
-      margin-right: 10px;
-    }
-  }
-
-  .article__shares {
-    margin-top: 30px;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    width: 100%;
-
-    .article__share_btn {
-      flex: 1;
+    .article__author {
       display: flex;
+      flex-direction: row;
       align-items: center;
-      justify-content: center;
-      height: 55px;
-      background-color: $color3;
-      cursor: pointer;
+      font-size: 15px;
+      line-height: 20px;
+      color: $color;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      text-decoration: none;
 
       &:hover {
-        background-color: $color;
+        text-decoration: underline;
       }
 
-      &:not(:last-child) {
-        margin-right: 1px;
+      .article__avatar {
+        width: 40px;
+        height: 40px;
+        object-fit: cover;
+        @include border_radius(40px);
+        margin-right: 20px;
       }
 
-      svg {
-        width: 35px;
-        height: 35px;
-        fill: white;
+      .article__first_name {
+        font-weight: $font-weight-bold;
+        margin-right: 10px;
       }
     }
   }
 
   @include desktop {
-    margin: 50px 0 0 0;
-    padding: 50px 0;
-    background-color: $color4;
+    justify-content: flex-start;
 
-    .article__shares {
-      width: 600px;
-      margin: 40px auto 0 auto;
+    .article__footer_content {
+      width: 650px;
     }
   }
 }
