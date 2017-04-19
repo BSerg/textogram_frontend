@@ -23,6 +23,7 @@ export default class Base extends React.Component<any, any> {
         this.state = {
             userNotificationsInterval: null,
             isDesktop: MediaQuerySerice.getIsDesktop(),
+            authenticated: !!UserAction.getStore().user,
             menuOpen: false,
         };
         this.handleMediaQuery = this.handleMediaQuery.bind(this);
@@ -43,6 +44,7 @@ export default class Base extends React.Component<any, any> {
             window.clearInterval(this.state.userNotificationsInterval);
             this.state.userNotificationsInterval = null;
         }
+        this.setState({authenticated: !!UserAction.getStore().user});
     }
 
     setMenuOpen() {
@@ -78,7 +80,9 @@ export default class Base extends React.Component<any, any> {
                 <div className={"content" + (this.state.menuOpen ? " content_menu_open" : "")}>
                     {this.props.children}
                 </div>
-                <MenuButton/>
+                {
+                    (!this.state.authenticated && process.env.IS_LENTACH) ? null : (<MenuButton/>)
+                }
                 {!this.state.isDesktop ? <PopupPanel/> : null}
                 <Notification/>
                 <Modal/>

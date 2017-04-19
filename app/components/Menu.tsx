@@ -12,9 +12,7 @@ import Login from './shared/Login';
 import LoginBlock from './shared/LoginBlock';
 
 import {MediaQuerySerice} from '../services/MediaQueryService';
-
 import '../styles/menu.scss';
-
 const ExitIcon = require('babel!svg-react!../assets/images/exit-icon.svg?name=ExitIcon');
 const InfoIcon = require('babel!svg-react!../assets/images/info-icon.svg?name=InfoIcon');
 const SettingsIcon = require('babel!svg-react!../assets/images/settings.svg?name=SettingsIcon');
@@ -339,6 +337,16 @@ class UserMenu extends React.Component<IUserMenuProps, any> {
                     </div>
                 </div>
 
+                {
+                    process.env.IS_LENTACH ? (
+                        <div className="menu__links">
+                            <div className="menu__link">
+                                <Link to={"/url_shorten/"}>Cокращалка</Link>
+                            </div>
+                        </div>
+                    ) : null
+                }
+
                 <div className="menu__controls">
                     <NotificationBlockWithRouter showZero={true} />
                     <div><Link to="/manage/"><SettingsIcon /></Link></div>
@@ -445,6 +453,11 @@ export default class Menu extends React.Component<any, IMenuStateInterface> {
     }
 
     render() {
+
+        if (process.env.IS_LENTACH && !this.state.user) {
+            return null;
+        }
+
         return (
             <div id="main_menu" onClick={this.toggleMenu} className={this.state.open ? "" : "hidden"}>
                 <div onClick={this.stopClosePropagation.bind(this)} className="main_menu_container">
