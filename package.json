@@ -6,6 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "local": "webpack --watch --config webpack.config.js",
+    "local_lentach": "webpack --watch --config webpack.lentach.config.js",
     "dev": "webpack --config webpack.dev.config.js",
     "prod": "webpack --config webpack.prod.config.js"
   },

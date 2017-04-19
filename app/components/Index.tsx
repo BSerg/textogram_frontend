@@ -1,6 +1,9 @@
 import * as React from 'react';
 import {Link} from 'react-router';
 import {UserAction, GET_ME, LOGIN} from '../actions/user/UserAction';
+import '../styles/lentach_index.scss';
+import LentachIndex from "./LentachIndex";
+
 
 export default class Index extends React.Component<any, any> {
     constructor() {
@@ -43,21 +46,11 @@ export default class Index extends React.Component<any, any> {
 
     render() {
         return (
-            <div className="index" style={{textAlign: "center"}}>
-                <h2 style={{marginTop: "80px"}}>TEXTIUS!</h2>
-                {this.state.authenticated ?
-                    [
-                        <h4>Hello, Juliy! You are authenticated!</h4>,
-                        <Link to="/articles/1/edit">PUSH ME!</Link>,
-                        <br/>,
-                        <button onClick={this.logout.bind(this)}>Logout</button>
-                    ] :
-                    [
-                        <input ref="fakeAuthToken" type="text" placeholder="Enter token"/>,
-                        <button onClick={this.fakeAuth.bind(this)}>Login</button>
-                    ]
-                }
-            </div>
-        )
+            process.env.IS_LENTACH ?
+                <LentachIndex/> :
+                <div className="index">
+                    <h1>__TEXTIUS__</h1>
+                </div>
+            )
     }
 }

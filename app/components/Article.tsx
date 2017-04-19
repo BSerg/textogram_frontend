@@ -424,6 +424,11 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
                                 </Link>
                             </div>
                         </div>
+                        {!this.state.isDesktop ?
+                            <div className="article__shares_btn" onClick={this.openSharePopup.bind(this)}>
+                                <ShareButton/>Поделиться
+                            </div> : null
+                        }
                         {this.state.isDesktop ?
                             <ShareFloatingPanel articleUrl={this.state.article.url}/> : null}
                         {this.state.isDesktop && this.props.isPreview ?
