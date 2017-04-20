@@ -15,6 +15,7 @@ import PopupPrompt from "./shared/PopupPrompt";
 import {NotificationAction, SHOW_NOTIFICATION} from "../actions/shared/NotificationAction";
 import Loading from "./shared/Loading";
 import "../styles/article.scss";
+import "../styles/banners.scss";
 
 const EditButton = require('babel!svg-react!../assets/images/edit.svg?name=EditButton');
 const DeleteButton = require('babel!svg-react!../assets/images/redactor_icon_delete.svg?name=DeleteButton');
@@ -387,8 +388,8 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
             !this.state.error ?
                 this.state.article ?
                     <div id={"article" + this.state.article.id} className="article">
-                        {this.state.topBanner ?
-                            <div className="ad_320x100" dangerouslySetInnerHTML={{__html: this.state.topBanner}}/>: null
+                        {this.state.article.ads_enabled ?
+                            <div className="banner banner__top"></div>: null
                         }
                         <div className={"article__title" + (this.state.article.cover ? ' inverted' : '')} style={coverStyle}>
                             {!this.state.isDesktop ?
@@ -434,6 +435,10 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
                                 </Link>
                             </div>
                         </div>
+                        {this.state.article.ads_enabled ?
+                            <div className="banner banner__content"></div> : null
+                        }
+
                         {!this.state.isDesktop ?
                             <div className="article__shares_btn" onClick={this.openSharePopup.bind(this)}>
                                 <ShareButton/>Поделиться
