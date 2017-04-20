@@ -7,11 +7,11 @@ import {
     RESET_CONTENT
 } from "../../actions/editor/ContentAction";
 import {api} from "../../api";
-import "../../styles/editor/title_block.scss";
 import {NotificationAction, SHOW_NOTIFICATION} from "../../actions/shared/NotificationAction";
 import {Validator} from "./utils";
 import ImageEditor from "../shared/ImageEditor";
 import {MediaQuerySerice} from "../../services/MediaQueryService";
+import "../../styles/editor/title_block.scss";
 
 
 interface ICover {
@@ -38,7 +38,8 @@ interface TitleBlockPropsInterface {
 }
 
 interface TitleBlockStateInterface {
-    title?: string|null
+    title?: string|null;
+    titleIsLong?: boolean;
     cover?: ICover | null
     coverClipped?: ICoverClipped | null
     isValid?: boolean
@@ -55,6 +56,7 @@ export default class TitleBlock extends React.Component<TitleBlockPropsInterface
         super(props);
         this.state = {
             title: props.title,
+            titleIsLong: this.checkTitleIsLong(props.title),
             cover: props.cover,
             coverClipped: props.coverClipped || null,
             coverLoading: false,
@@ -80,6 +82,11 @@ export default class TitleBlock extends React.Component<TitleBlockPropsInterface
         return Validator.isValid(this.state, Validation.ROOT);
     }
 
+    checkTitleIsLong(title: string) {
+        return title.length > 100;
+    }
+
+
     private updateValidState() {
         if (!this.isValid(this.state.title) && !this.refs.componentRootElement.classList.contains('invalid')) {
             this.refs.componentRootElement.classList.add('invalid');
@@ -93,7 +100,7 @@ export default class TitleBlock extends React.Component<TitleBlockPropsInterface
     }
 
     handleTitle(content: string, contentText: string) {
-        this.setState({title: contentText}, () => {
+        this.setState({title: contentText, titleIsLong: this.checkTitleIsLong(contentText)}, () => {
             ContentAction.do(UPDATE_TITLE_CONTENT, {articleId: this.props.articleSlug, autoSave: this.props.autoSave, title: this.state.title});
             this.updateValidState();
             if (!this.isValid(this.state.title)) {
@@ -216,6 +223,7 @@ export default class TitleBlock extends React.Component<TitleBlockPropsInterface
         if (this.state.cover) {
             className += ' inverse';
         }
+        if (this.state.titleIsLong) className += ' long';
 
         return (
             <div className={className} style={style} ref="componentRootElement">

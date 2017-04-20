@@ -153,6 +153,15 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
         }
     }
 
+    processTitle() {
+        let title = document.getElementsByClassName('article__title')[0] as HTMLHeadElement;
+        if (title && title.innerText) {
+            if (title.innerText.length > 100) {
+                title.classList.add('long');
+            }
+        }
+    }
+
     processEmbed() {
         let videoEmbeds = document.getElementsByClassName('embed video');
         for (let i in videoEmbeds) {
@@ -251,6 +260,7 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
     }
 
     processes() {
+        this.processTitle();
         this.processPhoto();
         this.processEmbed();
         this.processQuote();

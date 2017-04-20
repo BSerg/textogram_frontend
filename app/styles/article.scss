@@ -138,6 +138,10 @@ $block_margin_desktop: 25px;
         margin: 0 auto;
       }
 
+      &.long h1 {
+        @include title_font_desktop_small();
+      }
+
       .article__author {
 
       }

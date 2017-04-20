@@ -108,6 +108,10 @@
     max-width: 650px;
   }
 
+  &.long .title_block__title {
+    @include title_font_desktop_small();
+  }
+
   .title_block__cover_handler {
     @include border_radius(10px);
     top: 50px;
