@@ -56,7 +56,7 @@ export default class TitleBlock extends React.Component<TitleBlockPropsInterface
         super(props);
         this.state = {
             title: props.title,
-            titleIsLong: this.checkTitleIsLong(props.title),
+            titleIsLong: props.title ? this.checkTitleIsLong(props.title) : false,
             cover: props.cover,
             coverClipped: props.coverClipped || null,
             coverLoading: false,
