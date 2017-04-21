@@ -275,19 +275,6 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
             window.setTimeout(() => {
                 this.processes();
             }, 50);
-            if (this.state.article.ads_enabled) {
-                api.get('/banners/250x400/').then((response: any) => {
-                    this.setState({floatingBanner: response.data.code});
-                }).catch((err) => {
-                    console.log(err);
-                });
-                api.get('/banners/320x100/').then((response: any) => {
-                    this.setState({topBanner: response.data.code});
-                }).catch((err) => {
-                    console.log(err);
-                });
-
-            }
             document.title = this.state.article.title;
         });
     }
@@ -388,9 +375,7 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
             !this.state.error ?
                 this.state.article ?
                     <div id={"article" + this.state.article.id} className="article">
-                        {this.state.article.ads_enabled ?
-                            <div className="banner banner__top"></div>: null
-                        }
+
                         <div className={"article__title" + (this.state.article.cover ? ' inverted' : '')} style={coverStyle}>
                             {!this.state.isDesktop ?
                                 <div className="article__author">
@@ -416,13 +401,14 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
                                 </div>
                             </div>
                         </div>
+
                         <div className="article__content_wrapper">
                             <div className="article__content" dangerouslySetInnerHTML={{__html: this.state.article.html}}/>
-                            {this.state.isDesktop && this.state.floatingBanner ?
-                                <FloatingPanel className="ad_250x400" fixed={true}>
-                                    <div ref="ad_250x400" dangerouslySetInnerHTML={{__html: this.state.floatingBanner}}></div>
-                                </FloatingPanel> : null
-                            }
+                            {/*{this.state.isDesktop && this.state.article.ads_enabled ?*/}
+                                {/*<FloatingPanel className="ad_250x400" fixed={true}>*/}
+                                    {/*<div ref="ad_250x400" dangerouslySetInnerHTML={{__html: this.state.floatingBanner}}></div>*/}
+                                {/*</FloatingPanel> : null*/}
+                            {/*}*/}
                         </div>
 
                         <div className="article__footer">
@@ -435,8 +421,11 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
                                 </Link>
                             </div>
                         </div>
+
                         {this.state.article.ads_enabled ?
-                            <div className="banner banner__content"></div> : null
+                            <div className="banner_container">
+                                <div className="banner banner__content"></div>
+                            </div> : null
                         }
 
                         {!this.state.isDesktop ?
@@ -444,8 +433,10 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
                                 <ShareButton/>Поделиться
                             </div> : null
                         }
+
                         {this.state.isDesktop ?
                             <ShareFloatingPanel articleUrl={this.state.article.url}/> : null}
+
                         {this.state.isDesktop && this.props.isPreview ?
                             <div className="tools_panel">
                                 <div className="tools_panel__item">
@@ -459,6 +450,7 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
                                          className="tools_panel__icon"><PublishButton/></div>
                                 </div>
                             </div> : null}
+
                         {this.state.isDesktop && !this.props.isPreview && moment().isBefore(moment(this.state.article.published_at).add(12, 'hours')) ?
                             <div className="tools_panel">
                                 <div className="tools_panel__item">
@@ -468,6 +460,7 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
                                 </div>
                             </div> : null
                         }
+
                     </div>
                     :
                     <div className="article__loading">
