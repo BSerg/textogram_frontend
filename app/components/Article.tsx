@@ -50,7 +50,8 @@ interface IArticle {
     },
     images: IPhoto[]
     url: string
-    ads_enabled?: boolean
+    ads_enabled?: boolean,
+    inverted_theme?: boolean
 }
 
 interface IArticleProps {
@@ -60,12 +61,10 @@ interface IArticleProps {
 }
 
 interface IArticleState {
-    article?: IArticle | null
-    error?: any
-    isSelf?: boolean
-    isDesktop?: boolean
-    floatingBanner?: any
-    topBanner?: any
+    article?: IArticle | null;
+    error?: any;
+    isSelf?: boolean;
+    isDesktop?: boolean;
 }
 
 export default class Article extends React.Component<IArticleProps, IArticleState> {
@@ -79,7 +78,6 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
             article: null,
             isSelf: false,
             isDesktop: MediaQuerySerice.getIsDesktop(),
-            floatingBanner: null
         };
         this.handleMediaQuery = this.handleMediaQuery.bind(this);
     }
@@ -100,22 +98,28 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
     }
 
     processArticle(article: IArticle) {
+        let calendarParams = {
+            sameDay: 'Сегодня, LT',
+            lastDay: 'Вчера, LT',
+            sameElse: 'DD MMMM YYYY, LT',
+            lastWeek: 'DD MMMM YYYY, LT'
+        };
         if (this.props.isPreview && !article.published_at) {
-            article.date = moment().locale('ru').calendar(null, {
-                sameDay: 'Сегодня, LT',
-                lastDay: 'Вчера, LT',
-                sameElse: 'DD MMMM YYYY',
-                lastWeek: 'DD MMMM YYYY'
-            });
+            article.date = moment().locale('ru').calendar(null, calendarParams);
         } else {
-            article.date = moment(article.published_at).locale('ru').calendar(null, {
-                sameDay: 'Сегодня, LT',
-                lastDay: 'Вчера, LT',
-                sameElse: 'DD MMMM YYYY',
-                lastWeek: 'DD MMMM YYYY'
-            });
+            article.date = moment(article.published_at).locale('ru').calendar(null, calendarParams);
         }
         return article;
+    }
+
+    checkArticleLength(title: string) {
+        if (title.length <= 20) {
+            return 'short';
+        } else if (title.length <= 60) {
+            return 'regular';
+        } else {
+            return 'long';
+        }
     }
 
     processQuote() {
@@ -271,7 +275,8 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
 
     loadArticle(data: IArticle) {
         let isSelf = UserAction.getStore().user ? UserAction.getStore().user.id == data.owner.id : false;
-        this.setState({article: this.processArticle(data), isSelf: isSelf}, () => {
+        let articleContent = this.processArticle(data);
+        this.setState({article: articleContent, isSelf: isSelf}, () => {
             window.setTimeout(() => {
                 this.processes();
             }, 50);
@@ -371,33 +376,34 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
                 background: `url('${this.state.article.cover}') no-repeat center center`
             }
         }
+        let titleClassName = "article__title", authorLink = '/';
+
+        if (this.state.article) {
+            let titleLengthState = this.checkArticleLength(this.state.article.title);
+            if (titleLengthState != 'regular') titleClassName += ' ' + this.checkArticleLength(this.state.article.title);
+            if (this.state.article.cover) titleClassName += ' covered';
+            if (this.state.article.cover || this.state.article.inverted_theme) titleClassName += ' inverted';
+            authorLink = process.env.IS_LENTACH ? '/' : `/profile/${this.state.article.owner.id}`;
+        }
+
         return (
             !this.state.error ?
                 this.state.article ?
                     <div id={"article" + this.state.article.id} className="article">
 
-                        <div className={"article__title" + (this.state.article.cover ? ' inverted' : '')} style={coverStyle}>
-                            {!this.state.isDesktop ?
-                                <div className="article__author">
-                                    Автор:&nbsp;
-                                    <Link to={`/profile/${this.state.article.owner.id}`}>
-                                        {this.state.article.owner.first_name} {this.state.article.owner.last_name}
-                                    </Link>
-                                </div> : null
-                            }
-                            <h1>{this.state.article.title}</h1>
-                            <div className="article__stats">
-                                {this.state.isDesktop ?
+                        <div className={titleClassName} style={coverStyle}>
+                            <div className="article__title_container">
+                                <h1>{this.state.article.title}</h1>
+                                <div className="article__stats">
                                     <div className="article__author1">
-                                        Автор:&nbsp;
-                                        <Link to={`/profile/${this.state.article.owner.id}`}>
+                                        <Link to={authorLink}>
                                             {this.state.article.owner.first_name} {this.state.article.owner.last_name}
                                         </Link>
-                                    </div> : null
-                                }
-                                <div className="article__date">{this.state.article.date}</div>
-                                <div className="article__views">
-                                    <ViewIcon/> {this.state.article.views}
+                                    </div>
+                                    <div className="article__date">{this.state.article.date}</div>
+                                    <div className="article__views">
+                                        <ViewIcon/> {this.state.article.views}
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -413,7 +419,7 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
 
                         <div className="article__footer">
                             <div className="article__footer_content">
-                                <Link to={`/profile/${this.state.article.owner.id}`} className="article__author">
+                                <Link to={authorLink} className="article__author">
                                     {this.state.article.owner.avatar ?
                                         <img className="article__avatar" src={this.state.article.owner.avatar}/> : null
                                     }

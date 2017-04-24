@@ -4,7 +4,7 @@ import ContentEditable from "../shared/ContentEditable";
 import {UploadImageAction, UPLOAD_IMAGE, UPLOAD_IMAGE_BASE64} from "../../actions/editor/UploadImageAction";
 import {
     ContentAction, UPDATE_TITLE_CONTENT, UPDATE_COVER_CONTENT,
-    RESET_CONTENT
+    RESET_CONTENT, UPDATE_THEME_CONTENT
 } from "../../actions/editor/ContentAction";
 import {api} from "../../api";
 import {NotificationAction, SHOW_NOTIFICATION} from "../../actions/shared/NotificationAction";
@@ -37,6 +37,7 @@ interface TitleBlockPropsInterface {
     cover: ICover|null
     coverClipped?: ICoverClipped|null
     articleSlug: string
+    invertedTheme?: boolean
     autoSave?: boolean
 }
 
@@ -61,7 +62,7 @@ export default class TitleBlock extends React.Component<TitleBlockPropsInterface
         this.state = {
             title: props.title,
             titleLengthState: this.checkTitleLength(props.title),
-            invertedTheme: true,
+            invertedTheme: this.props.invertedTheme,
             cover: props.cover,
             coverClipped: props.coverClipped || null,
             coverLoading: false,
@@ -76,6 +77,7 @@ export default class TitleBlock extends React.Component<TitleBlockPropsInterface
 
     static defaultProps = {
         autoSave: true,
+        invertedTheme: true
     };
 
     refs: {
@@ -112,8 +114,16 @@ export default class TitleBlock extends React.Component<TitleBlockPropsInterface
         this.refs.fileInput.click();
     }
 
-    handleInverse(inverted: boolean) {
-        this.setState({invertedTheme: inverted});
+    handleInverseTheme(inverted: boolean) {
+        this.setState({invertedTheme: inverted}, () => {
+            ContentAction.do(
+                UPDATE_THEME_CONTENT,
+                {
+                    articleId: this.props.articleSlug,
+                    invertedTheme: this.state.invertedTheme
+                }
+            )
+        });
     }
 
     handleTitle(content: string, contentText: string) {
@@ -157,7 +167,7 @@ export default class TitleBlock extends React.Component<TitleBlockPropsInterface
 
     deleteCover() {
         this.setState({cover: null, coverClipped: null}, () => {
-            ContentAction.do(UPDATE_COVER_CONTENT, {articleId: this.props.articleSlug, autoSave: this.props.autoSave, cover: null});
+            ContentAction.do(UPDATE_COVER_CONTENT, {articleId: this.props.articleSlug, autoSave: this.props.autoSave, cover: null, coverClipped: null});
             this.drawCanvas();
         });
     }
@@ -231,6 +241,10 @@ export default class TitleBlock extends React.Component<TitleBlockPropsInterface
         MediaQuerySerice.listen(this.handleMediaQuery);
     }
 
+    componentWillReceiveProps(nextProps: any) {
+        console.log(nextProps)
+    }
+
     render() {
         let className = 'title_block',
             style = {};
@@ -257,7 +271,7 @@ export default class TitleBlock extends React.Component<TitleBlockPropsInterface
                     }
                     {!this.state.cover ?
                         <div className="title_block__invert_handler">
-                            <Switch isActive={this.state.invertedTheme} onChange={this.handleInverse.bind(this)}/>
+                            <Switch isActive={this.state.invertedTheme} onChange={this.handleInverseTheme.bind(this)}/>
                         </div> : null
                     }
                     <ContentEditable className="title_block__title"

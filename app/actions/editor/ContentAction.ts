@@ -16,6 +16,7 @@ export const SOFT_DELETE_CONTENT_BLCK = 'soft_delete_content';
 export const RESTORE_CONTENT_BLCK = 'restore_content';
 export const DELETE_CONTENT_BLCK = 'delete_content';
 export const UPDATE_TITLE_CONTENT = 'update_title_content';
+export const UPDATE_THEME_CONTENT = 'update_theme_content';
 export const UPDATE_COVER_CONTENT = 'update_cover_content';
 export const UPDATE_AUTO_SAVE = 'update_auto_save';
 
@@ -136,6 +137,10 @@ ContentAction.register(
     ) => {
     store.content.cover = data.cover;
     store.content.cover_clipped = data.coverClipped;
+});
+
+ContentAction.register(UPDATE_THEME_CONTENT, (store, data: {articleId: number, invertedTheme: boolean}) => {
+    store.content.inverted_theme = data.invertedTheme;
 });
 
 ContentAction.register(SWAP_CONTENT_BLCK, (store, data: {position: number}) => {

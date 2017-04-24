@@ -2,9 +2,11 @@ import Action from '../Action';
 import {Constants} from '../../constants'
 
 import {api} from '../../api';
+import {ContentAction} from "./ContentAction";
 
 export const UPDATE_TITLE_ACTION = 'update_title_action';
 export const UPDATE_COVER_ACTION = 'update_cover_action';
+export const UPDATE_THEME_ACTION = 'update_theme_action';
 
 export const TitleBlockAction = new Action();
 

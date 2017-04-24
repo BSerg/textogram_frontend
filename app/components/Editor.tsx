@@ -23,7 +23,7 @@ import {
     MOVE_UP_CONTENT_BLCK,
     MOVE_DOWN_CONTENT_BLCK,
     SOFT_DELETE_CONTENT_BLCK,
-    RESTORE_CONTENT_BLCK
+    RESTORE_CONTENT_BLCK, UPDATE_THEME_CONTENT
 } from "../actions/editor/ContentAction";
 import {Captions, BlockContentTypes, ArticleStatuses, Validation} from "../constants";
 import {ModalAction, OPEN_MODAL} from "../actions/shared/ModalAction";
@@ -314,8 +314,8 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
         ContentAction.onChange(
             [
                 CREATE_CONTENT_BLCK, DELETE_CONTENT_BLCK, UPDATE_COVER_CONTENT, UPDATE_TITLE_CONTENT,
-                SWAP_CONTENT_BLCK, MOVE_UP_CONTENT_BLCK, MOVE_DOWN_CONTENT_BLCK, SOFT_DELETE_CONTENT_BLCK,
-                RESTORE_CONTENT_BLCK
+                UPDATE_THEME_CONTENT, SWAP_CONTENT_BLCK, MOVE_UP_CONTENT_BLCK, MOVE_DOWN_CONTENT_BLCK,
+                SOFT_DELETE_CONTENT_BLCK, RESTORE_CONTENT_BLCK
             ],
             this.forceUpdateContent
         );
@@ -342,8 +342,8 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
         ContentAction.unbind(
             [
                 CREATE_CONTENT_BLCK, DELETE_CONTENT_BLCK, UPDATE_COVER_CONTENT, UPDATE_TITLE_CONTENT,
-                SWAP_CONTENT_BLCK, MOVE_UP_CONTENT_BLCK, MOVE_DOWN_CONTENT_BLCK, SOFT_DELETE_CONTENT_BLCK,
-                RESTORE_CONTENT_BLCK
+                UPDATE_THEME_CONTENT, SWAP_CONTENT_BLCK, MOVE_UP_CONTENT_BLCK, MOVE_DOWN_CONTENT_BLCK,
+                SOFT_DELETE_CONTENT_BLCK, RESTORE_CONTENT_BLCK
             ],
             this.forceUpdateContent
         );
@@ -371,6 +371,7 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
                                         articleSlug={this.state.article.id}
                                         title={this.state.article.content.title}
                                         cover={this.state.article.content.cover}
+                                        invertedTheme={this.state.article.content.inverted_theme}
                                         autoSave={this.state.autoSave}/>,
                             <div className="editor__content">
                                 {this.state.article.content.blocks.map((contentBlock: IContentData, index: number) => {
