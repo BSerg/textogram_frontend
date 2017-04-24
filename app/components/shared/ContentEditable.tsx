@@ -270,33 +270,6 @@ export default class ContentEditable extends React.Component<ContentEditableProp
         } else {
             ContentEditableAction.do(RESET_FORMAT_TOOL, null);
         }
-        // if (!this.selection.isCollapsed) {
-        //     let tools = <SelectionToolsPanel key={Math.random().toString().substr(2, 7)}
-        //         isBold={document.queryCommandState("bold")}
-        //         isItalic={document.queryCommandState("italic")}
-        //         isURL={this.detectURL()}
-        //         onBold={() => {document.execCommand('bold')}}
-        //         onItalic={() => {document.execCommand('italic')}}
-        //         onURL={(url: string) => {
-        //             if (this.detectURL()) {
-        //                 document.execCommand("unlink", false, false);
-        //             } else {
-        //                 let _selection = window.getSelection();
-        //                 _selection.removeAllRanges();
-        //                 _selection.addRange(this.range);
-        //                 document.execCommand('createLink', false, url);
-        //             }
-        //             this.handleSelectDesktop();
-        //         }}/>;
-        //
-        //     let sRect = this.range.getBoundingClientRect();
-        //     let sTools = document.getElementById('selection_tools');
-        //     sTools.style.top = sRect.top + window.pageYOffset - 65 + 'px';
-        //     sTools.style.left = sRect.left + window.pageXOffset + sRect.width / 2 - 75 + 'px';
-        //     ReactDOM.render(tools, sTools);
-        // } else {
-        //     document.getElementById('selection_tools').innerHTML = '';
-        // }
     }
 
     handleMediaQuery(isDestop: boolean) {

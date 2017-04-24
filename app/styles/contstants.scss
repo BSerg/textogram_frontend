@@ -17,6 +17,7 @@ $color6_1: #7F7F7F;
 $color-accent: #FF3333;
 $color5: #7F7F7F;
 $color7: #BCBCBC;
+$color8: #282828;
 
 // FONTS
 $family_arimo: 'Arimo';
@@ -49,6 +50,10 @@ $header-height: 35px;
 $profile-avatar-side-size: 60px;
 
 // ARTICLE CONTENT CONSTANTS
+
+@mixin title_font_large() {
+  @include font(40px, $font-weight-bold, $family_arimo, 135%)
+}
 
 @mixin title_font() {
   @include font(22px, $font-weight-bold, $family_arimo, 135%)
@@ -104,8 +109,16 @@ $profile-avatar-side-size: 60px;
 
 // desktop
 
+@mixin title_font_desktop_large() {
+  @include font(80px, $font-weight-bold, $family_arimo, 135%)
+}
+
 @mixin title_font_desktop() {
-  @include font(40px, $font-weight-bold, $family_arimo, 135%)
+  @include font(43px, $font-weight-bold, $family_arimo, 135%)
+}
+
+@mixin title_font_desktop_small() {
+  @include font(33px, $font-weight-bold, $family_arimo, 135%)
 }
 
 @mixin title_font_desktop_small() {

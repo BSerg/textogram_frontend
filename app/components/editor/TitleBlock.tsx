@@ -12,7 +12,10 @@ import {Validator} from "./utils";
 import ImageEditor from "../shared/ImageEditor";
 import {MediaQuerySerice} from "../../services/MediaQueryService";
 import "../../styles/editor/title_block.scss";
+import Switch from "../shared/Switch";
 
+
+type TitleLengthState = 'short' | 'regular' | 'long';
 
 interface ICover {
     id: number
@@ -39,7 +42,8 @@ interface TitleBlockPropsInterface {
 
 interface TitleBlockStateInterface {
     title?: string|null;
-    titleIsLong?: boolean;
+    titleLengthState?: TitleLengthState;
+    invertedTheme?: boolean;
     cover?: ICover | null
     coverClipped?: ICoverClipped | null
     isValid?: boolean
@@ -56,7 +60,8 @@ export default class TitleBlock extends React.Component<TitleBlockPropsInterface
         super(props);
         this.state = {
             title: props.title,
-            titleIsLong: props.title ? this.checkTitleIsLong(props.title) : false,
+            titleLengthState: this.checkTitleLength(props.title),
+            invertedTheme: true,
             cover: props.cover,
             coverClipped: props.coverClipped || null,
             coverLoading: false,
@@ -82,8 +87,16 @@ export default class TitleBlock extends React.Component<TitleBlockPropsInterface
         return Validator.isValid(this.state, Validation.ROOT);
     }
 
-    checkTitleIsLong(title: string) {
-        return title.length > 100;
+    checkTitleLength(title: string) {
+        if (title.length <= 15) {
+            return 'short';
+        }
+        else if (title.length <= 60) {
+            return 'regular';
+        }
+        else {
+            return 'long';
+        }
     }
 
 
@@ -99,8 +112,12 @@ export default class TitleBlock extends React.Component<TitleBlockPropsInterface
         this.refs.fileInput.click();
     }
 
+    handleInverse(inverted: boolean) {
+        this.setState({invertedTheme: inverted});
+    }
+
     handleTitle(content: string, contentText: string) {
-        this.setState({title: contentText, titleIsLong: this.checkTitleIsLong(contentText)}, () => {
+        this.setState({title: contentText, titleLengthState: this.checkTitleLength(contentText)}, () => {
             ContentAction.do(UPDATE_TITLE_CONTENT, {articleId: this.props.articleSlug, autoSave: this.props.autoSave, title: this.state.title});
             this.updateValidState();
             if (!this.isValid(this.state.title)) {
@@ -217,35 +234,41 @@ export default class TitleBlock extends React.Component<TitleBlockPropsInterface
     render() {
         let className = 'title_block',
             style = {};
-        if (!this.state.isDesktop || (this.state.cover && !this.state.cover.editable)) {
+        if (this.state.cover) {
             style = {background: `url(${this.state.coverClipped && this.state.coverClipped.image || this.state.cover && this.state.cover.image}) no-repeat center center`};
         }
-        if (this.state.cover) {
+        if (this.state.cover || this.state.invertedTheme) {
             className += ' inverse';
         }
-        if (this.state.titleIsLong) className += ' long';
+        if (this.state.cover) className += ' covered';
+        if (this.state.titleLengthState != 'regular') className += ' ' + this.state.titleLengthState;
 
         return (
             <div className={className} style={style} ref="componentRootElement">
-                <div className="title_block__cover_handler_wrapper">
+                <div className="title_block__container">
                     {!this.state.cover ?
                         <div onClick={!this.state.coverLoading && this.openFileDialog.bind(this)}
                              className="title_block__cover_handler">
-                            {this.state.coverLoading ? 'Обложка загружается...' : Captions.editor.add_cover_ru}
+                            {this.state.coverLoading ? Captions.editor.loading_cover_ru : Captions.editor.add_cover_ru}
                         </div> :
                         <div onClick={!this.state.coverLoading && this.deleteCover.bind(this)} className="title_block__cover_handler">
                             {Captions.editor.remove_cover_ru}
                         </div>
                     }
+                    {!this.state.cover ?
+                        <div className="title_block__invert_handler">
+                            <Switch isActive={this.state.invertedTheme} onChange={this.handleInverse.bind(this)}/>
+                        </div> : null
+                    }
+                    <ContentEditable className="title_block__title"
+                                     elementType="inline"
+                                     allowLineBreak={false}
+                                     focusOnMount={!this.state.title}
+                                     onChange={this.handleTitle.bind(this)}
+                                     onChangeDelay={0}
+                                     placeholder={Captions.editor.enter_title_ru}
+                                     content={this.state.title}/>
                 </div>
-                <ContentEditable className="title_block__title"
-                                 elementType="inline"
-                                 allowLineBreak={false}
-                                 alignContent="center"
-                                 focusOnMount={!this.state.title}
-                                 onChange={this.handleTitle.bind(this)}
-                                 placeholder={Captions.editor.enter_title_ru}
-                                 content={this.state.title}/>
                 <input ref="fileInput"
                        type="file"
                        style={{display: 'none'}}
