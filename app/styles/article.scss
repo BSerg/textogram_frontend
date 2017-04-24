@@ -35,23 +35,6 @@ $block_margin_desktop: 25px;
       width: 100%;
     }
 
-    .article__author {
-      display: inline-block;
-      position: absolute;
-      height: 20px;
-      top: -53px;
-      font-size: 12px;
-      line-height: 14px;
-      font-family: $family_open_sans;
-      letter-spacing: 1px;
-      color: $color;
-      cursor: pointer;
-
-      a, a:visited {
-        color: $color;
-      }
-    }
-
     h1 {
       @include title_font();
       max-width: 100%;
@@ -163,8 +146,8 @@ $block_margin_desktop: 25px;
         @include title_font_desktop_small();
       }
 
-      .article__author {
-
+      .article__stats {
+        font-size: 12px;
       }
     }
   }
