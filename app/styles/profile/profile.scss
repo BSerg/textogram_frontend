@@ -394,6 +394,7 @@ $content-main-width: 340px;
     }
 
     .profile_content_data {
+      max-width: calc(100% - 340px);
       padding: $padding $padding * 1.5;
     }
 
