@@ -184,7 +184,7 @@ class ArticlePreviewClass extends React.Component<IArticlePreviewPropsInterface,
                         ) : null
                     }
 
-                    <div className="article_preview__data">
+                    <div className={"article_preview__data" + (this.props.isOwner || this.props.item.is_draft ? " owned": "")}>
 
 
                         <div className="article_preview__title">
@@ -244,7 +244,7 @@ class ArticlePreviewClass extends React.Component<IArticlePreviewPropsInterface,
                                 ("/articles/" + this.props.item.slug + "/")}>
                                 <div className="article_preview__cover"  style={coverStyle}></div>
                             </Link>
-                        ) : null
+                        ) : <div className="article_preview__cover"></div>
                     }
 
                     {

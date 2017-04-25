@@ -42,6 +42,7 @@
   }
 
   .article_preview__title {
+    word-wrap: break-word;
 
     font-family: $family-arimo;
     font-size: 14px;
@@ -56,6 +57,7 @@
 
   .article_preview__lead {
     font-family: $family-arimo;
+    word-wrap: break-word;
 
 
     font-size: 10px;
@@ -167,6 +169,7 @@
 
   .article_preview, .article_preview_deleted {
     max-width: 800px;
+    overflow: hidden;
   }
 
   .article_preview_deleted {
@@ -192,8 +195,12 @@
     }
 
     .article_preview__data {
+      max-width: calc(100% - 320px);
       flex-grow: 1;
       margin: 0 $margin;
+      &.owned {
+        max-width: calc(100% - 290px);
+      }
     }
 
     .article_preview__title {
@@ -219,6 +226,10 @@
         max-height: 80px;
       }
 
+    }
+
+    .article_preview__title, .article_preview__lead {
+      //max-width: 400px;
     }
 
     .article_preview__text {
