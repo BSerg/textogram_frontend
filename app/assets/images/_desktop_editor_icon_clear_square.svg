@@ -3,16 +3,13 @@
 <svg version="1.1" id="Слой_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 viewBox="0 0 44 44" style="enable-background:new 0 0 44 44;" xml:space="preserve">
 <g>
-	<path d="M20.4,32.9h-3.2v-3h3.2V32.9z"/>
-	<rect x="11.1" y="29.9" class="st0" width="3" height="3"/>
+	<rect x="29.9" y="29.9" width="3" height="3"/>
+	<path d="M26.7,32.9h-3.2v-3h3.2V32.9z M20.4,32.9h-3.2v-3h3.2V32.9z"/>
+	<rect x="11.1" y="29.9" width="3" height="3"/>
 	<path d="M14.1,26.7h-3v-3.2h3V26.7z M14.1,20.4h-3v-3.2h3V20.4z"/>
-	<rect x="11.1" y="11.1" class="st0" width="3" height="3"/>
+	<rect x="11.1" y="11.1" width="3" height="3"/>
 	<path d="M26.7,14.1h-3.2v-3h3.2V14.1z M20.4,14.1h-3.2v-3h3.2V14.1z"/>
-	<rect x="29.9" y="11.1" class="st0" width="3" height="3"/>
-	<path d="M32.9,20.4h-3v-3.2h3V20.4z"/>
-</g>
-<g>
-	<polygon points="29.8,28.4 33,25.2 31.6,23.8 28.4,27 25.2,23.8 23.8,25.2 27,28.4 23.8,31.6 25.1,32.9 25.2,33
-		28.4,29.8 31.7,33.1 33.1,31.7 	"/>
+	<rect x="29.9" y="11.1" width="3" height="3"/>
+	<path d="M32.9,26.7h-3v-3.2h3V26.7z M32.9,20.4h-3v-3.2h3V20.4z"/>
 </g>
 </svg>
