@@ -71,6 +71,11 @@ export default class EmbedModal extends React.Component<IEmbedModalProps, IEmbed
         this.props.onSubmit && this.props.onSubmit();
     }
 
+    clear() {
+        this.state.content.value = '';
+        this.setState({content: this.state.content});
+    }
+
     deleteBlock() {
         ContentAction.do(DELETE_CONTENT_BLCK, {id: this.state.content.id});
         ContentBlockAction.do(DEACTIVATE_CONTENT_BLOCK, null);
@@ -127,7 +132,11 @@ export default class EmbedModal extends React.Component<IEmbedModalProps, IEmbed
                                placeholder={Captions.editor.enter_embed_url} onChange={this.handleChangeUrl.bind(this)}/>
                     </form>
                     {this.state.isError ?
-                    <div className="content_block_embed__error">{Captions.editor.error_embed_url}</div>:
+                    <div className="content_block_embed__error">
+                        {Captions.editor.error_embed_url}.&nbsp;
+                        <span onClick={this.clear.bind(this)}
+                              className="content_block_embed__error_clear">{Captions.editor.clear}</span>
+                    </div>:
                     <div className="content_block_embed__help">{help}</div>
                     }
                 </div>

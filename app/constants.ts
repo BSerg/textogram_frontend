@@ -69,6 +69,7 @@ export namespace Captions {
         deleted_post_block: 'Пост удален',
         deleted_photo_block: 'Галерея удалена',
         restore: 'Восстановить',
+        clear: 'Очистить',
     };
 
     export const shared = {

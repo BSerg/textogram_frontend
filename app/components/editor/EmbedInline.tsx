@@ -58,6 +58,11 @@ export default class EmbedInline extends React.Component<IEmbedInlineProps, IEmb
         this.props.onSubmit && this.props.onSubmit();
     }
 
+    clear() {
+        this.state.content.value = '';
+        this.setState({content: this.state.content});
+    }
+
     validate(value: string): boolean {
         return validateEmbed(this.state.content.type, value);
     }
@@ -94,8 +99,11 @@ export default class EmbedInline extends React.Component<IEmbedInlineProps, IEmb
                            placeholder={Captions.editor.enter_embed_url} onChange={this.handleChangeUrl.bind(this)}/>
                 </form>
                 {this.state.isError ?
-                    <div className="embed_inline__error">{Captions.editor.error_embed_url}</div>
-                    : <div className="embed_inline__help">{help}</div>
+                    <div className="embed_inline__error">
+                        {Captions.editor.error_embed_url}.&nbsp;
+                        <span onClick={this.clear.bind(this)}
+                              className="content_block_embed__error_clear">{Captions.editor.clear}</span>
+                    </div> : <div className="embed_inline__help">{help}</div>
                 }
             </div>
         )

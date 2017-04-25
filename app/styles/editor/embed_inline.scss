@@ -37,5 +37,10 @@
 
   .embed_inline__error {
     color: #FF3333;
+
+    .content_block_embed__error_clear {
+      text-decoration: underline;
+      cursor: pointer;
+    }
   }
 }
