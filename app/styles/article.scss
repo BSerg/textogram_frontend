@@ -631,9 +631,9 @@ $block_margin_desktop: 25px;
 
       blockquote {
         @include quote_font_desktop();
-        width: 500px - $basic_desktop_offset;
+        width: 500px - 18px;
         margin: 25px auto;
-        padding-left: $basic_desktop_offset;
+        padding-left: 18px;
 
         &.personal {
           margin-top: 155px;
