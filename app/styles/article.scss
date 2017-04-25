@@ -20,7 +20,6 @@ $block_margin_desktop: 25px;
     padding: 80px $basic_mobile_offset;
     margin-bottom: 25px;
 
-
     &.covered {
       min-height: 350px;
     }
@@ -154,16 +153,16 @@ $block_margin_desktop: 25px;
 
   .article__content_wrapper {
     position: relative;
-    max-width: 600px;
-    margin: 0 auto;
-
-    @include desktop {
-      max-width: 1500px;
-    }
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
   }
 
   .article__content {
     position: relative;
+    width: 100%;
 
     & > p, h2, blockquote, ul, .lead, .phrase, .columns, .embed, .photos, .dialogue, .single_photo {
       margin: 20px $basic_mobile_offset;
@@ -187,6 +186,7 @@ $block_margin_desktop: 25px;
       list-style: disc outside;
 
       li {
+        @include list_font();
         margin-left: 15px;
         padding-left: 5px;
       }
@@ -598,7 +598,6 @@ $block_margin_desktop: 25px;
     // DESKTOP
     @include desktop {
       width: 650px;
-      margin: 0 auto;
 
       & > p, h2, blockquote, ul, .lead, .phrase, .columns, .embed, .photos, .dialogue, .single_photo {
         width: 100%;
@@ -618,8 +617,12 @@ $block_margin_desktop: 25px;
       }
 
       ul {
-        @include list_font_desktop();
         padding-left: 70px;
+
+        li {
+          @include list_font_desktop();
+          width: calc(100% - 90px);
+        }
 
         li:not(:last-child) {
           margin-bottom: 10px;
@@ -1183,76 +1186,76 @@ $block_margin_desktop: 25px;
 
 // ADS
 
-.ad {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background-color: $color3;
-  margin: 0 auto;
-  overflow: hidden;
-
-  &:before {
-    content: 'Реклама';
-    position: absolute;
-    color: $color5;
-    font-size: 12px;
-    text-transform: uppercase;
-    z-index: -1;
-  }
-}
-
-.ad_728x90 {
-  width: 728px;
-  margin-left: -64px;
-}
-
-.ad_x250 {
-  width: 100%;
-  height: 250px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-}
-
-.ad_320x100 {
-  width: 320px;
-  height: 100px;
-  margin: 0 auto 30px auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-}
-
-.ad_250x400 {
-  width: 250px;
-  height: 400px;
-}
-
-.ad_300x250 {
-  width: 300px;
-  height: 250px;
-}
-
-.ad_728x90, .ad_250x400 {
-  display: none;
-}
-
-
-@include desktop {
-  .ad_728x90, .ad_250x400 {
-    display: flex;
-  }
-  .ad_300x250, .ad_x250, .ad_320x100 {
-    display: none;
-  }
-}
-
-@include small_desktop {
-  .ad_250x400 {
-    display: none;
-  }
-}
+//.ad {
+//  position: relative;
+//  display: flex;
+//  flex-direction: column;
+//  align-items: center;
+//  justify-content: center;
+//  background-color: $color3;
+//  margin: 0 auto;
+//  overflow: hidden;
+//
+//  &:before {
+//    content: 'Реклама';
+//    position: absolute;
+//    color: $color5;
+//    font-size: 12px;
+//    text-transform: uppercase;
+//    z-index: -1;
+//  }
+//}
+//
+//.ad_728x90 {
+//  width: 728px;
+//  margin-left: -64px;
+//}
+//
+//.ad_x250 {
+//  width: 100%;
+//  height: 250px;
+//  display: flex;
+//  align-items: center;
+//  justify-content: center;
+//  overflow: hidden;
+//}
+//
+//.ad_320x100 {
+//  width: 320px;
+//  height: 100px;
+//  margin: 0 auto 30px auto;
+//  display: flex;
+//  align-items: center;
+//  justify-content: center;
+//  overflow: hidden;
+//}
+//
+//.ad_250x400 {
+//  width: 250px;
+//  height: 400px;
+//}
+//
+//.ad_300x250 {
+//  width: 300px;
+//  height: 250px;
+//}
+//
+//.ad_728x90, .ad_250x400 {
+//  display: none;
+//}
+//
+//
+//@include desktop {
+//  .ad_728x90, .ad_250x400 {
+//    display: flex;
+//  }
+//  .ad_300x250, .ad_x250, .ad_320x100 {
+//    display: none;
+//  }
+//}
+//
+//@include small_desktop {
+//  .ad_250x400 {
+//    display: none;
+//  }
+//}

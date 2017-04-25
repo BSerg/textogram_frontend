@@ -1,21 +1,21 @@
 import * as React from "react";
-import {Link} from 'react-router';
+import {Link} from "react-router";
 import {IContentData} from "../actions/editor/ContentAction";
 import {api} from "../api";
 import Error from "./Error";
 import {UserAction, LOGIN, LOGOUT, UPDATE_USER, SAVE_USER} from "../actions/user/UserAction";
 import {ModalAction, OPEN_MODAL, CLOSE_MODAL} from "../actions/shared/ModalAction";
-import * as moment from 'moment';
+import * as moment from "moment";
 import SocialIcon from "./shared/SocialIcon";
 import {MediaQuerySerice} from "../services/MediaQueryService";
-import FloatingPanel from "./shared/FloatingPanel";
 import {PopupPanelAction, OPEN_POPUP, CLOSE_POPUP} from "../actions/shared/PopupPanelAction";
-import * as Swapeable from 'react-swipeable';
+import * as Swapeable from "react-swipeable";
 import PopupPrompt from "./shared/PopupPrompt";
 import {NotificationAction, SHOW_NOTIFICATION} from "../actions/shared/NotificationAction";
 import Loading from "./shared/Loading";
 import "../styles/article.scss";
 import "../styles/banners.scss";
+import {BannerID} from "../constants";
 
 const EditButton = require('babel!svg-react!../assets/images/edit.svg?name=EditButton');
 const DeleteButton = require('babel!svg-react!../assets/images/redactor_icon_delete.svg?name=DeleteButton');
@@ -26,7 +26,6 @@ const ArrowButton = require('babel!svg-react!../assets/images/arrow.svg?name=Arr
 const ShareButton = require('babel!svg-react!../assets/images/share.svg?name=ShareButton');
 const EditBlackButton = require('babel!svg-react!../assets/images/edit_black.svg?name=EditBlackButton');
 const PublishButton = require('babel!svg-react!../assets/images/publish.svg?name=PublishButton');
-
 
 
 interface IPhoto {id: number, image: string, preview?: string, caption?: string}
@@ -51,6 +50,7 @@ interface IArticle {
     images: IPhoto[]
     url: string
     ads_enabled?: boolean,
+    advertisement?: any,
     inverted_theme?: boolean
 }
 
@@ -68,10 +68,6 @@ interface IArticleState {
 }
 
 export default class Article extends React.Component<IArticleProps, IArticleState> {
-    refs: {
-        ad_250x400: HTMLDivElement
-    };
-
     constructor(props: any) {
         super(props);
         this.state = {
@@ -279,7 +275,7 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
         this.setState({article: articleContent, isSelf: isSelf}, () => {
             window.setTimeout(() => {
                 this.processes();
-            }, 50);
+            }, 100);
             document.title = this.state.article.title;
         });
     }
@@ -342,16 +338,34 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
     }
 
     processAds() {
-        if (this.refs.ad_250x400) {
-            console.log('PROCESS ADS');
-            try {
-                let script = this.refs.ad_250x400.getElementsByTagName('script')[0].innerText;
-                let f = new Function(script);
-                f();
-            } catch(err) {
-                console.log(err);
+        if (!this.state.article || !this.state.article.advertisement) return;
+        try {
+            let bannerElements = document.getElementById("article" + this.state.article.id).getElementsByClassName('banner');
+            console.log(bannerElements)
+            for (let i in bannerElements) {
+                let bannerElement = bannerElements[i] as HTMLDivElement;
+                for (let k in this.state.article.advertisement) {
+                    if (bannerElement.classList.contains(k)) {
+                        let ads = this.state.article.advertisement[k];
+                        if (ads.length) {
+                            bannerElement.classList.add('active');
+                            bannerElement.innerHTML = ads[Math.floor(Math.random()*ads.length)].code;
+                            try {
+                                let script = bannerElement.getElementsByTagName('script')[0];
+                                if (script) {
+                                    eval(script.innerText);
+                                }
+                            } catch (err) {
+                                console.log(err)
+                            }
+                        }
+                    }
+                }
             }
+        } catch(err) {
+
         }
+
     }
 
     componentDidMount() {
@@ -386,13 +400,24 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
             authorLink = process.env.IS_LENTACH ? '/' : `/profile/${this.state.article.owner.id}`;
         }
 
+        let shiftContentStyle = {};
+        if (this.state.isDesktop && this.state.article && this.state.article.ads_enabled) {
+            let offset = Math.min(0, 2 * ((MediaQuerySerice.getScreenWidth() - 650 ) / 2 - 400));
+            if (offset) shiftContentStyle = {marginLeft: `${offset}px`};
+        }
+
         return (
             !this.state.error ?
                 this.state.article ?
                     <div id={"article" + this.state.article.id} className="article">
+                        {/* SIDE BANNER */}
+                        {this.state.isDesktop && this.state.article.ads_enabled ?
+                            <div className={"banner " + BannerID.BANNER_RIGHT_SIDE}></div> : null
+                        }
 
+                        {/* TITLE BLOCK */}
                         <div className={titleClassName} style={coverStyle}>
-                            <div className="article__title_container">
+                            <div className="article__title_container" style={shiftContentStyle}>
                                 <h1>{this.state.article.title}</h1>
                                 <div className="article__stats">
                                     <div className="article__author1">
@@ -408,15 +433,14 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
                             </div>
                         </div>
 
+                        {/* CONTENT */}
                         <div className="article__content_wrapper">
-                            <div className="article__content" dangerouslySetInnerHTML={{__html: this.state.article.html}}/>
-                            {/*{this.state.isDesktop && this.state.article.ads_enabled ?*/}
-                                {/*<FloatingPanel className="ad_250x400" fixed={true}>*/}
-                                    {/*<div ref="ad_250x400" dangerouslySetInnerHTML={{__html: this.state.floatingBanner}}></div>*/}
-                                {/*</FloatingPanel> : null*/}
-                            {/*}*/}
+                            <div className="article__content"
+                                 style={shiftContentStyle}
+                                 dangerouslySetInnerHTML={{__html: this.state.article.html}}/>
                         </div>
 
+                        {/* FOOTER */}
                         <div className="article__footer">
                             <div className="article__footer_content">
                                 <Link to={authorLink} className="article__author">
@@ -430,7 +454,7 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
 
                         {this.state.article.ads_enabled ?
                             <div className="banner_container">
-                                <div className="banner banner__content"></div>
+                                <div className={"banner " + BannerID.BANNER_CONTENT} style={shiftContentStyle}></div>
                             </div> : null
                         }
 
@@ -470,7 +494,6 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
                     </div>
                     :
                     <div className="article__loading">
-                        {/*<span>СТАТЬЯ</span> ЗАГРУЖАЕТСЯ...*/}
                         <Loading/>
                     </div>
                 : this.state.error

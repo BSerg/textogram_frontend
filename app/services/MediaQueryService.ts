@@ -4,12 +4,15 @@ import Service from "./Service";
 class MediaQueryServiceClass extends Service{
 
     private isDesktop: boolean;
+    private screenWidth: number;
+    private screenHeight: number;
 
     constructor() {
         super('mediaQueryEvent');
         this.isDesktop = window.innerWidth >= Constants.desktopWidth;
+        this.screenWidth = window.innerWidth;
+        this.screenHeight = window.innerHeight;
         this.resizeHandler = this.resizeHandler.bind(this);
-
         window.addEventListener('resize', this.resizeHandler);
     }
 
@@ -19,7 +22,6 @@ class MediaQueryServiceClass extends Service{
             this.isDesktop = isDesktop;
             this.emit(this.eventName, this.isDesktop);
         }
-
     }
 
     listen(callback: (isDesktop: boolean) => any) {
@@ -33,6 +35,15 @@ class MediaQueryServiceClass extends Service{
     getIsDesktop(): boolean {
         return this.isDesktop;
     }
+
+    getScreenWidth(): number {
+        return this.screenWidth;
+    }
+
+    getScreenHeight(): number {
+        return this.screenHeight;
+    }
+
 }
 
 export const MediaQuerySerice = new MediaQueryServiceClass();

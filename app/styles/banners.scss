@@ -2,14 +2,28 @@
 @import "mixins";
 
 .banner {
-  display: flex;
+  position: relative;
+  display: none;
   align-items: center;
   justify-content: center;
-  background-color: $color3;
 
-  &:after {
+  &.active {
+    display: flex;
+  }
+
+  &:before {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     content: 'Реклама';
     color: white;
+    background-color: $color3;
+    z-index: -1;
   }
 
   &.banner__top {
@@ -37,6 +51,18 @@
     @include desktop {
       float: left;
       margin: 0 30px 30px 0;
+    }
+  }
+
+  &.banner__right_side {
+
+    @include regular_desktop {
+      position: fixed;
+      top: 50px;
+      right: 50px;
+      width: 300px;
+      height: 600px;
+      z-index: 5;
     }
   }
 }
