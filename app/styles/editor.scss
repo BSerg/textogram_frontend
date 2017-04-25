@@ -122,6 +122,50 @@
   }
 }
 
+.article_buttons {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  margin: 0 auto;
+
+  .article_buttons__button {
+    @include transition();
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 64px;
+    background-color: $color9;
+    font-family: $family_open_sans;
+    font-size: 12px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    cursor: pointer;
+
+    svg {
+      fill: $color;
+      width: 40px;
+      height: 40px;
+      margin-left: -30px;
+      margin-right: 10px;
+    }
+
+    &:not(:last-child) {
+      margin-right: 10px;
+    }
+
+    &:hover {
+      background-color: $color;
+      color: white;
+
+      svg {
+        fill: white;
+      }
+    }
+
+  }
+}
+
 @include desktop {
   .editor__content {
     max-width: 650px + $basic_desktop_offset * 2;
@@ -137,5 +181,9 @@
     margin: 0 auto 64px auto;
     font-size: 15px;
     height: 64px;
+  }
+
+  .article_buttons {
+    width: 650px;
   }
 }

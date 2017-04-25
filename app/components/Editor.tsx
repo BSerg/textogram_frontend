@@ -489,19 +489,42 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
                                             : null
                                     }
                                 </div> : null,
-                            // BUTTONS
-                            (this.state.article.id && this.state.article.status == ArticleStatuses.DRAFT ?
-                                <div key="publish_button"
-                                     className={"editor__publish" + (!this.state.isValid ? ' disabled': '')}
-                                     onClick={this.state.isValid && this.prePublish.bind(this)}>
-                                    Опубликовать
+                            // BUTTONS DESKTOP
+                            (this.state.isDesktop && this.state.article.id && this.state.article.status == ArticleStatuses.DRAFT ?
+                                <div key="articleButtons" className="article_buttons">
+                                    <div className={"article_buttons__button"  + (!this.state.isValid ? ' disabled': '')}
+                                         onClick={this.state.isValid && this.prePublish.bind(this)}>
+                                        <PublishButton/> Опубликовать
+                                    </div>
+                                    <div className={"article_buttons__button"  + (!this.state.isValid ? ' disabled': '')}
+                                         onClick={this.route.bind(this, `/articles/${this.state.article.id}/preview`)}>
+                                        <PreviewButton/> Предпросмотр
+                                    </div>
                                 </div> : null),
-                            (this.state.article.id && this.state.article.status == ArticleStatuses.PUBLISHED ?
-                                <div key="update_publish_button"
-                                     className={"editor__publish" + (!this.state.isValid ? ' disabled': '')}
-                                     onClick={this.state.isValid && this.updateArticle.bind(this, true)}>
-                                    Обновить публикацию
+                            (this.state.isDesktop && this.state.article.id && this.state.article.status == ArticleStatuses.PUBLISHED ?
+                                <div key="articleButtons" className="article_buttons">
+                                    <div className={"article_buttons__button"  + (!this.state.isValid ? ' disabled': '')}
+                                         onClick={this.state.isValid && this.updateArticle.bind(this, true)}>
+                                        <PublishButton/> Обновить публикацию
+                                    </div>
                                 </div> : null),
+                            // BUTTONS MOBILE
+                            (!this.state.isDesktop ?
+                                [
+                                    (this.state.article.id && this.state.article.status == ArticleStatuses.DRAFT ?
+                                        <div key="publish_button"
+                                             className={"editor__publish" + (!this.state.isValid ? ' disabled': '')}
+                                             onClick={this.state.isValid && this.prePublish.bind(this)}>
+                                            Опубликовать
+                                        </div> : null),
+                                    (this.state.article.id && this.state.article.status == ArticleStatuses.PUBLISHED ?
+                                        <div key="update_publish_button"
+                                             className={"editor__publish" + (!this.state.isValid ? ' disabled': '')}
+                                             onClick={this.state.isValid && this.updateArticle.bind(this, true)}>
+                                            Обновить публикацию
+                                        </div> : null)
+                                ] : null
+                            ),
                             // TOOLS
                             this.state.isDesktop && this.state.article.id ?
                                 <div className="left_tool_panel">
@@ -526,19 +549,6 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
                                             <PublishButton/>
                                         </LeftSideButton> : null
                                     }
-                                </div> : null,
-                            false && this.state.isDesktop && this.state.article.status == ArticleStatuses.DRAFT && this.state.article.id ?
-                                <div className="tools_panel">
-                                    <div className="tools_panel__item">
-                                        <div className="tools_panel__caption">Просмотр</div>
-                                        <Link to={`/articles/${this.state.article.id}/preview`}
-                                              className="tools_panel__icon"><PreviewButton/></Link>
-                                    </div>
-                                    <div className="tools_panel__item">
-                                        <div className="tools_panel__caption">Опубликовать</div>
-                                        <div onClick={this.prePublish.bind(this)}
-                                             className="tools_panel__icon"><PublishButton/></div>
-                                    </div>
                                 </div> : null
                         ] : null
                     }
