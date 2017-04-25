@@ -1,0 +1,52 @@
+@import "../contstants";
+@import "../mixins";
+
+
+
+.left_side_button {
+  $size: 50px;
+  $small-size: 30px;
+
+  @include border_radius(50px);
+  @include box_shadow(10px, rgba(0, 0, 0, 0.2), 3px, 3px);
+  @include transition();
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: $size;
+  height: $size;
+  background-color: $color;
+  cursor: pointer;
+
+  svg {
+    fill: white;
+    width: $size * 0.75;
+    height: $size * 0.75;
+  }
+
+  &.hidden, &.menu_displayed {
+    opacity: 0;
+    @include scale(0, 0);
+  }
+
+  &:after {
+    content: attr(data-tooltip);
+    display: none;
+    position: absolute;
+    top: 0;
+    left: $size + 20px;
+    height: $size;
+    line-height: $size;
+    white-space: nowrap;
+    font-family: $family_open_sans;
+    font-size: 10px;
+    color: $color5;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  
+  &:hover:after {
+    display: inline-block;
+  }
+}

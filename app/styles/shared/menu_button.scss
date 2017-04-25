@@ -12,12 +12,14 @@ $menu_button_size: 50px;
   left: 20px;
   width: $menu_button_size;
   height: $menu_button_size;
-  background-color: $color1;
+  //background-color: $color1;
+  background-color: $color;
   text-align: center;
   line-height: $menu_button_size;
   color: white;
   font-size: 20px;
   z-index: 20;
+  cursor: pointer;
 
   &:after {
     content: 'T';

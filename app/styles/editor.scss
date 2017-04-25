@@ -105,6 +105,23 @@
   }
 }
 
+.left_tool_panel {
+  position: fixed;
+  bottom: 90px;
+  left: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  .left_side_button:not(:last-child) {
+    margin-bottom: 20px;
+  }
+
+  @include desktop {
+    top: 90px;
+  }
+}
+
 @include desktop {
   .editor__content {
     max-width: 650px + $basic_desktop_offset * 2;

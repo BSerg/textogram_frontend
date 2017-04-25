@@ -55,12 +55,14 @@ interface TitleBlockStateInterface {
 }
 
 export default class TitleBlock extends React.Component<TitleBlockPropsInterface, TitleBlockStateInterface> {
+    private uid: string;
     private coverClippedProcess: number;
 
     constructor(props: any) {
         super(props);
+        this.uid = Math.random().toString().substr(2, 7);
         this.state = {
-            title: props.title,
+            title: props.title || '',
             titleLengthState: this.checkTitleLength(props.title),
             invertedTheme: this.props.invertedTheme,
             cover: props.cover,
@@ -90,6 +92,8 @@ export default class TitleBlock extends React.Component<TitleBlockPropsInterface
     }
 
     checkTitleLength(title: string) {
+        if (!title) return 'short';
+
         if (title.length <= 15) {
             return 'short';
         }
@@ -177,8 +181,6 @@ export default class TitleBlock extends React.Component<TitleBlockPropsInterface
             window.clearTimeout(this.coverClippedProcess);
             this.coverClippedProcess = window.setTimeout(() => {
                 UploadImageAction.doAsync(UPLOAD_IMAGE_BASE64,  {articleId: this.props.articleSlug, image: imageBase64}).then((data: any) => {
-                    console.log('UPLOAD BASE64', data);
-
                     let updateCoverContent = () => {
                         this.setState({coverClipped: data}, () => {
                             ContentAction.do(UPDATE_COVER_CONTENT, {
@@ -241,9 +243,7 @@ export default class TitleBlock extends React.Component<TitleBlockPropsInterface
         MediaQuerySerice.listen(this.handleMediaQuery);
     }
 
-    componentWillReceiveProps(nextProps: any) {
-        console.log(nextProps)
-    }
+    componentWillReceiveProps(nextProps: any) {}
 
     render() {
         let className = 'title_block',

@@ -46,6 +46,7 @@ import {NotificationAction, SHOW_NOTIFICATION} from "../actions/shared/Notificat
 import PopupPrompt from "./shared/PopupPrompt";
 import DeletedContentBlockInline from "./editor/DeletedContentBlockInline";
 import "../styles/editor.scss";
+import LeftSideButton from "./shared/LeftSideButton";
 
 const PreviewButton = require('babel!svg-react!../assets/images/preview.svg?name=PreviewButton');
 const PublishButton = require('babel!svg-react!../assets/images/publish.svg?name=PublishButton');
@@ -303,8 +304,12 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
         }));
     }
 
+    route(url: string) {
+        this.props.router.push(url);
+    }
+
     componentWillReceiveProps(nextProps: any) {
-        if (this.props.params.articleId != nextProps.params.articleId) {
+        if (this.props.params && this.props.params.articleId != nextProps.params.articleId) {
             this.loadArticle(nextProps.params.articleId);
         }
     }
@@ -367,126 +372,162 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
                 <div className="editor__wrapper">
                     {this.state.article && !this.state.error ?
                         [
-                            <TitleBlock key={titleBlockKey}
-                                        articleSlug={this.state.article.id}
-                                        title={this.state.article.content.title}
-                                        cover={this.state.article.content.cover}
-                                        invertedTheme={this.state.article.content.inverted_theme}
-                                        autoSave={this.state.autoSave}/>,
-                            <div className="editor__content">
-                                {this.state.article.content.blocks.map((contentBlock: IContentData, index: number) => {
-                                    let blockHandlerButtons, block, isLast = index == this.state.article.content.blocks.length - 1;
-                                    blockHandlerButtons = [BlockContentTypes.ADD];
+                            // TITLE BLOCK
+                            this.props.newArticle ?
+                                <TitleBlock key={'titleBlockNew'}
+                                            articleSlug={null}
+                                            title={''}
+                                            cover={null}
+                                            invertedTheme={this.state.article.content.inverted_theme}
+                                            autoSave={this.state.autoSave}/> :
+                                <TitleBlock key={titleBlockKey}
+                                            articleSlug={this.state.article.id}
+                                            title={this.state.article.content.title}
+                                            cover={this.state.article.content.cover}
+                                            invertedTheme={this.state.article.content.inverted_theme}
+                                            autoSave={this.state.autoSave}/>,
+                            // CONTENT
+                            this.state.article.id ?
+                                <div className="editor__content">
+                                    {this.state.article.content.blocks.map((contentBlock: IContentData, index: number) => {
+                                        let blockHandlerButtons, block, isLast = index == this.state.article.content.blocks.length - 1;
+                                        blockHandlerButtons = [BlockContentTypes.ADD];
 
-                                    switch (contentBlock.type) {
-                                        case BlockContentTypes.TEXT:
-                                            block = <TextContentBlock key={"content" + contentBlock.id}
-                                                                      className={isLast ? 'last' : ''}
-                                                                      content={contentBlock}/>;
-                                            break;
-                                        case BlockContentTypes.LEAD:
-                                            block = <LeadContentBlock key={"content" + contentBlock.id}
-                                                                      className={isLast ? 'last' : ''}
-                                                                      content={contentBlock}/>;
-                                            break;
-                                        case BlockContentTypes.HEADER:
-                                            block = <HeaderContentBlock key={"content" + contentBlock.id}
-                                                                        className={isLast ? 'last' : ''}
-                                                                        content={contentBlock}/>;
-                                            break;
-                                        case BlockContentTypes.PHRASE:
-                                            block = <PhraseContentBlock key={"content" + contentBlock.id}
-                                                                        className={isLast ? 'last' : ''}
-                                                                        content={contentBlock}/>;
-                                            break;
-                                        case BlockContentTypes.LIST:
-                                            block = <ListContentBlock key={"content" + contentBlock.id}
-                                                                      className={isLast ? 'last' : ''}
-                                                                      content={contentBlock}/>;
-                                            break;
-                                        case BlockContentTypes.PHOTO:
-                                            block = <PhotoContentBlock key={"content" + contentBlock.id}
-                                                                       className={isLast ? 'last' : ''}
-                                                                       articleId={this.state.article.id}
-                                                                       content={contentBlock}/>;
-                                            break;
-                                        case BlockContentTypes.QUOTE:
-                                            block = <QuoteContentBlock key={"content" + contentBlock.id}
-                                                                       articleId={this.state.article.id}
-                                                                       content={contentBlock}/>;
-                                            break;
-                                        case BlockContentTypes.VIDEO:
-                                            block = <EmbedContentBlock key={"content" + contentBlock.id}
-                                                                       className={isLast ? 'last' : ''}
-                                                                       content={contentBlock}/>;
-                                            break;
-                                        case BlockContentTypes.AUDIO:
-                                            block = <EmbedContentBlock key={"content" + contentBlock.id}
-                                                                       className={isLast ? 'last' : ''}
-                                                                       content={contentBlock}/>;
-                                            break;
-                                        case BlockContentTypes.POST:
-                                            let hash = this.b64EncodeUnicode((contentBlock as any).value);
-                                            block = <EmbedContentBlock key={"content-" + contentBlock.id + '-' + hash}
-                                                                       className={isLast ? 'last' : ''}
-                                                                       content={contentBlock}/>;
-                                            break;
-                                        case BlockContentTypes.COLUMNS:
-                                            block = <ColumnContentBlock key={"content-" + contentBlock.id}
-                                                                        className={isLast ? 'last' : ''}
-                                                                        articleId={this.state.article.id}
-                                                                        content={contentBlock}/>;
-                                            break;
-                                        case BlockContentTypes.DIALOG:
-                                            block = <DialogContentBlock key={"content-" + contentBlock.id}
-                                                                        className={isLast ? 'last' : ''}
-                                                                        articleId={this.state.article.id}
-                                                                        content={contentBlock}/>;
-                                            break;
-                                    }
+                                        switch (contentBlock.type) {
+                                            case BlockContentTypes.TEXT:
+                                                block = <TextContentBlock key={"content" + contentBlock.id}
+                                                                          className={isLast ? 'last' : ''}
+                                                                          content={contentBlock}/>;
+                                                break;
+                                            case BlockContentTypes.LEAD:
+                                                block = <LeadContentBlock key={"content" + contentBlock.id}
+                                                                          className={isLast ? 'last' : ''}
+                                                                          content={contentBlock}/>;
+                                                break;
+                                            case BlockContentTypes.HEADER:
+                                                block = <HeaderContentBlock key={"content" + contentBlock.id}
+                                                                            className={isLast ? 'last' : ''}
+                                                                            content={contentBlock}/>;
+                                                break;
+                                            case BlockContentTypes.PHRASE:
+                                                block = <PhraseContentBlock key={"content" + contentBlock.id}
+                                                                            className={isLast ? 'last' : ''}
+                                                                            content={contentBlock}/>;
+                                                break;
+                                            case BlockContentTypes.LIST:
+                                                block = <ListContentBlock key={"content" + contentBlock.id}
+                                                                          className={isLast ? 'last' : ''}
+                                                                          content={contentBlock}/>;
+                                                break;
+                                            case BlockContentTypes.PHOTO:
+                                                block = <PhotoContentBlock key={"content" + contentBlock.id}
+                                                                           className={isLast ? 'last' : ''}
+                                                                           articleId={this.state.article.id}
+                                                                           content={contentBlock}/>;
+                                                break;
+                                            case BlockContentTypes.QUOTE:
+                                                block = <QuoteContentBlock key={"content" + contentBlock.id}
+                                                                           articleId={this.state.article.id}
+                                                                           content={contentBlock}/>;
+                                                break;
+                                            case BlockContentTypes.VIDEO:
+                                                block = <EmbedContentBlock key={"content" + contentBlock.id}
+                                                                           className={isLast ? 'last' : ''}
+                                                                           content={contentBlock}/>;
+                                                break;
+                                            case BlockContentTypes.AUDIO:
+                                                block = <EmbedContentBlock key={"content" + contentBlock.id}
+                                                                           className={isLast ? 'last' : ''}
+                                                                           content={contentBlock}/>;
+                                                break;
+                                            case BlockContentTypes.POST:
+                                                let hash = this.b64EncodeUnicode((contentBlock as any).value);
+                                                block = <EmbedContentBlock key={"content-" + contentBlock.id + '-' + hash}
+                                                                           className={isLast ? 'last' : ''}
+                                                                           content={contentBlock}/>;
+                                                break;
+                                            case BlockContentTypes.COLUMNS:
+                                                block = <ColumnContentBlock key={"content-" + contentBlock.id}
+                                                                            className={isLast ? 'last' : ''}
+                                                                            articleId={this.state.article.id}
+                                                                            content={contentBlock}/>;
+                                                break;
+                                            case BlockContentTypes.DIALOG:
+                                                block = <DialogContentBlock key={"content-" + contentBlock.id}
+                                                                            className={isLast ? 'last' : ''}
+                                                                            articleId={this.state.article.id}
+                                                                            content={contentBlock}/>;
+                                                break;
+                                        }
 
-                                    if (this.state.isDesktop && this.state.inlineBlock && this.state.inlineBlock.position == index) {
-                                        return [
-                                            <InlineBlock>{this.state.inlineBlock.content}</InlineBlock>,
-                                            block
-                                        ]
-                                    } else {
-                                        return [
-                                            <BlockHandler key={"handler" + index}
+                                        if (this.state.isDesktop && this.state.inlineBlock && this.state.inlineBlock.position == index) {
+                                            return [
+                                                <InlineBlock>{this.state.inlineBlock.content}</InlineBlock>,
+                                                block
+                                            ]
+                                        } else {
+                                            return [
+                                                <BlockHandler key={"handler" + index}
+                                                              articleId={this.state.article.id}
+                                                              blockPosition={index}
+                                                              items={blockHandlerButtons}/>,
+                                                contentBlock.__meta && contentBlock.__meta.deleted ?
+                                                    <DeletedContentBlockInline content={contentBlock}/> : block
+                                            ]
+                                        }
+                                    })}
+                                    {this.state.showLastBlockHandler || this.state.isDesktop ?
+                                        this.state.isDesktop && this.state.inlineBlock && this.state.inlineBlock.position == this.state.article.content.blocks.length ?
+                                            <InlineBlock>{this.state.inlineBlock.content}</InlineBlock>
+                                            : <BlockHandler key="handlerLast"
                                                           articleId={this.state.article.id}
-                                                          blockPosition={index}
-                                                          items={blockHandlerButtons}/>,
-                                            contentBlock.__meta && contentBlock.__meta.deleted ?
-                                                <DeletedContentBlockInline content={contentBlock}/> : block
-                                        ]
+                                                          blockPosition={this.state.article.content.blocks.length}
+                                                          isLast={true}
+                                                          items={[
+                                                              BlockContentTypes.ADD,
+                                                          ]}/>
+                                            : null
                                     }
-                                })}
-                                {this.state.showLastBlockHandler || this.state.isDesktop ?
-                                    this.state.isDesktop && this.state.inlineBlock && this.state.inlineBlock.position == this.state.article.content.blocks.length ?
-                                        <InlineBlock>{this.state.inlineBlock.content}</InlineBlock>
-                                        : <BlockHandler key="handlerLast"
-                                                      articleId={this.state.article.id}
-                                                      blockPosition={this.state.article.content.blocks.length}
-                                                      isLast={true}
-                                                      items={[
-                                                          BlockContentTypes.ADD,
-                                                      ]}/>
-                                        : null
-                                }
-                            </div>,
-                            (this.state.article.status == ArticleStatuses.DRAFT ?
+                                </div> : null,
+                            // BUTTONS
+                            (this.state.article.id && this.state.article.status == ArticleStatuses.DRAFT ?
                                 <div key="publish_button"
                                      className={"editor__publish" + (!this.state.isValid ? ' disabled': '')}
                                      onClick={this.state.isValid && this.prePublish.bind(this)}>
                                     Опубликовать
                                 </div> : null),
-                            (this.state.article.status == ArticleStatuses.PUBLISHED ?
+                            (this.state.article.id && this.state.article.status == ArticleStatuses.PUBLISHED ?
                                 <div key="update_publish_button"
                                      className={"editor__publish" + (!this.state.isValid ? ' disabled': '')}
                                      onClick={this.state.isValid && this.updateArticle.bind(this, true)}>
                                     Обновить публикацию
                                 </div> : null),
-                            this.state.isDesktop && this.state.article.status == ArticleStatuses.DRAFT && this.state.article.id ?
+                            // TOOLS
+                            this.state.isDesktop && this.state.article.id ?
+                                <div className="left_tool_panel">
+                                    {this.state.article.status == ArticleStatuses.DRAFT ?
+                                        [
+                                            <LeftSideButton key="toolPublish"
+                                                            tooltip="Опубликовать"
+                                                            onClick={this.prePublish.bind(this)}>
+                                                <PublishButton/>
+                                            </LeftSideButton>,
+                                            <LeftSideButton key="toolPreview"
+                                                            tooltip="Предпросмотр"
+                                                            onClick={this.route.bind(this, `/articles/${this.state.article.id}/preview`)}>
+                                                <PreviewButton/>
+                                            </LeftSideButton>
+                                        ] : null
+                                    }
+                                    {this.state.article.status == ArticleStatuses.PUBLISHED ?
+                                        <LeftSideButton key="toolUpdatePublish"
+                                                        tooltip="Обновить публикацию"
+                                                        onClick={this.state.isValid && this.updateArticle.bind(this, true)}>
+                                            <PublishButton/>
+                                        </LeftSideButton> : null
+                                    }
+                                </div> : null,
+                            false && this.state.isDesktop && this.state.article.status == ArticleStatuses.DRAFT && this.state.article.id ?
                                 <div className="tools_panel">
                                     <div className="tools_panel__item">
                                         <div className="tools_panel__caption">Просмотр</div>
