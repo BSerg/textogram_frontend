@@ -40,7 +40,7 @@ class ContentActionClass extends Action {
         super({
             articleId: null,
             autoSave: false,
-            content: {title: null, cover: null, blocks: []},
+            content: {title: null, cover: null, blocks: [], inverted_theme: true},
             contentBlockMap: {}
         });
     }
