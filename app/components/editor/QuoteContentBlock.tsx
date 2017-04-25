@@ -188,6 +188,7 @@ export default class QuoteContentBlock extends React.Component<IQuoteContentBloc
     }
 
     openFileDialog() {
+        this.refs.inputUpload.value = '';
         this.refs.inputUpload.click();
         this.closePhotoMenu();
     }
