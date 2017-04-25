@@ -141,12 +141,6 @@
       display: none;
     }
 
-    &.invalid {
-      .base_content_block__tools {
-        border-right: 1px solid $color-accent;
-      }
-    }
-
     &.expand_top {
       padding-top: 25px;
       margin-top: 25px;
