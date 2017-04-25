@@ -104,6 +104,10 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
         newArticle: false
     };
 
+    route(url: string) {
+        this.props.router.push(url);
+    }
+
     createArticle(article: any) {
         return api.post('/articles/editor/', article).then((response: any) => {
             NotificationAction.do(SHOW_NOTIFICATION, {content: Captions.editor.article_created});
@@ -219,8 +223,7 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
         api.post(`/articles/editor/${this.state.article.id}/publish/`).then((response: any) => {
             this.setState({article: response.data}, () => {
                 NotificationAction.do(SHOW_NOTIFICATION, {content: 'Поздравляем, ваш материал опубликован.'});
-                // this.props.router.push(`/profile/${UserAction.getStore().user.id}`);
-                this.props.router.push(`/articles/${this.state.article.slug}`);
+                this.route(`/articles/${this.state.article.slug}`);
             });
         });
     }
@@ -233,6 +236,9 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
         }
         this.resetContent(true).then(() => {
             NotificationAction.do(SHOW_NOTIFICATION, {content: 'Публикация обновлена'});
+            if (process.env.IS_LENTACH) {
+                this.route(`/articles/${this.state.article.slug}`);
+            }
         });
     }
 
@@ -302,10 +308,6 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
             return p1;
             // return String.fromCharCode('0x' + p1);
         }));
-    }
-
-    route(url: string) {
-        this.props.router.push(url);
     }
 
     componentWillReceiveProps(nextProps: any) {
