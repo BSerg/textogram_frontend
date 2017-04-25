@@ -474,7 +474,8 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
                                                               blockPosition={index}
                                                               items={blockHandlerButtons}/>,
                                                 contentBlock.__meta && contentBlock.__meta.deleted ?
-                                                    <DeletedContentBlockInline content={contentBlock}/> : block
+                                                    <DeletedContentBlockInline key={"deletedBlock" + contentBlock.id}
+                                                                               content={contentBlock}/> : block
                                             ]
                                         }
                                     })}
