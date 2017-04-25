@@ -528,15 +528,14 @@ class ShareLinkButton extends React.Component<{link: string, className?: string}
         });
     }
 
-    prepareInput(el: HTMLDivElement) {
-        // let input = this.getElementsByTagName('input')[0];
-        // input.focus();
-        // document.execCommand("selectall",null,false);
+    prepareInput(el: HTMLInputElement) {
+        // window.setTimeout(() => {
+        //     el.focus();
+        //     document.execCommand("selectall",null,false);
+        // });
     }
 
     copyToClipboard(e: Event) {
-        e.preventDefault();
-        e.stopPropagation();
         let input = this.refs.element.getElementsByTagName('input')[0];
         input.focus();
         document.execCommand("selectall",null,false);
@@ -548,6 +547,10 @@ class ShareLinkButton extends React.Component<{link: string, className?: string}
         catch (error) {
             NotificationAction.do(SHOW_NOTIFICATION, {content: 'Невозможно скопировать ссылку в буфер обмена'});
         }
+    };
+
+    handleBlur() {
+        this.setState({shortLink: '', process: false, copied: false});
     }
 
     render() {
@@ -558,8 +561,11 @@ class ShareLinkButton extends React.Component<{link: string, className?: string}
                 <SocialIcon social="link"/>
                 {this.state.shortLink ?
                     <div ref="element" className="__popup_link" onClick={this.copyToClipboard.bind(this)}>
-                        <input type="text" value={this.state.shortLink} readOnly={true}/>
-                        {/*<button onClick={this.copyToClipboard.bind(this)}>copy</button>*/}
+                        <input ref={this.prepareInput.bind(this)}
+                               type="text"
+                               value={this.state.shortLink}
+                               readOnly={true}
+                               onBlur={this.handleBlur.bind(this)}/>
                         {this.state.copied ?
                             <div className="__popup_link__copy"><ConfirmButton/></div> : null
                         }
