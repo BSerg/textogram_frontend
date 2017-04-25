@@ -485,9 +485,9 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
                                                           articleId={this.state.article.id}
                                                           blockPosition={this.state.article.content.blocks.length}
                                                           isLast={true}
-                                                          items={[
-                                                              BlockContentTypes.ADD,
-                                                          ]}/>
+                                                          items={this.state.article.content.blocks.length ?
+                                                            [BlockContentTypes.TEXT, BlockContentTypes.ADD, BlockContentTypes.PHOTO] :
+                                                            [BlockContentTypes.ADD]}/>
                                             : null
                                     }
                                 </div> : null,
