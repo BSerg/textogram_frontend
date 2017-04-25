@@ -49,4 +49,12 @@
   &:hover:after {
     display: inline-block;
   }
+
+  &.disabled {
+    cursor: auto;
+
+    svg {
+      fill: $color5;
+    }
+  }
 }

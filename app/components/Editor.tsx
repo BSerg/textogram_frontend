@@ -45,8 +45,9 @@ import {MediaQuerySerice} from "../services/MediaQueryService";
 import {NotificationAction, SHOW_NOTIFICATION} from "../actions/shared/NotificationAction";
 import PopupPrompt from "./shared/PopupPrompt";
 import DeletedContentBlockInline from "./editor/DeletedContentBlockInline";
-import "../styles/editor.scss";
 import LeftSideButton from "./shared/LeftSideButton";
+import "../styles/editor.scss";
+import "../styles/shared/left_tool_panel.scss";
 
 const PreviewButton = require('babel!svg-react!../assets/images/preview.svg?name=PreviewButton');
 const PublishButton = require('babel!svg-react!../assets/images/publish.svg?name=PublishButton');
@@ -505,7 +506,7 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
                                     </div>
                                 </div> : null),
                             (this.state.isDesktop && this.state.article.id && this.state.article.status == ArticleStatuses.PUBLISHED ?
-                                <div key="articleButtons" className="article_buttons">
+                                <div key="articleButtons" className={"article_buttons" + (!this.state.isValid ? ' disabled': '')}>
                                     <div className={"article_buttons__button"  + (!this.state.isValid ? ' disabled': '')}
                                          onClick={this.state.isValid && this.updateArticle.bind(this, true)}>
                                         <PublishButton/> Обновить публикацию
@@ -535,12 +536,14 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
                                         [
                                             <LeftSideButton key="toolPublish"
                                                             tooltip="Опубликовать"
-                                                            onClick={this.prePublish.bind(this)}>
+                                                            onClick={this.prePublish.bind(this)}
+                                                            disabled={!this.state.isValid}>
                                                 <PublishButton/>
                                             </LeftSideButton>,
                                             <LeftSideButton key="toolPreview"
                                                             tooltip="Предпросмотр"
-                                                            onClick={this.route.bind(this, `/articles/${this.state.article.id}/preview`)}>
+                                                            onClick={this.route.bind(this, `/articles/${this.state.article.id}/preview`)}
+                                                            disabled={!this.state.isValid}>
                                                 <PreviewButton/>
                                             </LeftSideButton>
                                         ] : null
@@ -548,7 +551,8 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
                                     {this.state.article.status == ArticleStatuses.PUBLISHED ?
                                         <LeftSideButton key="toolUpdatePublish"
                                                         tooltip="Обновить публикацию"
-                                                        onClick={this.state.isValid && this.updateArticle.bind(this, true)}>
+                                                        onClick={this.state.isValid && this.updateArticle.bind(this, true)}
+                                                        disabled={!this.state.isValid}>
                                             <PublishButton/>
                                         </LeftSideButton> : null
                                     }

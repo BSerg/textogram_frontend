@@ -7,6 +7,7 @@ interface ILeftSideButtonProps {
     onClick?: () => any;
     small?: boolean;
     hideDelay?: number;
+    disabled?: boolean
 }
 
 export default class LeftSideButton extends React.Component<ILeftSideButtonProps, any> {
@@ -27,7 +28,8 @@ export default class LeftSideButton extends React.Component<ILeftSideButtonProps
 
     static defaultProps = {
         small: false,
-        hideDelay: 0
+        hideDelay: 0,
+        disabled: false
     };
 
     checkScroll() {
@@ -69,6 +71,7 @@ export default class LeftSideButton extends React.Component<ILeftSideButtonProps
         let className = 'left_side_button';
         if (this.props.small) className += ' small';
         if (this.props.className) className += ' ' + this.props.className;
+        if (this.props.disabled) className += ' disabled';
         if (this.state.hidden) className += ' hidden';
 
         let props: any = {className: className};

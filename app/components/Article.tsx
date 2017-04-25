@@ -16,6 +16,7 @@ import Loading from "./shared/Loading";
 import "../styles/article.scss";
 import "../styles/banners.scss";
 import {BannerID} from "../constants";
+import LeftSideButton from "./shared/LeftSideButton";
 
 const EditButton = require('babel!svg-react!../assets/images/edit.svg?name=EditButton');
 const DeleteButton = require('babel!svg-react!../assets/images/redactor_icon_delete.svg?name=DeleteButton');
@@ -368,6 +369,10 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
 
     }
 
+    route(url: string) {
+        this.props.router.push(url);
+    }
+
     componentDidMount() {
         MediaQuerySerice.listen(this.handleMediaQuery);
         UserAction.onChange([LOGIN, LOGOUT, UPDATE_USER, SAVE_USER], this.handleUser);
@@ -468,34 +473,28 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
                             <ShareFloatingPanel articleUrl={this.state.article.url}/> : null}
 
                         {this.state.isDesktop && this.props.isPreview ?
-                            <div className="tools_panel">
-                                <div className="tools_panel__item">
-                                    <div className="tools_panel__caption">Редактировать</div>
-                                    <Link to={`/articles/${this.props.params.articleId}/edit`}
-                                          className="tools_panel__icon"><EditBlackButton/></Link>
-                                </div>
-                                <div className="tools_panel__item">
-                                    <div className="tools_panel__caption">Опубликовать</div>
-                                    <div onClick={this.publishArticle.bind(this)}
-                                         className="tools_panel__icon"><PublishButton/></div>
-                                </div>
+                            <div className="left_tool_panel">
+                                <LeftSideButton key="toolPublish"
+                                                tooltip="Опубликовать"
+                                                onClick={this.publishArticle.bind(this)}>
+                                    <PublishButton/>
+                                </LeftSideButton>
+                                <LeftSideButton key="toolEdit"
+                                                tooltip="Редактировать"
+                                                onClick={this.route.bind(this, `/articles/${this.state.article.id}/edit`)}>
+                                    <EditBlackButton/>
+                                </LeftSideButton>
+                            </div> : null}
+                        {this.state.isDesktop && !this.props.isPreview && this.state.isSelf ?
+                            <div className="left_tool_panel">
+                                <LeftSideButton key="toolEdit"
+                                                tooltip="Редактировать"
+                                                onClick={this.route.bind(this, `/articles/${this.state.article.id}/edit`)}>
+                                    <EditBlackButton/>
+                                </LeftSideButton>
                             </div> : null}
 
-                        {this.state.isDesktop && !this.props.isPreview && moment().isBefore(moment(this.state.article.published_at).add(12, 'hours')) ?
-                            <div className="tools_panel">
-                                <div className="tools_panel__item">
-                                    <div className="tools_panel__caption">Редактировать</div>
-                                    <Link to={`/articles/${this.state.article.id}/edit`}
-                                          className="tools_panel__icon"><EditBlackButton/></Link>
-                                </div>
-                            </div> : null
-                        }
-
-                    </div>
-                    :
-                    <div className="article__loading">
-                        <Loading/>
-                    </div>
+                    </div> : <div className="article__loading"><Loading/></div>
                 : this.state.error
         )
     }
