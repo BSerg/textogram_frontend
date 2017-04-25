@@ -12,6 +12,9 @@ export interface IFormatTool {
     isBold?: boolean;
     isItalic?: boolean;
     isURL?: boolean;
+    disableBold?: boolean;
+    disableItalic?: boolean;
+    disableURL?: boolean;
 }
 
 ContentEditableAction.register(RESET_FORMAT_TOOL, (store, data: IFormatTool | null) => {

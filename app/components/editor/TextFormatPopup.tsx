@@ -16,6 +16,9 @@ interface IProps {
     onBold?: () => any
     onItalic?: () => any
     onURL?: () => any
+    disableBold?: boolean
+    disableItalic?: boolean
+    disableURL?: boolean
     onClose?: () => any
 }
 
@@ -32,7 +35,10 @@ export default class TextFormatPopup extends React.Component<IProps, any> {
     static defaultProps = {
         isBold: false,
         isItalics: false,
-        isURL: false
+        isURL: false,
+        disableBold: false,
+        disableItalic: false,
+        disableURL: false
     };
 
     onBold(e: Event) {
@@ -60,11 +66,16 @@ export default class TextFormatPopup extends React.Component<IProps, any> {
     render() {
         return (
             <div className="text_format_popup">
-                <BoldIcon className={this.state.isBold ? 'active' : ''} onClick={this.onBold.bind(this)}/>
-                <ItalicIcon className={this.state.isItalic ? 'active' : ''} onClick={this.onItalics.bind(this)}/>
-                {this.state.isURL ?
-                    <UnLinkIcon className="active" onClick={this.onURL.bind(this)}/> :
-                    <LinkIcon onClick={this.onURL.bind(this)}/>
+                {!this.props.disableBold ?
+                    <BoldIcon className={this.state.isBold ? 'active' : ''} onClick={this.onBold.bind(this)}/> : null
+                }
+                {!this.props.disableItalic ?
+                    <ItalicIcon className={this.state.isItalic ? 'active' : ''} onClick={this.onItalics.bind(this)}/> : null
+                }
+                {!this.props.disableURL ?
+                    this.state.isURL ?
+                        <UnLinkIcon className="active" onClick={this.onURL.bind(this)}/> :
+                        <LinkIcon onClick={this.onURL.bind(this)}/> : null
                 }
                 <CloseIcon className="close" onClick={this.onClose.bind(this)}/>
             </div>

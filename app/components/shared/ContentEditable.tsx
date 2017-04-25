@@ -27,6 +27,9 @@ interface ContentEditableProps {
     onBlur?: () => any
     onKeyDown?: (e: KeyboardEvent) => any
     enableTextFormat?: boolean
+    disableTextFormatBold?: boolean
+    disableTextFormatItalic?: boolean
+    disableTextFormatURL?: boolean
     forceUpdateContent?: boolean
 }
 
@@ -80,6 +83,9 @@ export default class ContentEditable extends React.Component<ContentEditableProp
         focusOnMount: false,
         forceUpdateContent: false,
         enableTextFormat: false,
+        disableTextFormatBold: false,
+        disableTextFormatItalic: false,
+        disableTextFormatURL: false,
     };
     private getElementEmptyContentByType () {
         switch (this.props.elementType) {
@@ -265,7 +271,10 @@ export default class ContentEditable extends React.Component<ContentEditableProp
                         document.execCommand("unlink", false, false);
                     }
                     this.handleSelectDesktop();
-                }
+                },
+                disableBold: this.props.disableTextFormatBold,
+                disableItalic: this.props.disableTextFormatItalic,
+                disableURL: this.props.disableTextFormatURL,
             });
         } else {
             ContentEditableAction.do(RESET_FORMAT_TOOL, null);

@@ -68,6 +68,8 @@ export default class LeadContentBlock extends React.Component<ILeadContentBlockP
                                  onChange={this.handleChange.bind(this)}
                                  onChangeDelay={0}
                                  enableTextFormat={true}
+                                 disableTextFormatBold={true}
+                                 disableTextFormatItalic={true}
                                  content={marked(this.state.content.value)}
                                  placeholder={Captions.editor.enter_lead}/>
             </BaseContentBlock>

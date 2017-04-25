@@ -294,21 +294,27 @@ class FormatTool extends React.Component<any, any> {
     render() {
         return (
             <div>
-                <div className={"base_content_block__tools_button" + (this.props.formatTool.isBold ? ' active' : '')}
-                     onMouseDown={this.onBold.bind(this)}><BoldIcon/></div>
-                <div className={"base_content_block__tools_button" + (this.props.formatTool.isItalic ? ' active' : '')}
-                     onMouseDown={this.onItalic.bind(this)}><ItalicIcon/></div>
-                <div className={"base_content_block__tools_button base_content_block__url_button" + (this.props.formatTool.isURL ? ' active' : '')}
-                     onMouseDown={this.onURL.bind(this)}>
-                    <URLIcon/>
-                    {this.state.showURLInput ?
-                        <div className="base_content_block__url_input">
-                            <form onSubmit={this.updateURL.bind(this)}>
-                                <input ref="urlInput" type="text" placeholder="Вставьте ссылку"/>
-                            </form>
-                            <div className="base_content_block__url_input_close" onClick={this.closeURLInput.bind(this)}><CloseIcon/></div>
-                        </div> : null}
-                </div>
+                {!this.props.formatTool.disableBold ?
+                    <div className={"base_content_block__tools_button" + (this.props.formatTool.isBold ? ' active' : '')}
+                         onMouseDown={this.onBold.bind(this)}><BoldIcon/></div> : null
+                }
+                {!this.props.formatTool.disableItalic ?
+                    <div className={"base_content_block__tools_button" + (this.props.formatTool.isItalic ? ' active' : '')}
+                         onMouseDown={this.onItalic.bind(this)}><ItalicIcon/></div> : null
+                }
+                {!this.props.formatTool.disableURL ?
+                    <div className={"base_content_block__tools_button base_content_block__url_button" + (this.props.formatTool.isURL ? ' active' : '')}
+                         onMouseDown={this.onURL.bind(this)}>
+                        <URLIcon/>
+                        {this.state.showURLInput ?
+                            <div className="base_content_block__url_input">
+                                <form onSubmit={this.updateURL.bind(this)}>
+                                    <input ref="urlInput" type="text" placeholder="Вставьте ссылку"/>
+                                </form>
+                                <div className="base_content_block__url_input_close" onClick={this.closeURLInput.bind(this)}><CloseIcon/></div>
+                            </div> : null}
+                    </div> : null
+                }
             </div>
         )
     }
