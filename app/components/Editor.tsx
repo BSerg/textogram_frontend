@@ -312,6 +312,17 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
     }
 
     componentWillReceiveProps(nextProps: any) {
+        this.setState({
+            article: {
+                id: null,
+                status: ArticleStatuses.DRAFT,
+                content: {title: null, cover: null, blocks: [], inverted_theme: true}
+            },
+            autoSave: false,
+            isValid: false
+        }, () => {
+            this.resetContent();
+        });
         if (this.props.params && this.props.params.articleId != nextProps.params.articleId) {
             this.loadArticle(nextProps.params.articleId);
         }
@@ -334,9 +345,15 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
 
         if (this.state.newArticle) {
             this.setState({
-                article: {id: null, status: ArticleStatuses.DRAFT, content: ContentAction.getStore().content},
+                article: {
+                    id: null,
+                    status: ArticleStatuses.DRAFT,
+                    content: {title: null, cover: null, blocks: [], inverted_theme: true}
+                },
                 autoSave: false,
                 isValid: false
+            }, () => {
+                this.resetContent();
             });
         } else {
             this.loadArticle(this.props.params.articleId);
@@ -391,7 +408,7 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
                                             autoSave={this.state.autoSave}/>,
                             // CONTENT
                             this.state.article.id ?
-                                <div className="editor__content">
+                                <div key={"articleContent" + this.state.article.id} className="editor__content">
                                     {this.state.article.content.blocks.map((contentBlock: IContentData, index: number) => {
                                         let blockHandlerButtons, block, isLast = index == this.state.article.content.blocks.length - 1;
                                         blockHandlerButtons = [BlockContentTypes.ADD];
