@@ -10,6 +10,7 @@ const TelegramIcon = require('babel!svg-react!../../assets/images/telegram.svg?n
 const InstagramIcon = require('babel!svg-react!../../assets/images/profile_social_icon_instagram.svg?name=InstagramIcon');
 const WhatsappIcon = require('babel!svg-react!../../assets/images/whatsapp.svg?name=WhatsappIcon');
 const ViberIcon = require('babel!svg-react!../../assets/images/viber.svg?name=ViberIcon');
+const LinkIcon = require('babel!svg-react!../../assets/images/share_link.svg?name=LinkIcon');
 
 interface ISocialIconProps {
     social?: string
@@ -26,7 +27,8 @@ export default class SocialIcon extends React.Component<ISocialIconProps, any> {
         'telegram': TelegramIcon,
         'instagram': InstagramIcon,
         'whatsapp': WhatsappIcon,
-        'viber': ViberIcon
+        'viber': ViberIcon,
+        'link': LinkIcon
     };
 
     constructor(props: any) {

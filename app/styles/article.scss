@@ -1007,7 +1007,7 @@ $block_margin_desktop: 25px;
     top: 30vh;
   }
 
-  a {
+  a, .share_panel__share_btn {
     @include border_radius(30px);
     display: flex;
     align-items: center;
@@ -1016,11 +1016,41 @@ $block_margin_desktop: 25px;
     height: 30px;
     background-color: $color;
     margin-bottom: 20px;
+    cursor: pointer;
 
     svg {
       width: 19px;
       heigth: 19px;
       fill: white;
+    }
+  }
+}
+
+.share_link_button {
+  @include no_select();
+  position: relative;
+
+  .__popup_link {
+    @include no_select();
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    position: absolute;
+    top: 0;
+    left: 50px;
+    height: 100%;
+    cursor: pointer;
+
+    .__popup_link__copy {
+      @include no_select();
+      width: 30px;
+      height: 30px;
+
+      svg {
+        fill: $color;
+        width: 30px;
+        height: 30px;
+      }
     }
   }
 }

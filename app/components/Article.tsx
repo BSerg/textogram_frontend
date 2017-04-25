@@ -27,6 +27,7 @@ const ArrowButton = require('babel!svg-react!../assets/images/arrow.svg?name=Arr
 const ShareButton = require('babel!svg-react!../assets/images/share.svg?name=ShareButton');
 const EditBlackButton = require('babel!svg-react!../assets/images/edit_black.svg?name=EditBlackButton');
 const PublishButton = require('babel!svg-react!../assets/images/publish.svg?name=PublishButton');
+const ConfirmButton = require('babel!svg-react!../assets/images/editor_confirm.svg?name=ConfirmButton');
 
 
 interface IPhoto {id: number, image: string, preview?: string, caption?: string}
@@ -232,23 +233,20 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
     openSharePopup() {
         let content = (
             <div className="share_popup">
-                <div className="share_popup__row">
-                    <a href={"http://vk.com/share.php?url=" + this.state.article.url}
-                       className="share_popup__item share_popup__vk"><SocialIcon social="vk"/></a>
-                    <a href={"https://www.facebook.com/sharer/sharer.php?u=" + this.state.article.url}
-                       className="share_popup__item share_popup__fb"><SocialIcon social="facebook"/></a>
-                    <a href={"https://twitter.com/home?status=" + this.state.article.url}
-                       className="share_popup__item share_popup__twitter"><SocialIcon social="twitter"/></a>
-                </div>
-                <div className="share_popup__row">
-                    <a href={"https://telegram.me/share/url?url=" + this.state.article.url}
-                       className="share_popup__item share_popup__telegram"><SocialIcon social="telegram"/></a>
-                    <a href={"whatsapp://send?text=" + this.state.article.url}
-                       data-action="share/whatsapp/share"
-                       className="share_popup__item share_popup__whatsapp"><SocialIcon social="whatsapp"/></a>
-                    <a href={"viber://forward?text=" + this.state.article.url}
-                       className="share_popup__item share_popup__viber"><SocialIcon social="viber"/></a>
-                </div>
+                <a href={"http://vk.com/share.php?url=" + this.state.article.url}
+                   className="share_popup__item share_popup__vk"><SocialIcon social="vk"/></a>
+                <a href={"https://www.facebook.com/sharer/sharer.php?u=" + this.state.article.url}
+                   className="share_popup__item share_popup__fb"><SocialIcon social="facebook"/></a>
+                <a href={"https://twitter.com/home?status=" + this.state.article.url}
+                   className="share_popup__item share_popup__twitter"><SocialIcon social="twitter"/></a>
+                <a href={"https://telegram.me/share/url?url=" + this.state.article.url}
+                   className="share_popup__item share_popup__telegram"><SocialIcon social="telegram"/></a>
+                <a href={"whatsapp://send?text=" + this.state.article.url}
+                   data-action="share/whatsapp/share"
+                   className="share_popup__item share_popup__whatsapp"><SocialIcon social="whatsapp"/></a>
+                <a href={"viber://forward?text=" + this.state.article.url}
+                   className="share_popup__item share_popup__viber"><SocialIcon social="viber"/></a>
+                <span className="share_popup__item"><SocialIcon social="link"/></span>
                 <div className="share_popup__close" onClick={this.closeSharePopup.bind(this)}><CloseIcon/></div>
             </div>
         );
@@ -500,6 +498,78 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
     }
 }
 
+class ShareLinkButton extends React.Component<{link: string, className?: string}, {shortLink?: string, process?: boolean, copied?: boolean}> {
+    refs: {
+        element: HTMLDivElement
+    };
+
+    constructor(props: any) {
+        super(props);
+        this.state = {
+            shortLink: '',
+            process: false,
+            copied: false
+        };
+    }
+
+    static defaultProps = {
+        className: ''
+    };
+
+    getShortUrl() {
+        if (this.state.process || this.state.shortLink) return;
+        this.setState({process: true});
+        api.post(`/url_short/`, {url: this.props.link}).then((response: any) => {
+            this.setState({process: false, shortLink: response.data.shortened_url});
+            console.log(response);
+        }).catch((err) => {
+            this.setState({process: false});
+            console.log(err);
+        });
+    }
+
+    prepareInput(el: HTMLDivElement) {
+        // let input = this.getElementsByTagName('input')[0];
+        // input.focus();
+        // document.execCommand("selectall",null,false);
+    }
+
+    copyToClipboard(e: Event) {
+        e.preventDefault();
+        e.stopPropagation();
+        let input = this.refs.element.getElementsByTagName('input')[0];
+        input.focus();
+        document.execCommand("selectall",null,false);
+        try {
+            document.execCommand('copy');
+            NotificationAction.do(SHOW_NOTIFICATION, {content: 'Ссылка скопирована в буфер обмена'});
+            this.setState({copied: true});
+        }
+        catch (error) {
+            NotificationAction.do(SHOW_NOTIFICATION, {content: 'Невозможно скопировать ссылку в буфер обмена'});
+        }
+    }
+
+    render() {
+        let className = this.props.className;
+        if (this.state.process) className += ' process';
+        return (
+            <div className={className} onClick={this.getShortUrl.bind(this)}>
+                <SocialIcon social="link"/>
+                {this.state.shortLink ?
+                    <div ref="element" className="__popup_link" onClick={this.copyToClipboard.bind(this)}>
+                        <input type="text" value={this.state.shortLink} readOnly={true}/>
+                        {/*<button onClick={this.copyToClipboard.bind(this)}>copy</button>*/}
+                        {this.state.copied ?
+                            <div className="__popup_link__copy"><ConfirmButton/></div> : null
+                        }
+                    </div> : null
+                }
+            </div>
+        )
+    }
+}
+
 
 interface IGalleryModalProps {
     photos: IPhoto[],
@@ -726,6 +796,8 @@ class ShareFloatingPanel extends React.Component<any, any> {
                    className="share_panel__share_btn"><SocialIcon social="twitter"/></a>
                 <a href={"https://telegram.me/share/url?url=" + this.props.articleUrl}
                    className="share_panel__share_btn"><SocialIcon social="telegram"/></a>
+                <ShareLinkButton className="share_link_button share_panel__share_btn"
+                                 link={this.props.articleUrl}/>
             </div>
         )
     }

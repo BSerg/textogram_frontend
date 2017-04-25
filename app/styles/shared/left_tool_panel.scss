@@ -3,7 +3,7 @@
 
 .left_tool_panel {
   position: fixed;
-  bottom: 90px;
+  top: 90px;
   left: 20px;
   display: flex;
   flex-direction: column;
@@ -11,9 +11,5 @@
 
   .left_side_button:not(:last-child) {
     margin-bottom: 20px;
-  }
-
-  @include desktop {
-    top: 90px;
   }
 }
