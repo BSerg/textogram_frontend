@@ -67,7 +67,12 @@ export default class BaseContentBlock extends React.Component<IBaseContnentBlock
         this.handleUpdateTools = this.handleUpdateTools.bind(this);
         this.handleKeyDown = this.handleKeyDown.bind(this);
         this.handleFormatTool = this.handleFormatTool.bind(this);
+        this.updateToolPosition = this.updateToolPosition.bind(this);
     }
+
+    refs: {
+        toolsElement: HTMLDivElement
+    };
 
     static defaultProps = {
         disablePopup: false,
@@ -95,6 +100,7 @@ export default class BaseContentBlock extends React.Component<IBaseContnentBlock
                         );
                     }
                 }
+                if (this.state.isActive) this.updateToolPosition();
             });
         }
     }
@@ -187,13 +193,35 @@ export default class BaseContentBlock extends React.Component<IBaseContnentBlock
         }
     }
 
+    updateToolPosition() {
+        let el = this.refs.toolsElement;
+        if (el) {
+            let elRect = el.getBoundingClientRect();
+            let parentEl = el.parentElement;
+            let parentElRect = parentEl.getBoundingClientRect();
+
+            el.style.top = null;
+            el.style.bottom = null;
+            el.style.position = "absolute";
+            if (window.innerHeight / 2 >= parentElRect.top + elRect.height / 2 && window.innerHeight / 2 <= parentElRect.top + parentElRect.height - elRect.height / 2) {
+                el.style.top = window.innerHeight / 2 - (parentElRect.top + elRect.height / 2) + 'px';
+            } else if (window.innerHeight / 2 < parentElRect.top + elRect.height) {
+                el.style.top = "0";
+            } else if (window.innerHeight / 2 > parentElRect.top + parentElRect.height - elRect.height / 2) {
+                el.style.bottom = "0";
+            }
+        }
+    }
+
     componentDidMount() {
         ContentBlockAction.onChange([ACTIVATE_CONTENT_BLOCK, DEACTIVATE_CONTENT_BLOCK], this.handleActivate);
         MediaQuerySerice.listen(this.handleMediaQuery);
         DesktopBlockToolsAction.onChange(UPDATE_TOOLS, this.handleUpdateTools);
         ContentEditableAction.onChange(RESET_FORMAT_TOOL, this.handleFormatTool);
         window.addEventListener('keydown', this.handleKeyDown);
+        document.addEventListener('scroll', this.updateToolPosition);
         this.handleActivate();
+        this.updateToolPosition();
     }
 
     componentWillUnmount() {
@@ -202,6 +230,7 @@ export default class BaseContentBlock extends React.Component<IBaseContnentBlock
         DesktopBlockToolsAction.unbind(UPDATE_TOOLS, this.handleUpdateTools);
         ContentEditableAction.unbind(RESET_FORMAT_TOOL, this.handleFormatTool);
         window.removeEventListener('keydown', this.handleKeyDown);
+        document.removeEventListener('scroll', this.updateToolPosition);
     }
 
     render() {
@@ -217,7 +246,7 @@ export default class BaseContentBlock extends React.Component<IBaseContnentBlock
                 </div>
                 {this.state.isDesktop && this.state.isActive ?
                     <div className="base_content_block__tools">
-                        <div className="base_content_block__tools_wrapper">
+                        <div ref="toolsElement" className="base_content_block__tools_wrapper">
                             {this.state.desktopFullTools ?
                                 this.state.desktopFullTools :
                                 [
