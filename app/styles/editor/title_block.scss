@@ -46,19 +46,19 @@
     @include title_font_large();
   }
 
-  &.inverse {
+  &.inverse, &.covered {
     background-color: $color8;
     color: white;
+  }
 
-    &:before {
-      content: '';
-      background-color: rgba(0, 0, 0, 0.5);
-      position: absolute;
-      top: 0;
-      bottom: 0;
-      left: 0;
-      right: 0;
-    }
+  &.covered:before {
+    content: '';
+    background-color: rgba(0, 0, 0, 0.5);
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
   }
 }
 
