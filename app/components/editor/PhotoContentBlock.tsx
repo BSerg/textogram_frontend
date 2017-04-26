@@ -1,5 +1,5 @@
 import * as React from "react";
-import {Captions, BlockContentTypes} from "../../constants";
+import {Captions, BlockContentTypes, Constants} from "../../constants";
 import BaseContentBlock from "./BaseContentBlock";
 import {
     ContentBlockAction,
@@ -22,6 +22,7 @@ import {MediaQuerySerice} from "../../services/MediaQueryService";
 import "../../styles/editor/photo_content_block.scss";
 import Sortable = require('sortablejs');
 import ContentEditable from "../shared/ContentEditable";
+import {NotificationAction, SHOW_NOTIFICATION} from "../../actions/shared/NotificationAction";
 
 const AddButton = require('babel!svg-react!../../assets/images/desktop_editor_icon_gallery.svg?name=AddButton');
 const DeleteButton = require('babel!svg-react!../../assets/images/editor_delete.svg?name=DeleteButton');
@@ -109,12 +110,14 @@ interface IPhotoContentBlockProps {
 }
 
 interface IPhotoContentBlockState {
-    isActive?: boolean
-    content?: IPhotoContent
-    loadingImage?: boolean
-    imageUploadProgress?: {progress: number, total: number} | null
-    sortable?: any
-    isDesktop?: boolean
+    isActive?: boolean;
+    content?: IPhotoContent;
+    loadingImage?: boolean;
+    loadingImageLoaded?: number;
+    loadingImageAmount?: number;
+    imageUploadProgress?: {progress: number, total: number} | null;
+    sortable?: any;
+    isDesktop?: boolean;
 }
 
 
@@ -129,6 +132,8 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
             content: this.props.content as IPhotoContent,
             isActive: false,
             loadingImage: false,
+            loadingImageLoaded: 0,
+            loadingImageAmount: 0,
             imageUploadProgress: null,
             sortable: null,
             isDesktop: MediaQuerySerice.getIsDesktop()
@@ -267,35 +272,79 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
         }
     }
 
+    _prevalidateFiles(files: FileList) {
+        let invalidFiles = [];
+        let validFiles = [];
+        for (let i = 0; i < files.length; i++) {
+            let file = files[i];
+            if (file.size > Constants.maxImageSize) {
+                invalidFiles.push(file);
+            } else {
+                validFiles.push(file);
+            }
+        }
+        if (invalidFiles.length == 1) {
+            NotificationAction.do(
+                SHOW_NOTIFICATION,
+                {content: `Размер изображения "${invalidFiles[0].name}" превышает ${Constants.maxImageSize/1024/1024}Mb`}
+            );
+        } else if (invalidFiles.length) {
+            NotificationAction.do(
+                SHOW_NOTIFICATION,
+                {content: `Размер некоторых изображений превышает ${Constants.maxImageSize/1024/1024}Mb`}
+            );
+        }
+        return validFiles;
+    }
+
+    _uploadPhoto(index: number, photoPlaceholder: any, files: File[]) {
+        if (index >= files.length) {
+            this.setState({loadingImage: false});
+            return;
+        }
+        this.state.content.photos.push(photoPlaceholder);
+        let file = files[index];
+        PopupPanelAction.do(OPEN_POPUP, {content: this.getPopupContent()});
+        const progressHandler = this.handleUploadProgress.bind(this, file.name);
+        UploadImageAction.onChange(UPDATE_PROGRESS, progressHandler);
+        UploadImageAction.doAsync(UPLOAD_IMAGE, {articleId: this.props.articleId, image: file}).then((uploadedImage) => {
+            UploadImageAction.unbind(UPDATE_PROGRESS, progressHandler);
+            this.state.content.photos.splice(this.state.content.photos.indexOf(photoPlaceholder), 1);
+            this.state.content.photos.push(uploadedImage);
+            this.setState({content: this.state.content, loadingImageLoaded: this.state.loadingImageLoaded + 1}, () => {
+                DesktopBlockToolsAction.do(UPDATE_TOOLS, {position: this.getPosition(), tools: this.getDesktopToolsContent()});
+                ContentAction.do(UPDATE_CONTENT_BLCK, {contentBlock: this.state.content});
+                if (index < files.length - 1) {
+                    let tempURL = window.URL.createObjectURL(files[index+1]);
+                    this._uploadPhoto(index + 1, {id: null, image: tempURL}, files);
+                } else {
+                    this.setState({loadingImage: false, loadingImageAmount: 0, loadingImageLoaded: 0});
+                }
+            });
+        }).catch((err) => {
+            console.log(err);
+            UploadImageAction.unbind(UPDATE_PROGRESS, progressHandler);
+            this.state.content.photos.splice(this.state.content.photos.indexOf(photoPlaceholder), 1);
+            this.setState({content: this.state.content}, () => {
+                if (index < files.length - 1) {
+                    let tempURL = window.URL.createObjectURL(files[index+1]);
+                    this._uploadPhoto(index + 1, {id: null, image: tempURL}, files);
+                } else {
+                    this.setState({loadingImage: false, loadingImageAmount: 0, loadingImageLoaded: 0});
+                }
+            });
+        });
+    }
+
     addPhoto() {
-        let file = this.refs.inputUpload.files[0];
-        if (!file) {
+        let files = this._prevalidateFiles(this.refs.inputUpload.files);
+        if (!files.length) {
             this.refs.inputUpload.value = '';
             return;
         }
-        let tempURL = window.URL.createObjectURL(file);
-        let photo: any = {id: null, image: tempURL};
-        this.state.content.photos.push(photo);
-        this.setState({loadingImage: true, content: this.state.content}, () => {
-            PopupPanelAction.do(OPEN_POPUP, {content: this.getPopupContent()});
-            const progressHandler = this.handleUploadProgress.bind(this, file.name);
-            UploadImageAction.onChange(UPDATE_PROGRESS, progressHandler);
-            UploadImageAction.doAsync(UPLOAD_IMAGE, {articleId: this.props.articleId, image: file}).then(() => {
-                UploadImageAction.unbind(UPDATE_PROGRESS, progressHandler);
-                let store = UploadImageAction.getStore();
-                this.state.content.photos.pop();
-                this.state.content.photos.push(store.image);
-                this.setState({content: this.state.content, loadingImage: false}, () => {
-                    PopupPanelAction.do(OPEN_POPUP, {content: this.getPopupContent()});
-                    DesktopBlockToolsAction.do(UPDATE_TOOLS, {position: this.getPosition(), tools: this.getDesktopToolsContent()});
-                    ContentAction.do(UPDATE_CONTENT_BLCK, {contentBlock: this.state.content});
-                });
-            }).catch((err) => {
-                console.log(err);
-                UploadImageAction.unbind(UPDATE_PROGRESS, progressHandler);
-                this.state.content.photos.splice(this.state.content.photos.indexOf(photo), 1);
-                this.setState({loadingImage: false, content: this.state.content});
-            });
+        let photoPlaceholder: any = {id: null, image: window.URL.createObjectURL(files[0])};
+        this.setState({loadingImage: true, loadingImageAmount: files.length, content: this.state.content}, () => {
+            this._uploadPhoto(0, photoPlaceholder, files);
         });
     }
 
@@ -473,7 +522,7 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
                                  value={this.state.imageUploadProgress.progress}
                                  total={this.state.imageUploadProgress.total}
                                  className={this.state.loadingImage ? 'active' : ''}
-                                 label={Captions.editor.loading_image}/>
+                                 label={this.state.loadingImageAmount > 1 ? `${Captions.editor.loading_images} (${this.state.loadingImageLoaded} из ${this.state.loadingImageAmount})` : Captions.editor.loading_image}/>
                         : null
                 }
                 <input id={"inputUpload" + this.props.content.id}
@@ -481,6 +530,7 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
                        ref="inputUpload"
                        type="file"
                        accept="image/jpeg,image/png,image/gif"
+                       multiple={true}
                        onChange={this.addPhoto.bind(this)}/>
             </BaseContentBlock>
         )

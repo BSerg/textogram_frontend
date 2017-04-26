@@ -46,6 +46,7 @@ export namespace Captions {
         help_embed_empty: 'Нажмите на блок и вставьте ссылку',
         loading: 'Загрузка...',
         loading_image: 'Загрузка изображения',
+        loading_images: 'Загрузка изображений',
         dialog_participants: 'Участники диалога',
         choose: 'Выбрать',
         help_dialogue: 'Добавьте реплики, нажав на «плюс» в панели инструментов',
