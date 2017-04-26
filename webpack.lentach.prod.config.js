@@ -6,18 +6,15 @@ var HTMLWebpackPluginConfig = new HtmlWebpackPlugin({
     inject: 'body'
 });
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
-var CommonsChunkPlugin = require('webpack/lib/optimize/CommonsChunkPlugin');
 
 module.exports = {
     entry: [
         './app/index.tsx'
     ],
     output: {
-        path: '/home/serega/projects/textogram/static',
+        path: __dirname + '/dist/lentach_prod',
         filename: 'bundle.js',
-        // vendor: ['article']
     },
-    devtool: "source-map",
     resolve: {
         extensions: ["", ".webpack.js", ".web.js", ".ts", ".tsx", ".js", ".jsx", ".css", ".sass"]
     },
@@ -51,11 +48,14 @@ module.exports = {
     plugins: [
         new ExtractTextPlugin('bundle.css'),
         new DefinePlugin({
-            'process.env': {
-                NODE_ENV: JSON.stringify("local"),
-                API_URL: JSON.stringify("http://localhost:8000/api/v1"),
-                VK_APP: JSON.stringify("5598086"),
-                FB_APP: JSON.stringify("1270929192923451"),
+            "process.env": {
+                NODE_ENV: JSON.stringify("prod"),
+                API_URL: JSON.stringify("http://prod.lentachmedia.tk/api/v1"),
+                VK_APP: JSON.stringify("5951821"),
+                FB_APP: JSON.stringify("176821492828506"),
+                // PROD for lentach.media
+                // "VK_APP": JSON.stringify("5955558"),
+                // "FB_APP": JSON.stringify("722837137876952"),
                 IS_LENTACH: JSON.stringify(true)
             }
         }),

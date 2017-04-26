@@ -1,22 +1,21 @@
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 var DefinePlugin = require('webpack/lib/DefinePlugin');
-var JavaScriptObfuscator = require('webpack-obfuscator');
 var HTMLWebpackPluginConfig = new HtmlWebpackPlugin({
     template: __dirname + '/index.html',
     filename: 'index.html',
     inject: 'body'
 });
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
+var CommonsChunkPlugin = require('webpack/lib/optimize/CommonsChunkPlugin');
 
 module.exports = {
     entry: [
         './app/index.tsx'
     ],
     output: {
-        path: __dirname + '/dist/prod',
-        // path: '/home/serega/projects/lentach/static',
+        path: __dirname + '/dist/lentach_dev',
         filename: 'bundle.js',
-        // publicPath: '/static/'
+        // vendor: ['article']
     },
     devtool: "source-map",
     resolve: {
@@ -51,16 +50,13 @@ module.exports = {
     },
     plugins: [
         new ExtractTextPlugin('bundle.css'),
-        new JavaScriptObfuscator ({
-            rotateUnicodeArray: true
-        }),
         new DefinePlugin({
-            "process.env": {
-                NODE_ENV: JSON.stringify("prod"),
-                API_URL: "http://localhost:8000/api/v1",
-                "VK_APP": JSON.stringify(""),
-                "FB_APP": JSON.stringify(""),
-                "GOOGLE_APP": JSON.stringify("40195744486-2lr3lt2adencnt9k54rc1mhl4a4kh70i.apps.googleusercontent.com")
+            'process.env': {
+                NODE_ENV: JSON.stringify("local"),
+                API_URL: JSON.stringify("http://lentachmedia.tk/api/v1"),
+                VK_APP: JSON.stringify("5951821"),
+                FB_APP: JSON.stringify("176821492828506"),
+                IS_LENTACH: JSON.stringify(true)
             }
         }),
         HTMLWebpackPluginConfig
