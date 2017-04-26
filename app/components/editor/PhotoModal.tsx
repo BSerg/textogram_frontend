@@ -126,7 +126,7 @@ export class PhotoModal extends React.Component<IPhotoDesktopModalProps, IPhotoD
         MediaQuerySerice.listen(this.handleMediaQuery);
     }
 
-    componentWillMount() {
+    componentWillUnmount() {
         MediaQuerySerice.unbind(this.handleMediaQuery);
     }
 

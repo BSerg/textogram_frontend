@@ -466,7 +466,7 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
 
     componentWillUnmount() {
         ContentBlockAction.unbind([ACTIVATE_CONTENT_BLOCK, DEACTIVATE_CONTENT_BLOCK], this.handleBlockActive);
-        MediaQuerySerice.listen(this.handleMediaQuery);
+        MediaQuerySerice.unbind(this.handleMediaQuery);
     }
 
     render() {
