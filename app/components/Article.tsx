@@ -50,7 +50,8 @@ interface IArticle {
         avatar: string
     },
     images: IPhoto[]
-    url: string
+    url: string;
+    short_url?: string;
     ads_enabled?: boolean,
     advertisement?: any,
     inverted_theme?: boolean
@@ -79,6 +80,10 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
         };
         this.handleMediaQuery = this.handleMediaQuery.bind(this);
     }
+
+    refs: {
+        shortUrlInput: HTMLInputElement
+    };
 
     static defaultProps = {
         isPreview: false
@@ -468,7 +473,7 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
                         }
 
                         {this.state.isDesktop ?
-                            <ShareFloatingPanel articleUrl={this.state.article.url}/> : null}
+                            <ShareFloatingPanel articleUrl={this.state.article.short_url}/> : null}
 
                         {this.state.isDesktop && this.props.isPreview ?
                             <div className="left_tool_panel">
@@ -498,7 +503,7 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
     }
 }
 
-class ShareLinkButton extends React.Component<{link: string, className?: string}, {shortLink?: string, process?: boolean, copied?: boolean}> {
+class ShareLinkButton extends React.Component<{shortUrl: string, className?: string}, {process?: boolean, copied?: boolean}> {
     refs: {
         element: HTMLDivElement
     };
@@ -506,7 +511,6 @@ class ShareLinkButton extends React.Component<{link: string, className?: string}
     constructor(props: any) {
         super(props);
         this.state = {
-            shortLink: '',
             process: false,
             copied: false
         };
@@ -516,26 +520,17 @@ class ShareLinkButton extends React.Component<{link: string, className?: string}
         className: ''
     };
 
-    getShortUrl() {
-        if (this.state.process || this.state.shortLink) return;
-        this.setState({process: true});
-        api.post(`/url_short/`, {url: this.props.link}).then((response: any) => {
-            this.setState({process: false, shortLink: response.data.shortened_url});
-            console.log(response);
-        }).catch((err) => {
-            this.setState({process: false});
-            console.log(err);
+    process() {
+        this.setState({process: true}, () => {
+            this.copyToClipboard();
+            window.setTimeout(() => {
+                this.setState({process: false});
+            }, 1000);
         });
+
     }
 
-    prepareInput(el: HTMLInputElement) {
-        // window.setTimeout(() => {
-        //     el.focus();
-        //     document.execCommand("selectall",null,false);
-        // });
-    }
-
-    copyToClipboard(e: Event) {
+    copyToClipboard(e?: Event) {
         let input = this.refs.element.getElementsByTagName('input')[0];
         input.focus();
         document.execCommand("selectall",null,false);
@@ -550,20 +545,19 @@ class ShareLinkButton extends React.Component<{link: string, className?: string}
     };
 
     handleBlur() {
-        this.setState({shortLink: '', process: false, copied: false});
+        this.setState({process: false, copied: false});
     }
 
     render() {
         let className = this.props.className;
         if (this.state.process) className += ' process';
         return (
-            <div className={className} onClick={this.getShortUrl.bind(this)}>
+            <div className={className} onClick={this.process.bind(this)}>
                 <SocialIcon social="link"/>
-                {this.state.shortLink ?
-                    <div ref="element" className="__popup_link" onClick={this.copyToClipboard.bind(this)}>
-                        <input ref={this.prepareInput.bind(this)}
-                               type="text"
-                               value={this.state.shortLink}
+                {this.state.process ?
+                    <div ref="element" className="__popup_link">
+                        <input type="text"
+                               value={this.props.shortUrl}
                                readOnly={true}
                                onBlur={this.handleBlur.bind(this)}/>
                         {this.state.copied ?
@@ -803,7 +797,7 @@ class ShareFloatingPanel extends React.Component<any, any> {
                 <a href={"https://telegram.me/share/url?url=" + this.props.articleUrl}
                    className="share_panel__share_btn"><SocialIcon social="telegram"/></a>
                 <ShareLinkButton className="share_link_button share_panel__share_btn"
-                                 link={this.props.articleUrl}/>
+                                 shortUrl={this.props.articleUrl}/>
             </div>
         )
     }
