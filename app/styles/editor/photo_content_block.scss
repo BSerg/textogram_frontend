@@ -28,6 +28,14 @@ $base_desktop_photo_height: 400px;
     display: none;
   }
 
+  &:not(.active) .content_block_photo__photo {
+    display: none;
+
+    &.photo0, &.photo1, &.photo2, &.photo3, &.photo4, &.photo5, &.content_block_photo__empty {
+      display: block;
+    }
+  }
+
   .progress_bar {
     display: none;
     margin-top: $margin;
@@ -82,12 +90,6 @@ $base_desktop_photo_height: 400px;
 
     &:not(.active) {
       .content_block_photo__photo {
-        display: none;
-
-        &.photo0, &.photo1, &.photo2, &.photo3, &.photo4, &.photo5, &.content_block_photo__empty {
-          display: block;
-        }
-
         &.photo0 {
           width: calc(82% - #{$space} / 2);
           height: $base_photo_height;
