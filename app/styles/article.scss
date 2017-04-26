@@ -1039,7 +1039,12 @@ $block_margin_desktop: 25px;
     top: 0;
     left: 50px;
     height: 100%;
-    cursor: pointer;
+
+    input {
+      font-family: $family_open_sans;
+      font-size: 10px;
+      letter-spacing: 1px;
+    }
 
     .__popup_link__copy {
       @include no_select();
