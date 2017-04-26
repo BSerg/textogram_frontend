@@ -113,6 +113,7 @@ interface IPhotoContentBlockState {
     isActive?: boolean;
     content?: IPhotoContent;
     loadingImage?: boolean;
+    loadingImageFilename?: string | null;
     loadingImageLoaded?: number;
     loadingImageAmount?: number;
     imageUploadProgress?: {progress: number, total: number} | null;
@@ -132,6 +133,7 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
             content: this.props.content as IPhotoContent,
             isActive: false,
             loadingImage: false,
+            loadingImageFilename: null,
             loadingImageLoaded: 0,
             loadingImageAmount: 0,
             imageUploadProgress: null,
@@ -304,6 +306,7 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
         }
         this.state.content.photos.push(photoPlaceholder);
         let file = files[index];
+        this.setState({loadingImageFilename: file.name});
         PopupPanelAction.do(OPEN_POPUP, {content: this.getPopupContent()});
         const progressHandler = this.handleUploadProgress.bind(this, file.name);
         UploadImageAction.onChange(UPDATE_PROGRESS, progressHandler);
@@ -318,7 +321,12 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
                     let tempURL = window.URL.createObjectURL(files[index+1]);
                     this._uploadPhoto(index + 1, {id: null, image: tempURL}, files);
                 } else {
-                    this.setState({loadingImage: false, loadingImageAmount: 0, loadingImageLoaded: 0});
+                    this.setState({
+                        loadingImage: false,
+                        loadingImageAmount: 0,
+                        loadingImageLoaded: 0,
+                        loadingImageFilename: null
+                    });
                 }
             });
         }).catch((err) => {
@@ -330,7 +338,12 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
                     let tempURL = window.URL.createObjectURL(files[index+1]);
                     this._uploadPhoto(index + 1, {id: null, image: tempURL}, files);
                 } else {
-                    this.setState({loadingImage: false, loadingImageAmount: 0, loadingImageLoaded: 0});
+                    this.setState({
+                        loadingImage: false,
+                        loadingImageAmount: 0,
+                        loadingImageLoaded: 0,
+                        loadingImageFilename: null
+                    });
                 }
             });
         });
@@ -519,10 +532,10 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
                 <div style={{clear: "both"}}/>
                 {this.state.imageUploadProgress ?
                     <ProgressBar type={PROGRESS_BAR_TYPE.DETERMINATE}
-                                 value={this.state.imageUploadProgress.progress}
-                                 total={this.state.imageUploadProgress.total}
+                                 value={this.state.loadingImageLoaded + (this.state.imageUploadProgress.total ? this.state.imageUploadProgress.progress / this.state.imageUploadProgress.total : 0)}
+                                 total={this.state.loadingImageAmount}
                                  className={this.state.loadingImage ? 'active' : ''}
-                                 label={this.state.loadingImageAmount > 1 ? `${Captions.editor.loading_images} (${this.state.loadingImageLoaded} из ${this.state.loadingImageAmount})` : Captions.editor.loading_image}/>
+                                 label={`${Captions.editor.loading_image} (${this.state.loadingImageFilename})`}/>
                         : null
                 }
                 <input id={"inputUpload" + this.props.content.id}

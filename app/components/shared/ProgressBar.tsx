@@ -50,13 +50,14 @@ export default class ProgressBar extends React.Component<IProgressBarProps, IPro
         let barStyle = {};
         let className = 'progress_bar';
         this.props.className && (className += ' ' + this.props.className);
+        let progress = 0;
         switch (this.props.type) {
             case PROGRESS_BAR_TYPE.INDETERMINATE:
                 className += ' indeterminate';
                 break;
             case PROGRESS_BAR_TYPE.DETERMINATE:
                 className += ' determinate';
-                let progress = this.props.total ? this.props.value * 100 / this.props.total : 0;
+                progress = this.props.total ? this.props.value * 100 / this.props.total : 0;
                 barStyle = {width: progress + '%'};
                 break;
         }
@@ -65,7 +66,7 @@ export default class ProgressBar extends React.Component<IProgressBarProps, IPro
             <div className={className}>
                 <div className="progress_bar__bar_container">
                     <div className="progress_bar__bar">
-                        <div className="progress_bar__item" style={barStyle}/>
+                        {progress ? <div className="progress_bar__item" style={barStyle}/> : null}
                     </div>
                     <CloseIcon className="progress_bar__cancel"/>
                 </div>
