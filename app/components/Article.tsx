@@ -345,7 +345,6 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
         if (!this.state.article || !this.state.article.advertisement) return;
         try {
             let bannerElements = document.getElementById("article" + this.state.article.id).getElementsByClassName('banner');
-            console.log(bannerElements)
             for (let i in bannerElements) {
                 let bannerElement = bannerElements[i] as HTMLDivElement;
                 for (let k in this.state.article.advertisement) {
@@ -667,12 +666,10 @@ class GalleryModal extends React.Component<IGalleryModalProps, IGalleryModalStat
     }
 
     handleSwipeRight() {
-        console.log('SWIPE RIGHT');
         this.prevPhoto();
     }
 
     handleSwipeLeft() {
-        console.log('SWIPE LEFT');
         this.nextPhoto();
     }
 

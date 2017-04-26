@@ -76,7 +76,6 @@ export default class BaseContentBlock extends React.Component<IBaseContnentBlock
     handleActivate() {
         let store: any = ContentBlockAction.getStore();
         if ((store.id == this.props.id) !== this.state.isActive) {
-            console.log('ACTIVE', store.id, this.props.id, this.state.isActive)
             this.setState({isActive: store.id == this.props.id}, () => {
                 if (this.state.isActive && this.props.onActive) {
                     this.props.onActive();

@@ -79,7 +79,6 @@ export default class BlockHandlerButton extends React.Component<IContentButtonPr
                 return {
                     icon: <SwapIcon/>,
                     onClick: () => {
-                        console.log('SWAP BLOCKS');
                         ContentAction.do(
                             SWAP_CONTENT_BLCK,
                             {position: this.props.blockPosition}
@@ -90,7 +89,6 @@ export default class BlockHandlerButton extends React.Component<IContentButtonPr
                 return {
                     icon: <TextIcon/>,
                     onClick: () => {
-                        console.log('ADD TEXT');
                         let data= {
                             contentBlock: {
                                 type: BlockContentTypes.TEXT,
@@ -106,7 +104,6 @@ export default class BlockHandlerButton extends React.Component<IContentButtonPr
                 return {
                     icon: <HeaderIcon/>,
                     onClick: () => {
-                        console.log('ADD HEADER');
                         let data= {
                             contentBlock: {
                                 type: BlockContentTypes.HEADER,
@@ -123,7 +120,6 @@ export default class BlockHandlerButton extends React.Component<IContentButtonPr
                 return {
                     icon: <LeadIcon/>,
                     onClick: () => {
-                        console.log('ADD LEAD');
                         let data= {
                             contentBlock: {
                                 type: BlockContentTypes.LEAD,
@@ -139,7 +135,6 @@ export default class BlockHandlerButton extends React.Component<IContentButtonPr
                 return {
                     icon: <VideoIcon/>,
                     onClick: () => {
-                        console.log('ADD VIDEO');
                         let content = {
                             type: BlockContentTypes.VIDEO,
                             value: "",
@@ -169,7 +164,6 @@ export default class BlockHandlerButton extends React.Component<IContentButtonPr
                 return {
                     icon: <PhotoIcon/>,
                     onClick: () => {
-                        console.log('ADD PHOTO');
                         let data: IContentData = {
                             type: BlockContentTypes.PHOTO,
                             photos: []
@@ -181,7 +175,6 @@ export default class BlockHandlerButton extends React.Component<IContentButtonPr
                 return {
                     icon: <AudioIcon/>,
                     onClick: () => {
-                        console.log('ADD AUDIO');
                         let content = {
                             type: BlockContentTypes.AUDIO,
                             value: "",
@@ -211,7 +204,6 @@ export default class BlockHandlerButton extends React.Component<IContentButtonPr
                 return {
                     icon: <QuoteIcon/>,
                     onClick: () => {
-                        console.log('ADD QUOTE');
                         let data: {contentBlock: IContentData, position: number} = {
                             contentBlock: {
                                 type: BlockContentTypes.QUOTE,
@@ -228,7 +220,6 @@ export default class BlockHandlerButton extends React.Component<IContentButtonPr
                 return {
                     icon: <ColumnsIcon/>,
                     onClick: () => {
-                        console.log('ADD COLUMNS');
                         let data: {contentBlock: IContentData, position: number} = {
                             contentBlock: {
                                 type: BlockContentTypes.COLUMNS,
@@ -260,7 +251,6 @@ export default class BlockHandlerButton extends React.Component<IContentButtonPr
                 return {
                     icon: <ListIcon/>,
                     onClick: () => {
-                        console.log('ADD LIST');
                         let data= {
                             contentBlock: {
                                 type: BlockContentTypes.LIST,
@@ -277,7 +267,6 @@ export default class BlockHandlerButton extends React.Component<IContentButtonPr
                 return {
                     icon: <DialogIcon/>,
                     onClick: () => {
-                        console.log('ADD DIALOG');
                         let questioner: IParticipant = {
                             id: 1,
                             avatar: null,
@@ -307,7 +296,6 @@ export default class BlockHandlerButton extends React.Component<IContentButtonPr
                 return {
                     icon: <PostIcon/>,
                     onClick: () => {
-                        console.log('ADD POST');
                         let content = {
                             type: BlockContentTypes.POST,
                             value: "",
