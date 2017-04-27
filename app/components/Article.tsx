@@ -297,7 +297,6 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
                    className="share_popup__item share_popup__whatsapp"><SocialIcon social="whatsapp"/></a>
                 <a href={"viber://forward?text=" + this.state.article.url}
                    className="share_popup__item share_popup__viber"><SocialIcon social="viber"/></a>
-                <span className="share_popup__item"><SocialIcon social="link"/></span>
                 <div className="share_popup__close" onClick={this.closeSharePopup.bind(this)}><CloseIcon/></div>
             </div>
         );
@@ -806,8 +805,6 @@ class ShareFloatingPanel extends React.Component<any, any> {
                    className="share_panel__share_btn"><SocialIcon social="facebook"/></a>
                 <a href={"https://twitter.com/home?status=" + this.props.articleUrl}
                    className="share_panel__share_btn"><SocialIcon social="twitter"/></a>
-                <a href={"https://telegram.me/share/url?url=" + this.props.articleUrl}
-                   className="share_panel__share_btn"><SocialIcon social="telegram"/></a>
                 <ShareLinkButton className="share_link_button share_panel__share_btn"
                                  shortUrl={this.props.articleUrl}/>
             </div>
