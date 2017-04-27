@@ -36,6 +36,9 @@ interface IManagementState {
     nameEdit?: boolean;
     descriptionEdit?: boolean;
     avatarUploading?: boolean;
+
+    nameSaveTimeout?: number;
+    descriptionSaveTimeout?: number;
 }
 
 class ProfileManagementClass extends React.Component<IManagementProps, IManagementState> {
@@ -64,11 +67,13 @@ class ProfileManagementClass extends React.Component<IManagementProps, IManageme
 
     setUser() {
         let user = UserAction.getStore().user ? JSON.parse(JSON.stringify(UserAction.getStore().user)) : null;
+        //let newName = user ? (user.first_name + ' ' + user.last_name) : '';
+        //newName = newName.trim();
         this.setState({
             user: user,
             error: UserAction.getStore().user ? null : <Error/>,
-            newName: user ? (user.first_name + ' ' + user.last_name) : '',
-            newDescription: user ? user.description : ''
+            //newName: user ? (user.first_name + (user.last_name ? (' ' + user.last_name) : '')) : '',
+            newDescription: (user && !this.state.newDescription) ? user.description : ''
         });
     }
 
@@ -88,23 +93,25 @@ class ProfileManagementClass extends React.Component<IManagementProps, IManageme
 
     formSubmit(type: string, e: any) {
         e.preventDefault();
-        this.saveUserData(type);
+        // this.saveUserData(type);
     }
 
     saveUserData(type: string) {
         let fd = new FormData();
         let stateData: any = {};
         if (type == 'name') {
-            stateData.nameEdit = false;
-
+            //stateData.nameEdit = false;
             if (!this.state.newName) return;
             let userNameArr = this.state.newName.split(' ');
+            if (!userNameArr[0]) {
+                return;
+            }
             fd.append('first_name', userNameArr[0]);
 
             fd.append('last_name', userNameArr.length > 1 ? userNameArr.slice(1).join(' ') : '');
         }
         else if (type == 'description') {
-            stateData.descriptionEdit = false;
+            // stateData.descriptionEdit = false;
             fd.append('description', this.state.newDescription);
         }
         UserAction.doAsync(UPDATE_USER, fd).then(() => {
@@ -143,7 +150,12 @@ class ProfileManagementClass extends React.Component<IManagementProps, IManageme
     textEdit(type: string, e: any) {
         let val: string = e.target.value;
         if (type == 'name' ) {
-            this.setState({newName: val});
+            this.state.nameSaveTimeout && window.clearTimeout(this.state.nameSaveTimeout);
+            this.setState({newName: val}, () => {
+                this.state.nameSaveTimeout = window.setTimeout(() => {
+                    this.saveUserData('name');
+                }, 500);
+            });
         }
         else if (type == 'description') {
             this.setState({newDescription: val});
@@ -155,13 +167,18 @@ class ProfileManagementClass extends React.Component<IManagementProps, IManageme
     }
 
     contentEdit(content: string, contentText: string ) {
-        this.setState({newDescription: contentText});
+        this.state.descriptionSaveTimeout && window.clearTimeout(this.state.descriptionSaveTimeout);
+        this.setState({newDescription: contentText}, () => {
+            this.state.descriptionSaveTimeout = window.setTimeout(() => {
+                this.saveUserData('description');
+            }, 500);
+        });
     }
 
     contentKeyDown(e: any) {
-        if (e.keyCode == 13) {
-            this.saveUserData('description');
-        }
+        // if (e.keyCode == 13) {
+        //     this.saveUserData('description');
+        // }
     }
 
     avatarSave(imageData: any) {
@@ -224,6 +241,8 @@ class ProfileManagementClass extends React.Component<IManagementProps, IManageme
     componentWillUnmount() {
         MediaQuerySerice.unbind(this.checkDesktop);
         UserAction.unbind([GET_ME, LOGIN, LOGOUT, SAVE_USER, UPDATE_USER, USER_REJECT], this.setUser);
+        this.state.nameSaveTimeout && window.clearTimeout(this.state.nameSaveTimeout);
+        this.state.descriptionSaveTimeout && window.clearTimeout(this.state.descriptionSaveTimeout);
     }
 
     render() {
@@ -276,7 +295,6 @@ class ProfileManagementClass extends React.Component<IManagementProps, IManageme
                             {
                                 this.state.nameEdit ? (
                                     <form onSubmit={this.formSubmit.bind(this, 'name')}>
-
                                         <input ref="inputName" type="text" value={this.state.newName}
                                                onBlur={this.toggleEdit.bind(this, 'name', false)}
                                                onChange={this.textEdit.bind(this, 'name') }/>
@@ -297,7 +315,6 @@ class ProfileManagementClass extends React.Component<IManagementProps, IManageme
                                 elementType="inline"
                                 placeholder="Введите описание"
                                 onKeyDown={this.contentKeyDown.bind(this)}
-                                forceUpdateContent={true}
                                 onChange={this.contentEdit.bind(this)}
                                 onBlur={this.toggleEdit.bind(this, 'description', false)}
                                 allowLineBreak={false}/>

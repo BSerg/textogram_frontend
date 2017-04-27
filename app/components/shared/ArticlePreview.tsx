@@ -217,7 +217,7 @@ class ArticlePreviewClass extends React.Component<IArticlePreviewPropsInterface,
                                             </Link>
 
                                         </div> : null,
-                                     <div className="article_preview__text" key="date">
+                                     <div className="article_preview__text article_preview__text_date" key="date">
 
                                          <Link to={this.props.item.is_draft ? ("/articles/" + this.props.item.id + "/edit/") :
                                             ("/articles/" + this.props.item.slug + "/")}>
@@ -226,7 +226,7 @@ class ArticlePreviewClass extends React.Component<IArticlePreviewPropsInterface,
                                      </div>
                                  ]
 
-                            : (<div className="article_preview__text" key="date">
+                            : (<div className="article_preview__text article_preview__text_date" key="date">
                                 <Link to={this.props.item.is_draft ? ("/articles/" + this.props.item.id + "/edit/") :
                                     ("/articles/" + this.props.item.slug + "/")}>
                                         {date}
@@ -276,7 +276,7 @@ class ArticlePreviewClass extends React.Component<IArticlePreviewPropsInterface,
                                         </Link>
                                      </div>,
 
-                                     <div className="article_preview__text" key="date">
+                                     <div className="article_preview__text article_preview__text_date" key="date">
 
                                          <Link to={this.props.item.is_draft ? ("/articles/" + this.props.item.id + "/edit/") :
                                             ("/articles/" + this.props.item.slug + "/")}>
@@ -291,7 +291,7 @@ class ArticlePreviewClass extends React.Component<IArticlePreviewPropsInterface,
 
                                  ]
 
-                            : (<div className="article_preview__text" key="date">
+                            : (<div className="article_preview__text article_preview__text_date" key="date">
 
                                     <Link to={this.props.item.is_draft ? ("/articles/" + this.props.item.id + "/edit/") :
                                         ("/articles/" + this.props.item.slug + "/")}>

@@ -80,16 +80,18 @@
     flex-grow: 1;
     overflow: hidden;
     text-overflow: ellipsis;
-    padding-right: $padding;
+    //padding-right: $padding;
 
   }
 
   form {
     flex-grow: 1;
+
   }
 
   .url, form {
     box-sizing: border-box;
+    margin-right: $margin;
   }
 
 
@@ -110,6 +112,11 @@
 
   .delete, .confirm {
     cursor: pointer;
+    width: 25px;
+    min-width: 25px;
+    height: 25px;
+    line-height: 25px;
+    text-align: center;
   }
 
   .delete {
@@ -127,8 +134,8 @@
   }
 
   .confirm {
-    position: absolute;
-    right: -10px;
+    //position: absolute;
+    //right: -10px;
 
     svg {
       width: 25px;
@@ -155,13 +162,22 @@
       width: 170px;
     }
 
+    .main {
+      flex-grow: 1;
+
+    }
+
   }
 
   .profile_management_social_link {
-    max-width: 250px;
+    max-width: 350px;
 
     &, input {
       font-size: 12px;
+    }
+
+    .url, form {
+      margin-right: 80px;
     }
   }
 }

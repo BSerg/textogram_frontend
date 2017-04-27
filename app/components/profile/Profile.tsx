@@ -228,9 +228,15 @@ class ProfileClass extends React.Component<IProfileProps, IProfileState> {
 
         if (!this.state.user) return null;
 
-        let sections: {name: string, caption: string}[] = (this.state.isSelf && !process.env.IS_LENTACH) ? [
-            {name: this.SECTION_FEED, caption: Captions.profile.menuSubscriptions},
-            {name: this.SECTION_ARTICLES, caption: Captions.profile.menuArticles}] : [];
+        let sections: {name: string, caption: string}[] = (this.state.isSelf && !process.env.IS_LENTACH) ?
+            [
+                {name: this.SECTION_FEED, caption: Captions.profile.menuSubscriptions},
+                {name: this.SECTION_ARTICLES, caption: Captions.profile.menuArticles}]
+            : [];
+
+        if (this.state.isSelf && process.env.IS_LENTACH) {
+            sections = [{name: this.SECTION_ARTICLES, caption: 'Тексты'}]
+        }
 
         return (
 
