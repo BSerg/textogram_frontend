@@ -805,8 +805,6 @@ class ShareFloatingPanel extends React.Component<any, any> {
                    className="share_panel__share_btn"><SocialIcon social="facebook"/></a>
                 <a href={"https://twitter.com/home?status=" + this.props.articleUrl}
                    className="share_panel__share_btn"><SocialIcon social="twitter"/></a>
-                <a href={"https://telegram.me/share/url?url=" + this.props.articleUrl}
-                   className="share_panel__share_btn"><SocialIcon social="telegram"/></a>
                 <ShareLinkButton className="share_link_button share_panel__share_btn"
                                  shortUrl={this.props.articleUrl}/>
             </div>
