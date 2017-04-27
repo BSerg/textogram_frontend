@@ -206,8 +206,41 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
         }
     }
 
-    openGalleryModal(currentPhotoIndex: number, photos: any[]) {
-        ModalAction.do(OPEN_MODAL, {content: <GalleryModal currentPhotoIndex={currentPhotoIndex} photos={photos}/>});
+    processAds() {
+        if (!this.state.article || !this.state.article.advertisement) return;
+        try {
+            let bannerElements = document.getElementById("article" + this.state.article.id).getElementsByClassName('banner');
+            for (let i in bannerElements) {
+                let bannerElement = bannerElements[i] as HTMLDivElement;
+                for (let k in this.state.article.advertisement) {
+                    if (bannerElement.classList.contains(k)) {
+                        let ads = [];
+                        for (let a in this.state.article.advertisement[k]) {
+                            if (this.state.article.advertisement[k][a].is_mobile == !this.state.isDesktop) {
+                                ads.push(this.state.article.advertisement[k][a]);
+                            }
+                        }
+                        if (ads.length) {
+                            bannerElement.classList.add('active');
+                            bannerElement.innerHTML = ads[Math.floor(Math.random()*ads.length)].code;
+                            try {
+                                let script = bannerElement.getElementsByTagName('script')[0];
+                                if (script) {
+                                    window.setTimeout(() => {
+                                        let f = new Function(script.innerText);
+                                        f();
+                                    });
+                                }
+                            } catch (err) {
+                                console.log(err)
+                            }
+                        }
+                    }
+                }
+            }
+        } catch(err) {
+            console.log(err);
+        }
     }
 
     processPhoto() {
@@ -229,6 +262,19 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
                 }
             } catch (err) {}
         }
+    }
+
+    processes() {
+        this.processTitle();
+        this.processPhoto();
+        this.processEmbed();
+        this.processQuote();
+        this.processPhrase();
+        this.processAds();
+    }
+
+    openGalleryModal(currentPhotoIndex: number, photos: any[]) {
+        ModalAction.do(OPEN_MODAL, {content: <GalleryModal currentPhotoIndex={currentPhotoIndex} photos={photos}/>});
     }
 
     closeSharePopup() {
@@ -262,15 +308,6 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
         if (this.state.isDesktop != isDesktop) {
             this.setState({isDesktop: isDesktop});
         }
-    }
-
-    processes() {
-        this.processTitle();
-        this.processPhoto();
-        this.processEmbed();
-        this.processQuote();
-        this.processPhrase();
-        this.processAds();
     }
 
     loadArticle(data: IArticle) {
@@ -339,39 +376,6 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
                 }
             }
         });
-    }
-
-    processAds() {
-        if (!this.state.article || !this.state.article.advertisement) return;
-        try {
-            let bannerElements = document.getElementById("article" + this.state.article.id).getElementsByClassName('banner');
-            for (let i in bannerElements) {
-                let bannerElement = bannerElements[i] as HTMLDivElement;
-                for (let k in this.state.article.advertisement) {
-                    if (bannerElement.classList.contains(k)) {
-                        let ads = this.state.article.advertisement[k];
-                        if (ads.length) {
-                            bannerElement.classList.add('active');
-                            bannerElement.innerHTML = ads[Math.floor(Math.random()*ads.length)].code;
-                            try {
-                                let script = bannerElement.getElementsByTagName('script')[0];
-                                if (script) {
-                                    window.setTimeout(() => {
-                                        let f = new Function(script.innerText);
-                                        f();
-                                    });
-                                }
-                            } catch (err) {
-                                console.log(err)
-                            }
-                        }
-                    }
-                }
-            }
-        } catch(err) {
-
-        }
-
     }
 
     route(url: string) {
