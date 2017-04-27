@@ -297,7 +297,6 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
                    className="share_popup__item share_popup__whatsapp"><SocialIcon social="whatsapp"/></a>
                 <a href={"viber://forward?text=" + this.state.article.url}
                    className="share_popup__item share_popup__viber"><SocialIcon social="viber"/></a>
-                <span className="share_popup__item"><SocialIcon social="link"/></span>
                 <div className="share_popup__close" onClick={this.closeSharePopup.bind(this)}><CloseIcon/></div>
             </div>
         );
