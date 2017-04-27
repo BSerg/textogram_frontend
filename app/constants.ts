@@ -76,6 +76,7 @@ export namespace Captions {
     export const shared = {
         confirmLabel: 'OK',
         cancelLabel: 'Отмена',
+        linkCopied: 'Ссылка скопирована в буфер обмена'
     };
 
     export const profile = {

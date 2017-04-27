@@ -15,7 +15,7 @@ import {NotificationAction, SHOW_NOTIFICATION} from "../actions/shared/Notificat
 import Loading from "./shared/Loading";
 import "../styles/article.scss";
 import "../styles/banners.scss";
-import {BannerID} from "../constants";
+import {BannerID, Captions} from "../constants";
 import LeftSideButton from "./shared/LeftSideButton";
 
 const EditButton = require('babel!svg-react!../assets/images/edit.svg?name=EditButton');
@@ -530,32 +530,36 @@ class ShareLinkButton extends React.Component<{shortUrl: string, className?: str
 
     process() {
         this.setState({process: true}, () => {
-            this.copyToClipboard();
-            window.setTimeout(() => {
-                this.setState({process: false});
-            }, 1000);
+            if (this.copyToClipboard()) {
+                window.setTimeout(() => {
+                    this.setState({process: false});
+                }, 1000);
+            }
+
         });
 
     }
 
     copyToClipboard(e?: Event) {
-        let input = this.refs.element.getElementsByTagName('input')[0];
+        let copied = false, input = this.refs.element.getElementsByTagName('input')[0];
         input.focus();
         document.execCommand("selectall",null,false);
         try {
-            let copied = document.execCommand('copy');
+            copied = document.execCommand('copy');
             if (copied) {
-                NotificationAction.do(SHOW_NOTIFICATION, {content: 'Ссылка скопирована в буфер обмена'});
+                // NotificationAction.do(SHOW_NOTIFICATION, {content: 'Ссылка скопирована в буфер обмена'});
                 this.setState({copied: true});
             }
         }
         catch (error) {
-            NotificationAction.do(SHOW_NOTIFICATION, {content: 'Невозможно скопировать ссылку в буфер обмена'});
+            // NotificationAction.do(SHOW_NOTIFICATION, {content: 'Невозможно скопировать ссылку в буфер обмена'});
         }
+
+        return copied;
     };
 
     handleBlur() {
-        this.setState({process: false, copied: false});
+        this.setState({process: false});
     }
 
     render() {
@@ -571,7 +575,7 @@ class ShareLinkButton extends React.Component<{shortUrl: string, className?: str
                                readOnly={true}
                                onBlur={this.handleBlur.bind(this)}/>
                         {this.state.copied ?
-                            <div className="__popup_link__copy"><ConfirmButton/></div> : null
+                            <div className="__popup_link__copy">{Captions.shared.linkCopied}</div> : null
                         }
                     </div> : null
                 }
