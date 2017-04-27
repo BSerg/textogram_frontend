@@ -291,13 +291,16 @@ class ArticlePreviewClass extends React.Component<IArticlePreviewPropsInterface,
 
                                  ]
 
-                            : (<div className="article_preview__text article_preview__text_date" key="date">
+                            : [
+                                <div className="article_preview__text article_preview__text_date" key="date">
 
                                     <Link to={this.props.item.is_draft ? ("/articles/" + this.props.item.id + "/edit/") :
                                         ("/articles/" + this.props.item.slug + "/")}>
                                          {date}
                                     </Link>
-                                 </div>)
+                                </div>,
+                                <div className="filler" key="filler"></div>,
+                                <ControlMenu item={this.props.item} deleteCallback={this.deleteArticle.bind(this)} key="control" />]
                         }
 
                     </div>
