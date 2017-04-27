@@ -172,12 +172,13 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
         let store: any = ContentAction.getStore();
         let isValid = this.validateContent(store.content, Validation.ROOT);
         if (this.state.newArticle) {
-            this.createArticle(Object.assign(this.state.article, {content: store.content})).then((article: any) => {
-                this.state.article = article;
-                this.state.autoSave = true;
-                this.state.newArticle = false;
-                // this.setState({article: article, autoSave: true, newArticle: false});
-            })
+            this.setState({newArticle: false}, () => {
+                this.createArticle(Object.assign(this.state.article, {content: store.content})).then((article: any) => {
+                    this.state.article = article;
+                    this.state.autoSave = true;
+                })
+            });
+
         } else {
             this.state.article.content = store.content;
             if (isValid != this.state.isValid) {
