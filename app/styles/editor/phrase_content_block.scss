@@ -33,5 +33,10 @@
     &.expand_top {
       padding-top: $padding * 1.5!important;
     }
+
+    .base_content_block__content {
+      width: 500px;
+      padding: 0 75px;
+    }
   }
 }
