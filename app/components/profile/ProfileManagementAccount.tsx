@@ -21,11 +21,14 @@ interface ISocialLink {
     url: string;
     is_auth?: boolean;
     is_hidden?: boolean;
+
 }
 
 interface  IProfileSocialLinkProps {
     item: ISocialLink;
     isAuth?: boolean;
+    isActive?: boolean;
+    setActiveCallback?: (social: string) => void
 }
 
 
@@ -56,7 +59,9 @@ class ProfileSocialLink extends React.Component<IProfileSocialLinkProps, IProfil
         this.saveUrl();
     }
 
-    saveUrl() {
+    saveUrl(e?: any) {
+        e && e.stopPropagation();
+        console.log('here');
         if (this.state.isLoading) {
             return;
         }
@@ -69,7 +74,7 @@ class ProfileSocialLink extends React.Component<IProfileSocialLinkProps, IProfil
                     UserAction.do(SAVE_USER, user);
                 });
             }).catch((error) => {
-                this.setState({isLoading: false, urlError: true, newUrl: ''});
+                this.setState({isLoading: false, urlError: true, newUrl: '', isActive: false});
             });
         });
     }
@@ -126,7 +131,9 @@ class ProfileSocialLink extends React.Component<IProfileSocialLinkProps, IProfil
     }
 
     setActive(active: boolean) {
-        this.setState({isActive: active, placeholder: active ? 'Вставьте ссылку' : this.getPlaceholder()});
+        this.props.setActiveCallback && this.props.setActiveCallback(this.state.item.social);
+
+        // this.setState({isActive: active, placeholder: active ? 'Вставьте ссылку' : this.getPlaceholder()});
     }
 
     getPlaceholder():string {
@@ -161,6 +168,10 @@ class ProfileSocialLink extends React.Component<IProfileSocialLinkProps, IProfil
         return placeholderValue || '';
     }
 
+    componentWillReceiveProps(nextProps: IProfileSocialLinkProps) {
+        this.setState({isActive: nextProps.isActive, placeholder: nextProps.isActive ? 'Вставьте ссылку' : this.getPlaceholder()});
+    }
+
     componentDidMount() {
         this.setState({item: this.props.item, newUrl: this.props.item.url, placeholder: this.getPlaceholder()});
     }
@@ -183,22 +194,15 @@ class ProfileSocialLink extends React.Component<IProfileSocialLinkProps, IProfil
                         </Link>
                     </div>,
 
-                        this.state.item.is_auth ?
-                            <div key="toggle" className="confirm" onClick={this.toggleHidden.bind(this)}>
-                                {
-                                    this.state.item.is_hidden ? (<VisibilityOffIcon />) : (<VisibilityIcon />)
-                                }
-                            </div>
-                            :
-
-                        <div key="delete" className="delete" onClick={this.deleteUrl.bind(this)}><CloseIcon /></div>,
+                        !this.state.item.is_auth ?
+                            <div key="delete" className="delete" onClick={this.deleteUrl.bind(this)}><CloseIcon /></div> : null,
                 ] : [
 
                     <form key="input" className="input" onSubmit={this.formSubmit.bind(this)}>
                         <input type="text" name="url" value={this.state.newUrl}
                                placeholder={this.state.placeholder}
                                onFocus={this.setActive.bind(this, true)}
-                               onBlur={this.setActive.bind(this, false)}
+
                                onChange={this.changeUrl.bind(this)} />
                     </form>,
                     this.state.isActive ? <div key="save" className="confirm" onClick={this.saveUrl.bind(this) }  ><ConfirmIcon /></div> : null
@@ -212,6 +216,7 @@ class ProfileSocialLink extends React.Component<IProfileSocialLinkProps, IProfil
 interface IAccountState {
     authAccount?: any;
     socialLinks?: ISocialLink[];
+    activeSocial?: string;
 }
 
 export default class ProfileManagementAccount extends React.Component<any, IAccountState> {
@@ -220,9 +225,12 @@ export default class ProfileManagementAccount extends React.Component<any, IAcco
 
     constructor() {
         super();
-        this.state = { authAccount: null, socialLinks: [] };
+        this.state = { authAccount: null, socialLinks: [], activeSocial: '' };
     }
 
+    setActiveSocialCallback(social: string) {
+        this.setState({activeSocial: social});
+    }
 
     setData() {
         if (!UserAction.getStore().user || !UserAction.getStore().user.social_links) {
@@ -283,7 +291,10 @@ export default class ProfileManagementAccount extends React.Component<any, IAcco
                 <div className="main">
                     {
                         this.state.socialLinks.map((socialLink: ISocialLink, index: number) => {
-                            return (<ProfileSocialLink key={socialLink.social} item={socialLink}/>)
+                            return (<ProfileSocialLink key={socialLink.social}
+                                                       item={socialLink}
+                                                       setActiveCallback={this.setActiveSocialCallback.bind(this)}
+                                                       isActive={socialLink.social == this.state.activeSocial}/>)
                         })
                     }
                 </div>
