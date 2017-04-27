@@ -27,7 +27,7 @@ export default class Base extends React.Component<any, any> {
             menuOpen: false,
         };
         this.handleMediaQuery = this.handleMediaQuery.bind(this);
-        this.handleNotifications = this.handleNotifications.bind(this);
+        this.handleUser = this.handleUser.bind(this);
         this.setMenuOpen = this.setMenuOpen.bind(this);
 
     }
@@ -45,7 +45,11 @@ export default class Base extends React.Component<any, any> {
             window.clearInterval(this.state.userNotificationsInterval);
             this.state.userNotificationsInterval = null;
         }
-        this.setState({authenticated: !!UserAction.getStore().user});
+    }
+
+    handleUser() {
+            this.setState({authenticated: !!UserAction.getStore().user});
+        this.handleNotifications();
     }
 
     setMenuOpen() {
@@ -59,13 +63,13 @@ export default class Base extends React.Component<any, any> {
     }
 
     componentDidMount() {
-        UserAction.onChange([GET_ME, LOGIN, LOGOUT], this.handleNotifications);
+        UserAction.onChange([GET_ME, LOGIN, LOGOUT], this.handleUser);
         MenuAction.onChange(TOGGLE, this.setMenuOpen);
         MediaQuerySerice.listen(this.handleMediaQuery);
     }
 
     componentWillUnmount() {
-        UserAction.unbind([GET_ME, LOGIN, LOGOUT], this.handleNotifications);
+        UserAction.unbind([GET_ME, LOGIN, LOGOUT], this.handleUser);
         MenuAction.unbind(TOGGLE, this.setMenuOpen);
         MediaQuerySerice.unbind(this.handleMediaQuery);
     }
