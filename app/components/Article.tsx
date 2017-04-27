@@ -356,7 +356,10 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
                             try {
                                 let script = bannerElement.getElementsByTagName('script')[0];
                                 if (script) {
-                                    eval(script.innerText);
+                                    window.setTimeout(() => {
+                                        let f = new Function(script.innerText);
+                                        f();
+                                    });
                                 }
                             } catch (err) {
                                 console.log(err)
@@ -534,9 +537,11 @@ class ShareLinkButton extends React.Component<{shortUrl: string, className?: str
         input.focus();
         document.execCommand("selectall",null,false);
         try {
-            document.execCommand('copy');
-            NotificationAction.do(SHOW_NOTIFICATION, {content: 'Ссылка скопирована в буфер обмена'});
-            this.setState({copied: true});
+            let copied = document.execCommand('copy');
+            if (copied) {
+                NotificationAction.do(SHOW_NOTIFICATION, {content: 'Ссылка скопирована в буфер обмена'});
+                this.setState({copied: true});
+            }
         }
         catch (error) {
             NotificationAction.do(SHOW_NOTIFICATION, {content: 'Невозможно скопировать ссылку в буфер обмена'});
