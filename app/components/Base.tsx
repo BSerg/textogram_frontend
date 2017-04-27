@@ -33,7 +33,8 @@ export default class Base extends React.Component<any, any> {
     }
 
     handleNotifications() {
-        // if (!UserAction.getStore().user || this.intervalId != null) return;
+        if (process.env.IS_LENTACH) return;
+
         if (UserAction.getStore().user || !this.state.userNotificationsInterval) {
             UserNotificationAction.do(CHECK_NOTIFICATIONS, null);
             this.state.userNotificationsInterval = window.setInterval(() => {
@@ -50,10 +51,6 @@ export default class Base extends React.Component<any, any> {
     setMenuOpen() {
         this.setState({ menuOpen: MenuAction.getStore().open });
     }
-
-    // stopNotifications() {
-    //
-    // }
 
     handleMediaQuery(isDesktop: boolean) {
         if (isDesktop != this.state.isDesktop) {
