@@ -778,7 +778,7 @@ class ShareFloatingPanel extends React.Component<any, any> {
     }
 
     handleScroll() {
-        let visible = window.pageYOffset >= 360;
+        let visible = window.pageYOffset >= 100;
         if (this.state.visible != visible) {
             this.setState({visible: visible});
         }

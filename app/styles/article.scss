@@ -994,7 +994,7 @@ $block_margin_desktop: 25px;
 .share_panel {
   @include transition(500ms);
   position: fixed;
-  top: 100px;
+  bottom: 50px;
   left: 30px;
   display: flex;
   flex-direction: column;
@@ -1003,24 +1003,25 @@ $block_margin_desktop: 25px;
 
   &:not(.visible) {
     opacity: 0;
-    top: 30vh;
+    bottom: 0;
   }
 
   a, .share_panel__share_btn {
-    @include border_radius(30px);
+    @include border_radius(35px);
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 30px;
-    height: 30px;
-    background-color: $color;
-    margin-bottom: 20px;
+    width: 35px;
+    height: 35px;
+    background-color: white;
+    border: 1px solid $color;
+    margin-bottom: 10px;
     cursor: pointer;
 
     svg {
-      width: 19px;
-      heigth: 19px;
-      fill: white;
+      width: 22px;
+      heigth: 22px;
+      fill: $color;
     }
   }
 }
@@ -1031,24 +1032,39 @@ $block_margin_desktop: 25px;
 
   .__popup_link {
     @include no_select();
+    @include border_radius(35px);
     display: flex;
-    flex-direction: column;
-    align-items: flex-start;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
     position: absolute;
-    top: 0;
-    left: 50px;
-    height: 100%;
+    left: -1px;
+    top: -1px;
+    width: 200px;
+    height: 35px;
+    border: 1px solid $color;
+    padding-left: 35px;
 
     input {
+      width: 180px;
       font-family: $family_open_sans;
       font-size: 10px;
       letter-spacing: 1px;
+      border: none;
+      outline: none;
+      text-align: center;
     }
 
     .__popup_link__copy {
       @include no_select();
-      width: 30px;
-      height: 30px;
+      position: absolute;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      bottom: -35px;
+      left: 0;
+      width: 235px;
+      height: 35px;
       font-family: $family_open_sans;
       font-size: 10px;
       letter-spacing: 1px;
@@ -1060,6 +1076,10 @@ $block_margin_desktop: 25px;
         height: 30px;
       }
     }
+  }
+
+  &.process {
+    border: 1px solid transparent;
   }
 }
 
