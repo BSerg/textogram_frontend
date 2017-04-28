@@ -23,7 +23,7 @@ import {
     MOVE_UP_CONTENT_BLCK,
     MOVE_DOWN_CONTENT_BLCK,
     SOFT_DELETE_CONTENT_BLCK,
-    RESTORE_CONTENT_BLCK, UPDATE_THEME_CONTENT
+    RESTORE_CONTENT_BLCK, UPDATE_THEME_CONTENT, SAVING_PROCESS
 } from "../actions/editor/ContentAction";
 import {Captions, BlockContentTypes, ArticleStatuses, Validation} from "../constants";
 import {ModalAction, OPEN_MODAL} from "../actions/shared/ModalAction";
@@ -89,11 +89,13 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
             autoSave: true,
             showLastBlockHandler: true,
             inlineBlock: null,
-            isDesktop: MediaQuerySerice.getIsDesktop()
+            isDesktop: MediaQuerySerice.getIsDesktop(),
+            isSavingArticle: ContentAction.getStore().savingProcess
         };
         this.resetContent = this.resetContent.bind(this);
         this.updateContent = this.updateContent.bind(this);
         this.forceUpdateContent = this.updateContent.bind(this, true);
+        this.handleSavingProcess = this.handleSavingProcess.bind(this);
         this.handleActiveBlock = this.handleActiveBlock.bind(this);
         this.handleOpenInlineBlock = this.handleOpenInlineBlock.bind(this);
         this.handleCloseInlineBlock = this.handleCloseInlineBlock.bind(this);
@@ -210,6 +212,8 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
     }
 
     prePublish() {
+        if (!this.state.isValid || this.state.isSavingArticle) return;
+
         if (this.state.isDesktop) {
             if (confirm('Опубликовать материал?')) {
                 this.publish();
@@ -227,6 +231,14 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
                 NotificationAction.do(SHOW_NOTIFICATION, {content: 'Поздравляем, ваш материал опубликован.'});
                 this.route(`/articles/${this.state.article.slug}`);
             });
+        });
+    }
+
+    preview() {
+        if (!this.state.isValid || this.state.isSavingArticle) return;
+
+        this.resetContent(true).then((data: any) => {
+            this.route(`/articles/${this.state.article.id}/preview`);
         });
     }
 
@@ -272,6 +284,13 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
     handleMediaQuery(isDesktop: boolean) {
         if (isDesktop != this.state.isDesktop) {
             this.setState({isDesktop: isDesktop});
+        }
+    }
+
+    handleSavingProcess() {
+        let isSavingProcess = ContentAction.getStore().savingProcess;
+        if (isSavingProcess != this.state.isSavingArticle) {
+            this.setState({isSavingArticle: isSavingProcess});
         }
     }
 
@@ -339,6 +358,7 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
             ],
             this.forceUpdateContent
         );
+        ContentAction.onChange(SAVING_PROCESS, this.handleSavingProcess);
         ContentBlockAction.onChange([ACTIVATE_CONTENT_BLOCK, DEACTIVATE_CONTENT_BLOCK], this.handleActiveBlock);
         InlineBlockAction.onChange(OPEN_INLINE_BLOCK, this.handleOpenInlineBlock);
         InlineBlockAction.onChange(CLOSE_INLINE_BLOCK, this.handleCloseInlineBlock);
@@ -373,6 +393,7 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
             ],
             this.forceUpdateContent
         );
+        ContentAction.unbind(SAVING_PROCESS, this.handleSavingProcess);
         ContentBlockAction.unbind([ACTIVATE_CONTENT_BLOCK, DEACTIVATE_CONTENT_BLOCK], this.handleActiveBlock);
         PopupPanelAction.do(CLOSE_POPUP, null);
         InlineBlockAction.unbind(OPEN_INLINE_BLOCK, this.handleOpenInlineBlock);
@@ -514,19 +535,19 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
                             // BUTTONS DESKTOP
                             (this.state.isDesktop && this.state.article.id && this.state.article.status == ArticleStatuses.DRAFT ?
                                 <div key="articleButtons" className="article_buttons">
-                                    <div className={"article_buttons__button"  + (!this.state.isValid ? ' disabled': '')}
-                                         onClick={this.state.isValid && this.prePublish.bind(this)}>
+                                    <div className={"article_buttons__button"  + (!this.state.isValid || this.state.isSavingArticle ? ' disabled': '')}
+                                         onClick={this.prePublish.bind(this)}>
                                         <PublishButton/> Опубликовать
                                     </div>
-                                    <div className={"article_buttons__button"  + (!this.state.isValid ? ' disabled': '')}
-                                         onClick={this.route.bind(this, `/articles/${this.state.article.id}/preview`)}>
+                                    <div className={"article_buttons__button"  + (!this.state.isValid || this.state.isSavingArticle ? ' disabled': '')}
+                                         onClick={this.preview.bind(this)}>
                                         <PreviewButton/> Предпросмотр
                                     </div>
                                 </div> : null),
                             (this.state.isDesktop && this.state.article.id && this.state.article.status == ArticleStatuses.PUBLISHED ?
-                                <div key="articleButtons" className={"article_buttons" + (!this.state.isValid ? ' disabled': '')}>
-                                    <div className={"article_buttons__button"  + (!this.state.isValid ? ' disabled': '')}
-                                         onClick={this.state.isValid && this.updateArticle.bind(this, true)}>
+                                <div key="articleButtons" className={"article_buttons" + (!this.state.isValid || this.state.isSavingArticle ? ' disabled': '')}>
+                                    <div className={"article_buttons__button"  + (!this.state.isValid || this.state.isSavingArticle ? ' disabled': '')}
+                                         onClick={this.state.isValid && !this.state.isSavingArticle && this.updateArticle.bind(this, true)}>
                                         <PublishButton/> Обновить публикацию
                                     </div>
                                 </div> : null),
@@ -535,14 +556,14 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
                                 [
                                     (this.state.article.id && this.state.article.status == ArticleStatuses.DRAFT ?
                                         <div key="publish_button"
-                                             className={"editor__publish" + (!this.state.isValid ? ' disabled': '')}
-                                             onClick={this.state.isValid && this.prePublish.bind(this)}>
+                                             className={"editor__publish" + (!this.state.isValid || this.state.isSavingArticle ? ' disabled': '')}
+                                             onClick={this.prePublish.bind(this)}>
                                             Опубликовать
                                         </div> : null),
                                     (this.state.article.id && this.state.article.status == ArticleStatuses.PUBLISHED ?
                                         <div key="update_publish_button"
-                                             className={"editor__publish" + (!this.state.isValid ? ' disabled': '')}
-                                             onClick={this.state.isValid && this.updateArticle.bind(this, true)}>
+                                             className={"editor__publish" + (!this.state.isValid || this.state.isSavingArticle ? ' disabled': '')}
+                                             onClick={this.state.isValid && !this.state.isSavingArticle && this.updateArticle.bind(this, true)}>
                                             Обновить публикацию
                                         </div> : null)
                                 ] : null
@@ -555,13 +576,13 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
                                             <LeftSideButton key="toolPublish"
                                                             tooltip="Опубликовать"
                                                             onClick={this.prePublish.bind(this)}
-                                                            disabled={!this.state.isValid}>
+                                                            disabled={!this.state.isValid || this.state.isSavingArticle}>
                                                 <PublishButton/>
                                             </LeftSideButton>,
                                             <LeftSideButton key="toolPreview"
                                                             tooltip="Предпросмотр"
-                                                            onClick={this.route.bind(this, `/articles/${this.state.article.id}/preview`)}
-                                                            disabled={!this.state.isValid}>
+                                                            onClick={this.preview.bind(this)}
+                                                            disabled={!this.state.isValid || this.state.isSavingArticle}>
                                                 <PreviewButton/>
                                             </LeftSideButton>
                                         ] : null
@@ -569,8 +590,8 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
                                     {this.state.article.status == ArticleStatuses.PUBLISHED ?
                                         <LeftSideButton key="toolUpdatePublish"
                                                         tooltip="Обновить публикацию"
-                                                        onClick={this.state.isValid && this.updateArticle.bind(this, true)}
-                                                        disabled={!this.state.isValid}>
+                                                        onClick={this.state.isValid && !this.state.isSavingArticle && this.updateArticle.bind(this, true)}
+                                                        disabled={!this.state.isValid || this.state.isSavingArticle}>
                                             <PublishButton/>
                                         </LeftSideButton> : null
                                     }

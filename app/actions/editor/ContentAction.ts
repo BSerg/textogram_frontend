@@ -19,6 +19,7 @@ export const UPDATE_TITLE_CONTENT = 'update_title_content';
 export const UPDATE_THEME_CONTENT = 'update_theme_content';
 export const UPDATE_COVER_CONTENT = 'update_cover_content';
 export const UPDATE_AUTO_SAVE = 'update_auto_save';
+export const SAVING_PROCESS = 'saving_process';
 
 export interface IContentData {
     id?: string
@@ -41,22 +42,34 @@ class ContentActionClass extends Action {
             articleId: null,
             autoSave: false,
             content: {title: null, cover: null, blocks: [], inverted_theme: true},
-            contentBlockMap: {}
+            contentBlockMap: {},
+            savingProcess: false
         });
     }
 
     saveContent(store: any, data: {articleId: number, autoSave?: boolean}) {
         window.clearTimeout(this.saveContentDelay);
+        if (data.autoSave) {
+            window.setTimeout(() => {
+                ContentAction.do(SAVING_PROCESS, true);
+            });
+        }
         return new Promise((resolve, reject) => {
             if (data.autoSave) {
                 this.saveContentDelay = window.setTimeout(() => {
                     api.patch(`/articles/editor/${data.articleId}/`, {content: store.content}).then((response: any) => {
                         console.log(response);
                         resolve(response.data.content);
+                        window.setTimeout(() => {
+                            ContentAction.do(SAVING_PROCESS, false);
+                        });
                     }).catch((err: any) => {
                         console.log(err);
                         reject(err);
                         NotificationAction.do(SHOW_NOTIFICATION, {content: Captions.editor.saving_error, type: 'error'})
+                        window.setTimeout(() => {
+                            ContentAction.do(SAVING_PROCESS, false);
+                        });
                     });
                 }, 1000);
             } else {
@@ -67,6 +80,10 @@ class ContentActionClass extends Action {
 }
 
 export const ContentAction = new ContentActionClass();
+
+ContentAction.register(SAVING_PROCESS, (store, isSavingProcess: boolean) => {
+   store.savingProcess = isSavingProcess;
+});
 
 ContentAction.register(UPDATE_AUTO_SAVE, (store, autoSave: boolean) => {
    store.autoSave = autoSave;

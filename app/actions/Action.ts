@@ -31,7 +31,7 @@ export default class Action extends events.EventEmitter {
         return 'uid' + Math.random().toString().substr(2, 7);
     }
 
-    private getUpdateEventName(action: string): string {
+    getUpdateEventName(action: string): string {
         return action + '__change';
     }
 
