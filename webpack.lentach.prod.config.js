@@ -50,7 +50,7 @@ module.exports = {
         new DefinePlugin({
             "process.env": {
                 NODE_ENV: JSON.stringify("prod"),
-                API_URL: JSON.stringify("http://prod.lentachmedia.tk/api/v1"),
+                API_URL: JSON.stringify("http://lentach.media/api/v1"),
                 VK_APP: JSON.stringify("5951821"),
                 FB_APP: JSON.stringify("176821492828506"),
                 // PROD for lentach.media
