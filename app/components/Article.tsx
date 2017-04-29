@@ -208,14 +208,14 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
 
     processAds() {
         if (!this.state.article || !this.state.article.advertisement) return;
-        try {
+        // try {
             let bannerElements = document.getElementById("article" + this.state.article.id).getElementsByClassName('banner');
-            for (let i in bannerElements) {
+            for (let i = 0; i < bannerElements.length; i++) {
                 let bannerElement = bannerElements[i] as HTMLDivElement;
                 for (let k in this.state.article.advertisement) {
                     if (bannerElement.classList.contains(k)) {
                         let ads = [];
-                        for (let a in this.state.article.advertisement[k]) {
+                        for (let a = 0; a < this.state.article.advertisement[k].length; a++) {
                             if (this.state.article.advertisement[k][a].is_mobile == !this.state.isDesktop) {
                                 ads.push(this.state.article.advertisement[k][a]);
                             }
@@ -238,9 +238,9 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
                     }
                 }
             }
-        } catch(err) {
-            console.log(err);
-        }
+        // } catch(err) {
+        //     console.log(err);
+        // }
     }
 
     processPhoto() {
