@@ -19,6 +19,7 @@ import 'core-js/shim';
 import {NewArticleEditor} from "./components/Editor";
 import {ArticlePreview} from "./components/Article";
 import LoginPage from "./components/LoginPage";
+import {Error404} from "./components/Error";
 
 
 class App extends React.Component<any, any> {
@@ -95,7 +96,7 @@ class App extends React.Component<any, any> {
                     <Route path="url_shorten" component={UrlShortener}/>
                     <Route path="auth/twitter/" component={TwitterAuth}/>
                 </Route>
-                <Route path="*" component={() => {return <Error code={404} msg="Page not found"/>}}/>
+                <Route path="*" component={() => {return <Error404/>}}/>
             </Router>
         )
     }

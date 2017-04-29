@@ -48,6 +48,9 @@ import DeletedContentBlockInline from "./editor/DeletedContentBlockInline";
 import LeftSideButton from "./shared/LeftSideButton";
 import "../styles/editor.scss";
 import "../styles/shared/left_tool_panel.scss";
+import {Error404} from "./Error";
+import {Error500} from "./Error";
+import {Error403} from "./Error";
 
 const PreviewButton = require('babel!svg-react!../assets/images/preview.svg?name=PreviewButton');
 const PublishButton = require('babel!svg-react!../assets/images/publish.svg?name=PublishButton');
@@ -306,11 +309,14 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
         }). catch((error) => {
             if (error.response) {
                 switch (error.response.status) {
+                    case 403:
+                        this.setState({error: <Error403/>});
+                        break;
                     case 404:
-                        this.setState({error: <Error code={404} msg="Page not found"/>});
+                        this.setState({error: <Error404/>});
                         break;
                     case 500:
-                        this.setState({error: <Error/>});
+                        this.setState({error: <Error500/>});
                         break;
                 }
             }
