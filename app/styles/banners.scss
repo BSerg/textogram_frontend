@@ -11,20 +11,20 @@
     display: flex;
   }
 
-  &:before {
-    position: absolute;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    content: 'Реклама';
-    color: white;
-    background-color: $color3;
-    z-index: -1;
-  }
+  //&:before {
+  //  position: absolute;
+  //  display: flex;
+  //  align-items: center;
+  //  justify-content: center;
+  //  top: 0;
+  //  left: 0;
+  //  right: 0;
+  //  bottom: 0;
+  //  content: 'Реклама';
+  //  color: white;
+  //  background-color: $color3;
+  //  z-index: -1;
+  //}
 
   &.banner__top {
     width: 100%;
@@ -55,6 +55,9 @@
   }
 
   &.banner__right_side {
+    &.active {
+      display: none;
+    }
 
     @include regular_desktop {
       position: fixed;
@@ -63,6 +66,10 @@
       width: 300px;
       height: 600px;
       z-index: 5;
+
+      &.active {
+        display: flex!important;
+      }
     }
   }
 }

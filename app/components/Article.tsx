@@ -221,15 +221,18 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
                             }
                         }
                         if (ads.length) {
-                            bannerElement.classList.add('active');
+
                             bannerElement.innerHTML = ads[Math.floor(Math.random()*ads.length)].code;
                             try {
                                 let script = bannerElement.getElementsByTagName('script')[0];
                                 if (script) {
+                                    bannerElement.classList.add('active');
                                     window.setTimeout(() => {
                                         let f = new Function(script.innerText);
                                         f();
                                     });
+                                } else {
+                                    bannerElement.classList.add('active');
                                 }
                             } catch (err) {
                                 console.log(err)
