@@ -11,26 +11,28 @@ type ElementType = 'inline' | 'p' | 'div' | 'ul' | 'ol';
 type AlignContent = 'left' | 'center' | 'right';
 
 interface ContentEditableProps {
-    id?: number|string
-    content?: string
-    className?: string
-    editable?: boolean
-    disabled?: boolean
-    onChange?: (content: string, contentText: string) => any
-    onChangeDelay?: number
-    placeholder?: string
-    allowLineBreak?: boolean
-    elementType?: ElementType
-    alignContent?: AlignContent
-    focusOnMount?: boolean
-    onFocus?: () => any
-    onBlur?: () => any
-    onKeyDown?: (e: KeyboardEvent) => any
-    enableTextFormat?: boolean
-    disableTextFormatBold?: boolean
-    disableTextFormatItalic?: boolean
-    disableTextFormatURL?: boolean
-    forceUpdateContent?: boolean
+    id?: number|string;
+    content?: string;
+    className?: string;
+    editable?: boolean;
+    disabled?: boolean;
+    onChange?: (content: string, contentText: string) => any;
+    onChangeDelay?: number;
+    placeholder?: string;
+    allowLineBreak?: boolean;
+    elementType?: ElementType;
+    alignContent?: AlignContent;
+    focusOnMount?: boolean;
+    onFocus?: () => any;
+    onBlur?: () => any;
+    onKeyDown?: (e: KeyboardEvent) => any;
+    enableTextFormat?: boolean;
+    disableTextFormatBold?: boolean;
+    disableTextFormatItalic?: boolean;
+    disableTextFormatURL?: boolean;
+    forceUpdateContent?: boolean;
+    maxTextLength?: number;
+    onOverMaxTextLength?: () => any;
 }
 
 interface ISelection {
@@ -53,6 +55,7 @@ export default class ContentEditable extends React.Component<ContentEditableProp
     private selectionModifyingProcess: boolean;
     private selection: Selection;
     private range: Range;
+    private stopInput: boolean;
 
     refs: {
         [key: string]: (Element);
@@ -62,6 +65,7 @@ export default class ContentEditable extends React.Component<ContentEditableProp
         super(props);
         this.formatPopupId = null;
         this.selectionModifyingProcess = false;
+        this.stopInput = false;
         this.state = {
             content: '',
             contentText: '',
@@ -86,6 +90,7 @@ export default class ContentEditable extends React.Component<ContentEditableProp
         disableTextFormatBold: false,
         disableTextFormatItalic: false,
         disableTextFormatURL: false,
+        maxTextLength: 0
     };
     private getElementEmptyContentByType () {
         switch (this.props.elementType) {
@@ -125,6 +130,19 @@ export default class ContentEditable extends React.Component<ContentEditableProp
         sel.removeAllRanges();
         sel.addRange(range);
     }
+    setCursor(toStart: boolean = false) {
+        window.setTimeout(() => {
+            if (typeof window.getSelection != "undefined"
+                    && typeof document.createRange != "undefined") {
+                var range = document.createRange();
+                range.selectNodeContents(this.refs.editableElement);
+                range.collapse(toStart);
+                var sel = window.getSelection();
+                sel.removeAllRanges();
+                sel.addRange(range);
+            }
+        });
+    }
     cleanElement() {
         if (this.props.elementType != 'inline') {
             let elementsForExcluding = this.refs.editableElement.parentElement.querySelectorAll(
@@ -151,8 +169,21 @@ export default class ContentEditable extends React.Component<ContentEditableProp
             this.cleanElement();
         }
     }
-    handleInput (e?: Event) {
+    handleInput (e?: KeyboardEvent) {
+        if (this.stopInput && e.keyCode != 8) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
         clearTimeout(this.handleChangeDelayProcess);
+        if (this.props.elementType == 'inline' && this.props.maxTextLength
+                && this.refs.editableElement.innerText.length > this.props.maxTextLength) {
+            this.stopInput = true;
+            this.refs.editableElement.innerHTML = this.refs.editableElement.innerText.slice(0, this.props.maxTextLength);
+            this.setCursor(false);
+            this.props.onOverMaxTextLength && this.props.onOverMaxTextLength();
+        } else {
+            this.stopInput = false;
+        }
         this.setState(this.extractContent(), () => {
             this.updateEmptyState();
             if (this.props.onChange) {
@@ -186,6 +217,12 @@ export default class ContentEditable extends React.Component<ContentEditableProp
             e.stopPropagation();
         }
         this.props.onKeyDown && this.props.onKeyDown(e);
+    }
+    handleKeyPress(e: KeyboardEvent) {
+        if (this.stopInput) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
     }
     private restoreSelection() {
         if (this.state.selectionState) {
@@ -328,6 +365,7 @@ export default class ContentEditable extends React.Component<ContentEditableProp
                  onFocus={this.handleFocus.bind(this)}
                  onBlur={this.handleBlur.bind(this)}
                  onKeyDown={this.handleKeyDown.bind(this)}
+                 onKeyPress={this.handleKeyPress.bind(this)}
                  onSelect={this.state.isDesktop ? this.handleSelectDesktop.bind(this) : this.handleSelect.bind(this)}
                  dangerouslySetInnerHTML={{__html: this.props.content || this.getElementEmptyContentByType()}}>
             </div>

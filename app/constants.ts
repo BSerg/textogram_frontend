@@ -257,32 +257,39 @@ export namespace Validation {
     };
 
     export const TEXT = {
+        value: {isRequired: false}
         // value: {maxLength: 3000, message: `Рекомендуемая длина текста 3000 символов`}
     };
 
     export const HEADER = {
-        value: {maxLength: 100, message: `Текст подзаголовка не может превышать 150 знаков`}
+        value: {isRequired: false}
+        // value: {maxLength: 100, message: `Текст подзаголовка не может превышать 150 знаков`}
     };
 
     export const LEAD = {
+        value: {isRequired: false}
         // value: {maxLength: 400, message: `Рекомендуемая длина лида 400 символов`}
     };
 
     export const PHRASE = {
-        value: {maxLength: 250, message: `Фраза не может превышать 250 знаков`}
+        value: {isRequired: false}
+        // value: {maxLength: 250, message: `Фраза не может превышать 250 знаков`}
     };
 
     export const QUOTE = {
-        value: {maxLength: 1000, message: `Цитата не может превышать 1000 знаков`}
+        value: {isRequired: false}
+        // value: {maxLength: 1000, message: `Цитата не может превышать 1000 знаков`}
     };
 
     export const COLUMN = {
         image: {isRequired: false},
-        value: {maxLength: 1000, message: `Текст в Колонках не может превышать 1000 знаков`}
+        value: {isRequired: false}
+        // value: {maxLength: 1000, message: `Текст в Колонках не может превышать 1000 знаков`}
     };
 
     export const LIST = {
-        value: {maxLength: 3000, message: `Рекомендуемая длина текста списка 3000 символов`}
+        value: {isRequired: false}
+        // value: {maxLength: 3000, message: `Рекомендуемая длина текста списка 3000 символов`}
     };
 
     export const DIALOGUE = {
@@ -295,4 +302,4 @@ export const BannerID = {
     BANNER_CONTENT: 'banner__content',
     BANNER_RIGHT_SIDE: 'banner__right_side',
     BANNER_CONTENT_INLINE: 'banner__content_inline'
-}
+};

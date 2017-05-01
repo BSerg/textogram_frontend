@@ -46,9 +46,9 @@ export default class HeaderContentBlock extends React.Component<IHeaderContentBl
         console.log(content, contentText);
         this.state.content.value = contentText;
         let isValid = this.isValid(this.state.content);
-        if (!isValid) {
-            NotificationAction.do(SHOW_NOTIFICATION, {content: Validation.HEADER.value.message});
-        }
+        // if (!isValid) {
+        //     NotificationAction.do(SHOW_NOTIFICATION, {content: Validation.HEADER.value.message});
+        // }
         this.state.content.__meta = {is_valid: isValid};
         this.setState({content: this.state.content, isValid: isValid}, () => {
             ContentAction.do(UPDATE_CONTENT_BLCK, {contentBlock: this.state.content});

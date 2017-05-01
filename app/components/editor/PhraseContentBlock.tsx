@@ -60,7 +60,7 @@ export default class PhraseContentBlock extends React.Component<IPhraseContentBl
         this.state.content.value = contentText;
         let isValid = this.isValid(this.state.content);
         if (!isValid) {
-            NotificationAction.do(SHOW_NOTIFICATION, {content: Validation.PHRASE.value.message});
+            // NotificationAction.do(SHOW_NOTIFICATION, {content: Validation.PHRASE.value.message});
         }
         this.state.content.__meta = {is_valid: isValid};
         this.setState({

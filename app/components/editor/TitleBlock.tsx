@@ -144,6 +144,13 @@ export default class TitleBlock extends React.Component<TitleBlockPropsInterface
         });
     }
 
+    handleOverMaxTitleLength() {
+        NotificationAction.do(
+            SHOW_NOTIFICATION,
+            {content: Validation.ROOT.title.message}
+        );
+    }
+
     uploadCover(articleId: string|null) {
         var file = this.refs.fileInput.files[0];
         UploadImageAction.doAsync(UPLOAD_IMAGE, {articleId: articleId, image: file}).then((data: any) => {
@@ -280,6 +287,8 @@ export default class TitleBlock extends React.Component<TitleBlockPropsInterface
                                      focusOnMount={!this.state.title}
                                      onChange={this.handleTitle.bind(this)}
                                      onChangeDelay={0}
+                                     maxTextLength={Validation.ROOT.title.maxLength}
+                                     onOverMaxTextLength={this.handleOverMaxTitleLength.bind(this)}
                                      placeholder={Captions.editor.enter_title_ru}
                                      content={this.state.title}/>
                 </div>
