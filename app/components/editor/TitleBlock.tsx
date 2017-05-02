@@ -166,7 +166,7 @@ export default class TitleBlock extends React.Component<TitleBlockPropsInterface
 
     handleCover() {
         this.setState({coverLoading: true});
-        if (!this.props.articleSlug) {
+        if (!ContentAction.getStore().articleId) {
             api.post('/articles/editor/', ContentAction.getStore().content).then((response: any) => {
                 ContentAction.do(RESET_CONTENT, {articleId: response.data.id, autoSave: false, content: response.data.content});
                 this.uploadCover(response.data.id);
@@ -174,7 +174,7 @@ export default class TitleBlock extends React.Component<TitleBlockPropsInterface
                 NotificationAction.do(SHOW_NOTIFICATION, {content: Captions.editor.saving_error, type: 'error'})
             });
         } else {
-            this.uploadCover(this.props.articleSlug);
+            this.uploadCover(ContentAction.getStore().articleId);
         }
     }
 
