@@ -58,7 +58,6 @@ class ContentActionClass extends Action {
             if (data.autoSave) {
                 this.saveContentDelay = window.setTimeout(() => {
                     api.patch(`/articles/editor/${data.articleId}/`, {content: store.content}).then((response: any) => {
-                        console.log(response);
                         resolve(response.data.content);
                         window.setTimeout(() => {
                             ContentAction.do(SAVING_PROCESS, false);

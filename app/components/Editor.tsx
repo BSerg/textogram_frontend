@@ -99,6 +99,7 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
         this.updateContent = this.updateContent.bind(this);
         this.forceUpdateContent = this.updateContent.bind(this, true);
         this.handleSavingProcess = this.handleSavingProcess.bind(this);
+        this.handleResetContent = this.handleResetContent.bind(this);
         this.handleActiveBlock = this.handleActiveBlock.bind(this);
         this.handleOpenInlineBlock = this.handleOpenInlineBlock.bind(this);
         this.handleCloseInlineBlock = this.handleCloseInlineBlock.bind(this);
@@ -297,6 +298,14 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
         }
     }
 
+    handleResetContent() {
+        this.state.article.id = this.state.article.id || ContentAction.getStore().articleId;
+        this.state.article.content = ContentAction.getStore().content;
+        if (this.state.article.id) {
+            this.state.newArticle = false;
+        }
+    }
+
     loadArticle(articleId: number) {
         api.get(`/articles/editor/${articleId}/`).then((response: any) => {
             this.setState({
@@ -364,6 +373,7 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
             ],
             this.forceUpdateContent
         );
+        ContentAction.onChange(RESET_CONTENT, this.handleResetContent);
         ContentAction.onChange(SAVING_PROCESS, this.handleSavingProcess);
         ContentBlockAction.onChange([ACTIVATE_CONTENT_BLOCK, DEACTIVATE_CONTENT_BLOCK], this.handleActiveBlock);
         InlineBlockAction.onChange(OPEN_INLINE_BLOCK, this.handleOpenInlineBlock);
@@ -399,6 +409,7 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
             ],
             this.forceUpdateContent
         );
+        ContentAction.unbind(RESET_CONTENT, this.handleResetContent);
         ContentAction.unbind(SAVING_PROCESS, this.handleSavingProcess);
         ContentBlockAction.unbind([ACTIVATE_CONTENT_BLOCK, DEACTIVATE_CONTENT_BLOCK], this.handleActiveBlock);
         PopupPanelAction.do(CLOSE_POPUP, null);

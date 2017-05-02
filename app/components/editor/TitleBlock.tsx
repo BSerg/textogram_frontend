@@ -166,7 +166,8 @@ export default class TitleBlock extends React.Component<TitleBlockPropsInterface
 
     handleCover() {
         this.setState({coverLoading: true});
-        if (!ContentAction.getStore().articleId) {
+        let articleId = ContentAction.getStore().articleId;
+        if (!articleId) {
             api.post('/articles/editor/', ContentAction.getStore().content).then((response: any) => {
                 ContentAction.do(RESET_CONTENT, {articleId: response.data.id, autoSave: false, content: response.data.content});
                 this.uploadCover(response.data.id);
@@ -174,26 +175,29 @@ export default class TitleBlock extends React.Component<TitleBlockPropsInterface
                 NotificationAction.do(SHOW_NOTIFICATION, {content: Captions.editor.saving_error, type: 'error'})
             });
         } else {
-            this.uploadCover(ContentAction.getStore().articleId);
+            this.uploadCover(articleId);
         }
     }
 
     deleteCover() {
+        let articleId = this.props.articleSlug || ContentAction.getStore().articleId;
         this.setState({cover: null, coverClipped: null}, () => {
-            ContentAction.do(UPDATE_COVER_CONTENT, {articleId: this.props.articleSlug, autoSave: this.props.autoSave, cover: null, coverClipped: null});
+            ContentAction.do(UPDATE_COVER_CONTENT,
+                {articleId: articleId, autoSave: this.props.autoSave, cover: null, coverClipped: null});
             this.drawCanvas();
         });
     }
 
     handleImageEditorChange(image: ICover, imageBase64: string) {
+        let articleId = this.props.articleSlug || ContentAction.getStore().articleId;
         this.setState({cover: image, }, () => {
             window.clearTimeout(this.coverClippedProcess);
             this.coverClippedProcess = window.setTimeout(() => {
-                UploadImageAction.doAsync(UPLOAD_IMAGE_BASE64,  {articleId: this.props.articleSlug, image: imageBase64}).then((data: any) => {
+                UploadImageAction.doAsync(UPLOAD_IMAGE_BASE64,  {articleId: articleId, image: imageBase64}).then((data: any) => {
                     let updateCoverContent = () => {
                         this.setState({coverClipped: data}, () => {
                             ContentAction.do(UPDATE_COVER_CONTENT, {
-                                articleId: this.props.articleSlug,
+                                articleId: articleId,
                                 autoSave: this.props.autoSave,
                                 cover: image,
                                 coverClipped: data
