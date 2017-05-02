@@ -253,7 +253,7 @@ export namespace Embed {
 export namespace Validation {
     // isRequired means not null or empty value
     export const ROOT = {
-        title: {isRequired: true, maxLength: 150, message: `Заголовок не может превышать 150 знаков`},
+        title: {isRequired: true, maxLength: 150, message: `Заголовок обязателен и не может превышать 150 знаков`},
     };
 
     export const TEXT = {

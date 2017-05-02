@@ -8,6 +8,7 @@ export const NotificationAction = new Action();
 
 
 NotificationAction.register(SHOW_NOTIFICATION, (store, data: {content: any, type: string}) => {
+    data.type = data.type || 'normal';
     Object.assign(store, data);
 });
 

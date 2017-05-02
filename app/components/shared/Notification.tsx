@@ -42,7 +42,7 @@ export default class Notification extends React.Component<INotificationProps, IN
         window.clearTimeout(this.closeTimeout);
         let store: any = NotificationAction.getStore();
         let content = store.content;
-        let type = store.type || this.state.type;
+        let type = store.type || 'normal';
         this.state.contentHistory.push(content);
         this.setState({
             opened: true,
@@ -50,7 +50,7 @@ export default class Notification extends React.Component<INotificationProps, IN
             contentHistory: this.state.contentHistory,
             type: type
         }, () => {
-            if (this.props.autoClose) {
+            if (this.props.autoClose && this.state.type != 'error') {
                 this.closeTimeout = window.setTimeout(() => {
                     this.handleClose();
                 }, this.props.autoCloseDelay)
@@ -78,7 +78,7 @@ export default class Notification extends React.Component<INotificationProps, IN
             className += ' opened';
         }
         if (this.state.type == 'error') {
-            className += ' error'
+            className += ' notification__error'
         }
         return (
             <div className={className}>

@@ -170,6 +170,8 @@ export default class TitleBlock extends React.Component<TitleBlockPropsInterface
             api.post('/articles/editor/', ContentAction.getStore().content).then((response: any) => {
                 ContentAction.do(RESET_CONTENT, {articleId: response.data.id, autoSave: false, content: response.data.content});
                 this.uploadCover(response.data.id);
+            }).catch((err: any) => {
+                NotificationAction.do(SHOW_NOTIFICATION, {content: Captions.editor.saving_error, type: 'error'})
             });
         } else {
             this.uploadCover(this.props.articleSlug);

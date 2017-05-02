@@ -116,7 +116,7 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
     }
 
     checkArticleLength(title: string) {
-        if (title.length <= 20) {
+        if (title.length <= 15) {
             return 'short';
         } else if (title.length <= 60) {
             return 'regular';
@@ -157,15 +157,6 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
                 if (column.innerText.length > 500) {
                     column.classList.add('long');
                 }
-            }
-        }
-    }
-
-    processTitle() {
-        let title = document.getElementsByClassName('article__title')[0] as HTMLHeadElement;
-        if (title && title.innerText) {
-            if (title.innerText.length > 100) {
-                title.classList.add('long');
             }
         }
     }
@@ -268,7 +259,6 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
     }
 
     processes() {
-        this.processTitle();
         this.processPhoto();
         this.processEmbed();
         this.processQuote();
