@@ -2,17 +2,17 @@
 @import "../mixins";
 
 .notification {
+  @include transition();
   position: fixed;
   bottom: 0;
   left: 0;
   width: calc(100% - #{$padding}*2);
-  max-height: 30vw;
+  max-height: 30vh;
   padding: $padding;
   background-color: $color;
   color: white;
   text-align: center;
   z-index: 30;
-
   font-size: 12px;
   letter-spacing: 1px;
   line-height: 20px;
@@ -27,7 +27,8 @@
   }
 
   &:not(.opened) {
-    display: none;
+    visibility: hidden;
+    bottom: -30vh;
   }
 
   &.notification__error {
