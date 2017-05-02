@@ -169,12 +169,45 @@ export default class ContentEditable extends React.Component<ContentEditableProp
             this.cleanElement();
         }
     }
-    handleInput (e?: KeyboardEvent) {
-        if (this.stopInput && e.keyCode != 8) {
-            e.preventDefault();
-            e.stopPropagation();
+
+    _limitHTML(originNode: HTMLElement, limit: number) {
+        let node = originNode.cloneNode(true) as HTMLElement;
+        console.log(node, node.tagName, limit);
+        let result = [];
+        let limitIncr = 0;
+        if (node.childNodes.length) {
+            for (let i = 0; i < node.childNodes.length; i++) {
+                if (limit - limitIncr >= 0) {
+                    let r = this._limitHTML(node.childNodes[i] as HTMLElement, limit - limitIncr);
+                    for (let k = 0; k < node.childNodes.length; k++) {
+                        node.removeChild(node.childNodes[k]);
+                    }
+                    for (let j = 0; j < r.result.length; j ++) {
+                        node.appendChild(r.result[j])
+                    }
+                    limitIncr += r.limitIncr;
+                }
+            }
+        } else {
+            let _length = node.innerText ? node.innerText.length : node.toString().length;
+            if (_length > limit) {
+                node.innerHTML = (node.innerText ? node.innerText : node.toString()).slice(0, limit);
+            }
+            limitIncr += _length;
+            console.log(_length)
         }
+        result.push(node);
+        return {
+            result: result,
+            limitIncr: limitIncr,
+            limitRest: limit - limitIncr
+        };
+    }
+
+    handleInput (e?: KeyboardEvent) {
         clearTimeout(this.handleChangeDelayProcess);
+        // let r = this._limitHTML(this.refs.editableElement, this.props.maxTextLength);
+        // console.log(r);
         if (this.props.elementType == 'inline' && this.props.maxTextLength
                 && this.refs.editableElement.innerText.length > this.props.maxTextLength) {
             this.stopInput = true;
