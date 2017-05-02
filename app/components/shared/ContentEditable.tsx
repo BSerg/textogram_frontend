@@ -240,7 +240,7 @@ export default class ContentEditable extends React.Component<ContentEditableProp
         let content;
         e.preventDefault();
         if(e.clipboardData || e.originalEvent.clipboardData ){
-            content = (e.originalEvent || e).clipboardData.getData("text/plain");
+            content = (e.originalEvent || e).clipboardData.getData('Text');
             content = content.replace(/\n{2,}/g, '\n');
             document.execCommand('insertText', false, content);
         }
