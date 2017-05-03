@@ -407,7 +407,7 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
         }
 
         let shiftContentStyle = {};
-        if (this.state.isDesktop && this.state.article && this.state.article.ads_enabled
+        if (MediaQuerySerice.getScreenWidth() >= 1280 && this.state.article && this.state.article.ads_enabled
                 && this.state.article.advertisement && this.state.article.advertisement[BannerID.BANNER_RIGHT_SIDE]) {
             let offset = Math.min(0, 2 * ((MediaQuerySerice.getScreenWidth() - 650 ) / 2 - 400));
             if (offset) shiftContentStyle = {marginLeft: `${offset}px`};
