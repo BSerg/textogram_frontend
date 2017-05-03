@@ -47,6 +47,23 @@ class ContentActionClass extends Action {
         });
     }
 
+    createArticle(data: {content: IContentData}) {
+         window.setTimeout(() => {
+            ContentAction.do(SAVING_PROCESS, true);
+        });
+        api.post('/articles/editor/', data.content).then((response: any) => {
+            ContentAction.do(RESET_CONTENT, {articleId: response.data.id, autoSave: false, content: response.data.content});
+             window.setTimeout(() => {
+                ContentAction.do(SAVING_PROCESS, false);
+            });
+        }).catch((err: any) => {
+            NotificationAction.do(SHOW_NOTIFICATION, {content: Captions.editor.saving_error, type: 'error'})
+             window.setTimeout(() => {
+                ContentAction.do(SAVING_PROCESS, false);
+            });
+        });
+    }
+
     saveContent(store: any, data: {articleId: number, autoSave?: boolean}) {
         window.clearTimeout(this.saveContentDelay);
         if (data.autoSave) {
