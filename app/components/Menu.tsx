@@ -215,7 +215,7 @@ class NotificationBlock extends React.Component<NotificationBlockPropsInterface,
     }
 
     openNotifications() {
-        this.props.router.push('/manage/?show=notifications');
+        this.props.router.push('/manage/notifications');
         if (!MediaQuerySerice.getIsDesktop()) {
             MenuAction.do(TOGGLE, false);
         }

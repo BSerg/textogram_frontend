@@ -92,6 +92,7 @@ class App extends React.Component<any, any> {
                     <Route path="articles/:articleId/preview" component={ArticlePreview}/>
                     <Route path="articles/:articleSlug" component={Article}/>
                     <Route path="manage" component={ProfileManagement}/>
+                    <Route path="manage/:section" component={ProfileManagement}/>
                     <Route path="url_shorten" component={UrlShortener}/>
                     <Route path="auth/twitter/" component={TwitterAuth}/>
 

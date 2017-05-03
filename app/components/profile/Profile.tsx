@@ -360,8 +360,7 @@ class ProfileClass extends React.Component<IProfileProps, IProfileState> {
                                      { sections.map((section: {name: string, caption: string, to: string}, index  ) => {
                                          return (<Link key={index}
                                                       to={section.to}
-                                                      className={ "menu_item" + (section.to == this.props.router.location.pathname ? " active" : "")}
-                                                      >
+                                                      className={ "menu_item" + (section.to == this.props.router.location.pathname ? " active" : "")}>
                                              { section.caption }
                                          </Link>)
                                      }) }
