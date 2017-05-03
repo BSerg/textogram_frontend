@@ -300,6 +300,8 @@ $content-main-width: 340px;
       display: flex;
       align-items: center;
       justify-content: center;
+      color: $color5;
+      text-decoration: none;
 
 
       &.active, &:hover {

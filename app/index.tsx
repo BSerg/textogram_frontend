@@ -76,7 +76,7 @@ class App extends React.Component<any, any> {
             }
         }
         window.setTimeout(onGAPILoad.bind(this), 0);
-        UserAction.do(GET_ME, null);
+        UserAction.doAsync(GET_ME, null);
     }
 
     render() {
@@ -86,15 +86,16 @@ class App extends React.Component<any, any> {
                     <IndexRoute component={IndexPage}/>
                     <Route path="login" component={LoginPage} />
                     <Route path="home/:id" component={IndexPage} />
-                    <Route path="profile/:userId" component={Profile}/>
+
                     <Route path="articles/new" component={NewArticleEditor}/>
                     <Route path="articles/:articleId/edit" component={Editor}/>
                     <Route path="articles/:articleId/preview" component={ArticlePreview}/>
                     <Route path="articles/:articleSlug" component={Article}/>
-                    <Route path="drafts" component={Drafts} />
                     <Route path="manage" component={ProfileManagement}/>
                     <Route path="url_shorten" component={UrlShortener}/>
                     <Route path="auth/twitter/" component={TwitterAuth}/>
+
+                    <Route path=":slug" component={Profile}/>
                 </Route>
                 <Route path="*" component={() => {return <Error404/>}}/>
             </Router>

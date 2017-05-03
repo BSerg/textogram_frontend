@@ -177,7 +177,7 @@ class ArticlePreviewClass extends React.Component<IArticlePreviewPropsInterface,
                     {
                         !this.props.isOwner && !this.props.item.is_draft ? (
                             <div className="article_preview__avatar" key="avatar">
-                                <Link to={"/profile/" + this.props.item.owner.id} >
+                                <Link to={"/" + this.props.item.owner.nickname} >
                                     <img src={this.props.item.owner.avatar}/>
                                 </Link>
                              </div>
@@ -210,7 +210,7 @@ class ArticlePreviewClass extends React.Component<IArticlePreviewPropsInterface,
                                  [
                                      !this.props.isOwner ?
                                          <div className="article_preview__text" key="name">
-                                             <Link to={"/profile/" + this.props.item.owner.id} >
+                                             <Link to={"/" + this.props.item.owner.nickname + '/'} >
                                                 {
                                                     this.props.item.owner.first_name + ' ' + this.props.item.owner.last_name
                                                 }
@@ -263,13 +263,13 @@ class ArticlePreviewClass extends React.Component<IArticlePreviewPropsInterface,
 
                                  [
                                      <div className="article_preview__avatar" key="avatar">
-                                        <Link to={"/profile/" + this.props.item.owner.id} >
+                                        <Link to={"/" + this.props.item.owner.nickname + '/'} >
                                             <img src={this.props.item.owner.avatar}/>
                                         </Link>
                                      </div>,
 
                                      <div className="article_preview__text" key="name">
-                                         <Link to={"/profile/" + this.props.item.owner.id} >
+                                         <Link to={"/" + this.props.item.owner.nickname + '/'} >
                                             {
                                                 this.props.item.owner.first_name + ' ' + this.props.item.owner.last_name
                                             }
