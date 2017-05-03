@@ -59,6 +59,9 @@ class ProfileClass extends React.Component<IProfileProps, IProfileState> {
     SECTION_ARTICLES: string = 'articles';
     SECTION_DRAFTS: string = 'drafts';
 
+    SECTION_FOLLOWERS: string = 'followers';
+    SECTION_FOLLOWING: string = 'following';
+
 
     constructor(props: any) {
         super(props);
@@ -87,9 +90,10 @@ class ProfileClass extends React.Component<IProfileProps, IProfileState> {
         }
     }
 
-    getUserData(slug: string = null) {
+    getUserData(slug: string = null, subsection: string = null) {
 
-        slug = slug || this.props.params.slug;
+        // slug = slug || this.props.params.slug;
+        // subsection = subsection || this.props.params.subsection;
 
         let currentSection: string;
         if (slug == 'feed' || slug == 'drafts') {
@@ -109,33 +113,52 @@ class ProfileClass extends React.Component<IProfileProps, IProfileState> {
             });
         }
         else  {
-            currentSection = this.SECTION_ARTICLES;
+            if (!subsection) {
+                currentSection = this.SECTION_ARTICLES;
+            }
+            else {
+                if (subsection == 'followers') {
+                    currentSection = this.SECTION_FOLLOWERS;
+                }
+                else if (subsection == 'following') {
+                    currentSection = this.SECTION_FOLLOWING;
+                }
+                else {
+                    currentSection = this.SECTION_ARTICLES;
+                    this.props.router.push('/' + slug);
+                }
+            }
+
             if (this.state.isLoading) {
                 return;
             }
             this.state.cancelSource && this.state.cancelSource.cancel();
             this.state.cancelSource =  axios.CancelToken.source();
+            if (!this.state.user || (slug != this.state.user.nickname)) {
+                this.setState({error: null, isLoading: true}, () => {
+                    api.get('users/' + slug + '/', { cancelToken: this.state.cancelSource.token }).then((response: any) => {
+                        let isSelf: boolean = Boolean(response.data && UserAction.getStore().user && (UserAction.getStore().user.id == response.data.id));
+                        let canSubscribe: boolean = Boolean(UserAction.getStore().user && !isSelf);
 
-            this.setState({error: null, isLoading: true, additionalPage: null}, () => {
-                api.get('users/' + slug + '/', { cancelToken: this.state.cancelSource.token }).then((response: any) => {
-                    let isSelf: boolean = Boolean(response.data && UserAction.getStore().user && (UserAction.getStore().user.id == response.data.id));
-                    let canSubscribe: boolean = Boolean(UserAction.getStore().user && !isSelf);
-
-                    this.setState({
-                        user: response.data,
-                        showSubscribers: false,
-                        isSelf: isSelf,
-                        currentSection: currentSection,
-                        isLoading: false,
-                        canSubscribe: canSubscribe,
-                        selfDrafts: isSelf ? UserAction.getStore().user.drafts || 0 : 0,
+                        this.setState({
+                            user: response.data,
+                            showSubscribers: false,
+                            isSelf: isSelf,
+                            currentSection: currentSection,
+                            isLoading: false,
+                            canSubscribe: canSubscribe,
+                            selfDrafts: isSelf ? UserAction.getStore().user.drafts || 0 : 0,
+                        });
+                    }).catch((error) => {
+                        if (!axios.isCancel(error)) {
+                            this.setState({error: <Error404 msg="page not found" />, isLoading: false });
+                        }
                     });
-                }).catch((error) => {
-                    if (!axios.isCancel(error)) {
-                        this.setState({error: <Error404 msg="page not found" />, isLoading: false });
-                    }
                 });
-            });
+            }
+            else {
+                this.setState({currentSection: currentSection});
+            }
         }
     }
 
@@ -182,8 +205,8 @@ class ProfileClass extends React.Component<IProfileProps, IProfileState> {
     }
 
     componentWillReceiveProps(nextProps: any) {
-        if (nextProps.params.slug != this.props.params.slug) {
-            this.getUserData(nextProps.params.slug);
+        if (nextProps.params.slug != this.props.params.slug || nextProps.params.subsection != this.props.params.subsection) {
+            this.getUserData(nextProps.params.slug, nextProps.params.subsection);
         }
     }
 
@@ -210,7 +233,7 @@ class ProfileClass extends React.Component<IProfileProps, IProfileState> {
         MediaQuerySerice.listen(this.checkDesktop);
 
 
-        this.getUserData();
+        this.getUserData(this.props.params.slug, this.props.params.subsection);
 
         UserAction.onChange([GET_ME, LOGIN, LOGOUT], this.handleUserChange);
         UserAction.onChange(UPDATE_USER_DRAFTS, this.setDrafts);
@@ -239,23 +262,44 @@ class ProfileClass extends React.Component<IProfileProps, IProfileState> {
         }
 
         if (!this.state.user) return null;
-
-        let sections: {name: string, caption: string, to: string}[] = (this.state.isSelf && !process.env.IS_LENTACH) ?
-            [
-                {name: this.SECTION_FEED, caption: Captions.profile.menuSubscriptions, to: '/feed' },
-                {name: this.SECTION_ARTICLES, caption: Captions.profile.menuArticles, to: '/' + this.state.user.nickname},
-                {name: this.SECTION_DRAFTS, caption: Captions.profile.menuDrafts + (this.state.selfDrafts ? ' (' + this.state.selfDrafts + ')' : ''), to: '/drafts'},
+        let sections: {name: string, caption: string, to: string}[];
+        if (!this.props.params.subsection) {
+            sections = (this.state.isSelf && !process.env.IS_LENTACH) ?
+                [
+                    {name: this.SECTION_FEED, caption: Captions.profile.menuSubscriptions, to: '/feed' },
+                    {name: this.SECTION_ARTICLES, caption: Captions.profile.menuArticles, to: '/' + this.state.user.nickname},
+                    {name: this.SECTION_DRAFTS, caption: Captions.profile.menuDrafts + (this.state.selfDrafts ? ' (' + this.state.selfDrafts + ')' : ''), to: '/drafts'},
+                ]
+                : [];
+        }
+        else {
+            sections = [
+                {name: this.SECTION_FOLLOWING, caption: 'Читаемые', to: '/' + this.state.user.nickname + '/following' },
+                {name: this.SECTION_FOLLOWERS, caption: 'Читатели', to: '/' + this.state.user.nickname + '/followers' }
             ]
-            : [];
+        }
 
         if (this.state.isSelf && process.env.IS_LENTACH) {
             sections = [{name: this.SECTION_ARTICLES, caption: 'Тексты', to: ('/' + this.state.user.nickname)}]
         }
+
+        let DisplayComponent: any = null;
+
+        if (this.state.currentSection == this.SECTION_ARTICLES ||
+            this.state.currentSection == this.SECTION_DRAFTS ||
+            this.state.currentSection == this.SECTION_FEED) {
+            DisplayComponent = <ProfileArticles userId={this.state.user.id} section={this.state.currentSection} isSelf={this.state.isSelf} />;
+        }
+        else if (this.state.currentSection == this.SECTION_FOLLOWERS || this.state.currentSection ==  this.SECTION_FOLLOWING) {
+            DisplayComponent = <ProfileAuthorList userId={this.state.user.id} isDesktop={this.state.isDesktop}
+                                                           subscribedTo={this.state.currentSection == this.SECTION_FOLLOWERS} />;
+        }
+
         return (
 
             <div id="profile">
 
-                <div className="profile_new_article"><Link to="/articles/new/"><EditIcon /></Link></div>
+                <div className="profile_new_article" style={{display: 'none'}}><Link to="/articles/new/"><EditIcon /></Link></div>
 
                  <div id="profile_content">
                      <div className="profile_content_main">
@@ -280,8 +324,8 @@ class ProfileClass extends React.Component<IProfileProps, IProfileState> {
                          <div className="divider"></div>
 
                          <div className="subscription">
-                             <div onClick={this.showAuthors.bind(this, false)}>Читаемые <span>{ this.state.user.subscriptions }</span></div>
-                             <div onClick={this.showAuthors.bind(this, true)}>Читатели <span>{ this.state.user.subscribers }</span></div>
+                             <Link to={'/' + this.state.user.nickname + '/following'}  >Читаемые <span>{ this.state.user.subscriptions }</span></Link>
+                             <Link to={'/' + this.state.user.nickname + '/followers'} >Читатели <span>{ this.state.user.subscribers }</span></Link>
                              {
                                  (!this.state.isDesktop && this.state.canSubscribe) ? (
                                     this.state.user.is_subscribed ? (
@@ -309,32 +353,30 @@ class ProfileClass extends React.Component<IProfileProps, IProfileState> {
                      </div>
                      <div className="profile_content_filler"></div>
 
-                     {
-                         this.state.additionalPage ? (
-                             this.state.additionalPage
-                         ) : (
-                             <div className="profile_content_data">
-                                 {
-                                     this.state.isSelf ? (
-                                         <div className="profile_menu">
-                                             { sections.map((section: {name: string, caption: string, to: string}, index  ) => {
-                                                 return (<Link key={index}
-                                                              to={section.to}
-                                                              className={ "menu_item" + (section.to == this.props.router.location.pathname ? " active" : "")}
-                                                              >
-                                                     { section.caption }
-                                                 </Link>)
-                                             }) }
+                     <div className="profile_content_data">
+                         {
+                             sections.length ? (
+                                 <div className="profile_menu">
+                                     { sections.map((section: {name: string, caption: string, to: string}, index  ) => {
+                                         return (<Link key={index}
+                                                      to={section.to}
+                                                      className={ "menu_item" + (section.to == this.props.router.location.pathname ? " active" : "")}
+                                                      >
+                                             { section.caption }
+                                         </Link>)
+                                     }) }
 
-                                             { this.state.isDesktop ? (<div className="filler"></div>) : null }
-                                         </div>
-                                     ) : null
-                                 }
+                                     { this.state.isDesktop ? (<div className="filler"></div>) : null }
+                                 </div>
+                             ) : null
+                         }
+                         {
+                             DisplayComponent
+                         }
 
-                                 <ProfileArticles userId={this.state.user.id} section={this.state.currentSection} isSelf={this.state.isSelf} />
-                             </div>
-                         )
-                     }
+                     </div>
+
+
                  </div>
              </div>
         )

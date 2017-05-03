@@ -256,7 +256,7 @@ $content-main-width: 340px;
     height: 20px;
     margin: $margin 0;
 
-    &>div {
+    &>div, &>a {
       display: flex;
       flex-direction: row;
       align-items: center;
@@ -264,7 +264,8 @@ $content-main-width: 340px;
 
       font-size: 10px;
       margin: 0 10px;
-
+      color: $color;
+      text-decoration: none;
       cursor: pointer;
 
       svg {
@@ -490,8 +491,9 @@ $content-main-width: 340px;
 
     .subscription {
       margin: 25px 0;
-      &>div {
+      &>div, &>a {
         font-size: 13px;
+        //display: block;
       }
     }
 
@@ -520,8 +522,8 @@ $content-main-width: 340px;
     }
 
     .profile_additional {
-      left: calc(50% + 170px - 400px - 25px);
-      max-width: 800px;
+      //left: calc(50% + 170px - 400px - 25px);
+      //max-width: 800px;
       margin: 0;
     }
 

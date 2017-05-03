@@ -85,10 +85,6 @@ export default class ProfileArticles extends React.Component<IArticlesProps, IAr
 
     }
 
-    handleMainScroll() {
-        console.log('scrolll');
-    }
-
     handleScroll() {
         let rect: ClientRect = this.refs.main.getBoundingClientRect();
         if ((rect.bottom <= window.innerHeight) && !this.state.isLoading && this.state.nextUrl) {

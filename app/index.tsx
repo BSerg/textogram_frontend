@@ -96,6 +96,7 @@ class App extends React.Component<any, any> {
                     <Route path="auth/twitter/" component={TwitterAuth}/>
 
                     <Route path=":slug" component={Profile}/>
+                    <Route path=":slug/:subsection" component={Profile}/>
                 </Route>
                 <Route path="*" component={() => {return <Error404/>}}/>
             </Router>
