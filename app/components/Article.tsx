@@ -25,7 +25,7 @@ const ViewIcon = require('babel!svg-react!../assets/images/views_white.svg?name=
 const CloseIcon = require('babel!svg-react!../assets/images/close_white.svg?name=CloseIcon');
 const ArrowButton = require('babel!svg-react!../assets/images/arrow.svg?name=ArrowButton');
 const ShareButton = require('babel!svg-react!../assets/images/share.svg?name=ShareButton');
-const EditBlackButton = require('babel!svg-react!../assets/images/edit_black.svg?name=EditBlackButton');
+const EditBlackButton = require('babel!svg-react!../assets/images/edit-small.svg?name=EditBlackButton');
 const PublishButton = require('babel!svg-react!../assets/images/publish.svg?name=PublishButton');
 const ConfirmButton = require('babel!svg-react!../assets/images/editor_confirm.svg?name=ConfirmButton');
 
