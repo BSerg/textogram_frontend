@@ -74,14 +74,20 @@ export namespace Captions {
         deleted_photo_block: 'Галерея удалена',
         restore: 'Восстановить',
         clear: 'Очистить',
-        enter_paywall_price: 'Стоимость',
+        paywall_price: 'Стоимость',
+        enter_paywall_price: 'Введите стоимость',
         paywall_price_tax_help: 'Стоимость доступа с учетом комиссии составит:',
     };
 
     export const shared = {
         confirmLabel: 'OK',
         cancelLabel: 'Отмена',
-        linkCopied: 'Ссылка скопирована в буфер обмена'
+        linkCopied: 'Ссылка скопирована в буфер обмена',
+        currency: {
+            RUR: '₽',
+            USD: '$',
+            EUR: '€'
+        }
     };
 
     export const profile = {

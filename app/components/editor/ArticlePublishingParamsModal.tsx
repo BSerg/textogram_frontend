@@ -112,17 +112,18 @@ export default class ArticlePublishingParamsModal extends React.Component<IProps
                     {this.state.article.paywall_enabled ?
                         <div className="publishing_modal__paywall_price">
                             <div className="publishing_modal__paywall_value">
-                                Стоимость
+                                {Captions.editor.paywall_price}
                                 <input ref="paywallPriceInput"
                                        type="number"
                                        placeholder={Captions.editor.enter_paywall_price}
                                        value={this.state.article.paywall_price}
                                        onChange={this.handlePaywallPrice.bind(this)}
                                        min={1} max={99999} step={1}/>
+                                {(Captions as any).shared.currency[this.state.article.paywall_currency]}
                             </div>
 
                                 <div className="publishing_modal__paywall_help">
-                                    {Captions.editor.paywall_price_tax_help} {this.calcPaywallPrice(this.state.article.paywall_price)}
+                                    {Captions.editor.paywall_price_tax_help} {this.calcPaywallPrice(this.state.article.paywall_price)}{(Captions as any).shared.currency[this.state.article.paywall_currency]}
                                 </div>
                         </div> : null
                     }
