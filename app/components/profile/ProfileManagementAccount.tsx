@@ -62,7 +62,6 @@ class ProfileSocialLink extends React.Component<IProfileSocialLinkProps, IProfil
 
     saveUrl(e?: any) {
         e && e.stopPropagation();
-        console.log('here');
         if (this.state.isLoading) {
             return;
         }
@@ -239,7 +238,6 @@ export default class ProfileManagementAccount extends React.Component<any, IAcco
 
     nicknameChange(e: any) {
         let val: string = e.target.value;
-        // console.log(val);
         if ((val == '' || val.match(/^[A-Za-z][A-Za-z\d_]*$/)) && val.length <= 20 ) {
             this.setState({nickname: val}, this.checkNickname);
         }
