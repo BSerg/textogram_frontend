@@ -30,7 +30,8 @@ export default class ArticlePublishingParamsModal extends React.Component<IProps
             article: this.props.article,
             adsEnabledCached: this.props.article.ads_enabled,
             blockPublish: false
-        }
+        };
+        this.handleKeyDown = this.handleKeyDown.bind(this);
     }
 
     back() {
@@ -83,7 +84,19 @@ export default class ArticlePublishingParamsModal extends React.Component<IProps
         }
     }
 
+    handleKeyDown(e: KeyboardEvent) {
+        if (e.keyCode == 13) {
+            this.publish();
+        }
+    }
 
+    componentDidMount() {
+        document.addEventListener('keydown', this.handleKeyDown);
+    }
+
+    componentWillUnmount() {
+        document.removeEventListener('keydown', this.handleKeyDown);
+    }
 
     render() {
         let adsHandlerClassName = "publishing_modal__param";
@@ -118,7 +131,7 @@ export default class ArticlePublishingParamsModal extends React.Component<IProps
                                        placeholder={Captions.editor.enter_paywall_price}
                                        value={this.state.article.paywall_price}
                                        onChange={this.handlePaywallPrice.bind(this)}
-                                       min={1} max={99999} step={1}/>
+                                       min="0" max="100000" step="1"/>
                                 {(Captions as any).shared.currency[this.state.article.paywall_currency]}
                             </div>
 

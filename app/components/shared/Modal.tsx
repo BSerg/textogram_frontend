@@ -21,6 +21,7 @@ export default class Modal extends React.Component<any, IModalState> {
         this.handleOpenModal = this.handleOpenModal.bind(this);
         this.handleCloseModal = this.handleCloseModal.bind(this);
         this.handleBackModal = this.handleBackModal.bind(this);
+        this.handleKeyDown = this.handleKeyDown.bind(this);
     }
 
     handleOpenModal() {
@@ -38,16 +39,24 @@ export default class Modal extends React.Component<any, IModalState> {
         this.setState({opened: this.state.opened, content: store.content});
     }
 
+    handleKeyDown(e: KeyboardEvent) {
+        if (this.state.opened && e.keyCode == 27) {
+            this.handleCloseModal();
+        }
+    }
+
     componentDidMount() {
         ModalAction.onChange(OPEN_MODAL, this.handleOpenModal);
         ModalAction.onChange(CLOSE_MODAL, this.handleCloseModal);
         ModalAction.onChange(BACK_MODAL, this.handleBackModal);
+        document.addEventListener('keydown', this.handleKeyDown);
     }
 
     componentWillUnmount() {
         ModalAction.unbind(OPEN_MODAL, this.handleOpenModal);
         ModalAction.unbind(CLOSE_MODAL, this.handleCloseModal);
         ModalAction.unbind(BACK_MODAL, this.handleBackModal);
+        document.removeEventListener('keydown', this.handleKeyDown);
     }
 
     render() {
