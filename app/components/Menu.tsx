@@ -352,7 +352,7 @@ class UserMenu extends React.Component<IUserMenuProps, any> {
 
                 <div className="menu__controls">
                     <NotificationBlockWithRouter showZero={true} />
-                    <div><Link to="/manage/"><SettingsIcon /></Link></div>
+                    <div><Link to="/manage/account/"><SettingsIcon /></Link></div>
                     <div><Link to="/"><InfoIcon /></Link></div>
                     <div onClick={this.logout.bind(this)}><ExitIcon /></div>
                 </div>
@@ -367,7 +367,7 @@ class UserMenu extends React.Component<IUserMenuProps, any> {
 
                         <div className="menu__controls">
                             <NotificationBlockWithRouter showZero={true} />
-                            <div onClick={this.handleUrlClick.bind(this, '/manage/')}><SettingsIcon /></div>
+                            <div onClick={this.handleUrlClick.bind(this, '/manage/account/')}><SettingsIcon /></div>
                             <div onClick={this.logout.bind(this)}><ExitIcon /></div>
                         </div>
                     </div>

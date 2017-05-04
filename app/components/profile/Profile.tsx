@@ -92,19 +92,16 @@ class ProfileClass extends React.Component<IProfileProps, IProfileState> {
 
     getUserData(slug: string = null, subsection: string = null) {
 
-        // slug = slug || this.props.params.slug;
-        // subsection = subsection || this.props.params.subsection;
-
         let currentSection: string;
-        if (slug == 'feed' || slug == 'drafts') {
-            if (slug == 'feed') {
-                currentSection = this.SECTION_FEED;
+        if (['drafts', 'feed'].indexOf(slug) != -1) {
+            switch (slug) {
+                case 'feed':
+                    currentSection = this.SECTION_FEED;
+                    break;
+                case 'drafts':
+                    currentSection = this.SECTION_DRAFTS;
+                    break;
             }
-            else if (slug == 'drafts') {
-                currentSection = this.SECTION_DRAFTS;
-            }
-
-
             UserAction.doAsync(GET_ME, null).then((user: any) => {
                 this.setState({user: UserAction.getStore().user, currentSection: currentSection,
                     isSelf: true, canSubscribe: false, selfDrafts: UserAction.getStore().user.drafts || 0});
@@ -117,15 +114,17 @@ class ProfileClass extends React.Component<IProfileProps, IProfileState> {
                 currentSection = this.SECTION_ARTICLES;
             }
             else {
-                if (subsection == 'followers') {
-                    currentSection = this.SECTION_FOLLOWERS;
-                }
-                else if (subsection == 'following') {
-                    currentSection = this.SECTION_FOLLOWING;
-                }
-                else {
-                    currentSection = this.SECTION_ARTICLES;
-                    this.props.router.push('/' + slug);
+
+                switch (subsection) {
+                    case 'followers':
+                        currentSection = this.SECTION_FOLLOWERS;
+                        break;
+                    case 'following':
+                        currentSection = this.SECTION_FOLLOWING;
+                        break;
+                    default:
+                        currentSection = this.SECTION_ARTICLES;
+                        break;
                 }
             }
 
@@ -263,7 +262,7 @@ class ProfileClass extends React.Component<IProfileProps, IProfileState> {
 
         if (!this.state.user) return null;
         let sections: {name: string, caption: string, to: string}[];
-        if (!this.props.params.subsection) {
+        if ([this.SECTION_ARTICLES, this.SECTION_DRAFTS, this.SECTION_FEED].indexOf(this.state.currentSection) != -1) {
             sections = (this.state.isSelf && !process.env.IS_LENTACH) ?
                 [
                     {name: this.SECTION_FEED, caption: Captions.profile.menuSubscriptions, to: '/feed' },
@@ -272,11 +271,14 @@ class ProfileClass extends React.Component<IProfileProps, IProfileState> {
                 ]
                 : [];
         }
-        else {
+        else if ([this.SECTION_FOLLOWERS, this.SECTION_FOLLOWING].indexOf(this.state.currentSection) != -1 ){
             sections = [
                 {name: this.SECTION_FOLLOWING, caption: 'Читаемые', to: '/' + this.state.user.nickname + '/following' },
                 {name: this.SECTION_FOLLOWERS, caption: 'Читатели', to: '/' + this.state.user.nickname + '/followers' }
             ]
+        }
+        else {
+            sections = [];
         }
 
         if (this.state.isSelf && process.env.IS_LENTACH) {
@@ -285,12 +287,10 @@ class ProfileClass extends React.Component<IProfileProps, IProfileState> {
 
         let DisplayComponent: any = null;
 
-        if (this.state.currentSection == this.SECTION_ARTICLES ||
-            this.state.currentSection == this.SECTION_DRAFTS ||
-            this.state.currentSection == this.SECTION_FEED) {
+        if ([this.SECTION_ARTICLES, this.SECTION_DRAFTS, this.SECTION_FEED].indexOf(this.state.currentSection) != -1) {
             DisplayComponent = <ProfileArticles userId={this.state.user.id} section={this.state.currentSection} isSelf={this.state.isSelf} />;
         }
-        else if (this.state.currentSection == this.SECTION_FOLLOWERS || this.state.currentSection ==  this.SECTION_FOLLOWING) {
+        else if ([this.SECTION_FOLLOWERS, this.SECTION_FOLLOWING].indexOf(this.state.currentSection) != -1) {
             DisplayComponent = <ProfileAuthorList userId={this.state.user.id} isDesktop={this.state.isDesktop}
                                                            subscribedTo={this.state.currentSection == this.SECTION_FOLLOWERS} />;
         }
@@ -360,7 +360,7 @@ class ProfileClass extends React.Component<IProfileProps, IProfileState> {
                                      { sections.map((section: {name: string, caption: string, to: string}, index  ) => {
                                          return (<Link key={index}
                                                       to={section.to}
-                                                      className={ "menu_item" + (section.to == this.props.router.location.pathname ? " active" : "")}>
+                                                      className={ "menu_item" + (section.name == this.state.currentSection ? " active" : "")}>
                                              { section.caption }
                                          </Link>)
                                      }) }

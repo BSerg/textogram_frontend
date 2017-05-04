@@ -330,7 +330,7 @@ class ProfileManagementClass extends React.Component<IManagementProps, IManageme
                                     <div className="profile_menu">
                                         { sections.map((section: {name: string, caption: string, to: string}, index  ) => {
                                              return (<Link key={index} to={section.to}
-                                                          className={ "menu_item" + (section.to == this.props.router.location.pathname ? " active" : "")}>
+                                                          className={ "menu_item" + (section.name == this.state.currentSection ? " active" : "")}>
                                                  { section.caption }
                                              </Link>)
                                          }) }
