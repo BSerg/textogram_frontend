@@ -36,9 +36,11 @@ export namespace Captions {
         content_dialog: 'Диалог',
         content_post: 'Пост',
         publish: 'Опубликовать',
+        publishUpdate: 'Обновить публикацию',
         publishingParams: 'Настройки публикации',
         publishAds: 'Реклама',
         publishLink: 'Доступ по ссылке',
+        publishPaywall: 'Paywall',
         error_embed_url: 'Некорректная ссылка',
         help_embed_video: 'Youtube, Vimeo, VK, Facebook',
         help_embed_audio: 'SoundCloud, Yandex Music, PromoDJ',
@@ -56,6 +58,7 @@ export namespace Captions {
         loading_audio: 'Загрузка аудио',
         loading_post: 'Загрузка поста',
         saving_error: 'Что-то пошло не так. Мы не можем сохранить эту публикацию.',
+        publishing_error: 'Что-то пошло не так. Мы не можем опубликовать эту публикацию.',
         article_created: 'Статья сохранена в черновиках',
         deleted_text_block: 'Текстовый блок удален',
         deleted_header_block: 'Заголовок удален',
@@ -71,6 +74,8 @@ export namespace Captions {
         deleted_photo_block: 'Галерея удалена',
         restore: 'Восстановить',
         clear: 'Очистить',
+        enter_paywall_price: 'Стоимость',
+        paywall_price_tax_help: 'Стоимость доступа с учетом комиссии составит:',
     };
 
     export const shared = {
@@ -187,6 +192,7 @@ export namespace Constants {
     export const maxImageSize = 5 * 1024 * 1024;
     export const notificationIntervalTime = 20000;
     export const desktopWidth = 1024;
+    export const paywallDefaultPriceRUR = 100;
 }
 
 export enum BlockContentTypes {

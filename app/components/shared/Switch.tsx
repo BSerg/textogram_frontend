@@ -27,6 +27,7 @@ export default class Switch extends React.Component<ISwitchProps, ISwitchState> 
     };
 
     toggle() {
+        if (this.props.disabled) return;
         this.setState({isActive: !this.state.isActive}, () => {
             this.props.onChange && this.props.onChange(this.state.isActive);
         });

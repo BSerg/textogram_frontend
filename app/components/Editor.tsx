@@ -1,5 +1,4 @@
 import * as React from "react";
-import {Link} from "react-router";
 import TitleBlock from "./editor/TitleBlock";
 import BlockHandler from "./editor/BlockHandler";
 import TextContentBlock from "./editor/TextContentBlock";
@@ -23,14 +22,15 @@ import {
     MOVE_UP_CONTENT_BLCK,
     MOVE_DOWN_CONTENT_BLCK,
     SOFT_DELETE_CONTENT_BLCK,
-    RESTORE_CONTENT_BLCK, UPDATE_THEME_CONTENT, SAVING_PROCESS
+    RESTORE_CONTENT_BLCK,
+    UPDATE_THEME_CONTENT,
+    SAVING_PROCESS
 } from "../actions/editor/ContentAction";
 import {Captions, BlockContentTypes, ArticleStatuses, Validation} from "../constants";
-import {ModalAction, OPEN_MODAL} from "../actions/shared/ModalAction";
-import PublishingParamsModal from "./editor/PublishingParamsModal";
+import {ModalAction, OPEN_MODAL, CLOSE_MODAL} from "../actions/shared/ModalAction";
 import ColumnContentBlock from "./editor/ColumnContentBlock";
 import {Validator} from "./editor/utils";
-import Error from "./Error";
+import {Error404, Error500, Error403} from "./Error";
 import {api} from "../api";
 import DialogContentBlock from "./editor/DialogContentBlock";
 import {
@@ -48,9 +48,7 @@ import DeletedContentBlockInline from "./editor/DeletedContentBlockInline";
 import LeftSideButton from "./shared/LeftSideButton";
 import "../styles/editor.scss";
 import "../styles/shared/left_tool_panel.scss";
-import {Error404} from "./Error";
-import {Error500} from "./Error";
-import {Error403} from "./Error";
+import ArticlePublishingParamsModal from "./editor/ArticlePublishingParamsModal";
 
 const PreviewButton = require('babel!svg-react!../assets/images/preview.svg?name=PreviewButton');
 const PublishButton = require('babel!svg-react!../assets/images/publish.svg?name=PublishButton');
@@ -205,39 +203,6 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
         }
     }
 
-    openPublishParamsModal() {
-        ModalAction.do(
-            OPEN_MODAL,
-            {
-                content: <PublishingParamsModal article={this.state.article}
-                                                onPublish={(article: any) => {this.setState({article: article})}}/>
-            }
-        );
-    }
-
-    prePublish() {
-        if (!this.state.isValid || this.state.isSavingArticle) return;
-
-        if (this.state.isDesktop) {
-            if (confirm('Опубликовать материал?')) {
-                this.publish();
-            }
-        } else {
-            let content = <PopupPrompt confirmLabel="Опубликовать" onConfirm={this.publish.bind(this)}/>;
-            PopupPanelAction.do(OPEN_POPUP, {content: content});
-        }
-
-    }
-
-    publish() {
-        api.post(`/articles/editor/${this.state.article.id}/publish/`).then((response: any) => {
-            this.setState({article: response.data}, () => {
-                NotificationAction.do(SHOW_NOTIFICATION, {content: 'Поздравляем, ваш материал опубликован.'});
-                this.route(`/articles/${this.state.article.slug}`);
-            });
-        });
-    }
-
     preview() {
         if (!this.state.isValid || this.state.isSavingArticle) return;
 
@@ -246,29 +211,108 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
         });
     }
 
-    _updateArticle() {
-        if (this.state.isDesktop) {
+    _publishArticle() {
+        this.resetContent();
+        api.patch(`/articles/editor/${this.state.article.id}/`, this.state.article).then(() => {
+            api.post(`/articles/editor/${this.state.article.id}/publish/`).then((response: any) => {
+                this.setState({article: response.data}, () => {
+                    ModalAction.do(CLOSE_MODAL, null);
+                    NotificationAction.do(SHOW_NOTIFICATION, {content: 'Поздравляем, ваш материал опубликован.'});
+                    this.route(`/articles/${this.state.article.slug}`);
+                });
+            }).catch((err: any) => {
+                console.log(err);
+                NotificationAction.do(SHOW_NOTIFICATION, {content: Captions.editor.publishing_error, type: 'error'});
+                ModalAction.do(CLOSE_MODAL, null);
+            });
+        }).catch((err: any) => {
+            console.log(err);
+            NotificationAction.do(SHOW_NOTIFICATION, {content: Captions.editor.publishing_error, type: 'error'});
+            ModalAction.do(CLOSE_MODAL, null);
+        });
+
+    }
+
+    publishArticle() {
+        if (!this.state.isValid || this.state.isSavingArticle) return;
+
+        if (process.env.IS_LENTACH) {
+
+            if (this.state.isDesktop) {
+                if (confirm('Опубликовать материал?')) {
+                    this._publishArticle();
+                }
+            } else {
+                let content = <PopupPrompt confirmLabel="Опубликовать"
+                                           onConfirm={() => {this._publishArticle(); PopupPanelAction.do(BACK_POPUP, null)}}/>;
+                PopupPanelAction.do(OPEN_POPUP, {content: content});
+            }
 
         } else {
-            PopupPanelAction.do(BACK_POPUP, null);
+
+            let onPublish = (article: any) => {
+                Object.assign(this.state.article, article);
+                this._publishArticle()
+            };
+
+            ModalAction.do(
+                OPEN_MODAL,
+                {
+                    content: <ArticlePublishingParamsModal article={this.state.article} onPublish={onPublish}/>
+                }
+            );
+
         }
-        this.resetContent(true).then(() => {
+    }
+
+    _updateArticle() {
+        this.resetContent();
+        api.patch(`/articles/editor/${this.state.article.id}/`, this.state.article).then(() => {
+            ModalAction.do(CLOSE_MODAL, null);
             NotificationAction.do(SHOW_NOTIFICATION, {content: 'Публикация обновлена'});
             if (process.env.IS_LENTACH) {
                 this.route(`/articles/${this.state.article.slug}`);
             }
+        }).catch((err: any) => {
+            console.log(err);
+            NotificationAction.do(SHOW_NOTIFICATION, {content: Captions.editor.saving_error, type: 'error'});
+            ModalAction.do(CLOSE_MODAL, null);
         });
     }
 
     updateArticle() {
-        if (this.state.isDesktop) {
-            if (confirm('Обновить?')) {
-                this._updateArticle();
+        if (!this.state.isValid || this.state.isSavingArticle) return;
+
+        if (process.env.IS_LENTACH) {
+
+            if (this.state.isDesktop) {
+                if (confirm('Обновить материал?')) {
+                    this._updateArticle();
+                }
+            } else {
+                let content = <PopupPrompt confirmLabel="Обновить"
+                                           onConfirm={() => {this._updateArticle(); PopupPanelAction.do(BACK_POPUP, null)}}/>;
+                PopupPanelAction.do(OPEN_POPUP, {content: content});
             }
+
         } else {
-            let content = <PopupPrompt confirmLabel="Обновить" onConfirm={this._updateArticle.bind(this)}/>;
-            PopupPanelAction.do(OPEN_POPUP, {content: content});
+
+            let onUpdate = (article: any) => {
+                Object.assign(this.state.article, article);
+                console.log(this.state.article)
+                this._updateArticle();
+            };
+
+            ModalAction.do(
+                OPEN_MODAL,
+                {
+                    content: <ArticlePublishingParamsModal article={this.state.article}
+                                                           onPublish={onUpdate}/>
+                }
+            );
+
         }
+
     }
 
     handleActiveBlock() {
@@ -553,7 +597,7 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
                             (this.state.isDesktop && this.state.article.id && this.state.article.status == ArticleStatuses.DRAFT ?
                                 <div key="articleButtons" className="article_buttons">
                                     <div className={"article_buttons__button"  + (!this.state.isValid || this.state.isSavingArticle ? ' disabled': '')}
-                                         onClick={this.prePublish.bind(this)}>
+                                         onClick={this.publishArticle.bind(this)}>
                                         <PublishButton/> Опубликовать
                                     </div>
                                     <div className={"article_buttons__button"  + (!this.state.isValid || this.state.isSavingArticle ? ' disabled': '')}
@@ -564,7 +608,7 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
                             (this.state.isDesktop && this.state.article.id && this.state.article.status == ArticleStatuses.PUBLISHED ?
                                 <div key="articleButtons" className={"article_buttons" + (!this.state.isValid || this.state.isSavingArticle ? ' disabled': '')}>
                                     <div className={"article_buttons__button"  + (!this.state.isValid || this.state.isSavingArticle ? ' disabled': '')}
-                                         onClick={this.state.isValid && !this.state.isSavingArticle && this.updateArticle.bind(this, true)}>
+                                         onClick={this.updateArticle.bind(this, true)}>
                                         <PublishButton/> Обновить публикацию
                                     </div>
                                 </div> : null),
@@ -574,13 +618,13 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
                                     (this.state.article.id && this.state.article.status == ArticleStatuses.DRAFT ?
                                         <div key="publish_button"
                                              className={"editor__publish" + (!this.state.isValid || this.state.isSavingArticle ? ' disabled': '')}
-                                             onClick={this.prePublish.bind(this)}>
+                                             onClick={this.publishArticle.bind(this)}>
                                             Опубликовать
                                         </div> : null),
                                     (this.state.article.id && this.state.article.status == ArticleStatuses.PUBLISHED ?
                                         <div key="update_publish_button"
                                              className={"editor__publish" + (!this.state.isValid || this.state.isSavingArticle ? ' disabled': '')}
-                                             onClick={this.state.isValid && !this.state.isSavingArticle && this.updateArticle.bind(this, true)}>
+                                             onClick={this.updateArticle.bind(this, true)}>
                                             Обновить публикацию
                                         </div> : null)
                                 ] : null
@@ -592,7 +636,7 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
                                         [
                                             <LeftSideButton key="toolPublish"
                                                             tooltip="Опубликовать"
-                                                            onClick={this.prePublish.bind(this)}
+                                                            onClick={this.publishArticle.bind(this)}
                                                             disabled={!this.state.isValid || this.state.isSavingArticle}>
                                                 <PublishButton/>
                                             </LeftSideButton>,
@@ -607,7 +651,7 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
                                     {this.state.article.status == ArticleStatuses.PUBLISHED ?
                                         <LeftSideButton key="toolUpdatePublish"
                                                         tooltip="Обновить публикацию"
-                                                        onClick={this.state.isValid && !this.state.isSavingArticle && this.updateArticle.bind(this, true)}
+                                                        onClick={this.updateArticle.bind(this, true)}
                                                         disabled={!this.state.isValid || this.state.isSavingArticle}>
                                             <PublishButton/>
                                         </LeftSideButton> : null
