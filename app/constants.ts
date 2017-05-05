@@ -8,7 +8,7 @@ export enum ArticleStatuses {
 export namespace Captions {
     export const editor = {
         add_cover_ru: 'Загрузить обложку',
-        loading_cover_ru: 'Обложка загружается...',
+        loading_cover_ru: 'Отменить загрузку обложки',
         remove_cover_ru: 'Удалить обложку',
         enter_title_ru: 'Заголовок',
         add_content_help: 'Выберите тип контента, нажав на "плюс"',

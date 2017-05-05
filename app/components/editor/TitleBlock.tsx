@@ -1,10 +1,13 @@
 import * as React from "react";
 import {Captions, Validation} from "../../constants";
 import ContentEditable from "../shared/ContentEditable";
-import {UploadImageAction, UPLOAD_IMAGE, UPLOAD_IMAGE_BASE64} from "../../actions/editor/UploadImageAction";
+import {
+    UploadImageAction, UPLOAD_IMAGE, UPLOAD_IMAGE_BASE64,
+    CANCEL_UPLOAD_IMAGE
+} from "../../actions/editor/UploadImageAction";
 import {
     ContentAction, UPDATE_TITLE_CONTENT, UPDATE_COVER_CONTENT,
-    RESET_CONTENT, UPDATE_THEME_CONTENT
+    RESET_CONTENT, UPDATE_THEME_CONTENT, SAVING_PROCESS
 } from "../../actions/editor/ContentAction";
 import {api} from "../../api";
 import {NotificationAction, SHOW_NOTIFICATION} from "../../actions/shared/NotificationAction";
@@ -25,11 +28,6 @@ interface ICover {
     height?: number;
     offset_x?: number;
     offset_y?: number;
-
-    position_x?: number
-    position_y?: number
-    image_width?: number
-    image_height?: number
     editable?: boolean
 }
 
@@ -55,6 +53,7 @@ interface TitleBlockStateInterface {
     coverClipped?: ICoverClipped | null
     isValid?: boolean
     coverLoading?: boolean
+    loadingCoverName?: string;
     isActive?: boolean
     canvas?: any
     isDesktop?: boolean
@@ -121,6 +120,7 @@ export default class TitleBlock extends React.Component<TitleBlockPropsInterface
     }
 
     openFileDialog() {
+        this.refs.fileInput.value = "";
         this.refs.fileInput.click();
     }
 
@@ -158,26 +158,42 @@ export default class TitleBlock extends React.Component<TitleBlockPropsInterface
     }
 
     uploadCover(articleId: string|null) {
+        this.cancelUploadCover();
+        ContentAction.do(SAVING_PROCESS, true);
         var file = this.refs.fileInput.files[0];
+        this.state.loadingCoverName = file.name;
         UploadImageAction.doAsync(UPLOAD_IMAGE, {articleId: articleId, image: file}).then((data: any) => {
             data.editable = file.type != 'image/gif';
             this.setState({cover: data, coverLoading: false}, () => {
+                ContentAction.do(SAVING_PROCESS, false);
                 ContentAction.do(UPDATE_COVER_CONTENT, {articleId: articleId, autoSave: this.props.autoSave, cover: data});
                 this.drawCanvas();
             });
         }).catch((err: any) => {
+            ContentAction.do(SAVING_PROCESS, false);
             this.setState({coverLoading: false});
         });
+    }
+
+    cancelUploadCover() {
+        if (this.state.loadingCoverName) {
+            this.state.loadingCoverName = null;
+            UploadImageAction.do(CANCEL_UPLOAD_IMAGE, this.state.loadingCoverName);
+            this.setState({coverLoading: false});
+        }
     }
 
     handleCover() {
         this.setState({coverLoading: true});
         let articleId = ContentAction.getStore().articleId;
         if (!articleId) {
+            ContentAction.do(SAVING_PROCESS, true);
             api.post('/articles/editor/', ContentAction.getStore().content).then((response: any) => {
+                ContentAction.do(SAVING_PROCESS, false);
                 ContentAction.do(RESET_CONTENT, {articleId: response.data.id, autoSave: false, content: response.data.content});
                 this.uploadCover(response.data.id);
             }).catch((err: any) => {
+                ContentAction.do(SAVING_PROCESS, false);
                 NotificationAction.do(SHOW_NOTIFICATION, {content: Captions.editor.saving_error, type: 'error'})
             });
         } else {
@@ -195,6 +211,7 @@ export default class TitleBlock extends React.Component<TitleBlockPropsInterface
     }
 
     handleImageEditorChange(image: ICover, imageBase64: string) {
+        ContentAction.do(SAVING_PROCESS, true);
         let articleId = this.props.articleSlug || ContentAction.getStore().articleId;
         this.setState({cover: image, }, () => {
             window.clearTimeout(this.coverClippedProcess);
@@ -202,6 +219,7 @@ export default class TitleBlock extends React.Component<TitleBlockPropsInterface
                 UploadImageAction.doAsync(UPLOAD_IMAGE_BASE64,  {articleId: articleId, image: imageBase64}).then((data: any) => {
                     let updateCoverContent = () => {
                         this.setState({coverClipped: data}, () => {
+                            ContentAction.do(SAVING_PROCESS, false);
                             ContentAction.do(UPDATE_COVER_CONTENT, {
                                 articleId: articleId,
                                 autoSave: this.props.autoSave,
@@ -219,6 +237,9 @@ export default class TitleBlock extends React.Component<TitleBlockPropsInterface
                         updateCoverContent();
                     }
 
+                }).catch((err: any) => {
+                    console.log(err);
+                    ContentAction.do(SAVING_PROCESS, false);
                 });
             }, 1000);
         })
@@ -260,6 +281,7 @@ export default class TitleBlock extends React.Component<TitleBlockPropsInterface
     componentWillUnmount() {
         window.removeEventListener('resize', this.handleResize);
         MediaQuerySerice.listen(this.handleMediaQuery);
+        UploadImageAction.do(CANCEL_UPLOAD_IMAGE, null);
     }
 
     componentWillReceiveProps(nextProps: any) {}
@@ -280,7 +302,7 @@ export default class TitleBlock extends React.Component<TitleBlockPropsInterface
             <div className={className} style={style} ref="componentRootElement">
                 <div className="title_block__container">
                     {!this.state.cover ?
-                        <div onClick={!this.state.coverLoading && this.openFileDialog.bind(this)}
+                        <div onClick={this.state.coverLoading ? this.cancelUploadCover.bind(this) : this.openFileDialog.bind(this)}
                              className="title_block__cover_handler">
                             {this.state.coverLoading ? Captions.editor.loading_cover_ru : Captions.editor.add_cover_ru}
                         </div> :

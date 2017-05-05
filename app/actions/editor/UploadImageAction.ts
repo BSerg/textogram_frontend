@@ -1,4 +1,6 @@
 import * as React from "react";
+import axios from 'axios';
+
 import Action from "../Action";
 import {Constants} from '../../constants';
 import {NotificationAction, SHOW_NOTIFICATION} from "../shared/NotificationAction";
@@ -7,11 +9,13 @@ import {api} from "../../api";
 
 export const UPLOAD_IMAGE = 'upload_image';
 export const UPLOAD_IMAGE_BASE64 = 'upload_image_base64';
+export const CANCEL_UPLOAD_IMAGE = 'cancel_upload_image';
 export const UPDATE_PROGRESS = 'update_progress';
 
 export const UploadImageAction = new Action({
     images: {},
-    progress: {}
+    progress: {},
+    cancelTokens: {}
 });
 
 UploadImageAction.register(UPDATE_PROGRESS, (store, data: {name: string, progress: number, total: number}) => {
@@ -19,7 +23,7 @@ UploadImageAction.register(UPDATE_PROGRESS, (store, data: {name: string, progres
 });
 
 UploadImageAction.registerAsync(UPLOAD_IMAGE, (store, data: {articleId: number, image: File}) => {
-    console.log(data);
+    if (store.cancelTokens.__image) store.cancelTokens.__image.abort();
     return new Promise((resolve, reject) => {
         if (data.image.size > Constants.maxImageSize) {
             NotificationAction.do(
@@ -33,6 +37,9 @@ UploadImageAction.registerAsync(UPLOAD_IMAGE, (store, data: {articleId: number, 
         formData.append('image', data.image);
 
         let xhr = new XMLHttpRequest();
+
+        store.cancelTokens.__image = xhr;
+        store.cancelTokens[data.image.name] = xhr;
 
         xhr.upload.onprogress = function(e: ProgressEvent) {
             window.setTimeout(() => {
@@ -59,11 +66,17 @@ UploadImageAction.registerAsync(UPLOAD_IMAGE, (store, data: {articleId: number, 
         xhr.setRequestHeader('Authorization', 'Token ' + localStorage.getItem('authToken'));
         xhr.setRequestHeader('Accept', 'application/json');
         xhr.send(formData);
-
     })
 });
 
 UploadImageAction.registerAsync(UPLOAD_IMAGE_BASE64, (store, data: {articleId: number, image: string}) => {
+    if (store.cancelTokens.__base64) {
+        store.cancelTokens.__base64.cancel();
+    }
+
+    let cancelSource = axios.CancelToken.source();
+    store.cancelTokens.__base64 = cancelSource;
+
     return new Promise((resolve, reject) => {
         if (data.image.length > Constants.maxImageSize) {
             NotificationAction.do(
@@ -72,10 +85,23 @@ UploadImageAction.registerAsync(UPLOAD_IMAGE_BASE64, (store, data: {articleId: n
             );
             reject('Error. Image exceeds max size limit');
         }
-        api.post('/articles/editor/images/base64/', {article: data.articleId, image: data.image}).then((response: any) => {
+        api.post('/articles/editor/images/base64/', {article: data.articleId, image: data.image},
+            {cancelToken: cancelSource.token}).then((response: any) => {
             resolve(response.data);
         }).catch((err: any) => {
-            reject('Unexpected error')
+            if (!axios.isCancel(err)) {
+                reject('Unexpected error')
+            }
         });
     })
 });
+
+UploadImageAction.register(CANCEL_UPLOAD_IMAGE, (store, fileName: string | null) => {
+    if (fileName && store.cancelTokens[fileName]) {
+        store.cancelTokens[fileName].abort();
+    } else {
+        if (store.cancelTokens.__image) store.cancelTokens.__image.abort();
+        if (store.cancelTokens.__base64) store.cancelTokens.__base64.cancel();
+    }
+});
+
