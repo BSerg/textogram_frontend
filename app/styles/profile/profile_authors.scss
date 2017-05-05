@@ -3,8 +3,11 @@
 
 
 .profile_authors {
-  background-color: #F7F7F7;
-  padding-top: 70px;
+  //background-color: #F7F7F7;
+  //padding-top: 70px;
+  position: relative;
+  height: 100%;
+  padding: 0;
 
   .profile_authors_close {
 
@@ -16,8 +19,8 @@
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    position: absolute;
-    left: 0;
+    position: fixed;
+    //left: 0;
     bottom: 0;
     //background-color: transparent;
     padding: 10px 0;
@@ -25,9 +28,11 @@
 
     //@include box_shadow();
 
-    -webkit-box-shadow: 0 -2px 5px -2px rgba(0, 0, 0, 0.5);
-    -moz-box-shadow: 0 -2px 5px -2px rgba(0, 0, 0, 0.5);
-    box-shadow: 0 -2px 5px -2px rgba(0, 0, 0, 0.5);
+    //-webkit-box-shadow: 0 -2px 5px -2px rgba(0, 0, 0, 0.5);
+    //-moz-box-shadow: 0 -2px 5px -2px rgba(0, 0, 0, 0.5);
+    //box-shadow: 0 -2px 5px -2px rgba(0, 0, 0, 0.5);
+
+    border-top: 1px solid #BCBCBC;
 
     input {
       max-width: 500px;
@@ -55,14 +60,14 @@
     align-items: center;
     justify-content: flex-start;
     width: 100%;
-    max-width: 500px;
+    max-width: 600px;
     box-sizing: border-box;
     text-transform: uppercase;
     height: 45px;
     min-height: 45px;
     margin-bottom: 5px;
     font-size: 9px;
-    padding: 0 10px;
+    padding: 0 15px;
 
     &:hover {
       background-color: #F7F7F7;
@@ -110,12 +115,13 @@
 
 @media (min-width: 1024px) {
   .profile_authors {
-    background-color: #FFFFFF;
-    padding-top: $padding / 2;
+    //background-color: #FFFFFF;
+    //padding-top: $padding / 2;
   }
 
   .profile_authors .profile_author {
     letter-spacing: 1px;
+    max-width: 800px;
     &>div {
       text-align: left;
     }
@@ -123,9 +129,9 @@
 
   .profile_authors_input {
     //max-width: 500px;
-    input {
-      max-width: 500px;
-      font-size: 13px;
-    }
+    //input {
+    //  max-width: 500px;
+    //  font-size: 13px;
+    //}
   }
 }

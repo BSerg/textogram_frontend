@@ -13,7 +13,7 @@ export const UPDATE_USER_DRAFTS = 'update_drafts';
 
 class UserActionClass extends Action {
     constructor() {
-        super({user: null});
+        super({user: null, getPromise: null});
     }
 }
 
@@ -39,16 +39,21 @@ UserAction.register(UPDATE_USER_DRAFTS, (store, addAmount: number = 1) => {
 
 UserAction.registerAsync(GET_ME, (store, data: any) => {
 
-    return new Promise((resolve, reject) => {
-        api.get('/users/me/').then((response: any) => {
-            store.user = response.data;
-            localStorage.setItem('authToken', response.data.token);
-            resolve(response.data);
-        }).catch((error) => {
-            UserAction.do(USER_REJECT, null);
-            reject(error);
+    if (!store.getPromise) {
+        store.getPromise = new Promise((resolve, reject) => {
+            api.get('/users/me/').then((response: any) => {
+                store.user = response.data;
+                localStorage.setItem('authToken', response.data.token);
+                resolve(response.data);
+            }).catch((error) => {
+                UserAction.do(USER_REJECT, null);
+                reject(error);
+            });
         });
-    });
+    }
+    return store.getPromise;
+
+
 });
 
 UserAction.registerAsync(LOGIN, (store, data: any) => {

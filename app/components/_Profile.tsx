@@ -385,7 +385,7 @@ export default class Profile extends React.Component<any, IProfileState> {
                     isSelf: Boolean(response.data && UserAction.getStore().user && (UserAction.getStore().user.id == response.data.id))
 
                 }, () => {
-                    // this.checkIsSelf();
+                    // this.handleUserChange();
 
                 });
             }).catch((error) => {

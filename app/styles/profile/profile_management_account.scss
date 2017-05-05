@@ -23,6 +23,59 @@
 
     margin-bottom: $margin * 2;
   }
+
+  .main {
+    &.nickname {
+
+      .hint {
+        height: 15px;
+        font-size: 12px;
+        font-family: $family_open_sans;
+        &.nickname_error {
+          color: $color-accent;
+
+        }
+      }
+      .nickname_input {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        flex-grow: 1;
+        max-width: 400px;
+        margin-bottom: 10px;
+        input {
+          width: 100%;
+          height: 30px;
+          box-sizing: border-box;
+          padding: 0;
+          margin: 0 10px 0 0;
+          font-size: 12px;
+          font-family: $family_open_sans;
+          letter-spacing: 1px;
+          border: none;
+          border-bottom: 1px solid $color5;
+          outline: none;
+          &.nickname_error {
+            border-color: $color-accent;
+          }
+        }
+
+      }
+
+      .nickname_confirm {
+        min-width: 30px;
+        width: 30px;
+        height: 30px;
+        &.active {
+          cursor: pointer;
+        }
+        svg {
+          width: 30px;
+          height: 30px;
+        }
+      }
+    }
+  }
 }
 
 .profile_management_social_link, .profile_management_social_link_loading {
