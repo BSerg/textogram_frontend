@@ -134,6 +134,7 @@ export namespace Captions {
         sectionLogin: 'Учетная запись',
         sectionNotifications: 'Уведомления',
         sectionSubscriptions: 'Подписки',
+        sectionStatistics: 'Статистика',
 
         authAccount: "Аккаунт авторизации",
         additionalLinks: "Дополнительные связи",

@@ -4,7 +4,8 @@ import {withRouter, Link} from 'react-router';
 
 import ProfileManagementNotifications from './ProfileManagementNotifications';
 import ProfileManagementAccount from './ProfileManagementAccount';
-import ProfileAuthorList from './ProfileAuthorList';
+import ProfileManagementStatistics from './ProfileManagementStatistics';
+
 import {MediaQuerySerice} from '../../services/MediaQueryService';
 
 import EditableImageModal from '../shared/EditableImageModal';
@@ -53,6 +54,13 @@ class ProfileManagementClass extends React.Component<IManagementProps, IManageme
 
     SECTION_ACCOUNT = 'account';
     SECTION_NOTIFICATIONS = 'notifications';
+    SECTION_STATISTICS = 'statistics';
+
+    SECTIONS: {name: string, caption: string, to: string, section: any}[] = [
+        {name: this.SECTION_ACCOUNT, caption: Captions.management.sectionAccount, to: '/manage/account', section: <ProfileManagementAccount />},
+        {name: this.SECTION_NOTIFICATIONS, caption: Captions.management.sectionNotifications, to: '/manage/notifications', section: <ProfileManagementNotifications />},
+        {name: this.SECTION_STATISTICS, caption: Captions.management.sectionStatistics, to: '/manage/statistics', section: <ProfileManagementStatistics/>},
+    ];
 
 
     constructor() {
@@ -81,12 +89,9 @@ class ProfileManagementClass extends React.Component<IManagementProps, IManageme
     }
 
     setSection(sectionName: string) {
-        if ([this.SECTION_ACCOUNT, this.SECTION_NOTIFICATIONS].indexOf(sectionName) != -1) {
-            this.setState({currentSection: sectionName});
-        }
-        else {
-            this.props.router.push('/manage/account');
-        }
+        this.setState({currentSection:
+            (this.SECTIONS.map((section) => {return section.name}).indexOf(this.state.currentSection) != -1) ?
+                sectionName : this.SECTION_ACCOUNT });
     }
 
     formSubmit(type: string, e: any) {
@@ -238,24 +243,37 @@ class ProfileManagementClass extends React.Component<IManagementProps, IManageme
             return (<div id="profile" className="profile_loading"><Loading /></div>);
         }
 
-        let sections: {name: string, caption: string, to: string}[] = [
-            {name: this.SECTION_ACCOUNT, caption: Captions.management.sectionAccount, to: '/manage/account'},
-            {name: this.SECTION_NOTIFICATIONS, caption: Captions.management.sectionNotifications, to: '/manage/notifications'}];
+        // let sections: {name: string, caption: string, to: string}[] = [
+        //     {name: this.SECTION_ACCOUNT, caption: Captions.management.sectionAccount, to: '/manage/account'},
+        //     {name: this.SECTION_NOTIFICATIONS, caption: Captions.management.sectionNotifications, to: '/manage/notifications'}
+        //
+        //     ];
 
-        let section: any = null;
+        //let section: any = this.sections[this.state.currentSection] || null;
 
-        if (this.state.currentSection == this.SECTION_NOTIFICATIONS) {
-            section = <ProfileManagementNotifications/>;
-        }
+        let section = null;
 
-        switch (this.state.currentSection) {
-            case (this.SECTION_ACCOUNT):
-                section = <ProfileManagementAccount/>;
-                break;
-            case (this.SECTION_NOTIFICATIONS):
-                section = <ProfileManagementNotifications/>;
-                break;
-        }
+        this.SECTIONS.forEach((s) => {
+            if (s.name == this.state.currentSection) {
+                section = s.section;
+            }
+        });
+
+
+
+
+        // if (this.state.currentSection == this.SECTION_NOTIFICATIONS) {
+        //     section = <ProfileManagementNotifications/>;
+        // }
+        //
+        // switch (this.state.currentSection) {
+        //     case (this.SECTION_ACCOUNT):
+        //         section = <ProfileManagementAccount/>;
+        //         break;
+        //     case (this.SECTION_NOTIFICATIONS):
+        //         section = <ProfileManagementNotifications/>;
+        //         break;
+        // }
 
         return (
             <div id="profile">
@@ -328,7 +346,7 @@ class ProfileManagementClass extends React.Component<IManagementProps, IManageme
                             (
                                 <div className="profile_content_data">
                                     <div className="profile_menu">
-                                        { sections.map((section: {name: string, caption: string, to: string}, index  ) => {
+                                        { this.SECTIONS.map((section: {name: string, caption: string, to: string}, index  ) => {
                                              return (<Link key={index} to={section.to}
                                                           className={ "menu_item" + (section.name == this.state.currentSection ? " active" : "")}>
                                                  { section.caption }
