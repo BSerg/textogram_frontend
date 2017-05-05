@@ -23,6 +23,7 @@ interface ISubscribersState {
 
     items?: any[];
     searchString?: string;
+    searchTimeout?: number;
     nextUrl?: string;
     cancelSource?: any;
     isLoading?: boolean;
@@ -34,6 +35,7 @@ export default class ProfileAuthorList extends React.Component<ISubscribersProps
     refs: {
         main: HTMLDivElement;
         input: HTMLDivElement;
+        search: HTMLInputElement;
     };
 
     constructor() {
@@ -77,9 +79,11 @@ export default class ProfileAuthorList extends React.Component<ISubscribersProps
         });
     }
 
-    setSearchString(e: any) {
-        this.setState({ searchString: e.target.value }, () => {
-            this.loadItems();
+    searchInput(e: any) {
+        this.state.searchTimeout && window.clearTimeout(this.state.searchTimeout);
+        this.state.cancelSource && this.state.cancelSource.cancel();
+        this.setState({ searchString: e.target.value, items: [], isLoading: true }, () => {
+            this.state.searchTimeout = window.setTimeout(this.loadItems.bind(this), 500);
         })
     }
 
@@ -101,28 +105,34 @@ export default class ProfileAuthorList extends React.Component<ISubscribersProps
     }
 
     componentWillReceiveProps(nextProps: any) {
+        this.refs.search.focus();
         this.loadItems();
     }
 
     componentDidMount() {
+        this.refs.search.focus();
         MenuAction.onChange([TOGGLE], this.setMenuOpen);
         this.loadItems();
-        this.setInputPosition();
-        window.addEventListener('resize', this.setInputPosition);
+        // this.setInputPosition();
+        // window.addEventListener('resize', this.setInputPosition);
     }
 
     componentWillUnmount() {
         MenuAction.unbind([TOGGLE], this.setMenuOpen);
-        if (this.state.cancelSource) {
-            this.state.cancelSource.cancel();
-        }
-        window.removeEventListener('resize', this.setInputPosition);
+        this.state.searchTimeout && window.clearTimeout(this.state.searchTimeout);
+        this.state.cancelSource && this.state.cancelSource.cancel();
+        // window.removeEventListener('resize', this.setInputPosition);
     }
 
     render() {
 
         return (
             <div className={"profile_additional profile_authors" + (this.state.menuOpen ? " adjusted" : "")} ref="main">
+
+                <div className="profile__search" ref="input">
+                    <input type="text" value={this.state.searchString} placeholder="Поиск" ref="search"
+                           onChange={this.searchInput.bind(this)}/>
+                </div>
 
                 {
                     this.state.items.map((item: any, index: number) => {
@@ -140,11 +150,6 @@ export default class ProfileAuthorList extends React.Component<ISubscribersProps
                 {
                     this.state.isLoading ? (<Loading />) : null
                 }
-
-                <div className="profile_authors_input" ref="input">
-                    <input type="text" value={this.state.searchString} placeholder="Быстрый поиск по имени"
-                           onChange={this.setSearchString.bind(this)}/>
-                </div>
 
 
             </div>)

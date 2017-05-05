@@ -314,7 +314,7 @@ class UserMenu extends React.Component<IUserMenuProps, any> {
 
                 <div className="menu__links">
                     <div className="menu__link">
-                        <Link to="/feed">{ "Лента" }</Link>
+                        <Link to="/feed">{ "Подписки" }</Link>
                     </div>
                 </div>
 
@@ -374,7 +374,7 @@ class UserMenu extends React.Component<IUserMenuProps, any> {
 
                     <div className="menu__links">
                         <div className="menu__link" onClick={this.handleUrlClick.bind(this, '/feed')}>
-                            { "Лента" }
+                            { "Подписки" }
                         </div>
                         <div className="menu__link" onClick={this.handleUrlClick.bind(this, '/articles/new/')}>
                             { Captions.main_menu.create_article }

@@ -132,7 +132,7 @@ export default class ProfileArticles extends React.Component<IArticlesProps, IAr
             <div className={"profile__articles" + (this.props.section == this.SECTION_DRAFTS ? ' drafts' : '') }
                  ref="main">
 
-                <div className="profile__articles__search" >
+                <div className="profile__search" >
                     <input ref="search" value={this.state.searchString} placeholder="Поиск" onChange={this.searchInput.bind(this)}  />
                 </div>
 

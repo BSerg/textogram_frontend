@@ -164,7 +164,7 @@ class ArticlePreviewClass extends React.Component<IArticlePreviewPropsInterface,
 
         let date = this.getDateString(this.props.item.is_draft ? this.props.item.last_modified : this.props.item.published_at);
         let coverStyle: any = this.props.item.cover ? { backgroundImage: `url('${this.props.item.cover}')`}
-            : (lead ? {} : {height: '0'});
+            :  {height: '0'};
 
         if (this.state.deleted) {
             return (<div className="article_preview_deleted">
@@ -186,8 +186,6 @@ class ArticlePreviewClass extends React.Component<IArticlePreviewPropsInterface,
                     }
 
                     <div className={"article_preview__data" + (this.props.isOwner || this.props.item.is_draft ? " owned": "")}>
-
-
                         <div className="article_preview__title">
                             <Link to={this.props.item.is_draft ? ("/articles/" + this.props.item.id + "/edit/") :
                                 ("/articles/" + this.props.item.slug + "/")}>{ this.props.item.title || date }
@@ -234,7 +232,6 @@ class ArticlePreviewClass extends React.Component<IArticlePreviewPropsInterface,
                                     </Link>
                                 </div>)
                         }
-
                         </div>
 
                     </div>
