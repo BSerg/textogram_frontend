@@ -1,5 +1,6 @@
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 var DefinePlugin = require('webpack/lib/DefinePlugin');
+var JavaScriptObfuscator = require('webpack-obfuscator');
 var HTMLWebpackPluginConfig = new HtmlWebpackPlugin({
     template: __dirname + '/index.html',
     filename: 'index.html',
@@ -47,6 +48,9 @@ module.exports = {
     },
     plugins: [
         new ExtractTextPlugin('bundle.css'),
+        // new JavaScriptObfuscator ({
+        //     rotateUnicodeArray: true
+        // }),
         new DefinePlugin({
             "process.env": {
                 NODE_ENV: JSON.stringify("prod"),
