@@ -320,17 +320,22 @@ class ProfileClass extends React.Component<IProfileProps, IProfileState> {
 
                          <div className="divider"></div>
 
-                         <div className="subscription">
-                             <Link to={'/' + this.state.user.nickname + '/following'}  >Читаемые <span>{ this.state.user.subscriptions }</span></Link>
-                             <Link to={'/' + this.state.user.nickname + '/followers'} >Читатели <span>{ this.state.user.subscribers }</span></Link>
-                             {
-                                 (!this.state.isDesktop && this.state.canSubscribe) ? (
-                                    this.state.user.is_subscribed ? (
-                                        <div onClick={this.unSubscribe.bind(this)}><ConfirmIcon /> {Captions.profile.subscribed}</div>) :
-                                        (<div onClick={this.subscribe.bind(this)}>{ Captions.profile.subscribe }</div>)
-                                 ) : null
-                             }
-                         </div>
+                         {
+                             !process.env.IS_LENTACH ? (
+                                 <div className="subscription">
+                                     <Link to={'/' + this.state.user.nickname + '/following'}  >Читаемые <span>{ this.state.user.subscriptions }</span></Link>
+                                     <Link to={'/' + this.state.user.nickname + '/followers'} >Читатели <span>{ this.state.user.subscribers }</span></Link>
+                                     {
+                                         (!this.state.isDesktop && this.state.canSubscribe) ? (
+                                            this.state.user.is_subscribed ? (
+                                                <div onClick={this.unSubscribe.bind(this)}><ConfirmIcon /> {Captions.profile.subscribed}</div>) :
+                                                (<div onClick={this.subscribe.bind(this)}>{ Captions.profile.subscribe }</div>)
+                                         ) : null
+                                     }
+                                 </div>
+                             ) : null
+                         }
+
 
                          {
                              this.state.isDesktop ? (<div className="divider"></div>) : null
