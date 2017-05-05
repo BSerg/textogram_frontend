@@ -71,6 +71,7 @@ export namespace Captions {
         deleted_photo_block: 'Галерея удалена',
         restore: 'Восстановить',
         clear: 'Очистить',
+        onDangerousExit: 'Несохраненные данные могут быть потеряны! Вы уверены, что хотите выйти?',
     };
 
     export const shared = {

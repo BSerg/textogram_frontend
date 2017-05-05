@@ -99,7 +99,6 @@ export default class ImageEditorRefactored extends React.Component<IProps, IStat
     handleZoom() {
         let zoomValue = (parseInt(this.refs.zoomInput.value) * (this.props.maxZoom - 1)/10 + 1);
         let dZoom = zoomValue - this.state.image.zoom;
-        console.log(dZoom);
         this.state.image.offset_x += this.state.image.offset_x / 2 * dZoom;
         this.state.image.offset_y += this.state.image.offset_y / 2 * dZoom;
         this.state.image.zoom = zoomValue;
@@ -145,14 +144,6 @@ export default class ImageEditorRefactored extends React.Component<IProps, IStat
             this.state.dragInitPoint = {x: (e as MouseEvent).clientX, y: (e as MouseEvent).clientY};
             this.state.image.offset_x += dX;
             this.state.image.offset_y += dY;
-            if (this.state.image.position_x > 0) {this.state.image.position_x = 0}
-            if (this.state.image.position_x + this.state.image.image_width < this.state.width) {
-                this.state.image.position_x = this.state.width - this.state.image.image_width;
-            }
-            if (this.state.image.position_y > 0) {this.state.image.position_y = 0}
-            if (this.state.image.position_y + this.state.image.image_height < this.state.height) {
-                this.state.image.position_y = this.state.height - this.state.image.image_height;
-            }
             this.drawImage();
             this.props.onChange && this.props.onChange(this.state.image, this._getBase64Image());
         }
@@ -247,7 +238,6 @@ export default class ImageEditorRefactored extends React.Component<IProps, IStat
                 image: nextProps.image,
                 width: nextProps.width,
                 height: nextProps.height,
-                zoomValue: 1
             }, () => {
                 this.drawImage();
             });
