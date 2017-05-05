@@ -19,6 +19,8 @@ interface IArticlesState {
     nextUrl?: string;
     isLoading?: boolean;
     cancelSource?: any;
+    searchString?: string;
+    searchTimeout?: number;
 }
 
 export default class ProfileArticles extends React.Component<IArticlesProps, IArticlesState> {
@@ -29,11 +31,12 @@ export default class ProfileArticles extends React.Component<IArticlesProps, IAr
 
     refs: {
         main: HTMLDivElement;
+        search: HTMLInputElement;
     };
 
     constructor() {
         super();
-        this.state = { items: [], nextUrl: null,  isLoading: false, cancelSource: null};
+        this.state = { items: [], nextUrl: null,  isLoading: false, cancelSource: null, searchString: ''};
 
         this.handleScroll = this.handleScroll.bind(this);
     }
@@ -42,12 +45,8 @@ export default class ProfileArticles extends React.Component<IArticlesProps, IAr
 
         let items: any[] = more ? this.state.items : [];
 
-        if (this.state.cancelSource) {
-            this.state.cancelSource.cancel();
-        }
-
+        this.state.cancelSource && this.state.cancelSource.cancel();
         let CancelToken = axios.CancelToken;
-        // let source: any = CancelToken.source();
         this.state.cancelSource = CancelToken.source();
 
         this.setState({items: items, isLoading: true}, () => {
@@ -64,6 +63,8 @@ export default class ProfileArticles extends React.Component<IArticlesProps, IAr
                 else if (this.state.section == this.SECTION_FEED) {
                     requestParams.feed = true;
                 }
+
+                requestParams.search = this.state.searchString;
             }
 
             api.get(apiUrl, {cancelToken: this.state.cancelSource.token, params: requestParams}).then((response: any) => {
@@ -81,12 +82,13 @@ export default class ProfileArticles extends React.Component<IArticlesProps, IAr
         });
     }
 
-    deleteItem() {
+    searchInput(e: any) {
+        this.state.searchTimeout && window.clearTimeout(this.state.searchTimeout);
+        this.state.cancelSource && this.state.cancelSource.cancel();
+        this.setState({searchString: e.target.value, items: [], isLoading: true}, () => {
+            this.state.searchTimeout = window.setTimeout(this.loadArticles.bind(this), 500);
 
-    }
-
-    handleMainScroll() {
-        console.log('scrolll');
+        })
     }
 
     handleScroll() {
@@ -99,20 +101,27 @@ export default class ProfileArticles extends React.Component<IArticlesProps, IAr
     componentWillReceiveProps(nextProps: IArticlesProps) {
 
         if (nextProps.userId != this.state.userId || nextProps.section != this.state.section || nextProps.isSelf != this.state.isSelf) {
-            this.setState({ userId: nextProps.userId, section: nextProps.section, isSelf: nextProps.isSelf }, () => { this.loadArticles(); });
+
+            this.state.searchTimeout && window.clearTimeout(this.state.searchTimeout);
+            this.state.cancelSource && this.state.cancelSource.cancel();
+
+            this.setState({ userId: nextProps.userId, searchString: '', section: nextProps.section, isSelf: nextProps.isSelf }, () => {
+                this.refs.search.focus();
+                this.loadArticles();
+            });
         }
     }
 
     componentDidMount() {
         window.addEventListener('scroll', this.handleScroll);
+        this.refs.search.focus();
         this.setState({ userId: this.props.userId, section: this.props.section, isSelf: this.props.isSelf }, () => { this.loadArticles(); });
     }
 
     componentWillUnmount() {
         window.removeEventListener('scroll', this.handleScroll);
-        if (this.state.cancelSource) {
-            this.state.cancelSource.cancel();
-        }
+        this.state.cancelSource && this.state.cancelSource.cancel();
+        this.state.searchTimeout && window.clearTimeout(this.state.searchTimeout);
     }
 
     render() {
@@ -123,9 +132,13 @@ export default class ProfileArticles extends React.Component<IArticlesProps, IAr
             <div className={"profile__articles" + (this.props.section == this.SECTION_DRAFTS ? ' drafts' : '') }
                  ref="main">
 
+                <div className="profile__search" >
+                    <input ref="search" value={this.state.searchString} placeholder="Поиск" onChange={this.searchInput.bind(this)}  />
+                </div>
+
                 { this.state.items.map((item: any, index: number) => {
                     return (<ArticlePreview isFeed={isFeed} key={index} item={item} isOwner={isOwner}
-                                                onClickDelete={this.deleteItem.bind(this)} index={index} />)
+                                                index={index} />)
 
                 }) }
                 {

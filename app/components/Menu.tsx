@@ -215,7 +215,7 @@ class NotificationBlock extends React.Component<NotificationBlockPropsInterface,
     }
 
     openNotifications() {
-        this.props.router.push('/manage/?show=notifications');
+        this.props.router.push('/manage/notifications');
         if (!MediaQuerySerice.getIsDesktop()) {
             MenuAction.do(TOGGLE, false);
         }
@@ -312,12 +312,9 @@ class UserMenu extends React.Component<IUserMenuProps, any> {
 
                 <div onClick={this.closeMenu.bind(this)} className="menu__close"><CloseIcon /></div>
 
-                <div className="menu__user menu__links">
+                <div className="menu__links">
                     <div className="menu__link">
-                        <Link to={"/profile/" + this.props.user.id}>
-                            <img src={ this.props.user.avatar } />
-                            {Captions.main_menu.myProfile}
-                        </Link>
+                        <Link to="/feed">{ "Подписки" }</Link>
                     </div>
                 </div>
 
@@ -326,9 +323,15 @@ class UserMenu extends React.Component<IUserMenuProps, any> {
                         <Link to="/articles/new/">{ Captions.main_menu.create_article }</Link>
                     </div>
                 </div>
+
                 <div className="menu__links">
                     <div className="menu__link">
-                        <Link to={"/profile/" + this.props.user.id + "/?show=drafts"}>
+                        <Link to={"/" + this.props.user.nickname}>{ "Мои тексты" }</Link>
+                    </div>
+                </div>
+                <div className="menu__links">
+                    <div className="menu__link">
+                        <Link to={"/drafts"}>
                             { Captions.main_menu.drafts }
                             {
                                 this.props.user.drafts ? <span>({this.props.user.drafts})</span> : ""
@@ -349,7 +352,7 @@ class UserMenu extends React.Component<IUserMenuProps, any> {
 
                 <div className="menu__controls">
                     <NotificationBlockWithRouter showZero={true} />
-                    <div><Link to="/manage/"><SettingsIcon /></Link></div>
+                    <div><Link to="/manage/account/"><SettingsIcon /></Link></div>
                     <div><Link to="/"><InfoIcon /></Link></div>
                     <div onClick={this.logout.bind(this)}><ExitIcon /></div>
                 </div>
@@ -358,22 +361,25 @@ class UserMenu extends React.Component<IUserMenuProps, any> {
                 <div className="menu__content" onClick={this.stopClosePropagation.bind(this)}>
                     <div className="menu__user">
                         <div className="menu__user_avatar" >
-                            <img src={ this.props.user.avatar } onClick={this.handleUrlClick.bind(this, '/profile/' + this.props.user.id)} />
+                            <img src={ this.props.user.avatar } onClick={this.handleUrlClick.bind(this, '/' + this.props.user.nickname)} />
                         </div>
-                        <div className="menu__user_username" onClick={this.handleUrlClick.bind(this, '/profile/' + this.props.user.id)}><span>{this.props.user.first_name}</span> <span>{this.props.user.last_name}</span></div>
+                        <div className="menu__user_username" onClick={this.handleUrlClick.bind(this, '/' + this.props.user.nickname)}><span>{this.props.user.first_name}</span> <span>{this.props.user.last_name}</span></div>
 
                         <div className="menu__controls">
                             <NotificationBlockWithRouter showZero={true} />
-                            <div onClick={this.handleUrlClick.bind(this, '/manage/')}><SettingsIcon /></div>
+                            <div onClick={this.handleUrlClick.bind(this, '/manage/account/')}><SettingsIcon /></div>
                             <div onClick={this.logout.bind(this)}><ExitIcon /></div>
                         </div>
                     </div>
 
                     <div className="menu__links">
+                        <div className="menu__link" onClick={this.handleUrlClick.bind(this, '/feed')}>
+                            { "Подписки" }
+                        </div>
                         <div className="menu__link" onClick={this.handleUrlClick.bind(this, '/articles/new/')}>
                             { Captions.main_menu.create_article }
                         </div>
-                        <div className="menu__link" onClick={this.handleUrlClick.bind(this, '/profile/' + this.props.user.id + "/?show=drafts")}>
+                        <div className="menu__link" onClick={this.handleUrlClick.bind(this, '/drafts')}>
                             { Captions.main_menu.drafts }
                             {
                                 this.props.user.drafts ? <span>({this.props.user.drafts})</span> : ""

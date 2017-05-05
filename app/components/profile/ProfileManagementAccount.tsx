@@ -1,11 +1,12 @@
 import * as React from 'react';
 
-import {UserAction, SAVE_USER} from '../../actions/user/UserAction';
+import {UserAction, SAVE_USER, UPDATE_USER} from '../../actions/user/UserAction';
 import SocialIcon from '../shared/SocialIcon';
 import {Link} from 'react-router';
 import Loading from '../shared/Loading';
 
 import {api} from '../../api';
+import axios from 'axios';
 
 import '../../styles/profile/profile_management_account.scss';
 
@@ -61,7 +62,6 @@ class ProfileSocialLink extends React.Component<IProfileSocialLinkProps, IProfil
 
     saveUrl(e?: any) {
         e && e.stopPropagation();
-        console.log('here');
         if (this.state.isLoading) {
             return;
         }
@@ -217,6 +217,12 @@ interface IAccountState {
     authAccount?: any;
     socialLinks?: ISocialLink[];
     activeSocial?: string;
+    nickname?: string;
+    nicknameChecking?: boolean;
+    nicknameCorrect?: boolean;
+    cancelSource?: any;
+    nicknameCheckTimeout?: number;
+    userSaving?: boolean;
 }
 
 export default class ProfileManagementAccount extends React.Component<any, IAccountState> {
@@ -225,7 +231,40 @@ export default class ProfileManagementAccount extends React.Component<any, IAcco
 
     constructor() {
         super();
-        this.state = { authAccount: null, socialLinks: [], activeSocial: '' };
+        this.state = { authAccount: null, socialLinks: [], activeSocial: '', nickname: '', nicknameChecking: false,
+            nicknameCorrect: true, userSaving: false, nicknameCheckTimeout: null, cancelSource: null
+        };
+    }
+
+    nicknameChange(e: any) {
+        let val: string = e.target.value;
+        if ((val == '' || val.match(/^[A-Za-z][A-Za-z\d_]*$/)) && val.length <= 20 ) {
+            this.setState({nickname: val}, this.checkNickname);
+        }
+    }
+
+    checkNickname() {
+        this.state.cancelSource && this.state.cancelSource.cancel();
+        if (this.state.nickname.length < 4) {
+            this.setState({nicknameChecking: false, nicknameCorrect: false});
+        }
+        else {
+            this.state.cancelSource =  axios.CancelToken.source();
+            this.setState({nicknameChecking: true, nicknameCorrect: true}, () => {
+                this.state.nicknameCheckTimeout && window.clearTimeout(this.state.nicknameCheckTimeout);
+                this.state.nicknameCheckTimeout = window.setTimeout(() => {
+                    api.get('/users/check_nickname/',
+                            {params: {nickname: this.state.nickname},
+                            cancelToken: this.state.cancelSource.token}).then((response: any) => {
+                                this.setState({nicknameChecking: false, nicknameCorrect: true});
+                    }).catch((error) => {
+                        this.setState({nicknameChecking: false, nicknameCorrect: false});
+                    });
+                }, 1000);
+            });
+        }
+
+
     }
 
     setActiveSocialCallback(social: string) {
@@ -257,15 +296,56 @@ export default class ProfileManagementAccount extends React.Component<any, IAcco
             links.push(item);
         });
 
-        this.setState({socialLinks: links, authAccount: authAccount});
+        this.setState({socialLinks: links, authAccount: authAccount, nickname: UserAction.getStore().user.nickname});
+    }
+
+    saveNickname() {
+        this.setState({ userSaving: true}, () => {
+            UserAction.doAsync(UPDATE_USER, {nickname: this.state.nickname}).then(() => {
+                this.setState({userSaving: false, nickname: UserAction.getStore().user.nickname});
+            }).catch(() => {
+                this.setState({userSaving: false, nicknameCorrect: false, nickname: UserAction.getStore().user.nickname})
+            })
+        });
     }
 
     componentDidMount() {
         this.setData();
     }
 
+    componentWillUnmount() {
+        this.state.cancelSource && this.state.cancelSource.cancel();
+        this.state.nicknameCheckTimeout && window.clearTimeout(this.state.nicknameCheckTimeout);
+    }
+
     render() {
+
+        let nicknameChanged = UserAction.getStore().user.nickname != this.state.nickname;
+        let hint: any = this.state.nickname ? ((nicknameChanged && !this.state.nicknameChecking) ? (this.state.nicknameCorrect ? 'Никнейм доступен' : 'Никнейм не доступен') : null)
+            : 'Никнейм не должен быть пустым';
+
         return (<div>
+
+            {
+                !process.env.IS_LENTACH ? (
+                    <div className="profile_management_links">
+                        <div className="title nickname">Никнейм</div>
+                        <div className="main nickname">
+                            <div className="nickname_input">
+                                <input className={this.state.nicknameCorrect ? "" : "nickname_error" } disabled={this.state.userSaving} type="text" value={this.state.nickname} onChange={this.nicknameChange.bind(this)} />
+                                {
+                                    (this.state.nicknameChecking || this.state.userSaving ) ? <div className="nickname_confirm"><Loading /></div> :
+                                        ((this.state.nicknameCorrect && nicknameChanged) ?
+                                            <div className="nickname_confirm active" onClick={this.saveNickname.bind(this)}>
+                                                <ConfirmIcon />
+                                            </div> : <div className="nickname_confirm"></div>)
+                                }
+                            </div>
+
+                            <div className={"hint" + (this.state.nicknameCorrect ? "" : " nickname_error") }>{hint}</div>
+                        </div>
+                    </div>) : null
+            }
 
             {
                 this.state.authAccount ? (
@@ -281,7 +361,6 @@ export default class ProfileManagementAccount extends React.Component<any, IAcco
                     </div>
                 ) : null
             }
-
 
 
             <div className="profile_management_links">

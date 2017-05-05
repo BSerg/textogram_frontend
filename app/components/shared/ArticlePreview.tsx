@@ -3,6 +3,7 @@ import {withRouter, Link} from 'react-router';
 import {api} from '../../api';
 
 import * as moment from 'moment';
+import * as marked from 'marked';
 import {MediaQuerySerice} from '../../services/MediaQueryService';
 
 import {UserAction, UPDATE_USER_DRAFTS} from '../../actions/user/UserAction';
@@ -87,7 +88,6 @@ class ArticlePreviewClass extends React.Component<IArticlePreviewPropsInterface,
     }
 
     restore() {
-        console.log(this.props.item);
 
         if (!this.state.deleted) {
             return;
@@ -101,10 +101,6 @@ class ArticlePreviewClass extends React.Component<IArticlePreviewPropsInterface,
                 this.setState({deleted: false});
 
             }).catch((error) => {  });
-
-
-
-        // this.setState({deleted: false});
     }
 
     remove() {
@@ -162,8 +158,13 @@ class ArticlePreviewClass extends React.Component<IArticlePreviewPropsInterface,
             return null;
         }
 
+        let dv: HTMLDivElement = document.createElement('div');
+        dv.innerHTML = marked(this.props.item.lead || '');
+        let lead = dv.innerText.trim();
+
         let date = this.getDateString(this.props.item.is_draft ? this.props.item.last_modified : this.props.item.published_at);
-        let coverStyle = { backgroundImage: `url('${this.props.item.cover}')`};
+        let coverStyle: any = this.props.item.cover ? { backgroundImage: `url('${this.props.item.cover}')`}
+            :  {height: '0'};
 
         if (this.state.deleted) {
             return (<div className="article_preview_deleted">
@@ -177,7 +178,7 @@ class ArticlePreviewClass extends React.Component<IArticlePreviewPropsInterface,
                     {
                         !this.props.isOwner && !this.props.item.is_draft ? (
                             <div className="article_preview__avatar" key="avatar">
-                                <Link to={"/profile/" + this.props.item.owner.id} >
+                                <Link to={"/" + this.props.item.owner.nickname} >
                                     <img src={this.props.item.owner.avatar}/>
                                 </Link>
                              </div>
@@ -185,8 +186,6 @@ class ArticlePreviewClass extends React.Component<IArticlePreviewPropsInterface,
                     }
 
                     <div className={"article_preview__data" + (this.props.isOwner || this.props.item.is_draft ? " owned": "")}>
-
-
                         <div className="article_preview__title">
                             <Link to={this.props.item.is_draft ? ("/articles/" + this.props.item.id + "/edit/") :
                                 ("/articles/" + this.props.item.slug + "/")}>{ this.props.item.title || date }
@@ -196,7 +195,7 @@ class ArticlePreviewClass extends React.Component<IArticlePreviewPropsInterface,
                             this.props.item.lead ? (
                                 <div className="article_preview__lead">
                                     <Link to={this.props.item.is_draft ? ("/articles/" + this.props.item.id + "/edit/") :
-                                        ("/articles/" + this.props.item.slug + "/")}>{ this.props.item.lead}
+                                        ("/articles/" + this.props.item.slug + "/")}>{ lead }
                                     </Link>
                                 </div>
                             ) : null
@@ -210,7 +209,7 @@ class ArticlePreviewClass extends React.Component<IArticlePreviewPropsInterface,
                                  [
                                      !this.props.isOwner ?
                                          <div className="article_preview__text" key="name">
-                                             <Link to={"/profile/" + this.props.item.owner.id} >
+                                             <Link to={"/" + this.props.item.owner.nickname + '/'} >
                                                 {
                                                     this.props.item.owner.first_name + ' ' + this.props.item.owner.last_name
                                                 }
@@ -233,19 +232,13 @@ class ArticlePreviewClass extends React.Component<IArticlePreviewPropsInterface,
                                     </Link>
                                 </div>)
                         }
-
                         </div>
 
                     </div>
-
-                    {
-                        this.props.item.cover ? (
-                            <Link to={this.props.item.is_draft ? ("/articles/" + this.props.item.id + "/edit/") :
-                                ("/articles/" + this.props.item.slug + "/")}>
-                                <div className="article_preview__cover"  style={coverStyle}></div>
-                            </Link>
-                        ) : <div className="article_preview__cover"></div>
-                    }
+                    <Link to={this.props.item.is_draft ? ("/articles/" + this.props.item.id + "/edit/") :
+                        ("/articles/" + this.props.item.slug + "/")}>
+                        <div className="article_preview__cover"  style={coverStyle}></div>
+                    </Link>
 
                     {
                         this.props.isOwner ? (<ControlMenu item={this.props.item } deleteCallback={this.deleteArticle.bind(this)} />) : null
@@ -263,13 +256,13 @@ class ArticlePreviewClass extends React.Component<IArticlePreviewPropsInterface,
 
                                  [
                                      <div className="article_preview__avatar" key="avatar">
-                                        <Link to={"/profile/" + this.props.item.owner.id} >
+                                        <Link to={"/" + this.props.item.owner.nickname + '/'} >
                                             <img src={this.props.item.owner.avatar}/>
                                         </Link>
                                      </div>,
 
                                      <div className="article_preview__text" key="name">
-                                         <Link to={"/profile/" + this.props.item.owner.id} >
+                                         <Link to={"/" + this.props.item.owner.nickname + '/'} >
                                             {
                                                 this.props.item.owner.first_name + ' ' + this.props.item.owner.last_name
                                             }
@@ -311,10 +304,10 @@ class ArticlePreviewClass extends React.Component<IArticlePreviewPropsInterface,
                         </Link>
                     </div>
                     {
-                        this.props.item.lead ? (
-                            <div className="article_preview__lead">
+                        lead ? (
+                            <div className="article_preview__lead" style={{display: 'none'}}>
                                 <Link to={this.props.item.is_draft ? ("/articles/" + this.props.item.id + "/edit/") :
-                                    ("/articles/" + this.props.item.slug + "/")}><div>{ this.props.item.lead}</div>
+                                    ("/articles/" + this.props.item.slug + "/")}><div>{ lead }</div>
                                 </Link>
                             </div>
                         ) : null
