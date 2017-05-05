@@ -154,6 +154,7 @@ export default class ImageEditorRefactored extends React.Component<IProps, IStat
                 this.state.image.position_y = this.state.height - this.state.image.image_height;
             }
             this.drawImage();
+            this.props.onChange && this.props.onChange(this.state.image, this._getBase64Image());
         }
     }
 
