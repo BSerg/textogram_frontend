@@ -13,6 +13,7 @@ import ImageEditor from "../shared/ImageEditor";
 import {MediaQuerySerice} from "../../services/MediaQueryService";
 import "../../styles/editor/title_block.scss";
 import Switch from "../shared/Switch";
+import ImageEditorRefactored from "../shared/ImageEditorRefactored";
 
 
 type TitleLengthState = 'short' | 'regular' | 'long';
@@ -20,6 +21,11 @@ type TitleLengthState = 'short' | 'regular' | 'long';
 interface ICover {
     id: number
     image: string
+    width?: number;
+    height?: number;
+    offset_x?: number;
+    offset_y?: number;
+
     position_x?: number
     position_y?: number
     image_width?: number
@@ -220,7 +226,7 @@ export default class TitleBlock extends React.Component<TitleBlockPropsInterface
 
     drawCanvas() {
         if (this.state.cover) {
-            let canvas = <ImageEditor image={this.state.cover}
+            let canvas = <ImageEditorRefactored image={this.state.cover}
                                       width={this.refs.componentRootElement.offsetWidth}
                                       height={this.refs.componentRootElement.offsetHeight}
                                       onChange={this.handleImageEditorChange.bind(this)}/>;
