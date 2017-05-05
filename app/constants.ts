@@ -87,7 +87,10 @@ export namespace Captions {
             RUR: '₽',
             USD: '$',
             EUR: '€'
-        }
+        },
+        articleRestrictedHeader: 'Доступ к статье ограничен',
+        articleRestrictedPriceCaption: 'Стоимость доступа',
+        toBuyAccessToArticle: 'Купить',
     };
 
     export const profile = {

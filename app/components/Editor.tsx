@@ -565,7 +565,7 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
 
                                         if (this.state.isDesktop && this.state.inlineBlock && this.state.inlineBlock.position == index) {
                                             return [
-                                                <InlineBlock>{this.state.inlineBlock.content}</InlineBlock>,
+                                                <InlineBlock key={"inlineBlock" + index}>{this.state.inlineBlock.content}</InlineBlock>,
                                                 block
                                             ]
                                         } else {
