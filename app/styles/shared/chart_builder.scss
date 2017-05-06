@@ -1,0 +1,19 @@
+@import "../contstants";
+@import "../mixins";
+
+
+.chart_builder {
+  position: relative;
+
+  canvas {
+    max-width: 100%;
+    height: auto;
+  }
+
+  .chart_builder_nodes {
+
+    &>div {
+      position: absolute;
+    }
+  }
+}
