@@ -5,8 +5,12 @@
 .chart_builder {
   position: relative;
 
+  max-width: 500px;
+  //border: 1px solid #BFBFBF;
+
   canvas {
     max-width: 100%;
+    width: 100%;
     height: auto;
   }
 
@@ -14,6 +18,37 @@
 
     &>div {
       position: absolute;
+    }
+  }
+
+  .chart_info {
+    opacity: 1;
+    visibility: visible;
+    position: fixed;
+    padding: 5px;
+
+    box-sizing: border-box;
+    background-color: #FFFFFF;
+    border: 1px solid $color5;
+    font-size: 13px;
+    font-family: $family_open_sans;
+
+    min-width: 120px;
+    min-height: 25px;
+    text-align: center;
+    &>div {
+      line-height: 25px;
+      height: 25px;
+      width: 100%;
+      text-align: center;
+    }
+
+    @include transition();
+
+    &.chart_info_hidden {
+      //visibility: hidden;
+      opacity: 0;
+      @include transition();
     }
   }
 }
