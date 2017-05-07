@@ -1,4 +1,5 @@
 var HtmlWebpackPlugin = require('html-webpack-plugin');
+var webpack = require('webpack');
 var DefinePlugin = require('webpack/lib/DefinePlugin');
 var HTMLWebpackPluginConfig = new HtmlWebpackPlugin({
     template: __dirname + '/index.html',
@@ -26,7 +27,7 @@ module.exports = {
             },
             {
                 test: /\.scss$/,
-                loader: ExtractTextPlugin.extract('style', 'css!sass?sourceMap'),
+                loader: ExtractTextPlugin.extract('style', 'css', '!sass?sourceMap'),
             },
             {
                 test: /\.(png|jpe?g|gif|svg)$/,
@@ -44,6 +45,13 @@ module.exports = {
         preLoaders: [
             { test: /\.jsx?$/, loader: "source-map-loader" }
         ]
+    },
+    postcss: function() {
+        return [
+            require('postcss-smart-import'),
+            require('precss'),
+            require('autoprefixer')
+        ];
     },
     plugins: [
         new ExtractTextPlugin('bundle.css'),
