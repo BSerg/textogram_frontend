@@ -1,5 +1,4 @@
 var HtmlWebpackPlugin = require('html-webpack-plugin');
-var webpack = require('webpack');
 var DefinePlugin = require('webpack/lib/DefinePlugin');
 var HTMLWebpackPluginConfig = new HtmlWebpackPlugin({
     template: __dirname + '/index.html',
@@ -27,7 +26,7 @@ module.exports = {
             },
             {
                 test: /\.scss$/,
-                loader: ExtractTextPlugin.extract('style', 'css', '!sass?sourceMap'),
+                loader: ExtractTextPlugin.extract('style', 'css!sass?sourceMap'),
             },
             {
                 test: /\.(png|jpe?g|gif|svg)$/,
@@ -48,7 +47,7 @@ module.exports = {
     },
     postcss: function() {
         return [
-            require('postcss-smart-import'),
+            // require('postcss-smart-import'),
             require('precss'),
             require('autoprefixer')
         ];
