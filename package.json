@@ -9,8 +9,8 @@
     "local_lentach": "webpack --watch --config webpack.lentach.config.js",
     "dev": "webpack --config webpack.dev.config.js",
     "lentach_dev": "webpack --config webpack.lentach.dev.config.js",
-    "prod": "webpack --config webpack.prod.config.js",
-    "lentach_prod": "webpack --config webpack.lentach.prod.config.js"
+    "prod": "webpack -p --config webpack.prod.config.js",
+    "lentach_prod": "webpack -p --config webpack.lentach.prod.config.js"
   },
   "author": "",
   "license": "ISC",
