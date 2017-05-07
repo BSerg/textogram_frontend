@@ -220,14 +220,14 @@ export namespace Embed {
         POST: {
             twitter: /^https:\/\/twitter\.com\/\w+\/status\/\d+$/,
             instagram: /^https:\/\/www\.instagram\.com\/p\/[\w\-_]+\/?$/,
-            fb: /^https:\/\/(www|ru-ru)\.facebook\.com\/\w+\/posts\/\d+$/
+            fb: /^https:\/\/(www|ru-ru)\.facebook\.com\/[\w\-_.]+\/posts\/\d+$/
         },
         VIDEO: {
             twitter: /^https:\/\/twitter\.com\/\w+\/status\/\d+$/,
             vk: /^https:\/\/vk\.com\/video-?\d+_\d+$/,
             youtube: /^https:\/\/www\.youtube\.com\/watch\?v=[\w\-_]+$/,
             youtubeShort: /^https:\/\/youtu\.be\/[\w\-_]+$/,
-            fb: /^https:\/\/(www|ru-ru)\.facebook\.com\/\w+\/videos\/\d+\/?$/,
+            fb: /^https:\/\/(www|ru-ru)\.facebook\.com\/[\w\-_.]+\/videos\/\d+\/?$/,
             vimeo: /^https:\/\/vimeo\.com\/\d+$/,
             coub: /^https?:\/\/coub\.com\/view\/\w+$/
         },
