@@ -46,6 +46,13 @@ module.exports = {
             { test: /\.jsx?$/, loader: "source-map-loader" }
         ]
     },
+    postcss: function() {
+        return [
+            // require('postcss-smart-import'),
+            require('precss'),
+            require('autoprefixer')
+        ];
+    },
     plugins: [
         new ExtractTextPlugin('bundle.css'),
         // new JavaScriptObfuscator ({
