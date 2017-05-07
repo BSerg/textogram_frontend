@@ -23,6 +23,7 @@ interface IChartProps {
 interface IChartState {
     values?: IChartNode[];
     arcs?: {start: number, end: number, color: string}[];
+    total?: number;
     displayNodeIndex?: number;
     animateTimeout?: number;
 }
@@ -51,7 +52,7 @@ export default class PieChart extends React.Component<IChartProps, IChartState> 
 
     constructor() {
         super();
-        this.state = {values: [], displayNodeIndex: null, arcs: []};
+        this.state = {values: [], displayNodeIndex: null, arcs: [], total: 0};
     }
 
     clear(ctx: CanvasRenderingContext2D) {
@@ -94,7 +95,7 @@ export default class PieChart extends React.Component<IChartProps, IChartState> 
             lastEnd += Math.PI*2*(val.value/total);
             return {start: start, end: lastEnd, color: this.getColor(index, this.state.values.length)};
         });
-        this.setState({arcs: arcs}, this.redrawArcs.bind(this));
+        this.setState({arcs: arcs, total: total}, this.redrawArcs.bind(this));
     }
 
     drawLine(ctx: CanvasRenderingContext2D, x: number, y: number, x1: number, y1: number, lineWidth: number, lineColor: string ) {
@@ -187,13 +188,18 @@ export default class PieChart extends React.Component<IChartProps, IChartState> 
     }
 
     render() {
+
+        let displayValue: string = (this.state.displayNodeIndex != null && this.state.total) ? (
+            this.props.displayPercent ? ( (Math.floor(1000 * this.state.values[this.state.displayNodeIndex].value / this.state.total)) /10 + '%' ) : this.state.values[this.state.displayNodeIndex].value.toString()
+        ) : '';
+
         return (<div className="chart_builder">
             <canvas ref="canvas" width={this.CANVAS_WIDTH} height={this.CANVAS_HEIGHT}
                     onMouseMove={this.mouseMoveHandle.bind(this)}
                     onMouseLeave={ this.mouseLeaveHandle.bind(this) } />
             <div ref="info" className={"chart_info" + (this.state.displayNodeIndex == null ? " chart_info_hidden" : "")}>
                 <div>{ this.state.displayNodeIndex != null ? this.state.values[this.state.displayNodeIndex].label : '' }</div>
-                <div>{ this.state.displayNodeIndex != null ? this.state.values[this.state.displayNodeIndex].value : '' }</div>
+                <div>{ displayValue }</div>
             </div>
 
             {
