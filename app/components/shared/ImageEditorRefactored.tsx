@@ -83,15 +83,18 @@ export default class ImageEditorRefactored extends React.Component<IProps, IStat
         }
 
         // fix offset
-        let _image_x = this.state.width / 2 + _image.offset_x - _image.width * _image.zoom / 2;
-        let _image_y = this.state.height / 2 + _image.offset_y - _image.height * _image.zoom / 2;
-        if (_image_x > 0) _image.offset_x = _image.width * _image.zoom / 2 - this.state.width / 2;
-        if (_image_x + _image.width * _image.zoom < this.state.width) {
-            _image.offset_x = this.state.width / 2 - _image.width * _image.zoom / 2;
+        let _image_real_width = _image.width * _image.zoom;
+        let _image_real_height = _image.height * _image.zoom;
+
+        let _image_x = this.state.width / 2 + _image.offset_x - _image_real_width / 2;
+        let _image_y = this.state.height / 2 + _image.offset_y - _image_real_height / 2;
+        if (_image_x > 0) _image.offset_x = _image_real_width / 2 - this.state.width / 2;
+        if (_image_x + _image_real_width < this.state.width) {
+            _image.offset_x = this.state.width / 2 - _image_real_width / 2;
         }
-        if (_image_y > 0) _image.offset_y = _image.height * _image.zoom / 2 - this.state.height / 2;
-        if (_image_y + _image.height * _image.zoom < this.state.height) {
-            _image.offset_y = this.state.height / 2 - _image.height * _image.zoom / 2;
+        if (_image_y > 0) _image.offset_y = _image_real_height / 2 - this.state.height / 2;
+        if (_image_y + _image_real_height < this.state.height) {
+            _image.offset_y = this.state.height / 2 - _image_real_height / 2;
         }
         return _image
     }
@@ -145,7 +148,6 @@ export default class ImageEditorRefactored extends React.Component<IProps, IStat
             this.state.image.offset_x += dX;
             this.state.image.offset_y += dY;
             this.drawImage();
-            this.props.onChange && this.props.onChange(this.state.image, this._getBase64Image());
         }
     }
 
@@ -193,6 +195,7 @@ export default class ImageEditorRefactored extends React.Component<IProps, IStat
 
     private drawImage() {
         if (!this.state.imageObject) {
+            console.log('HELLO11')
             let image = new Image();
             image.onload = () => {
                 this.state.imageObject = image;
