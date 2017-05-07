@@ -56,7 +56,7 @@ module.exports = {
         }),
         new DefinePlugin({
             "process.env": {
-                NODE_ENV: JSON.stringify("prod"),
+                NODE_ENV: JSON.stringify('production'),
                 API_URL: "http://localhost:8000/api/v1",
                 "VK_APP": JSON.stringify(""),
                 "FB_APP": JSON.stringify(""),
