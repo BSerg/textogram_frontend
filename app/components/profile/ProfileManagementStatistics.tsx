@@ -1,10 +1,22 @@
 import * as React from 'react';
-import LineChartBuilder from '../shared/charts/LineChartBuilder';
+import LineChart from '../shared/charts/LineChart';
+import PieChart from '../shared/charts/PieChart';
 
 
 export default class ProfileManagementStatistics extends React.Component<any, any> {
 
     render() {
+
+        let valsPie: any[] = [
+            { label: 'женщины', value: 200 },
+            { label: 'мужчины', value: 405 },
+            { label: 'дети', value: 30 },
+            { label: 'коты', value: 70 },
+            // { label: 'nsnsn', value: 266 },
+            // { label: 'dsdas', value: 405 },
+            // { label: 'дети', value: 30 },
+            // { label: 'коты', value: 45 },
+        ];
 
         let vals: any[] = [
             { label: '25', value: 20 },
@@ -14,7 +26,7 @@ export default class ProfileManagementStatistics extends React.Component<any, an
 
         let values: any[] = [
             { label: '25', value: 20 },
-            { label: 'вывфыывы влыв фы выф вфылв фы в фыв оыф выф в фылов лфы волф', value: 40 },
+            { label: 'вывфыывы влыв фы выф', value: 40 },
             { label: '27', value: 10 },
             { label: '28', value: 20 },
             { label: '29', value: 30 },
@@ -23,7 +35,7 @@ export default class ProfileManagementStatistics extends React.Component<any, an
             { label: '02', value: 60 },
             { label: '03', value: 80 } ,
             { label: '04', value: 80 },
-            { label: '05', value: 200 },
+            { label: '05', value: 190 },
             { label: '05', value: 60 },
             { label: '05', value: 30 },
             { label: '05', value: 50 },
@@ -39,9 +51,15 @@ export default class ProfileManagementStatistics extends React.Component<any, an
         ];
 
         return (
-            <div style={{paddingTop: '20px'}}>
+            <div>
+                <div style={{paddingTop: '20px', width: '300px'}} >
+                    <PieChart values={valsPie} />
+                </div>
 
-                <LineChartBuilder values={values} />
+                <div style={{paddingTop: '20px', width: '600px'}}>
+                    <LineChart values={values}/>
+                </div>
+
             </div>)
     }
 }
