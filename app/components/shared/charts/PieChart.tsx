@@ -190,7 +190,7 @@ export default class PieChart extends React.Component<IChartProps, IChartState> 
     render() {
 
         let displayValue: string = (this.state.displayNodeIndex != null && this.state.total) ? (
-            this.props.displayPercent ? ( (Math.floor(1000 * this.state.values[this.state.displayNodeIndex].value / this.state.total)) /10 + '%' ) : this.state.values[this.state.displayNodeIndex].value.toString()
+            this.props.displayPercent ? ( (Math.floor(1000 * this.state.values[this.state.displayNodeIndex].value / this.state.total)) /10 + ' %' ) : this.state.values[this.state.displayNodeIndex].value.toString()
         ) : '';
 
         return (<div className="chart_builder">
