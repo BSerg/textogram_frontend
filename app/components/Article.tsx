@@ -45,6 +45,7 @@ interface IArticle {
     views: number
     owner: {
         id: number,
+        nickname: string,
         first_name: string,
         last_name: string,
         avatar: string
@@ -403,7 +404,7 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
             if (titleLengthState != 'regular') titleClassName += ' ' + this.checkArticleLength(this.state.article.title);
             if (this.state.article.cover) titleClassName += ' covered';
             if (this.state.article.cover || this.state.article.inverted_theme) titleClassName += ' inverted';
-            authorLink = process.env.IS_LENTACH ? '/' : `/profile/${this.state.article.owner.id}`;
+            authorLink = process.env.IS_LENTACH ? '/' : `/${this.state.article.owner.nickname}`;
         }
 
         let shiftContentStyle = {};
