@@ -284,7 +284,7 @@ class ProfileClass extends React.Component<IProfileProps, IProfileState> {
         if (this.state.isSelf && process.env.IS_LENTACH) {
             sections = [
                 {name: this.SECTION_ARTICLES, caption: 'Тексты', to: ('/' + this.state.user.nickname)},
-                {name: this.SECTION_DRAFTS, caption: 'Тексты', to: '/drafts'},
+                {name: this.SECTION_DRAFTS, caption: 'Черновики', to: '/drafts'},
             ]
         }
 

@@ -52,7 +52,7 @@ module.exports = {
         new ExtractTextPlugin('bundle.css'),
         new DefinePlugin({
             'process.env': {
-                NODE_ENV: JSON.stringify("local"),
+                NODE_ENV: JSON.stringify("development"),
                 API_URL: JSON.stringify("http://lentachmedia.tk/api/v1"),
                 VK_APP: JSON.stringify("5951821"),
                 FB_APP: JSON.stringify("176821492828506"),
