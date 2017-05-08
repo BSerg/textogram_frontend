@@ -219,36 +219,59 @@ export enum PhotoBlockContentTypes {
 
 export namespace Embed {
     export const urlRegex = {
-        POST: {
-            twitter: /^https:\/\/twitter\.com\/\w+\/status\/\d+$/,
-            instagram: /^https:\/\/www\.instagram\.com\/p\/[\w\-_]+\/?$/,
-            fb: /^https:\/\/(www|ru-ru)\.facebook\.com\/[\w\-_.]+\/posts\/\d+$/
-        },
-        VIDEO: {
-            twitter: /^https:\/\/twitter\.com\/\w+\/status\/\d+$/,
-            vk: /^https:\/\/vk\.com\/video-?\d+_\d+$/,
-            youtube: /^https:\/\/www\.youtube\.com\/watch\?v=[\w\-_]+$/,
-            youtubeShort: /^https:\/\/youtu\.be\/[\w\-_]+$/,
-            fb: /^https:\/\/(www|ru-ru)\.facebook\.com\/[\w\-_.]+\/videos\/\d+\/?$/,
-            vimeo: /^https:\/\/vimeo\.com\/\d+$/,
-            coub: /^https?:\/\/coub\.com\/view\/\w+$/
-        },
-        AUDIO: {
-            soundcloud: /^https:\/\/soundcloud\.com\/[\w\-]+\/[\w\-]+$/,
-            propmodj: /^http:\/\/promodj\.com\/[\w\-.]+\/tracks\/\d+\/\w+$/,
-            yandex: /^https:\/\/music\.yandex\.ru\/album\/\d+(\/track\/\d+)?$/
-        }
+        POST: [
+            // Twitter
+            /^https:\/\/twitter\.com\/\w+\/status\/\d+$/,
+            // Instagram
+            /^https:\/\/www\.instagram\.com\/p\/[\w\-_]+\/?$/,
+            // Facebook
+            /^https:\/\/(www|ru-ru)\.facebook\.com\/[\w\-_.]+\/posts\/\d+$/,
+            /^https:\/\/(www|ru-ru)\.facebook\.com\/[\w\-_.]+\/videos\/\d+\/?$/,
+        ],
+        VIDEO: [
+            // VK
+            /^https:\/\/vk\.com\/video-?\d+_\d+$/,
+            // Youtube
+            /^https:\/\/www\.youtube\.com\/watch\?v=[\w\-_]+$/,
+            /^https:\/\/youtu\.be\/[\w\-_]+$/,
+            // Vimeo
+            /^https:\/\/vimeo\.com\/\d+$/,
+            // Coub
+            /^https?:\/\/coub\.com\/view\/\w+$/
+        ],
+        AUDIO: [
+            // SoundCloud
+            /^https:\/\/soundcloud\.com\/[\w\-]+\/[\w\-]+$/,
+            // Propmodj
+            /^http:\/\/promodj\.com\/[\w\-.]+\/tracks\/\d+\/\w+$/,
+            // Yandex
+            /^https:\/\/music\.yandex\.ru\/album\/\d+(\/track\/\d+)?$/
+        ],
     };
     export const embedRegex = {
-        POST: {
-            vk: /^<div id="vk_post_-?\d+_\d+"><\/div>\s*<script type="text\/javascript">[^<]+<\/script>$/,
-            twitter: /^<blockquote class="twitter-tweet" data-lang="\w+"><p lang="\w+" dir="ltr">.+<\/blockquote>\s*<script async src="\/\/platform\.twitter\.com\/widgets\.js" charset="utf-8"><\/script>$/
-        },
-        VIDEO: {
-            vk: /^<iframe src="\/\/vk\.com\/video_ext\.php\?oid=\d+&id=\d+&hash=\w+&hd=\d" width="\d+" height="\d+" frameborder="0" allowfullscreen><\/iframe>$/,
-            twitter: /^<blockquote class="twitter-video" data-lang="\w+"><p lang="\w+" dir="ltr">.+<\/blockquote>\s*<script async src="\/\/platform\.twitter\.com\/widgets\.js" charset="utf-8"><\/script>$/,
-        },
-        AUDIO: {}
+        POST: [
+            // VK
+            /^<div id="vk_post_-?\d+_\d+"><\/div>\s*<script type="text\/javascript">[^<]+<\/script>$/,
+            /^<iframe src="\/\/vk\.com\/video_ext\.php\?oid=\d+&id=\d+&hash=\w+&hd=\d"( width="\d+")?( height="\d+")?( frameborder="(0|1)")?( allowfullscreen)?><\/iframe>$/,
+            // Twitter
+            /^<blockquote class="twitter-(tweet|video)" data-lang="\w+"><p lang="\w+" dir="ltr">.+<\/blockquote>\s*<script async src="\/\/platform\.twitter\.com\/widgets\.js" charset="utf-8"><\/script>$/,
+        ],
+        VIDEO: [
+            // Youtube
+            /^<iframe( width="\d+")?( height="\d+")? src="https:\/\/www\.youtube(-nocookie)?\.com\/embed\/[\w\-]+((\?|&|&amp;)\w+=\w+)*"( frameborder="(0|1)")?( allowfullscreen)?><\/iframe>$/,
+            // Vimeo
+            /^<iframe src="https:\/\/player\.vimeo\.com\/video\/\d+([\?&]\w+=[01])*" width="\d+" height="\d+"( frameborder="0")?( (webkit|moz)?allowfullscreen)*><\/iframe>(\s*<p>(\s*.)+<\/p>)?$/,
+            // Coub
+            /^<iframe src="\/\/coub\.com\/embed\/\w+((\?|&)\w+=(true|false))*"( allowfullscreen="(true|false)")?( frameborder="(0|1)")?( width="\d+")?( height="\d+")?><\/iframe>(<script async src="\/\/c-cdn\.coub\.com\/embed-runner\.js"><\/script>)?$/
+        ],
+        AUDIO: [
+            // SoundCloud
+            /^<iframe( width="\d+%?")?( height="\d+")?( scrolling="(yes|no)")?( frameborder="(yes|no)")? src="https:\/\/w\.soundcloud\.com\/player\/\?url=https(%3A|:)\/\/api\.soundcloud\.com\/tracks\/\d+((&amp;|&)\w+=(\w+|true|false))*"><\/iframe>$/,
+            // PromoDJ
+            /^<iframe src="\/\/promodj\.com\/embed\/\d+\/(cover|big)"( width="\d+%?")?( height="\d+")?( style="[^"]+")?( frameborder="(0|1)")?( allowfullscreen)?><\/iframe>$/,
+            // Yandex
+            /^<iframe( frameborder="(0|1)")?( style="[^"]+")?( width="\d+")?( height="\d+")? src="https:\/\/music\.yandex\.ru\/iframe\/(#album\/\d+\/|#track\/\d+\/\d+)(\/\w+)*\/?">(\s*.)+<\/iframe>$/,
+        ]
     };
 }
 
