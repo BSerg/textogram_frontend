@@ -35,7 +35,7 @@ export default class ProfileManagementStatistics extends React.Component<any, an
             { label: '02', value: 60 },
             { label: '03', value: 80 } ,
             { label: '04', value: 80 },
-            { label: '05', value: 190 },
+            { label: '20.04.2017', value: 190 },
             { label: '05', value: 60 },
             { label: '05', value: 30 },
             { label: '05', value: 50 },
@@ -52,12 +52,12 @@ export default class ProfileManagementStatistics extends React.Component<any, an
 
         return (
             <div>
-                <div style={{paddingTop: '20px', width: '300px'}} >
-                    <PieChart values={valsPie} />
+                <div style={{paddingTop: '20px'}} >
+                    <PieChart values={valsPie} title="Аудитория" />
                 </div>
 
-                <div style={{paddingTop: '20px', width: '600px'}}>
-                    <LineChart values={values}/>
+                <div style={{padding: '20px 0'}}>
+                    <LineChart values={values} valuePrefix="Посетителей: " title="Посещаемость"/>
                 </div>
 
             </div>)

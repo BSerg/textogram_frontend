@@ -5,13 +5,41 @@
 .chart_builder {
   position: relative;
 
-  max-width: 500px;
-  //border: 1px solid #BFBFBF;
+  .chart_title {
+    text-align: center;
+    font-size: 16px;
+    font-family: $family_open_sans;
+    letter-spacing: 1px;
+    margin-bottom: 15px;
+  }
+
+  .chart_data {
+    text-align: center;
+
+    &:before {
+      content: "";
+      display: inline-block;
+      vertical-align: middle;
+      height: 100%;
+    }
+
+    &>div {
+      display: inline-block;
+      vertical-align: middle;
+      margin: 0 7.5px;
+      //padding: 0 15px;
+    }
+  }
 
   canvas {
-    max-width: 100%;
+    max-width: 500px;
     width: 100%;
     height: auto;
+  }
+  &.chart_pie {
+    canvas {
+      max-width: 300px;
+    }
   }
 
   .chart_builder_nodes {
@@ -44,7 +72,7 @@
     }
 
     &.chart_info_hidden {
-      opacity: 0;
+      display: none;
     }
   }
 
@@ -53,12 +81,17 @@
     font-family: $family_open_sans;
     margin-top: 10px;
     box-sizing: border-box;
-    padding: 0 15px;
+    padding: 15px;
     &>div {
       line-height: 25px;
       display: flex;
       flex-direction: row;
       align-items: center;
+
+      &.chart_legend_inactive {
+        opacity: 0.2;
+      }
+
       &>div {
 
         line-height: 25px;

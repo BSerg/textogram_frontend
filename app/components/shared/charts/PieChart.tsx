@@ -126,7 +126,7 @@ export default class PieChart extends React.Component<IChartProps, IChartState> 
         this.state.arcs.forEach((arc, index: number) => {
             this.drawArc(ctx, arc.start, arc.end,
                 (index == this.state.displayNodeIndex) ? this.PIE_RADIUS * 1.05 : this.PIE_RADIUS, arc.color,
-                (this.state.displayNodeIndex != null && index != this.state.displayNodeIndex) ? 0.5 : 1
+                (this.state.displayNodeIndex != null && index != this.state.displayNodeIndex) ? 0.2 : 1
             );
         });
     }
@@ -146,8 +146,10 @@ export default class PieChart extends React.Component<IChartProps, IChartState> 
             return;
         }
         let rect: ClientRect = this.refs.canvas.getBoundingClientRect();
-        let x: number = (e.clientX - rect.left) * (this.refs.canvas.width / rect.width);
-        let y: number = (e.clientY - rect.top) * (this.refs.canvas.height / rect.height);
+        let clientX: number = e.clientX;
+        let clientY: number = e.clientY;
+        let x: number = (clientX - rect.left) * (this.refs.canvas.width / rect.width);
+        let y: number = (clientY - rect.top) * (this.refs.canvas.height / rect.height);
 
         let displayNodeIndex: number = null;
         if ( Math.pow(x - this.refs.canvas.width / 2, 2) + Math.pow(y - this.refs.canvas.height/2, 2) < Math.pow(this.PIE_RADIUS, 2) ) {
@@ -163,18 +165,30 @@ export default class PieChart extends React.Component<IChartProps, IChartState> 
             });
         }
         if (displayNodeIndex != this.state.displayNodeIndex) {
-            this.setState({displayNodeIndex: displayNodeIndex}, this.redrawArcs.bind(this));
+            this.setState({displayNodeIndex: displayNodeIndex}, () => {
+                this.redrawArcs();
+                this.positionInfoDiv(clientX, clientY, rect);
+            });
         }
-        this.positionInfoDiv(e.clientX, e.clientY);
     }
 
-    positionInfoDiv(x: number, y: number) {
+    positionInfoDiv(x: number, y: number, canvasRect: ClientRect) {
         this.refs.info.style.top = y + 10 + 'px';
         this.refs.info.style.left = x + 10 + 'px';
     }
 
     mouseLeaveHandle(e: any) {
-        if (this.state.displayNodeIndex != null) {
+
+        let rect: ClientRect = this.refs.canvas.getBoundingClientRect();
+        console.log(rect);
+        console.log(e.clientX);
+        console.log(e.clientY);
+
+        if (e.clientX >= rect.left && e.clientY >= rect.top && e.clientX < rect.right && e.clientY < rect.bottom) {
+            console.log('here');
+            this.mouseMoveHandle(e);
+        }
+        else if (this.state.displayNodeIndex != null) {
             this.setState({displayNodeIndex: null}, this.redrawArcs.bind(this));
         }
     }
@@ -193,32 +207,42 @@ export default class PieChart extends React.Component<IChartProps, IChartState> 
             this.props.displayPercent ? ( (Math.floor(1000 * this.state.values[this.state.displayNodeIndex].value / this.state.total)) /10 + ' %' ) : this.state.values[this.state.displayNodeIndex].value.toString()
         ) : '';
 
-        return (<div className="chart_builder">
-            <canvas ref="canvas" width={this.CANVAS_WIDTH} height={this.CANVAS_HEIGHT}
-                    onMouseMove={this.mouseMoveHandle.bind(this)}
-                    onMouseLeave={ this.mouseLeaveHandle.bind(this) } />
+        return (<div className="chart_builder chart_pie">
+            {
+                this.props.title ? (<div className="chart_title">{this.props.title}</div>) : null
+            }
+
+            <div className="chart_data">
+                <div>
+                    <canvas ref="canvas" width={this.CANVAS_WIDTH} height={this.CANVAS_HEIGHT}
+                            onMouseMove={this.mouseMoveHandle.bind(this)}
+                            onMouseLeave={ this.mouseMoveHandle.bind(this) } />
+                </div>
+                {
+                    this.props.showLegend && this.state.arcs.length ? (
+                        <div className="chart_legend" style={{backgroundColor: this.props.bgColor, border: '1px solid ' + this.props.borderColor}}>
+                            {
+                                this.state.values.map((val, index: number) => {
+                                    return (
+                                        <div key={index} className={ (this.state.displayNodeIndex != null && index != this.state.displayNodeIndex) ? "chart_legend_inactive" : "" }>
+                                            <div style={{backgroundColor: this.state.arcs[index].color}}></div>
+                                            <div>{ val.label }</div>
+                                        </div>)
+                                })
+                            }
+
+                        </div>
+
+                    ) : null
+                }
+            </div>
+
             <div ref="info" className={"chart_info" + (this.state.displayNodeIndex == null ? " chart_info_hidden" : "")}>
                 <div>{ this.state.displayNodeIndex != null ? this.state.values[this.state.displayNodeIndex].label : '' }</div>
                 <div>{ displayValue }</div>
             </div>
 
-            {
-                this.props.showLegend && this.state.arcs.length ? (
-                    <div className="chart_legend">
-                        {
-                            this.state.values.map((val, index: number) => {
-                                return (
-                                    <div key={index}>
-                                        <div style={{backgroundColor: this.state.arcs[index].color}}></div>
-                                        <div>{ val.label }</div>
-                                    </div>)
-                            })
-                        }
 
-                    </div>
-
-                    ) : null
-            }
         </div>)
     }
 }
