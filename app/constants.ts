@@ -252,7 +252,7 @@ export namespace Embed {
         POST: [
             // VK
             /^<div id="vk_post_-?\d+_\d+"><\/div>\s*<script type="text\/javascript">[^<]+<\/script>$/,
-            /^<iframe src="\/\/vk\.com\/video_ext\.php\?oid=\d+&id=\d+&hash=\w+&hd=\d"( width="\d+")?( height="\d+")?( frameborder="(0|1)")?( allowfullscreen)?><\/iframe>$/,
+            /^<iframe src="\/\/vk\.com\/video_ext\.php\?oid=-?\d+&id=\d+&hash=\w+&hd=\d"( width="\d+")?( height="\d+")?( frameborder="(0|1)")?( allowfullscreen)?><\/iframe>$/,
             // Twitter
             /^<blockquote class="twitter-(tweet|video)" data-lang="\w+"><p lang="\w+" dir="ltr">.+<\/blockquote>\s*<script async src="\/\/platform\.twitter\.com\/widgets\.js" charset="utf-8"><\/script>$/,
         ],
