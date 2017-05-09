@@ -262,7 +262,9 @@ export namespace Embed {
             // Vimeo
             /^<iframe src="https:\/\/player\.vimeo\.com\/video\/\d+([\?&]\w+=[01])*" width="\d+" height="\d+"( frameborder="0")?( (webkit|moz)?allowfullscreen)*><\/iframe>(\s*<p>(\s*.)+<\/p>)?$/,
             // Coub
-            /^<iframe src="\/\/coub\.com\/embed\/\w+((\?|&)\w+=(true|false))*"( allowfullscreen="(true|false)")?( frameborder="(0|1)")?( width="\d+")?( height="\d+")?><\/iframe>(<script async src="\/\/c-cdn\.coub\.com\/embed-runner\.js"><\/script>)?$/
+            /^<iframe src="\/\/coub\.com\/embed\/\w+((\?|&)\w+=(true|false))*"( allowfullscreen="(true|false)")?( frameborder="(0|1)")?( width="\d+")?( height="\d+")?><\/iframe>(<script async src="\/\/c-cdn\.coub\.com\/embed-runner\.js"><\/script>)?$/,
+            // VK Video
+            /^<iframe src="\/\/vk\.com\/video_ext\.php\?oid=-?\d+&id=\d+&hash=\w+&hd=\d"( width="\d+")?( height="\d+")?( frameborder="(0|1)")?( allowfullscreen)?><\/iframe>$/,
         ],
         AUDIO: [
             // SoundCloud
