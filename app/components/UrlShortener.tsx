@@ -1,10 +1,10 @@
-import * as React from 'react';
-import {Link} from 'react-router';
-import {GET_ME, LOGIN, LOGOUT, UserAction} from '../actions/user/UserAction';
-import {Error404} from './Error';
-import {api} from '../api';
-import { NotificationAction, SHOW_NOTIFICATION } from '../actions/shared/NotificationAction';
-import '../styles/url_shortener.scss';
+import * as React from "react";
+import {Link} from "react-router";
+import {GET_ME, LOGIN, LOGOUT, UserAction} from "../actions/user/UserAction";
+import {Error404} from "./Error";
+import {api} from "../api";
+import {NotificationAction, SHOW_NOTIFICATION} from "../actions/shared/NotificationAction";
+import "../styles/url_shortener.scss";
 
 
 interface IShortenerState {
