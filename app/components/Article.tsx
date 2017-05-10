@@ -278,19 +278,23 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
     openSharePopup() {
         let content = (
             <div className="share_popup">
-                <a href={"http://vk.com/share.php?url=" + this.state.article.url}
-                   className="share_popup__item share_popup__vk"><SocialIcon social="vk"/></a>
-                <a href={"https://www.facebook.com/sharer/sharer.php?u=" + this.state.article.url}
-                   className="share_popup__item share_popup__fb"><SocialIcon social="facebook"/></a>
-                <a href={"https://twitter.com/home?status=" + this.state.article.url}
-                   className="share_popup__item share_popup__twitter"><SocialIcon social="twitter"/></a>
-                <a href={"https://telegram.me/share/url?url=" + this.state.article.url}
-                   className="share_popup__item share_popup__telegram"><SocialIcon social="telegram"/></a>
-                <a href={"whatsapp://send?text=" + this.state.article.url}
-                   data-action="share/whatsapp/share"
-                   className="share_popup__item share_popup__whatsapp"><SocialIcon social="whatsapp"/></a>
-                <a href={"viber://forward?text=" + this.state.article.url}
-                   className="share_popup__item share_popup__viber"><SocialIcon social="viber"/></a>
+                <div className="share_popup__row">
+                    <a href={"http://vk.com/share.php?url=" + this.state.article.url}
+                       className="share_popup__item share_popup__vk"><SocialIcon social="vk"/></a>
+                    <a href={"https://www.facebook.com/sharer/sharer.php?u=" + this.state.article.url}
+                       className="share_popup__item share_popup__fb"><SocialIcon social="facebook"/></a>
+                    <a href={"https://twitter.com/home?status=" + this.state.article.url}
+                       className="share_popup__item share_popup__twitter"><SocialIcon social="twitter"/></a>
+                </div>
+                <div className="share_popup__row">
+                    <a href={"https://telegram.me/share/url?url=" + this.state.article.url}
+                       className="share_popup__item share_popup__telegram"><SocialIcon social="telegram"/></a>
+                    <a href={"whatsapp://send?text=" + this.state.article.url}
+                       data-action="share/whatsapp/share"
+                       className="share_popup__item share_popup__whatsapp"><SocialIcon social="whatsapp"/></a>
+                    <a href={"viber://forward?text=" + this.state.article.url}
+                       className="share_popup__item share_popup__viber"><SocialIcon social="viber"/></a>
+                </div>
                 <div className="share_popup__close" onClick={this.closeSharePopup.bind(this)}><CloseIcon/></div>
             </div>
         );
