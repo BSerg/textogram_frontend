@@ -1,3 +1,4 @@
+var webpack = require('webpack');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 var DefinePlugin = require('webpack/lib/DefinePlugin');
 var JavaScriptObfuscator = require('webpack-obfuscator');
@@ -9,9 +10,10 @@ var HTMLWebpackPluginConfig = new HtmlWebpackPlugin({
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 module.exports = {
-    entry: [
-        './app/index.tsx'
-    ],
+    entry: {
+        app: './app/index.tsx',
+        vendor: ['react', 'react-router', 'react-dom']
+    },
     output: {
         path: __dirname + '/dist/prod',
         // path: '/home/serega/projects/lentach/static',
@@ -51,6 +53,7 @@ module.exports = {
     },
     plugins: [
         new ExtractTextPlugin('bundle.css'),
+        new webpack.optimize.CommonsChunkPlugin('vendor', 'vendor.js'),
         new JavaScriptObfuscator ({
             rotateUnicodeArray: true
         }),

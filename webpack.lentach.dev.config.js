@@ -1,3 +1,4 @@
+var webpack = require('webpack');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 var DefinePlugin = require('webpack/lib/DefinePlugin');
 var HTMLWebpackPluginConfig = new HtmlWebpackPlugin({
@@ -9,9 +10,10 @@ var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var CommonsChunkPlugin = require('webpack/lib/optimize/CommonsChunkPlugin');
 
 module.exports = {
-    entry: [
-        './app/index.tsx'
-    ],
+    entry: {
+        app: './app/index.tsx',
+        vendor: ['react', 'react-router', 'react-dom']
+    },
     output: {
         path: __dirname + '/dist/lentach_dev',
         filename: 'bundle.js',
@@ -50,6 +52,7 @@ module.exports = {
     },
     plugins: [
         new ExtractTextPlugin('bundle.css'),
+        new webpack.optimize.CommonsChunkPlugin('vendor', 'vendor.js'),
         new DefinePlugin({
             'process.env': {
                 NODE_ENV: JSON.stringify("development"),
