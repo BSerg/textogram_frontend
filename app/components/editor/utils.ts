@@ -32,30 +32,20 @@ export class Validator {
 }
 
 export let validateEmbed = (type: BlockContentTypes, value: string) => {
-    let isValid = false, testRegexps, testCodeRegexps;
+    let isValid = false, testRegexps;
     switch (type) {
         case BlockContentTypes.VIDEO:
-            testRegexps = Embed.urlRegex.VIDEO;
-            testCodeRegexps = Embed.embedRegex.VIDEO;
+            testRegexps = Embed.urlRegex.VIDEO.concat(Embed.embedRegex.VIDEO);
             break;
         case BlockContentTypes.AUDIO:
-            testRegexps = Embed.urlRegex.AUDIO;
-            testCodeRegexps = Embed.embedRegex.AUDIO;
+            testRegexps = Embed.urlRegex.AUDIO.concat(Embed.embedRegex.AUDIO);
             break;
         case BlockContentTypes.POST:
-            testRegexps = Embed.urlRegex.POST;
-            testCodeRegexps = Embed.embedRegex.POST;
+            testRegexps = Embed.urlRegex.POST.concat(Embed.embedRegex.POST);
             break;
     }
     if (testRegexps) {
-        Object.values(testRegexps).forEach((regex) => {
-            if (regex.test(value)) {
-                isValid = true;
-            }
-        });
-    }
-    if (testCodeRegexps) {
-        Object.values(testCodeRegexps).forEach((regex) => {
+        testRegexps.forEach((regex) => {
             if (regex.test(value)) {
                 isValid = true;
             }

@@ -18,3 +18,4 @@ declare const VK_APP_ID: string;
 declare class ClientJS {
     getFingerprint(): string
 }
+

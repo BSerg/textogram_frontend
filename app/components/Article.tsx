@@ -2,7 +2,7 @@ import * as React from "react";
 import {Link} from "react-router";
 import {IContentData} from "../actions/editor/ContentAction";
 import {api} from "../api";
-import Error from "./Error";
+import Error, {Error404, Error500, Error403} from "./Error";
 import {UserAction, LOGIN, LOGOUT, UPDATE_USER, SAVE_USER} from "../actions/user/UserAction";
 import {ModalAction, OPEN_MODAL, CLOSE_MODAL} from "../actions/shared/ModalAction";
 import * as moment from "moment";
@@ -188,54 +188,59 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
                 twttr.widgets && twttr.widgets.load(posts[i]);
             }
         } catch (err) {
-            console.log('TWITTER EMBED LOADING ERROR', err);
+            // console.log('TWITTER EMBED LOADING ERROR', err);
         }
         try {
             // INSTAGRAM LOAD EMBED
             instgrm.Embeds.process();
         } catch (err) {
-            console.log('INSTAGRAM EMBED LOADING ERROR', err);
+            // console.log('INSTAGRAM EMBED LOADING ERROR', err);
         }
     }
 
     processAds() {
         if (!this.state.article || !this.state.article.advertisement) return;
-        // try {
-            let bannerElements = document.getElementById("article" + this.state.article.id).getElementsByClassName('banner');
-            for (let i = 0; i < bannerElements.length; i++) {
-                let bannerElement = bannerElements[i] as HTMLDivElement;
-                for (let k in this.state.article.advertisement) {
-                    if (bannerElement.classList.contains(k)) {
-                        let ads = [];
-                        for (let a = 0; a < this.state.article.advertisement[k].length; a++) {
-                            if (this.state.article.advertisement[k][a].is_mobile == !this.state.isDesktop) {
-                                ads.push(this.state.article.advertisement[k][a]);
+        let ads = this.state.article.advertisement[this.state.isDesktop ? 'desktop' : 'mobile'];
+        let articleElement = document.getElementById("article" + this.state.article.id);
+        for (let k in ads) {
+            let banners = ads[k];
+            let bannersElements = articleElement.getElementsByClassName(k);
+            if (bannersElements.length && banners.length) {
+                banners.forEach((banner: any, index: number) => {
+                    if (index < bannersElements.length) {
+                        let bannerElement = bannersElements[index];
+                        bannerElement.innerHTML = banner.code;
+                        try {
+                            let script = bannerElement.getElementsByTagName('script')[0];
+                            if (script) {
+                                bannerElement.classList.add('active');
+                                window.setTimeout(() => {
+                                    let f = new Function(script.innerText);
+                                    f();
+                                });
+                            } else {
+                                bannerElement.classList.add('active');
                             }
-                        }
-                        if (ads.length) {
-
-                            bannerElement.innerHTML = ads[Math.floor(Math.random()*ads.length)].code;
-                            try {
-                                let script = bannerElement.getElementsByTagName('script')[0];
-                                if (script) {
-                                    bannerElement.classList.add('active');
-                                    window.setTimeout(() => {
-                                        let f = new Function(script.innerText);
-                                        f();
-                                    });
-                                } else {
-                                    bannerElement.classList.add('active');
-                                }
-                            } catch (err) {
-                                console.log(err)
-                            }
+                        } catch (err) {
+                            console.log(err)
                         }
                     }
-                }
+                });
             }
-        // } catch(err) {
-        //     console.log(err);
-        // }
+        }
+    }
+
+    getBanner(id: string) {
+        try {
+            return this.state.article.advertisement[this.state.isDesktop ? 'desktop' : 'mobile'][id];
+        } catch (err) {
+            return null;
+        }
+    }
+
+
+    getRightBanner() {
+        return this.getBanner(BannerID.BANNER_RIGHT_SIDE);
     }
 
     processPhoto() {
@@ -278,19 +283,23 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
     openSharePopup() {
         let content = (
             <div className="share_popup">
-                <a href={"http://vk.com/share.php?url=" + this.state.article.url}
-                   className="share_popup__item share_popup__vk"><SocialIcon social="vk"/></a>
-                <a href={"https://www.facebook.com/sharer/sharer.php?u=" + this.state.article.url}
-                   className="share_popup__item share_popup__fb"><SocialIcon social="facebook"/></a>
-                <a href={"https://twitter.com/home?status=" + this.state.article.url}
-                   className="share_popup__item share_popup__twitter"><SocialIcon social="twitter"/></a>
-                <a href={"https://telegram.me/share/url?url=" + this.state.article.url}
-                   className="share_popup__item share_popup__telegram"><SocialIcon social="telegram"/></a>
-                <a href={"whatsapp://send?text=" + this.state.article.url}
-                   data-action="share/whatsapp/share"
-                   className="share_popup__item share_popup__whatsapp"><SocialIcon social="whatsapp"/></a>
-                <a href={"viber://forward?text=" + this.state.article.url}
-                   className="share_popup__item share_popup__viber"><SocialIcon social="viber"/></a>
+                <div className="share_popup__row">
+                    <a href={"http://vk.com/share.php?url=" + this.state.article.url}
+                       className="share_popup__item share_popup__vk"><SocialIcon social="vk"/></a>
+                    <a href={"https://www.facebook.com/sharer/sharer.php?u=" + this.state.article.url}
+                       className="share_popup__item share_popup__fb"><SocialIcon social="facebook"/></a>
+                    <a href={"https://twitter.com/home?status=" + this.state.article.url}
+                       className="share_popup__item share_popup__twitter"><SocialIcon social="twitter"/></a>
+                </div>
+                <div className="share_popup__row">
+                    <a href={"https://telegram.me/share/url?url=" + this.state.article.url}
+                       className="share_popup__item share_popup__telegram"><SocialIcon social="telegram"/></a>
+                    <a href={"whatsapp://send?text=" + this.state.article.url}
+                       data-action="share/whatsapp/share"
+                       className="share_popup__item share_popup__whatsapp"><SocialIcon social="whatsapp"/></a>
+                    <a href={"viber://forward?text=" + this.state.article.url}
+                       className="share_popup__item share_popup__viber"><SocialIcon social="viber"/></a>
+                </div>
                 <div className="share_popup__close" onClick={this.closeSharePopup.bind(this)}><CloseIcon/></div>
             </div>
         );
@@ -340,11 +349,14 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
             console.log(err);
             if (err.response) {
                 switch (err.response.status) {
+                    case 403:
+                        this.setState({error: <Error403/>});
+                        break;
                     case 404:
-                        this.setState({error: <Error code={404} msg="Article not found"/>})
+                        this.setState({error: <Error404/>});
                         break;
                     default:
-                        this.setState({error: <Error/>})
+                        this.setState({error: <Error500/>});
                 }
             }
         });
@@ -359,13 +371,13 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
             if (err.response) {
                 switch (err.response.status) {
                     case 404:
-                        this.setState({error: <Error code={404} msg="Article not found"/>});
+                        this.setState({error: <Error404/>});
                         break;
                     case 401:
-                        this.setState({error: <Error code={401} msg="You haven't access to this article. Sorry."/>});
+                        this.setState({error: <Error403/>});
                         break;
                     default:
-                        this.setState({error: <Error/>})
+                        this.setState({error: <Error500/>})
                 }
             }
         });
@@ -408,8 +420,7 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
         }
 
         let shiftContentStyle = {};
-        if (MediaQuerySerice.getScreenWidth() >= 1280 && this.state.article && this.state.article.ads_enabled
-                && this.state.article.advertisement && this.state.article.advertisement[BannerID.BANNER_RIGHT_SIDE]) {
+        if (MediaQuerySerice.getScreenWidth() >= 1280 && this.getRightBanner()) {
             let offset = Math.min(0, 2 * ((MediaQuerySerice.getScreenWidth() - 650 ) / 2 - 400));
             if (offset) shiftContentStyle = {marginLeft: `${offset}px`};
         }
@@ -420,7 +431,7 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
                     <div id={"article" + this.state.article.id} className="article">
                         {/* SIDE BANNER */}
                         {this.state.isDesktop && this.state.article.ads_enabled
-                            && this.state.article.advertisement && this.state.article.advertisement[BannerID.BANNER_RIGHT_SIDE] ?
+                            && this.getRightBanner() ?
                             <div className={"banner " + BannerID.BANNER_RIGHT_SIDE}></div> : null
                         }
 
@@ -461,9 +472,9 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
                             </div>
                         </div>
 
-                        {this.state.article.ads_enabled ?
+                        {this.state.article.ads_enabled && this.getBanner(BannerID.BANNER_BOTTOM) ?
                             <div className="banner_container">
-                                <div className={"banner " + BannerID.BANNER_CONTENT} style={shiftContentStyle}></div>
+                                <div className={"banner " + BannerID.BANNER_BOTTOM} style={shiftContentStyle}></div>
                             </div> : null
                         }
 

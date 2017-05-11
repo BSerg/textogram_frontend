@@ -1,32 +1,24 @@
-import * as React from 'react';
-import * as ReactDOM from 'react-dom';
-import {Router, Route, Link, browserHistory, IndexRoute} from 'react-router';
-
-import Base from './components/Base';
-import IndexPage from './components/Index';
-import Article from './components/Article';
-import Profile from './components/profile/Profile';
-import Editor from './components/Editor';
-import Error from './components/Error';
-import ProfileManagement from'./components/profile/ProfileManagement';
-import Drafts from './components/Drafts';
-import TwitterAuth from './components/TwitterAuth';
-import UrlShortener from './components/UrlShortener';
-
-import {UserAction, GET_ME} from './actions/user/UserAction';
-
-import 'core-js/shim';
-import {NewArticleEditor} from "./components/Editor";
-import {ArticlePreview} from "./components/Article";
-import LoginPage from "./components/LoginPage";
+import * as React from "react";
+import * as ReactDOM from "react-dom";
+import {Router, Route, browserHistory, IndexRoute} from "react-router";
+import Base from "./components/Base";
+import IndexPage from "./components/Index";
+import Article, {ArticlePreview} from "./components/Article";
+import Profile from "./components/profile/Profile";
+import Editor, {NewArticleEditor} from "./components/Editor";
 import {Error404} from "./components/Error";
-
+import ProfileManagement from "./components/profile/ProfileManagement";
+import TwitterAuth from "./components/TwitterAuth";
+import UrlShortener from "./components/UrlShortener";
+import {UserAction, GET_ME} from "./actions/user/UserAction";
+import "core-js/shim";
+import LoginPage from "./components/LoginPage";
 
 class App extends React.Component<any, any> {
-
     constructor(props: any) {
         super(props);
     }
+
     componentDidMount() {
 
         window.vkAsyncInit = function() {
@@ -86,7 +78,6 @@ class App extends React.Component<any, any> {
                     <IndexRoute component={IndexPage}/>
                     <Route path="login" component={LoginPage} />
                     <Route path="home/:id" component={IndexPage} />
-
                     <Route path="articles/new" component={NewArticleEditor}/>
                     <Route path="articles/:articleId/edit" component={Editor}/>
                     <Route path="articles/:articleId/preview" component={ArticlePreview}/>
@@ -106,3 +97,5 @@ class App extends React.Component<any, any> {
 }
 
 ReactDOM.render(<App/>, document.getElementById("app"));
+
+

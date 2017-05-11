@@ -1,12 +1,16 @@
 import * as React from "react";
 import {BlockContentTypes, Captions} from "../../constants";
 import {
-    ContentBlockAction, ACTIVATE_CONTENT_BLOCK,
+    ContentBlockAction,
+    ACTIVATE_CONTENT_BLOCK,
     DEACTIVATE_CONTENT_BLOCK
 } from "../../actions/editor/ContentBlockAction";
 import {
-    IContentData, DELETE_CONTENT_BLCK, ContentAction, UPDATE_CONTENT_BLCK,
-    MOVE_UP_CONTENT_BLCK, MOVE_DOWN_CONTENT_BLCK
+    IContentData,
+    DELETE_CONTENT_BLCK,
+    ContentAction,
+    MOVE_UP_CONTENT_BLCK,
+    MOVE_DOWN_CONTENT_BLCK
 } from "../../actions/editor/ContentAction";
 import BaseContentBlock from "./BaseContentBlock";
 import ContentBlockPopup from "./ContentBlockPopup";
@@ -16,7 +20,6 @@ import EmbedModal from "./EmbedModal";
 import {api} from "../../api";
 import "../../styles/editor/embed_content_block.scss";
 import ProgressBar from "../shared/ProgressBar";
-import InlineBlock from "./InlineBlock";
 import {InlineBlockAction, OPEN_INLINE_BLOCK, CLOSE_INLINE_BLOCK} from "../../actions/editor/InlineBlockAction";
 import EmbedInline from "./EmbedInline";
 import {DesktopBlockToolsAction, UPDATE_TOOLS} from "../../actions/editor/DesktopBlockToolsAction";

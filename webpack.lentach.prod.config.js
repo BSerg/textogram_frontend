@@ -1,4 +1,6 @@
+var webpack = require('webpack');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
+var webpack = require('webpack');
 var DefinePlugin = require('webpack/lib/DefinePlugin');
 var JavaScriptObfuscator = require('webpack-obfuscator');
 var HTMLWebpackPluginConfig = new HtmlWebpackPlugin({
@@ -9,12 +11,13 @@ var HTMLWebpackPluginConfig = new HtmlWebpackPlugin({
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 module.exports = {
-    entry: [
-        './app/index.tsx'
-    ],
+    entry: {
+        app: './app/index.tsx',
+        vendor: ['react', 'react-router', 'react-dom']
+    },
     output: {
         path: __dirname + '/dist/lentach_prod',
-        filename: 'bundle.js',
+        filename: '[name].js',
     },
     resolve: {
         extensions: ["", ".webpack.js", ".web.js", ".ts", ".tsx", ".js", ".jsx", ".css", ".sass"]
@@ -55,9 +58,10 @@ module.exports = {
     },
     plugins: [
         new ExtractTextPlugin('bundle.css'),
-        // new JavaScriptObfuscator ({
-        //     rotateUnicodeArray: true
-        // }),
+        new webpack.optimize.CommonsChunkPlugin("bundle.js", ['editor.js', 'vendor.js']),
+        new JavaScriptObfuscator ({
+            rotateUnicodeArray: true
+        }),
         new DefinePlugin({
             "process.env": {
                 NODE_ENV: JSON.stringify('production'),
