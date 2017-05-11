@@ -181,14 +181,18 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
                 }
             }
         }
-        try {
-            let posts = document.getElementsByClassName('embed post');
-            for (let i in posts) {
-                // TWITTER LOAD EMBED
+        let posts = document.getElementsByClassName('embed post');
+        for (let i in posts) {
+            try {
                 twttr.widgets && twttr.widgets.load(posts[i]);
-            }
-        } catch (err) {
-            // console.log('TWITTER EMBED LOADING ERROR', err);
+            } catch (err) {}
+            try {
+                let script = posts[i].getElementsByTagName('script')[0];
+                if (script) {
+                    let f = new Function(script.innerText);
+                    f();
+                }
+            } catch (err) {}
         }
         try {
             // INSTAGRAM LOAD EMBED
