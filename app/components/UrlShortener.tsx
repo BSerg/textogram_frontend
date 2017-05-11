@@ -43,7 +43,7 @@ export default class UrlShortener extends React.Component<any, IShortenerState> 
 
         api.post('/url_short/', {url: url}).then((response: any) => {
             this.setState({
-                shortenedUrl: response.data.shortened_url,
+                shortenedUrl: response.data.short_url,
                 shortenedUrlInitial: response.data.url,
                 urlError: false,
             }, () => {
