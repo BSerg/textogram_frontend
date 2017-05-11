@@ -12,7 +12,7 @@ var CommonsChunkPlugin = require('webpack/lib/optimize/CommonsChunkPlugin');
 module.exports = {
     entry: {
         app: './app/index.tsx',
-        vendor: ['react', 'react-router', 'react-dom']
+        vendor: Object.keys(require('./package.json').dependencies)
     },
     output: {
         path: __dirname + '/dist/lentach_dev',

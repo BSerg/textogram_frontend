@@ -13,11 +13,11 @@ var ExtractTextPlugin = require('extract-text-webpack-plugin');
 module.exports = {
     entry: {
         app: './app/index.tsx',
-        vendor: ['react', 'react-router', 'react-dom']
+        vendor: Object.keys(require('./package.json').dependencies)
     },
     output: {
         path: __dirname + '/dist/lentach_prod',
-        filename: '[name].js',
+        filename: 'bundle.js',
     },
     resolve: {
         extensions: ["", ".webpack.js", ".web.js", ".ts", ".tsx", ".js", ".jsx", ".css", ".sass"]
@@ -58,10 +58,10 @@ module.exports = {
     },
     plugins: [
         new ExtractTextPlugin('bundle.css'),
-        new webpack.optimize.CommonsChunkPlugin("bundle.js", ['editor.js', 'vendor.js']),
-        new JavaScriptObfuscator ({
-            rotateUnicodeArray: true
-        }),
+        new webpack.optimize.CommonsChunkPlugin("vendor", "vendor.js"),
+        // new JavaScriptObfuscator ({
+        //     rotateUnicodeArray: true
+        // }),
         new DefinePlugin({
             "process.env": {
                 NODE_ENV: JSON.stringify('production'),
