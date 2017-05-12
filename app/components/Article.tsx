@@ -234,35 +234,31 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
         }
     }
 
-    getBanner(id: string) {
-        try {
-            return this.state.article.advertisement[this.state.isDesktop ? 'desktop' : 'mobile'][id];
-        } catch (err) {
-            return null;
-        }
-    }
-
-
-    getRightBanner() {
-        return this.getBanner(BannerID.BANNER_RIGHT_SIDE);
-    }
-
     processPhoto() {
         let galleries = document.getElementsByClassName('photos');
         for (let i in galleries) {
             try {
-                let gallery = galleries[i];
+                let gallery = galleries[i] as HTMLElement;
                 let photos = gallery.getElementsByClassName('photo');
                 let photoData: IPhoto[] = [];
-                for (let i in photos) {
+                for (let i = 0; i < photos.length; i++) {
                     let photo = photos[i];
-                    this.state.article.images.forEach((image) => {
-                        if (image.id == parseInt(photo.getAttribute('data-id'))) {
-                            image.caption = photo.getAttribute('data-caption');
-                            photoData.push(image);
-                        }
+                    photoData.push({
+                        id: parseInt(photo.getAttribute('data-id')),
+                        preview: photo.getAttribute('data-preview'),
+                        image: photo.getAttribute('data-src'),
+                        caption: photo.getAttribute('data-caption'),
                     });
-                    photo.addEventListener('click', this.openGalleryModal.bind(this, parseInt(i), photoData));
+                    if (i < 6) {
+                        let img = document.createElement('img');
+                        img.onload = () => {
+                            gallery.replaceChild(img, photo);
+                        };
+                        img.className = photo.getAttribute('class');
+                        img.src = photo.getAttribute('data-preview');
+                        img.alt = photo.getAttribute('data-caption');
+                        img.addEventListener('click', this.openGalleryModal.bind(this, i, photoData));
+                    }
                 }
             } catch (err) {}
         }
@@ -274,6 +270,19 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
         this.processQuote();
         this.processPhrase();
         this.processAds();
+    }
+
+    getBanner(id: string) {
+        try {
+            return this.state.article.advertisement[this.state.isDesktop ? 'desktop' : 'mobile'][id];
+        } catch (err) {
+            return null;
+        }
+    }
+
+
+    getRightBanner() {
+        return this.getBanner(BannerID.BANNER_RIGHT_SIDE);
     }
 
     openGalleryModal(currentPhotoIndex: number, photos: any[]) {
@@ -666,7 +675,7 @@ class GalleryModal extends React.Component<IGalleryModalProps, IGalleryModalStat
         if (index == null) {
             return {background: 'transparent'};
         } else {
-            return {background: `url('${this.props.photos[index].image}') no-repeat center center`};
+            return {background: `url('${this.props.photos[index].preview}') no-repeat center center`};
         }
     }
 
@@ -700,6 +709,15 @@ class GalleryModal extends React.Component<IGalleryModalProps, IGalleryModalStat
         this.setState({swipingDirection: null}, () => {
             this.refs.image.style.left = "0";
         });
+    }
+
+    lazyLoad(index: number, el: HTMLElement) {
+        console.log(index, el)
+        let img = new Image();
+        img.onload = () => {
+            el.style.background = `url('${this.props.photos[index].image}') no-repeat center center`;
+        };
+        img.src = this.props.photos[index].image;
     }
 
     componentDidMount() {
@@ -741,16 +759,19 @@ class GalleryModal extends React.Component<IGalleryModalProps, IGalleryModalStat
                 {this.state.isDesktop ?
                     <div className="gallery_modal__viewport">
                         {this.getPrevPhotoIndex() != null ?
-                            <div className="gallery_modal__image_prev"
+                            <div ref={this.lazyLoad.bind(this, this.getPrevPhotoIndex())}
+                                 className="gallery_modal__img gallery_modal__image_prev"
                                  style={this.getImageStyle(this.getPrevPhotoIndex())}
                                  onClick={this.prevPhoto.bind(this)}></div> :
                             <div className="gallery_modal__image_prev empty"></div>
                         }
-                        <div className="gallery_modal__image"
+                        <div ref={this.lazyLoad.bind(this, this.state.currentPhotoIndex)}
+                             className="gallery_modal__img gallery_modal__image"
                              style={this.getImageStyle(this.state.currentPhotoIndex)}
                              onClick={this.nextPhoto.bind(this)}/>
                         {this.getNextPhotoIndex() != null ?
-                            <div className="gallery_modal__image_next"
+                            <div ref={this.lazyLoad.bind(this, this.getNextPhotoIndex())}
+                                 className="gallery_modal__img gallery_modal__image_next"
                                  style={this.getImageStyle(this.getNextPhotoIndex())}
                                  onClick={this.nextPhoto.bind(this)}></div> :
                             <div className="gallery_modal__image_next empty"></div>

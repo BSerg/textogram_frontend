@@ -347,6 +347,7 @@ $block_margin_desktop: 25px;
         float: left;
         cursor: pointer;
         display: none;
+        background-color: $color9;
 
         &.photo_0 {
           width: calc(80% - #{$space}/2);
