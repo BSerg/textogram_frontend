@@ -17,7 +17,7 @@ class RegistrationBlock extends React.Component<{className?: string}, any> {
 }
 
 
-export default class DefaultIndex extends React.Component<any, {screenWidth?: number, screenHeight?: number}> {
+export default class DefaultIndex extends React.Component<any, {screenWidth?: number, screenHeight?: number, scrollInterval?: number}> {
 
 
     BLOCKS: {key: string, caption: string, content: any}[] = [
@@ -35,11 +35,14 @@ export default class DefaultIndex extends React.Component<any, {screenWidth?: nu
     }
 
     scrollTop() {
-        // document.body.scrollTop = 0;
-        window.setInterval(() => {
-
-        });
-        window.scrollTo(0);
+        // window.scrollTo(0, 0);
+        this.state.scrollInterval =  window.setInterval(() => {
+            document.body.scrollTop -= 300;
+            if (document.body.scrollTop <= 0) {
+                document.body.scrollTop = 0;
+                window.clearInterval(this.state.scrollInterval);
+            }
+        }, 50);
     }
 
     setWidthHeight() {
@@ -52,6 +55,7 @@ export default class DefaultIndex extends React.Component<any, {screenWidth?: nu
 
     componentWillUnmount() {
         window.removeEventListener('resize', this.setWidthHeight);
+        this.state.scrollInterval && window.clearInterval(this.state.scrollInterval);
     }
 
     render() {
