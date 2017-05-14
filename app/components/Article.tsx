@@ -37,7 +37,7 @@ interface IArticle {
     id: number
     slug: string
     title: string
-    cover: {id: number, image: string} | null
+    cover: string | null
     blocks: IContentData[]
     html: string
     published_at: string
@@ -336,6 +336,16 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
         });
     }
 
+    coverLazyLoad(el: HTMLElement) {
+        if (this.state.article && this.state.article.cover) {
+            let img = new Image();
+            img.onload = () => {
+                el.style.background = `url('${this.state.article.cover}') no-repeat center center`;
+            };
+            img.src = this.state.article.cover;
+        }
+    }
+
     _publish() {
         api.post(`/articles/editor/${this.props.params.articleId}/publish/`).then((response: any) => {
             NotificationAction.do(SHOW_NOTIFICATION, {content: 'Поздравляем, ваш материал опубликован.'});
@@ -417,11 +427,6 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
 
     render() {
         let coverStyle = {};
-        if (this.state.article && this.state.article.cover) {
-            coverStyle = {
-                background: `url('${this.state.article.cover}') no-repeat center center`
-            }
-        }
         let titleClassName = "article__title", authorLink = '/';
 
         if (this.state.article) {
@@ -449,7 +454,7 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
                         }
 
                         {/* TITLE BLOCK */}
-                        <div className={titleClassName} style={coverStyle}>
+                        <div ref={this.coverLazyLoad.bind(this)} className={titleClassName}>
                             <div className="article__title_container" style={shiftContentStyle}>
                                 <h1>{this.state.article.title}</h1>
                                 <div className="article__stats">
@@ -712,12 +717,11 @@ class GalleryModal extends React.Component<IGalleryModalProps, IGalleryModalStat
     }
 
     lazyLoad(index: number, el: HTMLElement) {
-        console.log(index, el)
-        let img = new Image();
-        img.onload = () => {
-            el.style.background = `url('${this.props.photos[index].image}') no-repeat center center`;
-        };
-        img.src = this.props.photos[index].image;
+        // let img = new Image();
+        // img.onload = () => {
+        //     el.style.background = `url('${this.props.photos[index].image}') no-repeat center center`;
+        // };
+        // img.src = this.props.photos[index].image;
     }
 
     componentDidMount() {
@@ -759,8 +763,7 @@ class GalleryModal extends React.Component<IGalleryModalProps, IGalleryModalStat
                 {this.state.isDesktop ?
                     <div className="gallery_modal__viewport">
                         {this.getPrevPhotoIndex() != null ?
-                            <div ref={this.lazyLoad.bind(this, this.getPrevPhotoIndex())}
-                                 className="gallery_modal__img gallery_modal__image_prev"
+                            <div className="gallery_modal__img gallery_modal__image_prev"
                                  style={this.getImageStyle(this.getPrevPhotoIndex())}
                                  onClick={this.prevPhoto.bind(this)}></div> :
                             <div className="gallery_modal__image_prev empty"></div>
@@ -770,8 +773,7 @@ class GalleryModal extends React.Component<IGalleryModalProps, IGalleryModalStat
                              style={this.getImageStyle(this.state.currentPhotoIndex)}
                              onClick={this.nextPhoto.bind(this)}/>
                         {this.getNextPhotoIndex() != null ?
-                            <div ref={this.lazyLoad.bind(this, this.getNextPhotoIndex())}
-                                 className="gallery_modal__img gallery_modal__image_next"
+                            <div className="gallery_modal__img gallery_modal__image_next"
                                  style={this.getImageStyle(this.getNextPhotoIndex())}
                                  onClick={this.nextPhoto.bind(this)}></div> :
                             <div className="gallery_modal__image_next empty"></div>
