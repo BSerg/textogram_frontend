@@ -235,10 +235,11 @@ export namespace Embed {
             // Instagram
             /^https:\/\/www\.instagram\.com\/p\/[\w\-_]+\/?$/,
             // Facebook
-            /^https:\/\/(www|ru-ru)\.facebook\.com\/[\w\-_.]+\/posts\/\d+$/,
-            /^https:\/\/(www|ru-ru)\.facebook\.com\/[\w\-_.]+\/videos\/\d+\/?$/,
+            /^https:\/\/(www|ru-ru)\.facebook\.com\/[\w\-_.]+\/(posts|videos)\/\d+$/,
         ],
         VIDEO: [
+            // Facebook
+            /^https:\/\/(www|ru-ru)\.facebook\.com\/[\w\-_.]+\/videos\/\d+\/?$/,
             // VK
             /^https:\/\/vk\.com\/video-?\d+_\d+$/,
             // Youtube
