@@ -83,6 +83,7 @@ class App extends React.Component<any, any> {
                     <Route path="articles/new" component={NewArticleEditor}/>
                     <Route path="articles/:articleId/edit" component={Editor}/>
                     <Route path="articles/:articleId/preview" component={ArticlePreview}/>
+                    <Route path="articles/:articleSlug/gallery/:galleryBlockId" component={Article}/>
                     <Route path="articles/:articleSlug" component={Article}/>
                     <Route path="manage" component={ProfileManagement}/>
                     <Route path="manage/:section" component={ProfileManagement}/>

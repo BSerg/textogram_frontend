@@ -236,7 +236,7 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
 
     processPhoto() {
         let galleries = document.getElementsByClassName('photos');
-        for (let i in galleries) {
+        for (let i = 0; i < galleries.length; i++) {
             try {
                 let gallery = galleries[i] as HTMLElement;
                 let photos = gallery.getElementsByClassName('photo');
@@ -257,8 +257,11 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
                         img.className = photo.getAttribute('class');
                         img.src = photo.getAttribute('data-preview');
                         img.alt = photo.getAttribute('data-caption');
-                        img.addEventListener('click', this.openGalleryModal.bind(this, i, photoData));
+                        img.addEventListener('click', this.openGalleryModal.bind(this, i, photoData, gallery.getAttribute('id')));
                     }
+                }
+                if (this.props.params.galleryBlockId == gallery.getAttribute('id')) {
+                    this.openGalleryModal(0, photoData);
                 }
             } catch (err) {}
         }
@@ -285,8 +288,14 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
         return this.getBanner(BannerID.BANNER_RIGHT_SIDE);
     }
 
-    openGalleryModal(currentPhotoIndex: number, photos: any[]) {
-        ModalAction.do(OPEN_MODAL, {content: <GalleryModal currentPhotoIndex={currentPhotoIndex} photos={photos}/>});
+    openGalleryModal(currentPhotoIndex: number, photos: any[], galleryId: string = null) {
+        if (galleryId) {
+            this.props.router.push(`/articles/${this.state.article.slug}/gallery/${galleryId}`);
+        }
+        ModalAction.do(OPEN_MODAL, {content: <GalleryModal currentPhotoIndex={currentPhotoIndex}
+                                                           photos={photos}
+                                                           router={this.props.router}
+                                                           article={this.state.article}/>});
     }
 
     closeSharePopup() {
@@ -417,6 +426,23 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
             this.retrieveArticlePreview();
         } else {
             this.retrieveArticle();
+        }
+    }
+
+    componentWillReceiveProps(nextProps: any) {
+        if (this.props.isPreview) {
+            if (nextProps.params.articleId != this.props.params.articleId) {
+                this.retrieveArticlePreview();
+            }
+        } else {
+            if (!nextProps.params.galleryBlockId) {
+                ModalAction.do(CLOSE_MODAL, null);
+            } else if (nextProps.params.galleryBlockId != this.props.params.galleryBlockId) {
+                this.processPhoto();
+            }
+            if (nextProps.params.articleSlug != this.props.params.articleSlug) {
+                this.retrieveArticle();
+            }
         }
     }
 
@@ -608,6 +634,8 @@ class ShareLinkButton extends React.Component<{shortUrl: string, className?: str
 
 
 interface IGalleryModalProps {
+    article?: IArticle,
+    router?: any,
     photos: IPhoto[],
     currentPhotoIndex: number,
 }
@@ -638,6 +666,7 @@ class GalleryModal extends React.Component<IGalleryModalProps, IGalleryModalStat
 
     back() {
         ModalAction.do(CLOSE_MODAL, null);
+        this.props.router.push(`/articles/${this.props.article.slug}`);
     }
 
     nextPhoto() {
