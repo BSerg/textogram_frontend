@@ -46,11 +46,11 @@ $content-main-width: 340px;
   }
 
   .profile_avatar {
-    margin: 10px 0 5px 0;
+    //margin: 10px 0 5px 0;
 
     &.profile_avatar_editable {
       cursor: pointer;
-      position: relative;
+      //position: relative;
 
 
       &:hover:after {
@@ -91,11 +91,15 @@ $content-main-width: 340px;
   }
 
   .profile_avatar, .profile_avatar_dummy {
-    width: 70px;
-    min-width: 70px;
-    height: 70px;
+    width: 50px;
+    min-width: 50px;
+    height: 50px;
     @include border_radius(50%);
     background-color: $color5;
+
+    position: absolute;
+    top: calc(50% - 25px);
+    right: 10px;
 
     img {
       width: 100%;
@@ -104,6 +108,22 @@ $content-main-width: 340px;
       @include border_radius(50%);
       object-fit: cover;
     }
+  }
+
+  .profile_userdata {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    justify-content: center;
+    position: relative;
+    padding: 15px 80px;
+    min-height: 60px;
+    box-sizing: border-box;
+  }
+
+  .profile_user_text {
+    text-align: center;
   }
 
   .username, .description {
@@ -130,9 +150,10 @@ $content-main-width: 340px;
 
   .description {
 
-    max-width: 200px;
-    min-width: 200px;
+    max-width: 100%;
+    min-width: 100%;
     margin: 5px 0;
+    box-sizing: border-box;
 
     .content_editable {
       min-width: 100%;
@@ -176,7 +197,7 @@ $content-main-width: 340px;
   .social_links_list {
     display: flex;
     flex-direction: row;
-    margin: 5px 0 10px 0;
+    margin: 5px 0;
     &>div {
       margin: 0 10px;
     }
@@ -270,7 +291,7 @@ $content-main-width: 340px;
     flex-direction: row;
     align-items: center;
     height: 20px;
-    margin: $margin 0;
+    margin: 10px 0;
 
     &>div, &>a {
       display: flex;
@@ -461,32 +482,17 @@ $content-main-width: 340px;
     }
 
     .profile_avatar, .profile_avatar_dummy {
+      position: static;
       width: 90px;
       min-width: 90px;
       height: 90px;
-      //margin-top: 0;
-      position: relative;
+      top: initial;
+      right: initial;
 
       margin: 0 0 $margin * 2 0;
 
-      .profile_management_link {
-        //display: none;
-        position: absolute;
-        top: -20px;
-        right: -40px;
-        width: 50px;
-        height: 50px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        opacity: 0;
-        @include transition(200ms);
-
-        svg {
-          width: 50px;
-          height: 50px;
-          fill: $color;
-        }
+      &.profile_avatar_editable {
+        position: relative;
       }
     }
 
@@ -500,9 +506,15 @@ $content-main-width: 340px;
       }
     }
 
+    .profile_userdata {
+      padding: 0;
+      flex-direction: column;
+      align-items: center;
+    }
 
 
     .username {
+      display: block;
       padding: 0 $padding;
       form {
         height: 20px;
@@ -518,6 +530,7 @@ $content-main-width: 340px;
 
     .description {
       margin: 0 0 $margin 0;
+      padding: 0 $padding;
 
       &, form input, form textarea {
         line-height: 19px;
