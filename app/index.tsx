@@ -70,7 +70,9 @@ class App extends React.Component<any, any> {
             }
         }
         window.setTimeout(onGAPILoad.bind(this), 0);
-        UserAction.doAsync(GET_ME, null);
+        if (window.localStorage.getItem('authToken')) {
+            UserAction.doAsync(GET_ME, null);
+        }
     }
 
     render() {
