@@ -260,7 +260,7 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
                         img.addEventListener('click', this.openGalleryModal.bind(this, i, photoData, gallery.getAttribute('id')));
                     }
                 }
-                if (this.props.params.galleryBlockId == gallery.getAttribute('id')) {
+                if (this.props.params.galleryBlockId && this.props.params.galleryBlockId == gallery.getAttribute('id')) {
                     this.openGalleryModal(0, photoData);
                 }
             } catch (err) {}
