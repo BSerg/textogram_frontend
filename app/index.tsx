@@ -41,7 +41,6 @@ class App extends React.Component<any, any> {
                 xfbml      : true,
                 version    : 'v2.8'
             });
-            console.log('HELLO FB', FB)
         }.bind(this);
 
         setTimeout(function () {
