@@ -35,8 +35,8 @@ export  default class LineChart extends React.Component<IChartProps, IChartState
     OFFSET_TOP: number = 60;
     OFFSET_BOTTOM: number = 60;
 
-    POINT_RADIUS: number = 4;
-    LINE_WIDTH: number = 2;
+    POINT_RADIUS: number = 6;
+    LINE_WIDTH: number = 4;
     FONT_SIZE: number = 13;
 
 
@@ -57,21 +57,22 @@ export  default class LineChart extends React.Component<IChartProps, IChartState
     static defaultProps: {bgColor: string, nodeColor: string, borderColor: string, lineColor: string, alwaysShowNodes: boolean} = {
         bgColor: '#FFFFFF',
         borderColor: '#000000',
-        nodeColor: '#FF3333',
-        lineColor: '#33FF33',
+        nodeColor: '#333333',
+        lineColor: '#333333',
         alwaysShowNodes: false,
     };
 
     clear(ctx: CanvasRenderingContext2D) {
-        ctx.fillStyle = this.props.bgColor;
-        ctx.fillRect(0, 0, this.refs.canvas.width, this.refs.canvas.height);
+        // ctx.fillStyle = this.props.bgColor;
+        // ctx.fillRect(0, 0, this.refs.canvas.width, this.refs.canvas.height);
+        ctx.clearRect(0, 0, this.refs.canvas.width, this.refs.canvas.height);
 
         let lineWidth: number = this.refs.canvas.width/this.refs.canvas.getBoundingClientRect().width;
 
-        this.drawLine(ctx, 0, 0, this.refs.canvas.width, 0, lineWidth, this.props.borderColor);
-        this.drawLine(ctx, this.refs.canvas.width, 0, this.refs.canvas.width, this.refs.canvas.height, lineWidth, this.props.borderColor);
-        this.drawLine(ctx, this.refs.canvas.width, this.refs.canvas.height, 0, this.refs.canvas.height, lineWidth, this.props.borderColor);
-        this.drawLine(ctx, 0, this.refs.canvas.height, 0, 0, lineWidth, this.props.borderColor);
+        // this.drawLine(ctx, 0, 0, this.refs.canvas.width, 0, lineWidth, this.props.borderColor);
+        // this.drawLine(ctx, this.refs.canvas.width, 0, this.refs.canvas.width, this.refs.canvas.height, lineWidth, this.props.borderColor);
+        // this.drawLine(ctx, this.refs.canvas.width, this.refs.canvas.height, 0, this.refs.canvas.height, lineWidth, this.props.borderColor);
+        // this.drawLine(ctx, 0, this.refs.canvas.height, 0, 0, lineWidth, this.props.borderColor);
 
         this.drawLine(ctx, this.OFFSET_LEFT, this.OFFSET_TOP, this.refs.canvas.width - this.OFFSET_RIGHT, this.OFFSET_TOP, lineWidth, '#BABABA');
         this.drawLine(ctx, this.OFFSET_LEFT, this.OFFSET_TOP + (this.refs.canvas.height - this.OFFSET_TOP - this.OFFSET_BOTTOM) / 2,
@@ -132,14 +133,17 @@ export  default class LineChart extends React.Component<IChartProps, IChartState
     drawPoints(ctx: CanvasRenderingContext2D) {
         let radius: number = this.POINT_RADIUS * this.refs.canvas.width/this.refs.canvas.getBoundingClientRect().width;
         this.state.lineCoordinates.forEach((coord, index: number) => {
-            if (this.props.alwaysShowNodes || index == this.state.displayNodeIndex) {
-                ctx.beginPath();
-                ctx.arc(coord.x, coord.y, radius * ((index == this.state.displayNodeIndex && this.props.alwaysShowNodes) ? 1.5 : 1) , 0, 2 * Math.PI, false);
-                ctx.fillStyle = this.props.nodeColor;
-                ctx.fill();
-            }
+            // if (this.props.alwaysShowNodes || index == this.state.displayNodeIndex) {
+            //     ctx.beginPath();
+            //     ctx.arc(coord.x, coord.y, radius * ((index == this.state.displayNodeIndex && this.props.alwaysShowNodes) ? 1.5 : 1) , 0, 2 * Math.PI, false);
+            //     ctx.fillStyle = this.props.nodeColor;
+            //     ctx.fill();
+            // }
+            ctx.beginPath();
+            ctx.arc(coord.x, coord.y, (index == this.state.displayNodeIndex) ? radius : this.LINE_WIDTH/2 , 0, 2 * Math.PI, false);
+            ctx.fillStyle = this.props.nodeColor;
+            ctx.fill();
         });
-        this.drawText(ctx);
 
     }
 
@@ -150,7 +154,7 @@ export  default class LineChart extends React.Component<IChartProps, IChartState
         //ctx.font=   "20px Georgia";
         let fontSize: number = this.FONT_SIZE * this.refs.canvas.width/this.refs.canvas.getBoundingClientRect().width;
         ctx.font= fontSize + "px Open Sans";
-        ctx.fillStyle = '#000000';
+        ctx.fillStyle = '#333333';
         ctx.fillText(this.state.max.toString(), this.OFFSET_LEFT, this.OFFSET_TOP + fontSize);
         ctx.fillText(Math.round(this.state.max / 2).toString(), this.OFFSET_LEFT, this.OFFSET_TOP + fontSize + (this.refs.canvas.height - this.OFFSET_TOP - this.OFFSET_BOTTOM) / 2);
     }
@@ -168,6 +172,7 @@ export  default class LineChart extends React.Component<IChartProps, IChartState
             }
         });
         this.drawPoints(ctx);
+        this.drawText(ctx);
     }
 
     mouseMoveHandle(e: any) {

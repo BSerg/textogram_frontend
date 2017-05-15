@@ -35,11 +35,13 @@ export default class DefaultIndex extends React.Component<any, {screenWidth?: nu
     }
 
     scrollTop() {
-        // window.scrollTo(0, 0);
+
+        let scrollTop = document.body.scrollTop;
         this.state.scrollInterval =  window.setInterval(() => {
-            document.body.scrollTop -= 300;
-            if (document.body.scrollTop <= 0) {
-                document.body.scrollTop = 0;
+            window.scrollTo(0, scrollTop);
+            scrollTop -= (scrollTop < (document.body.scrollHeight / 4) ? 100 : 400 );
+            if (scrollTop <= 0) {
+                window.scrollTo(0, 0);
                 window.clearInterval(this.state.scrollInterval);
             }
         }, 50);
