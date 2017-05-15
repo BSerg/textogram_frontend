@@ -45,7 +45,7 @@ export default class PieChart extends React.Component<IChartProps, IChartState> 
         sort: true,
         displayPercent: true,
         showLegend: true,
-        colors: [],
+        colors: ['#393939', '#777777', '#444444', '#999999', '#555555', '#222222', '#9A9A9A'],
         bgColor: '#FFFFFF',
         borderColor: '#000000',
     };
@@ -56,13 +56,14 @@ export default class PieChart extends React.Component<IChartProps, IChartState> 
     }
 
     clear(ctx: CanvasRenderingContext2D) {
-        ctx.fillStyle = this.props.bgColor;
-        ctx.fillRect(0, 0, this.refs.canvas.width, this.refs.canvas.height);
-        let lineWidth: number = this.refs.canvas.width/this.refs.canvas.getBoundingClientRect().width;
-        this.drawLine(ctx, 0, 0, this.refs.canvas.width, 0, lineWidth, this.props.borderColor);
-        this.drawLine(ctx, this.refs.canvas.width, 0, this.refs.canvas.width, this.refs.canvas.height, lineWidth, this.props.borderColor);
-        this.drawLine(ctx, this.refs.canvas.width, this.refs.canvas.height, 0, this.refs.canvas.height, lineWidth, this.props.borderColor);
-        this.drawLine(ctx, 0, this.refs.canvas.height, 0, 0, lineWidth, this.props.borderColor);
+        // ctx.fillStyle = this.props.bgColor;
+        // ctx.fillRect(0, 0, this.refs.canvas.width, this.refs.canvas.height);
+        ctx.clearRect(0, 0, this.refs.canvas.width, this.refs.canvas.height);
+        // let lineWidth: number = this.refs.canvas.width/this.refs.canvas.getBoundingClientRect().width;
+        // this.drawLine(ctx, 0, 0, this.refs.canvas.width, 0, lineWidth, this.props.borderColor);
+        // this.drawLine(ctx, this.refs.canvas.width, 0, this.refs.canvas.width, this.refs.canvas.height, lineWidth, this.props.borderColor);
+        // this.drawLine(ctx, this.refs.canvas.width, this.refs.canvas.height, 0, this.refs.canvas.height, lineWidth, this.props.borderColor);
+        // this.drawLine(ctx, 0, this.refs.canvas.height, 0, 0, lineWidth, this.props.borderColor);
     }
 
     numToHex(n: number): string {
@@ -107,25 +108,29 @@ export default class PieChart extends React.Component<IChartProps, IChartState> 
         ctx.stroke();
     }
 
-    drawArc(ctx: CanvasRenderingContext2D, start: number, end: number, radius: number, color: string, alpha: number = 1) {
+    drawArc(ctx: CanvasRenderingContext2D, start: number, end: number, radius: number, color: string, lineWidth: number, alpha: number = 1) {
 
         ctx.globalAlpha = alpha;
         ctx.fillStyle = color;
+        ctx.strokeStyle = '#000000';
+        ctx.lineWidth = lineWidth;
         ctx.beginPath();
         ctx.moveTo(this.refs.canvas.width / 2, this.refs.canvas.height / 2);
         ctx.arc(this.refs.canvas.width / 2, this.refs.canvas.height / 2, radius, start, end, false);
         ctx.lineTo(this.refs.canvas.width / 2, this.refs.canvas.height / 2);
         ctx.fill();
+        ctx.stroke();
         ctx.globalAlpha = 1;
     }
 
     redrawArcs() {
         let ctx = this.refs.canvas.getContext('2d');
         this.clear(ctx);
-
+        let lineWidth: number = 3 * this.refs.canvas.width/this.refs.canvas.getBoundingClientRect().width;
         this.state.arcs.forEach((arc, index: number) => {
             this.drawArc(ctx, arc.start, arc.end,
                 (index == this.state.displayNodeIndex) ? this.PIE_RADIUS * 1.05 : this.PIE_RADIUS, arc.color,
+                lineWidth,
                 (this.state.displayNodeIndex != null && index != this.state.displayNodeIndex) ? 0.2 : 1
             );
         });
@@ -220,7 +225,7 @@ export default class PieChart extends React.Component<IChartProps, IChartState> 
                 </div>
                 {
                     this.props.showLegend && this.state.arcs.length ? (
-                        <div className="chart_legend" style={{backgroundColor: this.props.bgColor, border: '1px solid ' + this.props.borderColor}}>
+                        <div className="chart_legend">
                             {
                                 this.state.values.map((val, index: number) => {
                                     return (
