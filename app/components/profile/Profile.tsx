@@ -306,15 +306,37 @@ class ProfileClass extends React.Component<IProfileProps, IProfileState> {
 
                  <div id="profile_content">
                      <div className="profile_content_main">
-                         <Link to={"/" + this.state.user.nickname} className="profile_avatar" key="avatar">
-                             { this.state.user.avatar ? (<img src={this.state.user.avatar}/>) : (
-                                 <div className="profile_avatar_dummy"></div>) }
-                         </Link>
 
-                         <Link to={"/" + this.state.user.nickname} key="username" className="username">
-                             {this.state.user.first_name} {this.state.user.last_name}
-                         </Link>
-                         <div className="description">{ this.state.user.description }</div>
+                         <div className="profile_userdata">
+                             {
+                                 this.state.isDesktop ? (
+                                     <Link to={"/" + this.state.user.nickname} className="profile_avatar" key="avatar">
+                                         { this.state.user.avatar ? (<img src={this.state.user.avatar}/>) : (
+                                             <div className="profile_avatar_dummy"></div>) }
+                                     </Link>
+                                 ) : null
+                             }
+
+                             <div className="profile_user_text">
+                                <Link to={"/" + this.state.user.nickname} key="username" className="username">
+                                     {this.state.user.first_name} {this.state.user.last_name}
+                                 </Link>
+
+
+                                 <div className="description">{ this.state.user.description }</div>
+                             </div>
+
+
+                             {
+                                 !this.state.isDesktop ? (
+                                     <Link to={"/" + this.state.user.nickname} className="profile_avatar" key="avatar">
+                                         { this.state.user.avatar ? (<img src={this.state.user.avatar}/>) : (
+                                             <div className="profile_avatar_dummy"></div>) }
+                                     </Link>
+                                 ) : null
+                             }
+                         </div>
+
 
                          <ProfileSocialLinkList items={this.state.user.social_links}/>
 

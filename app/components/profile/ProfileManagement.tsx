@@ -90,7 +90,7 @@ class ProfileManagementClass extends React.Component<IManagementProps, IManageme
 
     setSection(sectionName: string) {
         this.setState({currentSection:
-            (this.SECTIONS.map((section) => {return section.name}).indexOf(this.state.currentSection) != -1) ?
+            (this.SECTIONS.map((section) => {return section.name}).indexOf(sectionName) != -1) ?
                 sectionName : this.SECTION_ACCOUNT });
     }
 
@@ -279,45 +279,51 @@ class ProfileManagementClass extends React.Component<IManagementProps, IManageme
             <div id="profile">
                 <div id="profile_content">
                     <div className="profile_content_main">
-                        <div className={"profile_avatar profile_avatar_editable" + (this.state.avatarUploading ? " uploading" : "") }
-                             key="avatar" onClick={this.inputClick.bind(this)}>
-                             { this.state.user.avatar ? (<img src={this.state.user.avatar}/>) : (
-                                 <div className="profile_avatar_dummy"></div>) }
 
-                            {
-                                this.state.avatarUploading ? (<div className="avatar_upload"><Loading/></div>) : null
-                            }
+                        <div className="profile_userdata">
+                            <div className={"profile_avatar profile_avatar_editable" + (this.state.avatarUploading ? " uploading" : "") }
+                                 key="avatar" onClick={this.inputClick.bind(this)}>
+                                 { this.state.user.avatar ? (<img src={this.state.user.avatar}/>) : (
+                                     <div className="profile_avatar_dummy"></div>) }
 
-                        </div>
+                                {
+                                    this.state.avatarUploading ? (<div className="avatar_upload"><Loading/></div>) : null
+                                }
 
-                        <input accept="image/jpeg,image/png" style={{visibility: 'hidden', position: 'fixed', top: '-1000px', left: '-1000px'}} type="file" ref="inputAvatar" onChange={this.uploadAvatar.bind(this)} />
+                            </div>
 
-                        <div key="username" className="username">
-                            {
-                                this.state.nameEdit ? (
-                                    <form onSubmit={this.formSubmit.bind(this, 'name')}>
-                                        <input ref="inputName" type="text" value={this.state.newName}
-                                               onBlur={this.toggleEdit.bind(this, 'name', false)}
-                                               onChange={this.textEdit.bind(this, 'name') }/>
-                                        <input type="submit" style={{visibility: 'hidden'}}/>
-                                    </form>
-                                ) : (<span onClick={this.toggleEdit.bind(this, 'name', true)}>
-                                        {this.state.user.first_name} {this.state.user.last_name}
-                                </span>)
-                            }
-
-                         </div>
+                            <input accept="image/jpeg,image/png" style={{visibility: 'hidden', position: 'fixed', top: '-1000px', left: '-1000px'}} type="file" ref="inputAvatar" onChange={this.uploadAvatar.bind(this)} />
 
 
-                        <div className={"description" + ( this.state.descriptionEdit ? " editable" : "")}
-                             onFocus={this.toggleEdit.bind(this, 'description', true)}>
-                            <ContentEditable
-                                content={this.state.newDescription}
-                                elementType="inline"
-                                placeholder="Введите описание"
-                                onChange={this.contentEdit.bind(this)}
-                                onBlur={this.toggleEdit.bind(this, 'description', false)}
-                                allowLineBreak={false}/>
+                            <div className="profile_user_text">
+                                <div key="username" className="username">
+                                    {
+                                        this.state.nameEdit ? (
+                                            <form onSubmit={this.formSubmit.bind(this, 'name')}>
+                                                <input ref="inputName" type="text" value={this.state.newName}
+                                                       onBlur={this.toggleEdit.bind(this, 'name', false)}
+                                                       onChange={this.textEdit.bind(this, 'name') }/>
+                                                <input type="submit" style={{visibility: 'hidden'}}/>
+                                            </form>
+                                        ) : (<span onClick={this.toggleEdit.bind(this, 'name', true)}>
+                                                {this.state.user.first_name} {this.state.user.last_name}
+                                        </span>)
+                                    }
+
+                                </div>
+
+                                <div className={"description" + ( this.state.descriptionEdit ? " editable" : "")}
+                                     onFocus={this.toggleEdit.bind(this, 'description', true)}>
+                                    <ContentEditable
+                                        content={this.state.newDescription}
+                                        elementType="inline"
+                                        placeholder="Введите описание"
+                                        onChange={this.contentEdit.bind(this)}
+                                        onBlur={this.toggleEdit.bind(this, 'description', false)}
+                                        allowLineBreak={false}/>
+                                </div>
+
+                            </div>
                         </div>
 
                         <ProfileSocialLinkList items={this.state.user.social_links}/>

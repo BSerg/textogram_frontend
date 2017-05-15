@@ -43,6 +43,7 @@ export default class Index extends React.Component<any, any> {
     }
 
     componentDidMount() {
+        this.redirectToProfile();
         UserAction.onChange(GET_ME, this.redirectToProfile);
         UserAction.onChange(LOGIN, this.redirectToProfile);
     }
