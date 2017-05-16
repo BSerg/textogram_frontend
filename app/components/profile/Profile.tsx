@@ -70,17 +70,23 @@ class ProfileClass extends React.Component<IProfileProps, IProfileState> {
         this.handleUserChange = this.handleUserChange.bind(this);
         this.checkDesktop = this.checkDesktop.bind(this);
         this.setDrafts = this.setDrafts.bind(this);
+        this.logoutHandle = this.logoutHandle.bind(this);
     }
 
     handleUserChange() {
         let isSelf: boolean =  Boolean(this.state.user && UserAction.getStore().user && (UserAction.getStore().user.id == this.state.user.id));
         let stateData: any = { canSubscribe: Boolean(UserAction.getStore().user && !isSelf) };
         stateData.isSelf = isSelf;
-        // stateData.currentSection = process.env.IS_LENTACH ? this.SECTION_ARTICLES : (isSelf ? this.SECTION_FEED : this.SECTION_ARTICLES);
         stateData.selfDrafts = isSelf ? UserAction.getStore().user.drafts || 0 : 0;
         stateData.additionalPage = null;
         if (stateData.isSelf != this.state.isSelf || stateData.canSubscribe != this.state.canSubscribe ) {
             this.setState(stateData);
+        }
+    }
+
+    logoutHandle() {
+        if (this.state.currentSection == this.SECTION_FEED || this.state.currentSection == this.SECTION_DRAFTS) {
+            this.props.router.push('/');
         }
     }
 
@@ -162,7 +168,7 @@ class ProfileClass extends React.Component<IProfileProps, IProfileState> {
     }
 
     setSection(sectionName: string) {
-        if (this.state.isSelf && [ this.SECTION_FEED, this.SECTION_ARTICLES ].includes(sectionName)) {
+        if (this.state.isSelf && [this.SECTION_FEED, this.SECTION_ARTICLES ].includes(sectionName)) {
             this.setState({currentSection: sectionName});
         }
         else {
@@ -235,11 +241,13 @@ class ProfileClass extends React.Component<IProfileProps, IProfileState> {
         this.getUserData(this.props.params.slug, this.props.params.subsection);
 
         UserAction.onChange([GET_ME, LOGIN, LOGOUT], this.handleUserChange);
+        UserAction.onChange(LOGOUT, this.logoutHandle);
         UserAction.onChange(UPDATE_USER_DRAFTS, this.setDrafts);
     }
 
     componentWillUnmount() {
         UserAction.unbind([GET_ME, LOGIN, LOGOUT], this.handleUserChange);
+        UserAction.unbind(LOGOUT, this.logoutHandle);
         UserAction.unbind(UPDATE_USER_DRAFTS, this.setDrafts);
         MediaQuerySerice.unbind(this.checkDesktop);
 

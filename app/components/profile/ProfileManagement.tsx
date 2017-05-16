@@ -73,6 +73,7 @@ class ProfileManagementClass extends React.Component<IManagementProps, IManageme
         this.setUser = this.setUser.bind(this);
         this.setError = this.setError.bind(this);
         this.checkDesktop = this.checkDesktop.bind(this);
+        this.logoutHandle = this.logoutHandle.bind(this);
     }
 
     setUser() {
@@ -92,6 +93,10 @@ class ProfileManagementClass extends React.Component<IManagementProps, IManageme
         this.setState({currentSection:
             (this.SECTIONS.map((section) => {return section.name}).indexOf(sectionName) != -1) ?
                 sectionName : this.SECTION_ACCOUNT });
+    }
+
+    logoutHandle() {
+        this.props.router.push('/');
     }
 
     formSubmit(type: string, e: any) {
@@ -224,6 +229,7 @@ class ProfileManagementClass extends React.Component<IManagementProps, IManageme
         this.setSection(this.props.params.section);
         MediaQuerySerice.listen(this.checkDesktop);
         UserAction.onChange([GET_ME, LOGIN, LOGOUT, SAVE_USER, UPDATE_USER, USER_REJECT], this.setUser);
+        UserAction.onChange(LOGOUT, this.logoutHandle);
     }
 
     componentWillUnmount() {
@@ -231,6 +237,7 @@ class ProfileManagementClass extends React.Component<IManagementProps, IManageme
         UserAction.unbind([GET_ME, LOGIN, LOGOUT, SAVE_USER, UPDATE_USER, USER_REJECT], this.setUser);
         this.state.nameSaveTimeout && window.clearTimeout(this.state.nameSaveTimeout);
         this.state.descriptionSaveTimeout && window.clearTimeout(this.state.descriptionSaveTimeout);
+        UserAction.unbind(LOGOUT, this.logoutHandle);
     }
 
     render() {
@@ -243,14 +250,6 @@ class ProfileManagementClass extends React.Component<IManagementProps, IManageme
             return (<div id="profile" className="profile_loading"><Loading /></div>);
         }
 
-        // let sections: {name: string, caption: string, to: string}[] = [
-        //     {name: this.SECTION_ACCOUNT, caption: Captions.management.sectionAccount, to: '/manage/account'},
-        //     {name: this.SECTION_NOTIFICATIONS, caption: Captions.management.sectionNotifications, to: '/manage/notifications'}
-        //
-        //     ];
-
-        //let section: any = this.sections[this.state.currentSection] || null;
-
         let section = null;
 
         this.SECTIONS.forEach((s) => {
@@ -258,23 +257,6 @@ class ProfileManagementClass extends React.Component<IManagementProps, IManageme
                 section = s.section;
             }
         });
-
-
-
-
-        // if (this.state.currentSection == this.SECTION_NOTIFICATIONS) {
-        //     section = <ProfileManagementNotifications/>;
-        // }
-        //
-        // switch (this.state.currentSection) {
-        //     case (this.SECTION_ACCOUNT):
-        //         section = <ProfileManagementAccount/>;
-        //         break;
-        //     case (this.SECTION_NOTIFICATIONS):
-        //         section = <ProfileManagementNotifications/>;
-        //         break;
-        // }
-
         return (
             <div id="profile">
                 <div id="profile_content">
