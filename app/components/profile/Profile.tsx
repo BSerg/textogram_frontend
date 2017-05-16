@@ -108,12 +108,20 @@ class ProfileClass extends React.Component<IProfileProps, IProfileState> {
                     currentSection = this.SECTION_DRAFTS;
                     break;
             }
-            UserAction.doAsync(GET_ME, null).then((user: any) => {
+            if (UserAction.getStore().user) {
                 this.setState({user: UserAction.getStore().user, currentSection: currentSection,
-                    isSelf: true, canSubscribe: false, selfDrafts: UserAction.getStore().user.drafts || 0});
-            }).catch((error) => {
-                this.props.router.push('/');
-            });
+                        isSelf: true, canSubscribe: false, selfDrafts: UserAction.getStore().user.drafts || 0});
+            }
+            else {
+                UserAction.doAsync(GET_ME, null).then((user: any) => {
+                    this.setState({user: UserAction.getStore().user, currentSection: currentSection,
+                        isSelf: true, canSubscribe: false, selfDrafts: UserAction.getStore().user.drafts || 0});
+                }).catch((error) => {
+                    console.log('pushhh');
+                    this.props.router.push('/');
+                });
+            }
+
         }
         else  {
             if (!subsection) {
