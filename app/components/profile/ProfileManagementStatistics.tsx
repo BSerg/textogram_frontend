@@ -1,9 +1,15 @@
 import * as React from 'react';
 import LineChart from '../shared/charts/LineChart';
 import PieChart from '../shared/charts/PieChart';
+import './ProfileArticles';
+import ProfileArticles from "./ProfileArticles";
 
+export default class ProfileManagementStatistics extends React.Component<any, {items?: any[]}> {
 
-export default class ProfileManagementStatistics extends React.Component<any, any> {
+    constructor() {
+        super();
+        this.state = {items: []};
+    }
 
     render() {
 
@@ -59,6 +65,10 @@ export default class ProfileManagementStatistics extends React.Component<any, an
                 <div style={{padding: '20px 0'}}>
                     <LineChart values={values} valuePrefix="Посетителей: " title="Посещаемость"/>
                 </div>
+
+                <ProfileArticles section={'statistics'} />
+
+
 
             </div>)
     }
