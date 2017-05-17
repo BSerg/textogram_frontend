@@ -48,7 +48,7 @@ export default class Base extends React.Component<any, any> {
     }
 
     handleUser() {
-            this.setState({authenticated: !!UserAction.getStore().user});
+        this.setState({authenticated: !!UserAction.getStore().user});
         this.handleNotifications();
     }
 
