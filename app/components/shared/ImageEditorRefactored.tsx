@@ -195,8 +195,8 @@ export default class ImageEditorRefactored extends React.Component<IProps, IStat
 
     private drawImage() {
         if (!this.state.imageObject) {
-            console.log('HELLO11')
             let image = new Image();
+            image.setAttribute('crossOrigin', 'anonymous');
             image.onload = () => {
                 this.state.imageObject = image;
                 this.state.image.width = image.width;
