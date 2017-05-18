@@ -44,6 +44,7 @@ UserAction.registerAsync(GET_ME, (store, data: any) => {
             api.get('/users/me/').then((response: any) => {
                 store.user = response.data;
                 localStorage.setItem('authToken', response.data.token);
+                document.cookie = 'authToken=' + response.data.token;
                 resolve(response.data);
             }).catch((error) => {
                 localStorage.removeItem('authToken');
