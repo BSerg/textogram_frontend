@@ -34,15 +34,20 @@ export default class LoginBlock extends React.Component<any, ILoginBlockStateInt
 
     __loginVK() {
         VK.Auth.login((response: any) => {
-            // console.log(response);
             let data = response.session;
-            data.social = 'vk';
-            // console.log(data);
-            VK.api('users.get', {access_token: response.session.sid, fields: 'photo_100'}, (userData) => {
-                data.user.avatar = userData.response[0].photo_100;
+            if (response.status == 'connected') {
+                data.social = 'vk';
                 // console.log(data);
-                UserAction.do(LOGIN, data);
-            })
+                VK.api('users.get', {access_token: response.session.sid, fields: 'photo_100,email'}, (userData) => {
+                    data.user.avatar = userData.response[0].photo_100;
+                    // console.log(data);
+                    UserAction.do(LOGIN, data);
+                })
+            }
+            else {
+                this.setState({isLogging: false});
+            }
+
         }, 4194304);
     }
 
@@ -53,8 +58,10 @@ export default class LoginBlock extends React.Component<any, ILoginBlockStateInt
                 data.social = 'fb';
                 UserAction.do(LOGIN, data);
             }
-           // console.log(response);
-        });
+            else {
+                this.setState({isLogging: false});
+            }
+        }, {return_scopes: true, scope: 'email' });
 
     }
 
@@ -64,7 +71,7 @@ export default class LoginBlock extends React.Component<any, ILoginBlockStateInt
             let data: any = response.getAuthResponse();
             let authData = { social: 'google', id_token: data.id_token };
             UserAction.do(LOGIN, authData);
-        });
+        }, (error: any) => { this.setState({isLogging: false}) });
     }
 
     __loginTwitter() {
@@ -72,7 +79,7 @@ export default class LoginBlock extends React.Component<any, ILoginBlockStateInt
            // console.log(response);
            let oauthToken = response.data.oauth_token;
            window.open('https://api.twitter.com/oauth/authenticate?oauth_token=' + oauthToken);
-       });
+       }).catch(() => { this.setState({isLogging: false}) });
     }
 
     __onTwitterAuth() {
@@ -80,6 +87,7 @@ export default class LoginBlock extends React.Component<any, ILoginBlockStateInt
         if (!twitterData || UserAction.getStore().user) return;
         var data = JSON.parse(twitterData);
         data.social = 'twitter';
+        localStorage.removeItem('twitter_auth_data');
         UserAction.do(LOGIN, data)
     }
 
