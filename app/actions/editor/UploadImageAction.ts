@@ -49,10 +49,10 @@ UploadImageAction.registerAsync(UPLOAD_IMAGE, (store, data: {articleId: number, 
 
         xhr.onload = () => {
             if (xhr.status == 201) {
-                let data = JSON.parse(xhr.response);
-                store.image = data;
-                store.images[data.image.name] = data;
-                resolve(data)
+                let response = JSON.parse(xhr.response);
+                store.image = response;
+                store.images[data.image.name] = response;
+                resolve(response)
             } else {
                 reject('ERROR ' + xhr.status);
             }
