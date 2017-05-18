@@ -12,7 +12,7 @@ export default class ProfileSocialLinkList extends React.Component<ILinksProps, 
 
         let items: any[] = [];
         this.props.items.forEach((item: any) => {
-            if (!item.is_hidden) {
+            if (!item.is_hidden && !item.is_auth) {
                 items.push(item);
             }
         });

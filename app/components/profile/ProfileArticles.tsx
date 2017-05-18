@@ -3,6 +3,7 @@ import * as React from 'react';
 import axios from 'axios';
 import {api} from '../../api';
 import ArticlePreview from '../shared/ArticlePreview';
+import ArticlePreviewStatistics from '../shared/ArticlePreviewStatistics';
 import Loading from '../shared/Loading';
 
 interface IArticlesProps {
@@ -137,8 +138,9 @@ export default class ProfileArticles extends React.Component<IArticlesProps, IAr
                 </div>
 
                 { this.state.items.map((item: any, index: number) => {
-                    return (<ArticlePreview isFeed={isFeed} key={index} item={item} isOwner={isOwner}
-                                                index={index} />)
+                    return this.props.section == 'statistics' ?
+                        <ArticlePreviewStatistics item={item} key={index}/> :
+                        <ArticlePreview isFeed={isFeed} key={index} item={item} isOwner={isOwner} index={index} />
 
                 }) }
                 {
