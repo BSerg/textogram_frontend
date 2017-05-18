@@ -197,7 +197,7 @@ export namespace Captions {
 
 export namespace Constants {
     export const maxImageSize = 5 * 1024 * 1024;
-    export const notificationIntervalTime = 20000;
+    export const notificationIntervalTime = 10000;
     export const desktopWidth = 1024;
 }
 
