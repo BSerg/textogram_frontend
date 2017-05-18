@@ -255,7 +255,7 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
                             gallery.replaceChild(img, photo);
                         };
                         img.className = photo.getAttribute('class');
-                        img.src = photo.getAttribute('data-preview');
+                        img.src = photo.getAttribute('data-src');
                         img.alt = photo.getAttribute('data-caption');
                         img.addEventListener('click', this.openGalleryModal.bind(this, i, photoData, gallery.getAttribute('id')));
                     }
