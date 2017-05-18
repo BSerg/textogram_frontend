@@ -289,10 +289,11 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
     }
 
     openGalleryModal(currentPhotoIndex: number, photos: any[], galleryId: string = null) {
-        if (galleryId) {
+        if (galleryId && !this.props.isPreview) {
             this.props.router.push(`/articles/${this.state.article.slug}/gallery/${galleryId}`);
         }
-        ModalAction.do(OPEN_MODAL, {content: <GalleryModal currentPhotoIndex={currentPhotoIndex}
+        ModalAction.do(OPEN_MODAL, {content: <GalleryModal isPreview={this.props.isPreview}
+                                                           currentPhotoIndex={currentPhotoIndex}
                                                            photos={photos}
                                                            router={this.props.router}
                                                            article={this.state.article}/>});
@@ -634,10 +635,11 @@ class ShareLinkButton extends React.Component<{shortUrl: string, className?: str
 
 
 interface IGalleryModalProps {
-    article?: IArticle,
-    router?: any,
-    photos: IPhoto[],
-    currentPhotoIndex: number,
+    isPreview?: boolean;
+    article?: IArticle;
+    router?: any;
+    photos: IPhoto[];
+    currentPhotoIndex: number;
 }
 
 type SwipingDirection = 'left' | 'right';
@@ -666,7 +668,9 @@ class GalleryModal extends React.Component<IGalleryModalProps, IGalleryModalStat
 
     back() {
         ModalAction.do(CLOSE_MODAL, null);
-        this.props.router.push(`/articles/${this.props.article.slug}`);
+        if (!this.props.isPreview) {
+            this.props.router.push(`/articles/${this.props.article.slug}`);
+        }
     }
 
     nextPhoto() {
