@@ -255,7 +255,7 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
                             gallery.replaceChild(img, photo);
                         };
                         img.className = photo.getAttribute('class');
-                        img.src = photo.getAttribute('data-src');
+                        img.src = photo.getAttribute('data-preview');
                         img.alt = photo.getAttribute('data-caption');
                         img.addEventListener('click', this.openGalleryModal.bind(this, i, photoData, gallery.getAttribute('id')));
                     }
@@ -713,7 +713,7 @@ class GalleryModal extends React.Component<IGalleryModalProps, IGalleryModalStat
         if (index == null) {
             return {background: 'transparent'};
         } else {
-            return {background: `url('${this.props.photos[index].preview}') no-repeat center center`};
+            return {background: `url('${this.props.photos[index].image}') no-repeat center center`};
         }
     }
 
@@ -767,9 +767,6 @@ class GalleryModal extends React.Component<IGalleryModalProps, IGalleryModalStat
 
     render() {
         let photo = this.props.photos[this.state.currentPhotoIndex];
-        let imageStyle = {
-            background: `url('${photo.image}') no-repeat center center`
-        };
         return (
             <div className="gallery_modal">
                 {this.state.isDesktop ?
@@ -821,7 +818,7 @@ class GalleryModal extends React.Component<IGalleryModalProps, IGalleryModalStat
                                onSwiped={this.handleSwipe.bind(this)}>
                         <div ref="image"
                              className={"gallery_modal__image" + (this.state.swipingDirection? ' ' + this.state.swipingDirection: '')}
-                             style={imageStyle}
+                             style={this.getImageStyle(this.state.currentPhotoIndex)}
                              onClick={this.nextPhoto.bind(this)}/>
                     </Swapeable>
 
