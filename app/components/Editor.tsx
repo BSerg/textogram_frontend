@@ -396,7 +396,7 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
                 article: {
                     id: null,
                     status: ArticleStatuses.DRAFT,
-                    content: {title: null, cover: null, blocks: [], inverted_theme: true}
+                    content: {title: '', cover: null, blocks: [], inverted_theme: true}
                 },
                 autoSave: false,
                 isValid: false

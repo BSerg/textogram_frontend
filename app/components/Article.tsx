@@ -72,8 +72,11 @@ interface IArticleState {
 }
 
 export default class Article extends React.Component<IArticleProps, IArticleState> {
+    private loadingImages: HTMLImageElement[];
+
     constructor(props: any) {
         super(props);
+        this.loadingImages = [];
         this.state = {
             article: null,
             isSelf: false,
@@ -253,11 +256,15 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
                         let img = document.createElement('img');
                         img.onload = () => {
                             gallery.replaceChild(img, photo);
+                            if (this.loadingImages.indexOf(img) != -1) {
+                                this.loadingImages.splice(this.loadingImages.indexOf(img), 1);
+                            }
                         };
                         img.className = photo.getAttribute('class');
                         img.src = photo.getAttribute('data-preview');
                         img.alt = photo.getAttribute('data-caption');
                         img.addEventListener('click', this.openGalleryModal.bind(this, i, photoData, gallery.getAttribute('id')));
+                        this.loadingImages.push(img);
                     }
                 }
                 if (this.props.params.galleryBlockId && this.props.params.galleryBlockId == gallery.getAttribute('id')) {
@@ -351,8 +358,12 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
             let img = new Image();
             img.onload = () => {
                 el.style.background = `url('${this.state.article.cover}') no-repeat center center`;
+                if (this.loadingImages.indexOf(img) != -1) {
+                    this.loadingImages.splice(this.loadingImages.indexOf(img), 1);
+                }
             };
             img.src = this.state.article.cover;
+            this.loadingImages.push(img);
         }
     }
 
@@ -450,6 +461,11 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
     componentWillUnmount() {
         MediaQuerySerice.unbind(this.handleMediaQuery);
         UserAction.unbind([LOGIN, LOGOUT, UPDATE_USER, SAVE_USER], this.handleUser);
+
+        this.loadingImages.forEach((img) => {
+            img.onload = () => {};
+        });
+        this.loadingImages = [];
     }
 
     render() {

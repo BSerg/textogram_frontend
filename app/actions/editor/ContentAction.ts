@@ -29,7 +29,7 @@ export interface IContentData {
 }
 
 interface IContent {
-    title: string|null,
+    title: string,
     cover: {id: number, image: string}|null,
     blocks: IContentData[]
 }
@@ -41,7 +41,7 @@ class ContentActionClass extends Action {
         super({
             articleId: null,
             autoSave: false,
-            content: {title: null, cover: null, blocks: [], inverted_theme: true},
+            content: {title: '', cover: null, blocks: [], inverted_theme: true},
             contentBlockMap: {},
             savingProcess: false
         });
