@@ -196,7 +196,6 @@ export default class ImageEditorRefactored extends React.Component<IProps, IStat
     private drawImage() {
         if (!this.state.imageObject) {
             let image = new Image();
-            image.setAttribute('crossOrigin', 'anonymous');
             image.onload = () => {
                 this.state.imageObject = image;
                 this.state.image.width = image.width;
@@ -204,6 +203,7 @@ export default class ImageEditorRefactored extends React.Component<IProps, IStat
                 this.state.image = this.fitImage(this.state.image);
                 this._drawImage(image);
             };
+            image.crossOrigin = 'anonymous';
             image.src = this.state.image.image;
         } else {
             this.state.image = this.fitImage(this.state.image);
