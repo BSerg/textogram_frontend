@@ -13,27 +13,17 @@ $menu_button_size: 50px;
   width: $menu_button_size;
   height: $menu_button_size;
   //background-color: $color1;
-  background-color: $color;
   text-align: center;
   line-height: $menu_button_size;
   color: white;
   font-size: 20px;
   z-index: 20;
   cursor: pointer;
+  background: $color url('../../assets/images/logo_white.svg') no-repeat center center;
+  background-size: 40px;
 
-  &:after {
-    content: 'T';
-  }
-  
   &.hidden, &.menu_displayed {
     opacity: 0;
     @include scale(0, 0);
   }
-}
-
-@media (min-width: 1024px) {
-  .menu_button {
-    //display: none;
-  }
-
 }

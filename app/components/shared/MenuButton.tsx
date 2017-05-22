@@ -5,6 +5,7 @@ import {MenuAction, TOGGLE} from '../../actions/MenuAction';
 interface MenuButtonPropsInterface {
     disabled?: boolean,
     hideDelay?: number,
+    hideScrollDelta?: number
 }
 
 interface MenuButtonStateInterface {
@@ -29,7 +30,8 @@ export default class MenuButton extends React.Component<MenuButtonPropsInterface
 
     static defaultProps = {
         disabled: false,
-        hideDelay: 0
+        hideDelay: 0,
+        hideScrollDelta: 50
     };
 
     handleClick() {
@@ -56,7 +58,7 @@ export default class MenuButton extends React.Component<MenuButtonPropsInterface
                 this.scrollDelta += (scrollTop - this.lastScrollPosition);
             }
         }
-        if (this.scrollDelta <= -20) {
+        if (this.scrollDelta <= -this.props.hideScrollDelta) {
             this.hideTimeout = window.setTimeout(() => {
                 this.setState({hidden: false});
             }, this.props.hideDelay);        }
@@ -72,7 +74,6 @@ export default class MenuButton extends React.Component<MenuButtonPropsInterface
         document.addEventListener('scroll', this.checkScroll);
         this.setMenuDisplayed();
         MenuAction.onChange(TOGGLE, this.setMenuDisplayed);
-        // this.setState({menuDisplayed: MenuAction.getStore().open});
     }
 
     componentWillUnmount() {
@@ -86,9 +87,6 @@ export default class MenuButton extends React.Component<MenuButtonPropsInterface
         if (this.state.hidden || this.state.menuDisplayed) {
             className += ' hidden';
         }
-        // if (this.state.menuDisplayed) {
-        //     className += ' menu_displayed'
-        // }
         return (
             <div className={className} onClick={this.handleClick}></div>
         )
