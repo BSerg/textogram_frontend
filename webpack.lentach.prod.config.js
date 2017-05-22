@@ -30,7 +30,7 @@ module.exports = {
             },
             {
                 test: /\.scss$/,
-                loader: ExtractTextPlugin.extract('style', 'css!sass?sourceMap'),
+                loader: ExtractTextPlugin.extract('style', 'css!postcss!sass?sourceMap'),
             },
             {
                 test: /\.(png|jpe?g|gif|svg)$/,
