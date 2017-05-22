@@ -103,6 +103,7 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
         this.handleCloseInlineBlock = this.handleCloseInlineBlock.bind(this);
         this.handleMediaQuery = this.handleMediaQuery.bind(this);
         this.handleDocumentClick = this.handleDocumentClick.bind(this);
+        this.handleExit = this.handleExit.bind(this);
     }
 
     static defaultProps = {
@@ -390,6 +391,16 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
         }));
     }
 
+    handleExit(e: Event) {
+        console.log('HELLO')
+        return false;
+        // if (ContentAction.getStore().savingProcess) {
+        //     return Captions.editor.onDangerousExit;
+        // } else {
+        //     return true;
+        // }
+    }
+
     componentWillReceiveProps(nextProps: any) {
         this.setState({
             article: {
@@ -429,7 +440,7 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
                 article: {
                     id: null,
                     status: ArticleStatuses.DRAFT,
-                    content: {title: null, cover: null, blocks: [], inverted_theme: true}
+                    content: {title: '', cover: null, blocks: [], inverted_theme: true}
                 },
                 autoSave: false,
                 isValid: false
@@ -441,6 +452,7 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
         }
 
         document.addEventListener('click', this.handleDocumentClick);
+        window.addEventListener("beforeunload", this.handleExit);
     }
 
     componentWillUnmount() {
@@ -461,6 +473,7 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
         InlineBlockAction.unbind(CLOSE_INLINE_BLOCK, this.handleCloseInlineBlock);
         MediaQuerySerice.unbind(this.handleMediaQuery);
         document.removeEventListener('click', this.handleDocumentClick);
+        window.removeEventListener("beforeunload", this.handleExit);
     }
 
     render() {

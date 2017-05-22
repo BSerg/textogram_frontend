@@ -1,3 +1,4 @@
+var webpack = require('webpack');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 var DefinePlugin = require('webpack/lib/DefinePlugin');
 var JavaScriptObfuscator = require('webpack-obfuscator');
@@ -9,9 +10,10 @@ var HTMLWebpackPluginConfig = new HtmlWebpackPlugin({
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 module.exports = {
-    entry: [
-        './app/index.tsx'
-    ],
+    entry: {
+        app: './app/index.tsx',
+        vendor: Object.keys(require('./package.json').dependencies)
+    },
     output: {
         path: __dirname + '/dist/prod',
         // path: '/home/serega/projects/lentach/static',
@@ -34,7 +36,7 @@ module.exports = {
             },
             {
                 test: /\.(png|jpe?g|gif|svg)$/,
-                loader: 'file-loader?name=images/[name].[ext]'
+                loader: 'file-loader?name=images/[hash].[ext]'
             },
             {
                 test: /\.(eot|ttf|woff|woff2)$/,
@@ -51,12 +53,13 @@ module.exports = {
     },
     plugins: [
         new ExtractTextPlugin('bundle.css'),
+        new webpack.optimize.CommonsChunkPlugin('vendor', 'vendor.js'),
         new JavaScriptObfuscator ({
             rotateUnicodeArray: true
         }),
         new DefinePlugin({
             "process.env": {
-                NODE_ENV: JSON.stringify("prod"),
+                NODE_ENV: JSON.stringify('production'),
                 API_URL: "http://localhost:8000/api/v1",
                 "VK_APP": JSON.stringify(""),
                 "FB_APP": JSON.stringify(""),

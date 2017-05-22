@@ -1,5 +1,8 @@
+var webpack = require('webpack');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
+var webpack = require('webpack');
 var DefinePlugin = require('webpack/lib/DefinePlugin');
+var JavaScriptObfuscator = require('webpack-obfuscator');
 var HTMLWebpackPluginConfig = new HtmlWebpackPlugin({
     template: __dirname + '/index.html',
     filename: 'index.html',
@@ -8,9 +11,10 @@ var HTMLWebpackPluginConfig = new HtmlWebpackPlugin({
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 module.exports = {
-    entry: [
-        './app/index.tsx'
-    ],
+    entry: {
+        app: './app/index.tsx',
+        vendor: Object.keys(require('./package.json').dependencies)
+    },
     output: {
         path: __dirname + '/dist/lentach_prod',
         filename: 'bundle.js',
@@ -30,7 +34,7 @@ module.exports = {
             },
             {
                 test: /\.(png|jpe?g|gif|svg)$/,
-                loader: 'file-loader?name=images/[name].[ext]'
+                loader: 'file-loader?name=images/[hash].[ext]'
             },
             {
                 test: /\.(eot|ttf|woff|woff2)$/,
@@ -45,11 +49,22 @@ module.exports = {
             { test: /\.jsx?$/, loader: "source-map-loader" }
         ]
     },
+    postcss: function() {
+        return [
+            // require('postcss-smart-import'),
+            require('precss'),
+            require('autoprefixer')
+        ];
+    },
     plugins: [
         new ExtractTextPlugin('bundle.css'),
+        new webpack.optimize.CommonsChunkPlugin("vendor", "vendor.js"),
+        // new JavaScriptObfuscator ({
+        //     rotateUnicodeArray: true
+        // }),
         new DefinePlugin({
             "process.env": {
-                NODE_ENV: JSON.stringify("prod"),
+                NODE_ENV: JSON.stringify('production'),
                 API_URL: JSON.stringify("http://lentach.media/api/v1"),
                 VK_APP: JSON.stringify("5951821"),
                 FB_APP: JSON.stringify("176821492828506"),

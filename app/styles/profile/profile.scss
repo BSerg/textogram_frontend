@@ -46,10 +46,24 @@ $content-main-width: 340px;
   }
 
   .profile_avatar {
-    margin: $margin 0;
+    //margin: 10px 0 5px 0;
 
     &.profile_avatar_editable {
       cursor: pointer;
+      //position: relative;
+
+
+      &:hover:after {
+        position: absolute;
+        content: '';
+        min-width: 100%;
+        height: 100%;
+        background-color: #000000;
+        top: 0;
+        left: 0;
+        @include border_radius(50%);
+        opacity: 0.5;
+      }
     }
 
     &.uploading {
@@ -77,11 +91,15 @@ $content-main-width: 340px;
   }
 
   .profile_avatar, .profile_avatar_dummy {
-    width: 70px;
-    min-width: 70px;
-    height: 70px;
+    width: 50px;
+    min-width: 50px;
+    height: 50px;
     @include border_radius(50%);
     background-color: $color5;
+
+    position: absolute;
+    top: calc(50% - 25px);
+    right: 10px;
 
     img {
       width: 100%;
@@ -90,6 +108,22 @@ $content-main-width: 340px;
       @include border_radius(50%);
       object-fit: cover;
     }
+  }
+
+  .profile_userdata {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    justify-content: center;
+    position: relative;
+    padding: 15px 80px;
+    min-height: 60px;
+    box-sizing: border-box;
+  }
+
+  .profile_user_text {
+    text-align: center;
   }
 
   .username, .description {
@@ -103,8 +137,10 @@ $content-main-width: 340px;
   .username {
     padding: 0 $padding/2;
     text-transform: uppercase;
+    text-decoration: none;
+    color: $color;
 
-    margin: $margin 0;
+    margin: 5px 0;
 
     &, form input {
       font-size: 13px;
@@ -114,9 +150,10 @@ $content-main-width: 340px;
 
   .description {
 
-    max-width: 200px;
-    min-width: 200px;
-    margin: $margin 0;
+    max-width: 100%;
+    min-width: 100%;
+    margin: 5px 0;
+    box-sizing: border-box;
 
     .content_editable {
       min-width: 100%;
@@ -160,7 +197,7 @@ $content-main-width: 340px;
   .social_links_list {
     display: flex;
     flex-direction: row;
-    margin: $margin 0;
+    margin: 5px 0;
     &>div {
       margin: 0 10px;
     }
@@ -254,9 +291,9 @@ $content-main-width: 340px;
     flex-direction: row;
     align-items: center;
     height: 20px;
-    margin: $margin 0;
+    margin: 10px 0;
 
-    &>div {
+    &>div, &>a {
       display: flex;
       flex-direction: row;
       align-items: center;
@@ -264,7 +301,8 @@ $content-main-width: 340px;
 
       font-size: 10px;
       margin: 0 10px;
-
+      color: $color;
+      text-decoration: none;
       cursor: pointer;
 
       svg {
@@ -300,7 +338,9 @@ $content-main-width: 340px;
       display: flex;
       align-items: center;
       justify-content: center;
-
+      color: $color5;
+      text-decoration: none;
+      outline: none;
 
       &.active, &:hover {
         border-bottom: 2px solid #000000;
@@ -324,9 +364,30 @@ $content-main-width: 340px;
   }
 
   .profile__articles {
+    display: block;
     display: flex;
     flex-direction: column;
     align-items: center;
+  }
+
+  .profile__search {
+    width: 100%;
+    max-width: 600px;
+    box-sizing: border-box;
+    text-align: center;
+    background-color: #FFFFFF;
+    padding: 5px 15px;
+    margin: $margin 0;
+
+    input {
+      width: 100%;
+      border: none;
+      height: 30px;
+      font-size: 11px;
+      font-family: $family_open_sans;
+      color: $color;
+      outline: none;
+    }
   }
 
   .profile_new_article {
@@ -370,8 +431,16 @@ $content-main-width: 340px;
     .profile__articles {
       //align-items: flex-start;
 
-      &.drafts {
-        display: block;
+      //&.drafts {
+      //  display: block;
+      //}
+    }
+
+    .profile__search {
+      max-width: 800px;
+      padding: 5px 40px;
+      input {
+        font-size: 13px;
       }
     }
 
@@ -413,32 +482,17 @@ $content-main-width: 340px;
     }
 
     .profile_avatar, .profile_avatar_dummy {
+      position: static;
       width: 90px;
       min-width: 90px;
       height: 90px;
-      //margin-top: 0;
-      position: relative;
+      top: initial;
+      right: initial;
 
       margin: 0 0 $margin * 2 0;
 
-      .profile_management_link {
-        //display: none;
-        position: absolute;
-        top: -20px;
-        right: -40px;
-        width: 50px;
-        height: 50px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        opacity: 0;
-        @include transition(200ms);
-
-        svg {
-          width: 50px;
-          height: 50px;
-          fill: $color;
-        }
+      &.profile_avatar_editable {
+        position: relative;
       }
     }
 
@@ -452,9 +506,15 @@ $content-main-width: 340px;
       }
     }
 
+    .profile_userdata {
+      padding: 0;
+      flex-direction: column;
+      align-items: center;
+    }
 
 
     .username {
+      display: block;
       padding: 0 $padding;
       form {
         height: 20px;
@@ -470,6 +530,7 @@ $content-main-width: 340px;
 
     .description {
       margin: 0 0 $margin 0;
+      padding: 0 $padding;
 
       &, form input, form textarea {
         line-height: 19px;
@@ -488,8 +549,10 @@ $content-main-width: 340px;
 
     .subscription {
       margin: 25px 0;
-      &>div {
+      &>div, &>a {
         font-size: 13px;
+        outline: none;
+        //display: block;
       }
     }
 
@@ -518,8 +581,8 @@ $content-main-width: 340px;
     }
 
     .profile_additional {
-      left: calc(50% + 170px - 400px - 25px);
-      max-width: 800px;
+      //left: calc(50% + 170px - 400px - 25px);
+      //max-width: 800px;
       margin: 0;
     }
 

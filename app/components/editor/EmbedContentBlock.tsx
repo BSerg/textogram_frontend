@@ -1,12 +1,16 @@
 import * as React from "react";
 import {BlockContentTypes, Captions} from "../../constants";
 import {
-    ContentBlockAction, ACTIVATE_CONTENT_BLOCK,
+    ContentBlockAction,
+    ACTIVATE_CONTENT_BLOCK,
     DEACTIVATE_CONTENT_BLOCK
 } from "../../actions/editor/ContentBlockAction";
 import {
-    IContentData, DELETE_CONTENT_BLCK, ContentAction, UPDATE_CONTENT_BLCK,
-    MOVE_UP_CONTENT_BLCK, MOVE_DOWN_CONTENT_BLCK
+    IContentData,
+    DELETE_CONTENT_BLCK,
+    ContentAction,
+    MOVE_UP_CONTENT_BLCK,
+    MOVE_DOWN_CONTENT_BLCK
 } from "../../actions/editor/ContentAction";
 import BaseContentBlock from "./BaseContentBlock";
 import ContentBlockPopup from "./ContentBlockPopup";
@@ -16,7 +20,6 @@ import EmbedModal from "./EmbedModal";
 import {api} from "../../api";
 import "../../styles/editor/embed_content_block.scss";
 import ProgressBar from "../shared/ProgressBar";
-import InlineBlock from "./InlineBlock";
 import {InlineBlockAction, OPEN_INLINE_BLOCK, CLOSE_INLINE_BLOCK} from "../../actions/editor/InlineBlockAction";
 import EmbedInline from "./EmbedInline";
 import {DesktopBlockToolsAction, UPDATE_TOOLS} from "../../actions/editor/DesktopBlockToolsAction";
@@ -152,7 +155,6 @@ export default class EmbedContentBlock extends React.Component<IEmbedContentBloc
 
     processEmbedCode(embed: HTMLDivElement) {
         let script = embed.getElementsByTagName('script')[0];
-        console.log(script);
         if (script) {
             let f = new Function(script.innerText);
             f();
@@ -162,26 +164,55 @@ export default class EmbedContentBlock extends React.Component<IEmbedContentBloc
     processEmbedElement(embed: HTMLDivElement) {
         if (!embed || this.state.loaded) return;
         window.setTimeout(() => {
-            if (this.state.content.type == BlockContentTypes.VIDEO) {
-                embed.style.height = embed.offsetWidth * 450 / 800 + 'px';
-                let iframe = embed.getElementsByTagName('iframe')[0];
-                if (iframe) {
-                    iframe.addEventListener('load', () => {
-                        iframe.style.height = iframe.offsetWidth * 450 / 800 + 'px';
-                        this.setState({loaded: true});
-                    });
-                }
-            } else {
-                this.setState({loaded: true}, () => {
-                    // TWITTER LOAD EMBED
-                    twttr.widgets && twttr.widgets.load(document.getElementById(this.props.content.id));
-                    // INSTAGRAM LOAD EMBED
-                    instgrm.Embeds.process();
-                    // EXEC EMBED SCRIPTS
-                    this.processEmbedCode(embed);
-                });
 
-            }
+            this.setState({loaded: true}, () => {
+                // TWITTER LOAD EMBED
+                twttr.widgets && twttr.widgets.load(document.getElementById(this.props.content.id));
+                // INSTAGRAM LOAD EMBED
+                instgrm.Embeds.process();
+                // FACEBOOK LOAD EMBED
+                let fbCount = 0;
+                let fbEmbedProcess = window.setInterval(() => {
+                    if (fbCount >= 4) window.clearInterval(fbEmbedProcess);
+                    if (typeof (FB) != 'undefined' && (window as any).fbAsyncInit.hasRun) {
+                        FB.XFBML.parse();
+                        window.clearInterval(fbEmbedProcess);
+                    }
+                    fbCount++;
+                }, 50);
+                // EXEC EMBED SCRIPTS
+                this.processEmbedCode(embed);
+            });
+
+            // if (this.state.content.type == BlockContentTypes.VIDEO) {
+            //     embed.style.height = embed.offsetWidth * 450 / 800 + 'px';
+            //     let iframe = embed.getElementsByTagName('iframe')[0];
+            //     if (iframe) {
+            //         iframe.addEventListener('load', () => {
+            //             iframe.style.height = iframe.offsetWidth * 450 / 800 + 'px';
+            //             this.setState({loaded: true});
+            //         });
+            //     }
+            // } else {
+            //     this.setState({loaded: true}, () => {
+            //         // TWITTER LOAD EMBED
+            //         twttr.widgets && twttr.widgets.load(document.getElementById(this.props.content.id));
+            //         // INSTAGRAM LOAD EMBED
+            //         instgrm.Embeds.process();
+            //         // FACEBOOK LOAD EMBED
+            //         let fbCount = 0;
+            //         let fbEmbedProcess = window.setInterval(() => {
+            //             if (fbCount >= 4) window.clearInterval(fbEmbedProcess);
+            //             if (typeof (FB) != 'undefined' && (window as any).fbAsyncInit.hasRun) {
+            //                 FB.XFBML.parse();
+            //                 window.clearInterval(fbEmbedProcess);
+            //             }
+            //             fbCount++;
+            //         }, 50);
+            //         // EXEC EMBED SCRIPTS
+            //         this.processEmbedCode(embed);
+            //     });
+            // }
         });
     }
 
@@ -198,7 +229,6 @@ export default class EmbedContentBlock extends React.Component<IEmbedContentBloc
                 params.type = 'video';
             }
             api.post('/utils/embed/', params).then((response: any) => {
-                console.log(response);
                 if (response.data.embed) {
                     content.__meta = {embed: response.data.embed};
                     this.setState({content: content});

@@ -14,9 +14,8 @@ module.exports = {
         vendor: Object.keys(require('./package.json').dependencies)
     },
     output: {
-        path: __dirname + '/dist/dev',
+        path: '/home/serega/projects/textogram/static',
         filename: 'bundle.js',
-        // publicPath: '/static/'
     },
     devtool: "source-map",
     resolve: {
@@ -53,12 +52,12 @@ module.exports = {
         new ExtractTextPlugin('bundle.css'),
         new webpack.optimize.CommonsChunkPlugin('vendor', 'vendor.js'),
         new DefinePlugin({
-            "process.env": {
-                NODE_ENV: JSON.stringify("dev"),
-                API_URL: JSON.stringify("http://textius.tk/api/v1"),
-                "VK_APP": JSON.stringify("5829713"),
-                "FB_APP": JSON.stringify("388271138196824"),
-                "GOOGLE_APP": JSON.stringify("40195744486-2lr3lt2adencnt9k54rc1mhl4a4kh70i.apps.googleusercontent.com")
+            'process.env': {
+                NODE_ENV: JSON.stringify("local"),
+                API_URL: JSON.stringify("http://localhost:8000/api/v1"),
+                VK_APP: '5598086',
+                FB_APP: '1270929192923451',
+                IS_LENTACH: JSON.stringify(true)
             }
         }),
         HTMLWebpackPluginConfig

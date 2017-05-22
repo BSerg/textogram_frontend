@@ -8,7 +8,7 @@ export enum ArticleStatuses {
 export namespace Captions {
     export const editor = {
         add_cover_ru: 'Загрузить обложку',
-        loading_cover_ru: 'Обложка загружается...',
+        loading_cover_ru: 'Отменить загрузку обложки',
         remove_cover_ru: 'Удалить обложку',
         enter_title_ru: 'Заголовок',
         add_content_help: 'Выберите тип контента, нажав на "плюс"',
@@ -74,6 +74,7 @@ export namespace Captions {
         deleted_photo_block: 'Галерея удалена',
         restore: 'Восстановить',
         clear: 'Очистить',
+        onDangerousExit: 'Несохраненные данные могут быть потеряны! Вы уверены, что хотите выйти?',
         paywall_price: 'Стоимость',
         enter_paywall_price: 'Введите стоимость',
         paywall_price_tax_help: 'Стоимость доступа с учетом комиссии составит:',
@@ -148,6 +149,7 @@ export namespace Captions {
         sectionLogin: 'Учетная запись',
         sectionNotifications: 'Уведомления',
         sectionSubscriptions: 'Подписки',
+        sectionStatistics: 'Статистика',
 
         authAccount: "Аккаунт авторизации",
         additionalLinks: "Дополнительные связи",
@@ -191,15 +193,25 @@ export namespace Captions {
         stepPasswordRegistration: "ШАГ 3 - пароль",
         stepCodeReset: "ШАГ 1 - код подтверждения",
         stepPasswordReset: "ШАГ 2 - пароль",
-
-
-
     };
+
+    export const index = {
+        oneClickRegister: "Регистрация в один клик",
+        featureAbout: "Текстиус — это инструмент для авторов. Быстрый способ создать Текст, поделиться им с аудиторией и монетизировать уникальный контент.",
+        editorBlockCaption: "Редактор",
+        editorBlockText: "Самая важная часть инструмента — редактор. Редактор в Текстиус устроен по принципу модулей. Всего их двенадцать: от простого текстового блока до возможности оформить Текст в виде диалога. Все максимально просто и доступно с любых устройств.",
+        textBlockCaption: "Текст",
+        textBlockText: "Вы получите ссылку на свою публикацию, лишенную визуального мусора. Текст, которым приятно делиться с читателями.",
+        otherBlockCaption: "Что еще",
+        otherBlockText: "У Текстиуса есть система подписок на любимых авторов, но на этом социальная составляющая ограничивается.\n\nМы все устали от бесполезных лайков и комментариев. Обратная связь в Тексиус — это показатель дохода, хорошей статистики текстов и реально заработанных денег.",
+        mainBlockCaption: "Самое главное",
+        mainBlockText: "Текстиус дает три инструмента монетизации:\n\n* paywall\n* баннерный обвес\n* нативная реклама\n\nАвтор сам решает какой вид рекламы для него предпочтителен."
+    }
 }
 
 export namespace Constants {
     export const maxImageSize = 5 * 1024 * 1024;
-    export const notificationIntervalTime = 20000;
+    export const notificationIntervalTime = 10000;
     export const desktopWidth = 1024;
     export const paywallDefaultPriceRUR = 100;
 }
@@ -232,36 +244,64 @@ export enum PhotoBlockContentTypes {
 
 export namespace Embed {
     export const urlRegex = {
-        POST: {
-            twitter: /^https:\/\/twitter\.com\/\w+\/status\/\d+$/,
-            instagram: /^https:\/\/www\.instagram\.com\/p\/[\w\-_]+\/?$/,
-            fb: /^https:\/\/(www|ru-ru)\.facebook\.com\/\w+\/posts\/\d+$/
-        },
-        VIDEO: {
-            twitter: /^https:\/\/twitter\.com\/\w+\/status\/\d+$/,
-            vk: /^https:\/\/vk\.com\/video-?\d+_\d+$/,
-            youtube: /^https:\/\/www\.youtube\.com\/watch\?v=[\w\-_]+$/,
-            youtubeShort: /^https:\/\/youtu\.be\/[\w\-_]+$/,
-            fb: /^https:\/\/(www|ru-ru)\.facebook\.com\/\w+\/videos\/\d+\/?$/,
-            vimeo: /^https:\/\/vimeo\.com\/\d+$/,
-            coub: /^https?:\/\/coub\.com\/view\/\w+$/
-        },
-        AUDIO: {
-            soundcloud: /^https:\/\/soundcloud\.com\/[\w\-]+\/[\w\-]+$/,
-            propmodj: /^http:\/\/promodj\.com\/[\w\-.]+\/tracks\/\d+\/\w+$/,
-            yandex: /^https:\/\/music\.yandex\.ru\/album\/\d+(\/track\/\d+)?$/
-        }
+        POST: [
+            // Twitter
+            /^https:\/\/twitter\.com\/\w+\/status\/\d+$/,
+            // Instagram
+            /^https:\/\/www\.instagram\.com\/p\/[\w\-_]+\/?$/,
+            // Facebook
+            /^https:\/\/(www|ru-ru)\.facebook\.com\/[\w\-_.]+\/(posts|videos)\/\d+$/,
+        ],
+        VIDEO: [
+            // Facebook
+            /^https:\/\/(www|ru-ru)\.facebook\.com\/[\w\-_.]+\/videos\/\d+\/?$/,
+            // VK
+            /^https:\/\/vk\.com\/video-?\d+_\d+$/,
+            // Youtube
+            /^https:\/\/www\.youtube\.com\/watch\?v=[\w\-_]+$/,
+            /^https:\/\/youtu\.be\/[\w\-_]+$/,
+            // Vimeo
+            /^https:\/\/vimeo\.com\/\d+$/,
+            // Coub
+            /^https?:\/\/coub\.com\/view\/\w+$/
+        ],
+        AUDIO: [
+            // SoundCloud
+            /^https:\/\/soundcloud\.com\/[\w\-]+\/[\w\-]+$/,
+            // Propmodj
+            /^http:\/\/promodj\.com\/[\w\-.]+\/tracks\/\d+\/\w+$/,
+            // Yandex
+            /^https:\/\/music\.yandex\.ru\/album\/\d+(\/track\/\d+)?$/
+        ],
     };
     export const embedRegex = {
-        POST: {
-            vk: /^<div id="vk_post_-?\d+_\d+"><\/div>\s*<script type="text\/javascript">[^<]+<\/script>$/,
-            twitter: /^<blockquote class="twitter-tweet" data-lang="\w+"><p lang="\w+" dir="ltr">.+<\/blockquote>\s*<script async src="\/\/platform\.twitter\.com\/widgets\.js" charset="utf-8"><\/script>$/
-        },
-        VIDEO: {
-            vk: /^<iframe src="\/\/vk\.com\/video_ext\.php\?oid=\d+&id=\d+&hash=\w+&hd=\d" width="\d+" height="\d+" frameborder="0" allowfullscreen><\/iframe>$/,
-            twitter: /^<blockquote class="twitter-video" data-lang="\w+"><p lang="\w+" dir="ltr">.+<\/blockquote>\s*<script async src="\/\/platform\.twitter\.com\/widgets\.js" charset="utf-8"><\/script>$/,
-        },
-        AUDIO: {}
+        POST: [
+            // VK
+            /^<div id="vk_post_-?\d+_\d+"><\/div>\s*<script type="text\/javascript">[^<]+<\/script>$/,
+            /^<iframe src="\/\/vk\.com\/video_ext\.php\?oid=-?\d+&id=\d+&hash=\w+&hd=\d"( width="\d+")?( height="\d+")?( frameborder="(0|1)")?( allowfullscreen)?><\/iframe>$/,
+            // Twitter
+            /^<blockquote class="twitter-(tweet|video)" data-lang="\w+"><p lang="\w+" dir="ltr">.+<\/blockquote>\s*<script async src="\/\/platform\.twitter\.com\/widgets\.js" charset="utf-8"><\/script>$/,
+            //Facebook
+            /^<iframe src=\"https:\/\/[\w\-]+\.facebook\.com\/plugins\/(post|video)\.php\?href=https(%3A|:)(%2F%2F|\/\/)www\.facebook\.com(%2F|\/)[\w\-.]+(%2F|\/)(posts|videos)(%2F|\/)\d+(%2F|\/)?(&show_text=(0|1))?&width=\d+\"( width=\"\d+\")?( height=\"\d+\")?( style=\".+\")?( scrolling=\"(yes|no)\")?( frameborder=\"(0|1)\")?( allowTransparency=\"(true|false)\")?(allowFullScreen=\"(true|false)\")?><\/iframe>$/
+        ],
+        VIDEO: [
+            // Youtube
+            /^<iframe( width="\d+")?( height="\d+")? src="https:\/\/www\.youtube(-nocookie)?\.com\/embed\/[\w\-]+((\?|&|&amp;)\w+=\w+)*"( frameborder="(0|1)")?( allowfullscreen)?><\/iframe>$/,
+            // Vimeo
+            /^<iframe src="https:\/\/player\.vimeo\.com\/video\/\d+([\?&]\w+=[01])*" width="\d+" height="\d+"( frameborder="0")?( (webkit|moz)?allowfullscreen)*><\/iframe>(\s*<p>(\s*.)+<\/p>)?$/,
+            // Coub
+            /^<iframe src="\/\/coub\.com\/embed\/\w+((\?|&)\w+=(true|false))*"( allowfullscreen="(true|false)")?( frameborder="(0|1)")?( width="\d+")?( height="\d+")?><\/iframe>(<script async src="\/\/c-cdn\.coub\.com\/embed-runner\.js"><\/script>)?$/,
+            // VK Video
+            /^<iframe src="\/\/vk\.com\/video_ext\.php\?oid=-?\d+&id=\d+&hash=\w+&hd=\d"( width="\d+")?( height="\d+")?( frameborder="(0|1)")?( allowfullscreen)?><\/iframe>$/,
+        ],
+        AUDIO: [
+            // SoundCloud
+            /^<iframe( width="\d+%?")?( height="\d+")?( scrolling="(yes|no)")?( frameborder="(yes|no)")? src="https:\/\/w\.soundcloud\.com\/player\/\?url=https(%3A|:)\/\/api\.soundcloud\.com\/tracks\/\d+((&amp;|&)\w+=(\w+|true|false))*"><\/iframe>$/,
+            // PromoDJ
+            /^<iframe src="\/\/promodj\.com\/embed\/\d+\/(cover|big)"( width="\d+%?")?( height="\d+")?( style="[^"]+")?( frameborder="(0|1)")?( allowfullscreen)?><\/iframe>$/,
+            // Yandex
+            /^<iframe( frameborder="(0|1)")?( style="[^"]+")?( width="\d+")?( height="\d+")? src="https:\/\/music\.yandex\.ru\/iframe\/(#album\/\d+\/|#track\/\d+\/\d+)(\/\w+)*\/?">(\s*.)+<\/iframe>$/,
+        ]
     };
 }
 
@@ -314,6 +354,7 @@ export namespace Validation {
 
 export const BannerID = {
     BANNER_TOP: 'banner__top',
+    BANNER_BOTTOM: 'banner__bottom',
     BANNER_CONTENT: 'banner__content',
     BANNER_RIGHT_SIDE: 'banner__right_side',
     BANNER_CONTENT_INLINE: 'banner__content_inline'

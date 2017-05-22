@@ -36,6 +36,7 @@ const SettingsIcon = require('babel!svg-react!../../assets/images/settings.svg?n
 interface IProfileProps {
     router?: any;
     params?: any;
+    section?: any;
 }
 
 interface IProfileState {
@@ -56,26 +57,36 @@ class ProfileClass extends React.Component<IProfileProps, IProfileState> {
 
     SECTION_FEED: string = 'feed';
     SECTION_ARTICLES: string = 'articles';
+    SECTION_DRAFTS: string = 'drafts';
+
+    SECTION_FOLLOWERS: string = 'followers';
+    SECTION_FOLLOWING: string = 'following';
 
 
     constructor(props: any) {
         super(props);
         this.state = {user: null, error: null, isLoading: false, isSelf: false, selfDrafts: 0, showSubscribers: true,
             isDesktop: MediaQuerySerice.getIsDesktop(), canSubscribe: false, additionalPage: null, cancelSource: null};
-        this.checkIsSelf = this.checkIsSelf.bind(this);
+        this.handleUserChange = this.handleUserChange.bind(this);
         this.checkDesktop = this.checkDesktop.bind(this);
         this.setDrafts = this.setDrafts.bind(this);
+        this.logoutHandle = this.logoutHandle.bind(this);
     }
 
-    checkIsSelf() {
+    handleUserChange() {
         let isSelf: boolean =  Boolean(this.state.user && UserAction.getStore().user && (UserAction.getStore().user.id == this.state.user.id));
         let stateData: any = { canSubscribe: Boolean(UserAction.getStore().user && !isSelf) };
         stateData.isSelf = isSelf;
-        stateData.currentSection = process.env.IS_LENTACH ? this.SECTION_ARTICLES : (isSelf ? this.SECTION_FEED : this.SECTION_ARTICLES);
         stateData.selfDrafts = isSelf ? UserAction.getStore().user.drafts || 0 : 0;
         stateData.additionalPage = null;
         if (stateData.isSelf != this.state.isSelf || stateData.canSubscribe != this.state.canSubscribe ) {
             this.setState(stateData);
+        }
+    }
+
+    logoutHandle() {
+        if (this.state.currentSection == this.SECTION_FEED || this.state.currentSection == this.SECTION_DRAFTS) {
+            this.props.router.push('/');
         }
     }
 
@@ -85,46 +96,87 @@ class ProfileClass extends React.Component<IProfileProps, IProfileState> {
         }
     }
 
-    getUserData(userId: string) {
-        if (this.state.isLoading) {
-            return;
-        }
-        if (this.state.cancelSource) {
-            this.state.cancelSource.cancel();
-        }
+    getUserData(slug: string = null, subsection: string = null) {
 
-        this.state.cancelSource =  axios.CancelToken.source();
-
-        this.setState({error: null, isLoading: true, additionalPage: null}, () => {
-            api.get('/users/' + userId + '/', { cancelToken: this.state.cancelSource.token }).then((response: any) => {
-                let isSelf: boolean = Boolean(response.data && UserAction.getStore().user && (UserAction.getStore().user.id == response.data.id));
-                let canSubscribe: boolean = Boolean(UserAction.getStore().user && !isSelf);
-                this.setState({
-                    user: response.data,
-                    showSubscribers: false,
-                    isSelf: isSelf,
-                    currentSection: process.env.IS_LENTACH ? this.SECTION_ARTICLES : (isSelf ? this.SECTION_FEED : this.SECTION_ARTICLES),
-                    isLoading: false,
-                    canSubscribe: canSubscribe,
-                    selfDrafts: isSelf ? UserAction.getStore().user.drafts || 0 : 0,
-                    additionalPage: null
-
-                }, () => {
-                    if (this.props.router.location.query.show == 'drafts') {
-                        this.showDrafts();
-                    }
+        let currentSection: string;
+        if (['drafts', 'feed'].indexOf(slug) != -1) {
+            switch (slug) {
+                case 'feed':
+                    currentSection = this.SECTION_FEED;
+                    break;
+                case 'drafts':
+                    currentSection = this.SECTION_DRAFTS;
+                    break;
+            }
+            if (UserAction.getStore().user) {
+                this.setState({user: UserAction.getStore().user, currentSection: currentSection,
+                        isSelf: true, canSubscribe: false, selfDrafts: UserAction.getStore().user.drafts || 0});
+            }
+            else {
+                UserAction.doAsync(GET_ME, null).then((user: any) => {
+                    this.setState({user: UserAction.getStore().user, currentSection: currentSection,
+                        isSelf: true, canSubscribe: false, selfDrafts: UserAction.getStore().user.drafts || 0});
+                }).catch((error) => {
+                    console.log('pushhh');
+                    this.props.router.push('/');
                 });
-            }).catch((error) => {
-                if (!axios.isCancel(error)) {
-                    this.setState({error: <Error404 msg="page not found" />, isLoading: false });
-                }
+            }
 
-            });
-        });
+        }
+        else  {
+            if (!subsection) {
+                currentSection = this.SECTION_ARTICLES;
+            }
+            else {
+
+                switch (subsection) {
+                    case 'followers':
+                        currentSection = this.SECTION_FOLLOWERS;
+                        break;
+                    case 'following':
+                        currentSection = this.SECTION_FOLLOWING;
+                        break;
+                    default:
+                        currentSection = this.SECTION_ARTICLES;
+                        break;
+                }
+            }
+
+            if (this.state.isLoading) {
+                return;
+            }
+            this.state.cancelSource && this.state.cancelSource.cancel();
+            this.state.cancelSource =  axios.CancelToken.source();
+            if (!this.state.user || (slug != this.state.user.nickname)) {
+                this.setState({error: null, isLoading: true}, () => {
+                    api.get('users/' + slug + '/', { cancelToken: this.state.cancelSource.token }).then((response: any) => {
+                        let isSelf: boolean = Boolean(response.data && UserAction.getStore().user && (UserAction.getStore().user.id == response.data.id));
+                        let canSubscribe: boolean = Boolean(UserAction.getStore().user && !isSelf);
+
+                        this.setState({
+                            user: response.data,
+                            showSubscribers: false,
+                            isSelf: isSelf,
+                            currentSection: currentSection,
+                            isLoading: false,
+                            canSubscribe: canSubscribe,
+                            selfDrafts: isSelf ? UserAction.getStore().user.drafts || 0 : 0,
+                        });
+                    }).catch((error) => {
+                        if (!axios.isCancel(error)) {
+                            this.setState({error: <Error404 msg="page not found" />, isLoading: false });
+                        }
+                    });
+                });
+            }
+            else {
+                this.setState({currentSection: currentSection});
+            }
+        }
     }
 
     setSection(sectionName: string) {
-        if (this.state.isSelf && [ this.SECTION_FEED, this.SECTION_ARTICLES ].includes(sectionName)) {
+        if (this.state.isSelf && [this.SECTION_FEED, this.SECTION_ARTICLES ].includes(sectionName)) {
             this.setState({currentSection: sectionName});
         }
         else {
@@ -133,13 +185,13 @@ class ProfileClass extends React.Component<IProfileProps, IProfileState> {
     }
 
     subscribe() {
-        api.post('/users/' + this.state.user.id + '/subscribe/').then((response) => {
+        api.post('/users/' + this.state.user.nickname + '/subscribe/').then((response) => {
             this.setIsSubscribed(true);
         }).catch((error: any) => {});
     }
 
     unSubscribe() {
-        api.post('/users/' + this.state.user.id + '/un_subscribe/').then((response) => {
+        api.post('/users/' + this.state.user.nickname + '/un_subscribe/').then((response) => {
             this.setIsSubscribed(false);
         }).catch((error: any) => {})
     }
@@ -166,14 +218,8 @@ class ProfileClass extends React.Component<IProfileProps, IProfileState> {
     }
 
     componentWillReceiveProps(nextProps: any) {
-        if (nextProps.params.userId != this.props.params.userId) {
-            this.getUserData(nextProps.params.userId);
-        }
-        if ( this.state.isSelf
-            && (nextProps.params.userId == this.props.params.userId)
-            && (nextProps.router.location.query.show == 'drafts')) {
-
-            this.showDrafts();
+        if (nextProps.params.slug != this.props.params.slug || nextProps.params.subsection != this.props.params.subsection) {
+            this.getUserData(nextProps.params.slug, nextProps.params.subsection);
         }
     }
 
@@ -199,13 +245,17 @@ class ProfileClass extends React.Component<IProfileProps, IProfileState> {
     componentDidMount() {
         MediaQuerySerice.listen(this.checkDesktop);
 
-        this.getUserData(this.props.params.userId);
-        UserAction.onChange([GET_ME, LOGIN, LOGOUT], this.checkIsSelf);
+
+        this.getUserData(this.props.params.slug, this.props.params.subsection);
+
+        UserAction.onChange([GET_ME, LOGIN, LOGOUT], this.handleUserChange);
+        UserAction.onChange(LOGOUT, this.logoutHandle);
         UserAction.onChange(UPDATE_USER_DRAFTS, this.setDrafts);
     }
 
     componentWillUnmount() {
-        UserAction.unbind([GET_ME, LOGIN, LOGOUT], this.checkIsSelf);
+        UserAction.unbind([GET_ME, LOGIN, LOGOUT], this.handleUserChange);
+        UserAction.unbind(LOGOUT, this.logoutHandle);
         UserAction.unbind(UPDATE_USER_DRAFTS, this.setDrafts);
         MediaQuerySerice.unbind(this.checkDesktop);
 
@@ -227,56 +277,103 @@ class ProfileClass extends React.Component<IProfileProps, IProfileState> {
         }
 
         if (!this.state.user) return null;
-
-        let sections: {name: string, caption: string}[] = (this.state.isSelf && !process.env.IS_LENTACH) ?
-            [
-                {name: this.SECTION_FEED, caption: Captions.profile.menuSubscriptions},
-                {name: this.SECTION_ARTICLES, caption: Captions.profile.menuArticles}]
-            : [];
+        let sections: {name: string, caption: string, to: string}[];
+        if ([this.SECTION_ARTICLES, this.SECTION_DRAFTS, this.SECTION_FEED].indexOf(this.state.currentSection) != -1) {
+            sections = (this.state.isSelf && !process.env.IS_LENTACH) ?
+                [
+                    {name: this.SECTION_FEED, caption: Captions.profile.menuSubscriptions, to: '/feed' },
+                    {name: this.SECTION_ARTICLES, caption: Captions.profile.menuArticles, to: '/' + this.state.user.nickname},
+                    {name: this.SECTION_DRAFTS, caption: Captions.profile.menuDrafts + (this.state.selfDrafts ? ' (' + this.state.selfDrafts + ')' : ''), to: '/drafts'},
+                ]
+                : [];
+        }
+        else if ([this.SECTION_FOLLOWERS, this.SECTION_FOLLOWING].indexOf(this.state.currentSection) != -1 ){
+            sections = [
+                {name: this.SECTION_FOLLOWING, caption: 'Читаемые', to: '/' + this.state.user.nickname + '/following' },
+                {name: this.SECTION_FOLLOWERS, caption: 'Читатели', to: '/' + this.state.user.nickname + '/followers' }
+            ]
+        }
+        else {
+            sections = [];
+        }
 
         if (this.state.isSelf && process.env.IS_LENTACH) {
-            sections = [{name: this.SECTION_ARTICLES, caption: 'Тексты'}]
+            sections = [
+                {name: this.SECTION_ARTICLES, caption: 'Тексты', to: ('/' + this.state.user.nickname)},
+                {name: this.SECTION_DRAFTS, caption: 'Черновики', to: '/drafts'},
+            ]
+        }
+
+        let DisplayComponent: any = null;
+
+        if ([this.SECTION_ARTICLES, this.SECTION_DRAFTS, this.SECTION_FEED].indexOf(this.state.currentSection) != -1) {
+            DisplayComponent = <ProfileArticles userId={this.state.user.id} section={this.state.currentSection} isSelf={this.state.isSelf} />;
+        }
+        else if ([this.SECTION_FOLLOWERS, this.SECTION_FOLLOWING].indexOf(this.state.currentSection) != -1) {
+            DisplayComponent = <ProfileAuthorList userId={this.state.user.id} isDesktop={this.state.isDesktop}
+                                                           subscribedTo={this.state.currentSection == this.SECTION_FOLLOWERS} />;
         }
 
         return (
 
             <div id="profile">
 
-                <div className="profile_new_article"><Link to="/articles/new/"><EditIcon /></Link></div>
+                <div className="profile_new_article" style={{display: 'none'}}><Link to="/articles/new/"><EditIcon /></Link></div>
 
                  <div id="profile_content">
                      <div className="profile_content_main">
-                         <div className="profile_avatar" key="avatar">
-                             { this.state.user.avatar ? (<img src={this.state.user.avatar}/>) : (
-                                 <div className="profile_avatar_dummy"></div>) }
 
+                         <div className="profile_userdata">
                              {
-                                 (this.state.isDesktop && this.state.isSelf) ? (
-                                     <Link to="/manage/" className="profile_management_link" ><SettingsIcon /></Link>) : null
+                                 this.state.isDesktop ? (
+                                     <Link to={"/" + this.state.user.nickname} className="profile_avatar" key="avatar">
+                                         { this.state.user.avatar ? (<img src={this.state.user.avatar}/>) : (
+                                             <div className="profile_avatar_dummy"></div>) }
+                                     </Link>
+                                 ) : null
                              }
 
+                             <div className="profile_user_text">
+                                <Link to={"/" + this.state.user.nickname} key="username" className="username">
+                                     {this.state.user.first_name} {this.state.user.last_name}
+                                 </Link>
+
+
+                                 <div className="description">{ this.state.user.description }</div>
+                             </div>
+
+
+                             {
+                                 !this.state.isDesktop ? (
+                                     <Link to={"/" + this.state.user.nickname} className="profile_avatar" key="avatar">
+                                         { this.state.user.avatar ? (<img src={this.state.user.avatar}/>) : (
+                                             <div className="profile_avatar_dummy"></div>) }
+                                     </Link>
+                                 ) : null
+                             }
                          </div>
 
-                         <div key="username" className="username">
-                             {this.state.user.first_name} {this.state.user.last_name}
-                         </div>
-                         <div className="description">{ this.state.user.description }</div>
 
                          <ProfileSocialLinkList items={this.state.user.social_links}/>
 
                          <div className="divider"></div>
 
-                         <div className="subscription">
-                             <div onClick={this.showAuthors.bind(this, false)}>Читаемые <span>{ this.state.user.subscriptions }</span></div>
-                             <div onClick={this.showAuthors.bind(this, true)}>Читатели <span>{ this.state.user.subscribers }</span></div>
-                             {
-                                 (!this.state.isDesktop && this.state.canSubscribe) ? (
-                                    this.state.user.is_subscribed ? (
-                                        <div onClick={this.unSubscribe.bind(this)}><ConfirmIcon /> {Captions.profile.subscribed}</div>) :
-                                        (<div onClick={this.subscribe.bind(this)}>{ Captions.profile.subscribe }</div>)
-                                 ) : null
-                             }
-                         </div>
+                         {
+                             !process.env.IS_LENTACH ? (
+                                 <div className="subscription">
+                                     <Link to={'/' + this.state.user.nickname + '/following'}  >Читаемые <span>{ this.state.user.subscriptions }</span></Link>
+                                     <Link to={'/' + this.state.user.nickname + '/followers'} >Читатели <span>{ this.state.user.subscribers }</span></Link>
+                                     {
+                                         (!this.state.isDesktop && this.state.canSubscribe) ? (
+                                            this.state.user.is_subscribed ? (
+                                                <div onClick={this.unSubscribe.bind(this)}><ConfirmIcon /> {Captions.profile.subscribed}</div>) :
+                                                (<div onClick={this.subscribe.bind(this)}>{ Captions.profile.subscribe }</div>)
+                                         ) : null
+                                     }
+                                 </div>
+                             ) : null
+                         }
+
 
                          {
                              this.state.isDesktop ? (<div className="divider"></div>) : null
@@ -296,39 +393,29 @@ class ProfileClass extends React.Component<IProfileProps, IProfileState> {
                      </div>
                      <div className="profile_content_filler"></div>
 
-                     {
-                         this.state.additionalPage ? (
-                             this.state.additionalPage
-                         ) : (
-                             <div className="profile_content_data">
-                                 {
-                                     this.state.isSelf ? (
-                                         <div className="profile_menu">
-                                             { sections.map((section: {name: string, caption: string}, index  ) => {
-                                                 return (<div key={index}
-                                                              className={ "menu_item" + (section.name == this.state.currentSection ? " active" : "")}
-                                                              onClick={this.setSection.bind(this, section.name)}>
-                                                     { section.caption }
-                                                 </div>)
-                                             }) }
+                     <div className="profile_content_data">
+                         {
+                             sections.length ? (
+                                 <div className="profile_menu">
+                                     { sections.map((section: {name: string, caption: string, to: string}, index  ) => {
+                                         return (<Link key={index}
+                                                      to={section.to}
+                                                      className={ "menu_item" + (section.name == this.state.currentSection ? " active" : "")}>
+                                             { section.caption }
+                                         </Link>)
+                                     }) }
 
-                                             { this.state.isDesktop ? (<div className="filler"></div>) : null }
+                                     { this.state.isDesktop ? (<div className="filler"></div>) : null }
+                                 </div>
+                             ) : null
+                         }
+                         {
+                             DisplayComponent
+                         }
 
-                                             {
-                                                 this.state.isDesktop && this.state.isSelf && this.state.selfDrafts ? (
-                                                     <div className="menu_drafts" onClick={this.showDrafts.bind(this)}>
-                                                         Черновиков: <span>{this.state.selfDrafts}</span>
-                                                     </div>
-                                                 ) : null
-                                             }
-                                         </div>
-                                     ) : null
-                                 }
+                     </div>
 
-                                 <ProfileArticles userId={this.state.user.id} section={this.state.currentSection} isSelf={this.state.isSelf} />
-                             </div>
-                         )
-                     }
+
                  </div>
              </div>
         )

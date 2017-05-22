@@ -1,10 +1,11 @@
 import * as React from 'react';
 import {Captions} from '../../constants';
-import {withRouter} from 'react-router';
+import {withRouter, Link} from 'react-router';
 
 import ProfileManagementNotifications from './ProfileManagementNotifications';
 import ProfileManagementAccount from './ProfileManagementAccount';
-import ProfileAuthorList from './ProfileAuthorList';
+import ProfileManagementStatistics from './ProfileManagementStatistics';
+
 import {MediaQuerySerice} from '../../services/MediaQueryService';
 
 import EditableImageModal from '../shared/EditableImageModal';
@@ -23,6 +24,7 @@ import Error from "../Error";
 
 interface IManagementProps {
     router?: any;
+    params?: any;
 }
 
 interface IManagementState {
@@ -52,6 +54,14 @@ class ProfileManagementClass extends React.Component<IManagementProps, IManageme
 
     SECTION_ACCOUNT = 'account';
     SECTION_NOTIFICATIONS = 'notifications';
+    SECTION_STATISTICS = 'statistics';
+
+    SECTIONS: {name: string, caption: string, to: string, section: any}[] = [
+        {name: this.SECTION_ACCOUNT, caption: Captions.management.sectionAccount, to: '/manage/account', section: <ProfileManagementAccount />},
+        {name: this.SECTION_NOTIFICATIONS, caption: Captions.management.sectionNotifications, to: '/manage/notifications', section: <ProfileManagementNotifications />},
+        {name: this.SECTION_STATISTICS, caption: Captions.management.sectionStatistics, to: '/manage/statistics', section: <ProfileManagementStatistics/>},
+    ];
+
 
     constructor() {
         super();
@@ -63,16 +73,14 @@ class ProfileManagementClass extends React.Component<IManagementProps, IManageme
         this.setUser = this.setUser.bind(this);
         this.setError = this.setError.bind(this);
         this.checkDesktop = this.checkDesktop.bind(this);
+        this.logoutHandle = this.logoutHandle.bind(this);
     }
 
     setUser() {
         let user = UserAction.getStore().user ? JSON.parse(JSON.stringify(UserAction.getStore().user)) : null;
-        //let newName = user ? (user.first_name + ' ' + user.last_name) : '';
-        //newName = newName.trim();
         this.setState({
             user: user,
             error: UserAction.getStore().user ? null : <Error/>,
-            //newName: user ? (user.first_name + (user.last_name ? (' ' + user.last_name) : '')) : '',
             newDescription: (user && !this.state.newDescription) ? user.description : ''
         });
     }
@@ -82,25 +90,23 @@ class ProfileManagementClass extends React.Component<IManagementProps, IManageme
     }
 
     setSection(sectionName: string) {
-        this.setState({currentSection: sectionName});
+        this.setState({currentSection:
+            (this.SECTIONS.map((section) => {return section.name}).indexOf(sectionName) != -1) ?
+                sectionName : this.SECTION_ACCOUNT });
     }
 
-    showAuthors(subscribedTo: boolean = false) {
-        this.setState({additionalPage: <ProfileAuthorList userId={this.state.user.id} isDesktop={this.state.isDesktop}
-                                                          closeCallback={ () => { this.setState({additionalPage: null}) } }
-                                                          subscribedTo={subscribedTo} />});
+    logoutHandle() {
+        this.props.router.push('/');
     }
 
     formSubmit(type: string, e: any) {
         e.preventDefault();
-        // this.saveUserData(type);
     }
 
     saveUserData(type: string) {
         let fd = new FormData();
         let stateData: any = {};
         if (type == 'name') {
-            //stateData.nameEdit = false;
             if (!this.state.newName) return;
             let userNameArr = this.state.newName.split(' ');
             if (!userNameArr[0]) {
@@ -175,12 +181,6 @@ class ProfileManagementClass extends React.Component<IManagementProps, IManageme
         });
     }
 
-    contentKeyDown(e: any) {
-        // if (e.keyCode == 13) {
-        //     this.saveUserData('description');
-        // }
-    }
-
     avatarSave(imageData: any) {
         this.setState({avatarUploading: true}, () => {
 
@@ -216,26 +216,20 @@ class ProfileManagementClass extends React.Component<IManagementProps, IManageme
         img.src = _URL.createObjectURL(file);
     }
 
-    showNotifications() {
-        this.setState({ currentSection: this.SECTION_NOTIFICATIONS }, () => {
-            this.props.router.push('/manage/');
-        });
-    }
 
     componentWillReceiveProps(nextProps: any) {
-        if (nextProps.router.location.query.show == 'notifications' ) {
-            this.showNotifications();
+
+        if (nextProps.params.section != this.props.params.section) {
+            this.setSection(nextProps.params.section);
         }
     }
 
     componentDidMount() {
 
-        if (this.props.router.location.query.show == 'notifications') {
-            this.showNotifications();
-        }
-
+        this.setSection(this.props.params.section);
         MediaQuerySerice.listen(this.checkDesktop);
         UserAction.onChange([GET_ME, LOGIN, LOGOUT, SAVE_USER, UPDATE_USER, USER_REJECT], this.setUser);
+        UserAction.onChange(LOGOUT, this.logoutHandle);
     }
 
     componentWillUnmount() {
@@ -243,6 +237,7 @@ class ProfileManagementClass extends React.Component<IManagementProps, IManageme
         UserAction.unbind([GET_ME, LOGIN, LOGOUT, SAVE_USER, UPDATE_USER, USER_REJECT], this.setUser);
         this.state.nameSaveTimeout && window.clearTimeout(this.state.nameSaveTimeout);
         this.state.descriptionSaveTimeout && window.clearTimeout(this.state.descriptionSaveTimeout);
+        UserAction.unbind(LOGOUT, this.logoutHandle);
     }
 
     render() {
@@ -255,69 +250,62 @@ class ProfileManagementClass extends React.Component<IManagementProps, IManageme
             return (<div id="profile" className="profile_loading"><Loading /></div>);
         }
 
-        let sections: {name: string, caption: string}[] = [
-            {name: this.SECTION_ACCOUNT, caption: Captions.management.sectionAccount},
-            {name: this.SECTION_NOTIFICATIONS, caption: Captions.management.sectionNotifications}];
+        let section = null;
 
-        let section: any = null;
-
-        if (this.state.currentSection == this.SECTION_NOTIFICATIONS) {
-            section = <ProfileManagementNotifications/>;
-        }
-
-        switch (this.state.currentSection) {
-            case (this.SECTION_ACCOUNT):
-                section = <ProfileManagementAccount/>;
-                break;
-            case (this.SECTION_NOTIFICATIONS):
-                section = <ProfileManagementNotifications/>;
-                break;
-        }
-
+        this.SECTIONS.forEach((s) => {
+            if (s.name == this.state.currentSection) {
+                section = s.section;
+            }
+        });
         return (
             <div id="profile">
                 <div id="profile_content">
                     <div className="profile_content_main">
-                        <div className={"profile_avatar profile_avatar_editable" + (this.state.avatarUploading ? " uploading" : "") }
-                             key="avatar" onClick={this.inputClick.bind(this)}>
-                             { this.state.user.avatar ? (<img src={this.state.user.avatar}/>) : (
-                                 <div className="profile_avatar_dummy"></div>) }
 
-                            {
-                                this.state.avatarUploading ? (<div className="avatar_upload"><Loading/></div>) : null
-                            }
+                        <div className="profile_userdata">
+                            <div className={"profile_avatar profile_avatar_editable" + (this.state.avatarUploading ? " uploading" : "") }
+                                 key="avatar" onClick={this.inputClick.bind(this)}>
+                                 { this.state.user.avatar ? (<img src={this.state.user.avatar}/>) : (
+                                     <div className="profile_avatar_dummy"></div>) }
 
-                        </div>
+                                {
+                                    this.state.avatarUploading ? (<div className="avatar_upload"><Loading/></div>) : null
+                                }
 
-                        <input accept="image/jpeg,image/png" style={{visibility: 'hidden', position: 'fixed', top: '-1000px', left: '-1000px'}} type="file" ref="inputAvatar" onChange={this.uploadAvatar.bind(this)} />
+                            </div>
 
-                        <div key="username" className="username">
-                            {
-                                this.state.nameEdit ? (
-                                    <form onSubmit={this.formSubmit.bind(this, 'name')}>
-                                        <input ref="inputName" type="text" value={this.state.newName}
-                                               onBlur={this.toggleEdit.bind(this, 'name', false)}
-                                               onChange={this.textEdit.bind(this, 'name') }/>
-                                        <input type="submit" style={{visibility: 'hidden'}}/>
-                                    </form>
-                                ) : (<span onClick={this.toggleEdit.bind(this, 'name', true)}>
-                                        {this.state.user.first_name} {this.state.user.last_name}
-                                </span>)
-                            }
-
-                         </div>
+                            <input accept="image/jpeg,image/png" style={{visibility: 'hidden', position: 'fixed', top: '-1000px', left: '-1000px'}} type="file" ref="inputAvatar" onChange={this.uploadAvatar.bind(this)} />
 
 
-                        <div className={"description" + ( this.state.descriptionEdit ? " editable" : "")}
-                             onFocus={this.toggleEdit.bind(this, 'description', true)}>
-                            <ContentEditable
-                                content={this.state.newDescription}
-                                elementType="inline"
-                                placeholder="Введите описание"
-                                onKeyDown={this.contentKeyDown.bind(this)}
-                                onChange={this.contentEdit.bind(this)}
-                                onBlur={this.toggleEdit.bind(this, 'description', false)}
-                                allowLineBreak={false}/>
+                            <div className="profile_user_text">
+                                <div key="username" className="username">
+                                    {
+                                        this.state.nameEdit ? (
+                                            <form onSubmit={this.formSubmit.bind(this, 'name')}>
+                                                <input ref="inputName" type="text" value={this.state.newName}
+                                                       onBlur={this.toggleEdit.bind(this, 'name', false)}
+                                                       onChange={this.textEdit.bind(this, 'name') }/>
+                                                <input type="submit" style={{visibility: 'hidden'}}/>
+                                            </form>
+                                        ) : (<span onClick={this.toggleEdit.bind(this, 'name', true)}>
+                                                {this.state.user.first_name} {this.state.user.last_name}
+                                        </span>)
+                                    }
+
+                                </div>
+
+                                <div className={"description" + ( this.state.descriptionEdit ? " editable" : "")}
+                                     onFocus={this.toggleEdit.bind(this, 'description', true)}>
+                                    <ContentEditable
+                                        content={this.state.newDescription}
+                                        elementType="inline"
+                                        placeholder="Введите описание"
+                                        onChange={this.contentEdit.bind(this)}
+                                        onBlur={this.toggleEdit.bind(this, 'description', false)}
+                                        allowLineBreak={false}/>
+                                </div>
+
+                            </div>
                         </div>
 
                         <ProfileSocialLinkList items={this.state.user.social_links}/>
@@ -325,8 +313,9 @@ class ProfileManagementClass extends React.Component<IManagementProps, IManageme
                         <div className="divider"></div>
 
                         <div className="subscription">
-                            <div onClick={this.showAuthors.bind(this, false)}>Читаемые <span>{ this.state.user.subscriptions }</span></div>
-                            <div onClick={this.showAuthors.bind(this, true)}>Читатели <span>{ this.state.user.subscribers }</span></div>
+                            <Link to={'/' + this.state.user.nickname + '/following'}  >Читаемые <span>{ this.state.user.subscriptions }</span></Link>
+                            <Link to={'/' + this.state.user.nickname + '/followers'} >Читатели <span>{ this.state.user.subscribers }</span></Link>
+
                         </div>
 
                         {
@@ -345,12 +334,11 @@ class ProfileManagementClass extends React.Component<IManagementProps, IManageme
                             (
                                 <div className="profile_content_data">
                                     <div className="profile_menu">
-                                        { sections.map((section: {name: string, caption: string}, index  ) => {
-                                             return (<div key={index}
-                                                          className={ "menu_item" + (section.name == this.state.currentSection ? " active" : "")}
-                                                          onClick={this.setSection.bind(this, section.name)}>
+                                        { this.SECTIONS.map((section: {name: string, caption: string, to: string}, index  ) => {
+                                             return (<Link key={index} to={section.to}
+                                                          className={ "menu_item" + (section.name == this.state.currentSection ? " active" : "")}>
                                                  { section.caption }
-                                             </div>)
+                                             </Link>)
                                          }) }
                                     </div>
                                     {section}

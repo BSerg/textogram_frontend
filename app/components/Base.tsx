@@ -35,7 +35,7 @@ export default class Base extends React.Component<any, any> {
     handleNotifications() {
         if (process.env.IS_LENTACH) return;
 
-        if (UserAction.getStore().user || !this.state.userNotificationsInterval) {
+        if (UserAction.getStore().user && !this.state.userNotificationsInterval) {
             UserNotificationAction.do(CHECK_NOTIFICATIONS, null);
             this.state.userNotificationsInterval = window.setInterval(() => {
                 UserNotificationAction.do(CHECK_NOTIFICATIONS, null);
@@ -47,8 +47,15 @@ export default class Base extends React.Component<any, any> {
         }
     }
 
+    checkCreated() {
+        if (UserAction.getStore().user && UserAction.getStore().user.created) {
+            console.log('welcome');
+        }
+    }
+
     handleUser() {
-            this.setState({authenticated: !!UserAction.getStore().user});
+        this.setState({authenticated: !!UserAction.getStore().user});
+        this.checkCreated();
         this.handleNotifications();
     }
 

@@ -23,6 +23,7 @@ interface ISubscribersState {
 
     items?: any[];
     searchString?: string;
+    searchTimeout?: number;
     nextUrl?: string;
     cancelSource?: any;
     isLoading?: boolean;
@@ -32,13 +33,16 @@ interface ISubscribersState {
 export default class ProfileAuthorList extends React.Component<ISubscribersProps, ISubscribersState> {
 
     refs: {
-        container: HTMLDivElement;
+        main: HTMLDivElement;
+        input: HTMLDivElement;
+        search: HTMLInputElement;
     };
 
     constructor() {
         super();
         this.state = {searchString: "", nextUrl: null, cancelSource: null, items: [], isLoading: false, menuOpen: MenuAction.getStore().open};
         this.setMenuOpen = this.setMenuOpen.bind(this);
+        this.setInputPosition = this.setInputPosition.bind(this);
     }
 
     loadItems(more: boolean = false) {
@@ -75,18 +79,25 @@ export default class ProfileAuthorList extends React.Component<ISubscribersProps
         });
     }
 
-    setSearchString(e: any) {
-        this.setState({ searchString: e.target.value }, () => {
-            this.loadItems();
+    searchInput(e: any) {
+        this.state.searchTimeout && window.clearTimeout(this.state.searchTimeout);
+        this.state.cancelSource && this.state.cancelSource.cancel();
+        this.setState({ searchString: e.target.value, items: [], isLoading: true }, () => {
+            this.state.searchTimeout = window.setTimeout(this.loadItems.bind(this), 500);
         })
     }
 
     handleScroll(e: any) {
-        let rect: ClientRect = this.refs.container.getBoundingClientRect();
-        if ((rect.height + this.refs.container.scrollTop) >= this.refs.container.scrollHeight && (this.state.nextUrl && !this.state.isLoading)) {
-            // console.log('LooD');
+        let rect: ClientRect = this.refs.main.getBoundingClientRect();
+        if ((rect.bottom <= window.innerHeight) && !this.state.isLoading && this.state.nextUrl) {
             this.loadItems(true);
         }
+    }
+
+    setInputPosition() {
+        let rect: ClientRect = this.refs.main.getBoundingClientRect();
+        this.refs.input.style.left = rect.left + 'px';
+        this.refs.input.style.width = rect.width + 'px';
     }
 
     setMenuOpen() {
@@ -94,54 +105,51 @@ export default class ProfileAuthorList extends React.Component<ISubscribersProps
     }
 
     componentWillReceiveProps(nextProps: any) {
+        this.refs.search.focus();
         this.loadItems();
     }
 
     componentDidMount() {
+        this.refs.search.focus();
         MenuAction.onChange([TOGGLE], this.setMenuOpen);
         this.loadItems();
+        // this.setInputPosition();
+        // window.addEventListener('resize', this.setInputPosition);
     }
 
     componentWillUnmount() {
         MenuAction.unbind([TOGGLE], this.setMenuOpen);
-        if (this.state.cancelSource) {
-            this.state.cancelSource.cancel();
-        }
+        this.state.searchTimeout && window.clearTimeout(this.state.searchTimeout);
+        this.state.cancelSource && this.state.cancelSource.cancel();
+        // window.removeEventListener('resize', this.setInputPosition);
     }
 
     render() {
 
-        // console.log(this.state.items);
-
         return (
-            <div className={"profile_additional profile_authors" + (this.state.menuOpen ? " adjusted" : "")}>
+            <div className={"profile_additional profile_authors" + (this.state.menuOpen ? " adjusted" : "")} ref="main">
 
-                { this.props.closeCallback ? (<div onClick={this.props.closeCallback} className="profile_additional_close">
-                    <CloseIcon />
-                </div>) : null }
-
-                <div className="profile_additional_container" onScroll={this.handleScroll.bind(this)} ref="container">
-                    {
-                        this.state.items.map((item: any, index: number) => {
-                            return (
-                                <Link to={'/profile/' + item.id + '/'} key={index} className="profile_author">
-                                    <div className="author_avatar"><img src={item.avatar} /></div>
-                                    <div className="author_username">{ item.first_name + " " + item.last_name }</div>
-                                    <div>{"Читатют " + item.subscribers }</div>
-                                    <div>{"Текстов " + item.number_of_articles }</div>
-                                    <div className="info">{ item.is_subscribed ? <ConfirmIcon /> : null }</div>
-                                </Link>)
-                        })
-                    }
+                <div className="profile__search" ref="input">
+                    <input type="text" value={this.state.searchString} placeholder="Поиск" ref="search"
+                           onChange={this.searchInput.bind(this)}/>
                 </div>
+
+                {
+                    this.state.items.map((item: any, index: number) => {
+                        return (
+                            <Link to={'/' + item.nickname } key={index} className="profile_author">
+                                <div className="author_avatar"><img src={item.avatar} /></div>
+                                <div className="author_username">{ item.first_name + " " + item.last_name }</div>
+                                <div>{"Читатют " + item.subscribers }</div>
+                                <div>{"Текстов " + item.number_of_articles }</div>
+                                <div className="info">{ item.is_subscribed ? <ConfirmIcon /> : null }</div>
+                            </Link>)
+                    })
+                }
+
                 {
                     this.state.isLoading ? (<Loading />) : null
                 }
-
-                <div className="profile_authors_input">
-                    <input type="text" value={this.state.searchString} placeholder="Быстрый поиск по имени"
-                           onChange={this.setSearchString.bind(this)}/>
-                </div>
 
 
             </div>)

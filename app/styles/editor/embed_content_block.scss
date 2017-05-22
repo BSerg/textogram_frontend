@@ -6,7 +6,9 @@
   padding: $basic_mobile_offset;
 
   .content_block_embed__html {
+    text-align: center;
     width: 100%;
+    overflow: hidden;
 
     iframe {
       width: 100%;

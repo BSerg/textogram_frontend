@@ -2,7 +2,7 @@ import * as React from "react";
 import {Link} from "react-router";
 import {IContentData} from "../actions/editor/ContentAction";
 import {api} from "../api";
-import Error from "./Error";
+import Error, {Error404, Error500, Error403} from "./Error";
 import {UserAction, LOGIN, LOGOUT, UPDATE_USER, SAVE_USER} from "../actions/user/UserAction";
 import {ModalAction, OPEN_MODAL, CLOSE_MODAL} from "../actions/shared/ModalAction";
 import * as moment from "moment";
@@ -37,7 +37,7 @@ interface IArticle {
     id: number
     slug: string
     title: string
-    cover: {id: number, image: string} | null
+    cover: string | null
     blocks: IContentData[]
     html: string
     published_at: string
@@ -45,6 +45,7 @@ interface IArticle {
     views: number
     owner: {
         id: number,
+        nickname: string,
         first_name: string,
         last_name: string,
         avatar: string
@@ -74,8 +75,11 @@ interface IArticleState {
 }
 
 export default class Article extends React.Component<IArticleProps, IArticleState> {
+    private loadingImages: HTMLImageElement[];
+
     constructor(props: any) {
         super(props);
+        this.loadingImages = [];
         this.state = {
             article: null,
             isSelf: false,
@@ -187,79 +191,91 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
                 }
             }
         }
-        try {
-            let posts = document.getElementsByClassName('embed post');
-            for (let i in posts) {
-                // TWITTER LOAD EMBED
+        let posts = document.getElementsByClassName('embed post');
+        for (let i in posts) {
+            try {
                 twttr.widgets && twttr.widgets.load(posts[i]);
-            }
-        } catch (err) {
-            console.log('TWITTER EMBED LOADING ERROR', err);
+            } catch (err) {}
+            try {
+                let script = posts[i].getElementsByTagName('script')[0];
+                if (script) {
+                    let f = new Function(script.innerText);
+                    f();
+                }
+            } catch (err) {}
         }
         try {
             // INSTAGRAM LOAD EMBED
             instgrm.Embeds.process();
         } catch (err) {
-            console.log('INSTAGRAM EMBED LOADING ERROR', err);
+            // console.log('INSTAGRAM EMBED LOADING ERROR', err);
         }
     }
 
     processAds() {
         if (!this.state.article || !this.state.article.advertisement) return;
-        // try {
-            let bannerElements = document.getElementById("article" + this.state.article.id).getElementsByClassName('banner');
-            for (let i = 0; i < bannerElements.length; i++) {
-                let bannerElement = bannerElements[i] as HTMLDivElement;
-                for (let k in this.state.article.advertisement) {
-                    if (bannerElement.classList.contains(k)) {
-                        let ads = [];
-                        for (let a = 0; a < this.state.article.advertisement[k].length; a++) {
-                            if (this.state.article.advertisement[k][a].is_mobile == !this.state.isDesktop) {
-                                ads.push(this.state.article.advertisement[k][a]);
+        let ads = this.state.article.advertisement[this.state.isDesktop ? 'desktop' : 'mobile'];
+        let articleElement = document.getElementById("article" + this.state.article.id);
+        for (let k in ads) {
+            let banners = ads[k];
+            let bannersElements = articleElement.getElementsByClassName(k);
+            if (bannersElements.length && banners.length) {
+                banners.forEach((banner: any, index: number) => {
+                    if (index < bannersElements.length) {
+                        let bannerElement = bannersElements[index];
+                        bannerElement.innerHTML = banner.code;
+                        try {
+                            let script = bannerElement.getElementsByTagName('script')[0];
+                            if (script) {
+                                bannerElement.classList.add('active');
+                                window.setTimeout(() => {
+                                    let f = new Function(script.innerText);
+                                    f();
+                                });
+                            } else {
+                                bannerElement.classList.add('active');
                             }
-                        }
-                        if (ads.length) {
-
-                            bannerElement.innerHTML = ads[Math.floor(Math.random()*ads.length)].code;
-                            try {
-                                let script = bannerElement.getElementsByTagName('script')[0];
-                                if (script) {
-                                    bannerElement.classList.add('active');
-                                    window.setTimeout(() => {
-                                        let f = new Function(script.innerText);
-                                        f();
-                                    });
-                                } else {
-                                    bannerElement.classList.add('active');
-                                }
-                            } catch (err) {
-                                console.log(err)
-                            }
+                        } catch (err) {
+                            console.log(err)
                         }
                     }
-                }
+                });
             }
-        // } catch(err) {
-        //     console.log(err);
-        // }
+        }
     }
 
     processPhoto() {
         let galleries = document.getElementsByClassName('photos');
-        for (let i in galleries) {
+        for (let i = 0; i < galleries.length; i++) {
             try {
-                let gallery = galleries[i];
+                let gallery = galleries[i] as HTMLElement;
                 let photos = gallery.getElementsByClassName('photo');
                 let photoData: IPhoto[] = [];
-                for (let i in photos) {
+                for (let i = 0; i < photos.length; i++) {
                     let photo = photos[i];
-                    this.state.article.images.forEach((image) => {
-                        if (image.id == parseInt(photo.getAttribute('data-id'))) {
-                            image.caption = photo.getAttribute('data-caption');
-                            photoData.push(image);
-                        }
+                    photoData.push({
+                        id: parseInt(photo.getAttribute('data-id')),
+                        preview: photo.getAttribute('data-preview'),
+                        image: photo.getAttribute('data-src'),
+                        caption: photo.getAttribute('data-caption'),
                     });
-                    photo.addEventListener('click', this.openGalleryModal.bind(this, parseInt(i), photoData));
+                    if (i < 6) {
+                        let img = document.createElement('img');
+                        img.onload = () => {
+                            gallery.replaceChild(img, photo);
+                            if (this.loadingImages.indexOf(img) != -1) {
+                                this.loadingImages.splice(this.loadingImages.indexOf(img), 1);
+                            }
+                        };
+                        img.className = photo.getAttribute('class');
+                        img.src = photo.getAttribute('data-preview');
+                        img.alt = photo.getAttribute('data-caption');
+                        img.addEventListener('click', this.openGalleryModal.bind(this, i, photoData, gallery.getAttribute('id')));
+                        this.loadingImages.push(img);
+                    }
+                }
+                if (this.props.params.galleryBlockId && this.props.params.galleryBlockId == gallery.getAttribute('id')) {
+                    this.openGalleryModal(0, photoData);
                 }
             } catch (err) {}
         }
@@ -273,8 +289,28 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
         this.processAds();
     }
 
-    openGalleryModal(currentPhotoIndex: number, photos: any[]) {
-        ModalAction.do(OPEN_MODAL, {content: <GalleryModal currentPhotoIndex={currentPhotoIndex} photos={photos}/>});
+    getBanner(id: string) {
+        try {
+            return this.state.article.advertisement[this.state.isDesktop ? 'desktop' : 'mobile'][id];
+        } catch (err) {
+            return null;
+        }
+    }
+
+
+    getRightBanner() {
+        return this.getBanner(BannerID.BANNER_RIGHT_SIDE);
+    }
+
+    openGalleryModal(currentPhotoIndex: number, photos: any[], galleryId: string = null) {
+        if (galleryId && !this.props.isPreview) {
+            this.props.router.push(`/articles/${this.state.article.slug}/gallery/${galleryId}`);
+        }
+        ModalAction.do(OPEN_MODAL, {content: <GalleryModal isPreview={this.props.isPreview}
+                                                           currentPhotoIndex={currentPhotoIndex}
+                                                           photos={photos}
+                                                           router={this.props.router}
+                                                           article={this.state.article}/>});
     }
 
     closeSharePopup() {
@@ -284,19 +320,23 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
     openSharePopup() {
         let content = (
             <div className="share_popup">
-                <a href={"http://vk.com/share.php?url=" + this.state.article.url}
-                   className="share_popup__item share_popup__vk"><SocialIcon social="vk"/></a>
-                <a href={"https://www.facebook.com/sharer/sharer.php?u=" + this.state.article.url}
-                   className="share_popup__item share_popup__fb"><SocialIcon social="facebook"/></a>
-                <a href={"https://twitter.com/home?status=" + this.state.article.url}
-                   className="share_popup__item share_popup__twitter"><SocialIcon social="twitter"/></a>
-                <a href={"https://telegram.me/share/url?url=" + this.state.article.url}
-                   className="share_popup__item share_popup__telegram"><SocialIcon social="telegram"/></a>
-                <a href={"whatsapp://send?text=" + this.state.article.url}
-                   data-action="share/whatsapp/share"
-                   className="share_popup__item share_popup__whatsapp"><SocialIcon social="whatsapp"/></a>
-                <a href={"viber://forward?text=" + this.state.article.url}
-                   className="share_popup__item share_popup__viber"><SocialIcon social="viber"/></a>
+                <div className="share_popup__row">
+                    <a href={"http://vk.com/share.php?url=" + this.state.article.url}
+                       className="share_popup__item share_popup__vk"><SocialIcon social="vk"/></a>
+                    <a href={"https://www.facebook.com/sharer/sharer.php?u=" + this.state.article.url}
+                       className="share_popup__item share_popup__fb"><SocialIcon social="facebook"/></a>
+                    <a href={"https://twitter.com/home?status=" + this.state.article.url}
+                       className="share_popup__item share_popup__twitter"><SocialIcon social="twitter"/></a>
+                </div>
+                <div className="share_popup__row">
+                    <a href={"https://telegram.me/share/url?url=" + this.state.article.url}
+                       className="share_popup__item share_popup__telegram"><SocialIcon social="telegram"/></a>
+                    <a href={"whatsapp://send?text=" + this.state.article.url}
+                       data-action="share/whatsapp/share"
+                       className="share_popup__item share_popup__whatsapp"><SocialIcon social="whatsapp"/></a>
+                    <a href={"viber://forward?text=" + this.state.article.url}
+                       className="share_popup__item share_popup__viber"><SocialIcon social="viber"/></a>
+                </div>
                 <div className="share_popup__close" onClick={this.closeSharePopup.bind(this)}><CloseIcon/></div>
             </div>
         );
@@ -318,6 +358,20 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
             }, 100);
             document.title = this.state.article.title;
         });
+    }
+
+    coverLazyLoad(el: HTMLElement) {
+        if (this.state.article && this.state.article.cover) {
+            let img = new Image();
+            img.onload = () => {
+                el.style.background = `url('${this.state.article.cover}') no-repeat center center`;
+                if (this.loadingImages.indexOf(img) != -1) {
+                    this.loadingImages.splice(this.loadingImages.indexOf(img), 1);
+                }
+            };
+            img.src = this.state.article.cover;
+            this.loadingImages.push(img);
+        }
     }
 
     _publish() {
@@ -346,11 +400,14 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
             console.log(err);
             if (err.response) {
                 switch (err.response.status) {
+                    case 403:
+                        this.setState({error: <Error403/>});
+                        break;
                     case 404:
-                        this.setState({error: <Error code={404} msg="Article not found"/>})
+                        this.setState({error: <Error404/>});
                         break;
                     default:
-                        this.setState({error: <Error/>})
+                        this.setState({error: <Error500/>});
                 }
             }
         });
@@ -365,13 +422,13 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
             if (err.response) {
                 switch (err.response.status) {
                     case 404:
-                        this.setState({error: <Error code={404} msg="Article not found"/>});
+                        this.setState({error: <Error404/>});
                         break;
                     case 401:
-                        this.setState({error: <Error code={401} msg="You haven't access to this article. Sorry."/>});
+                        this.setState({error: <Error403/>});
                         break;
                     default:
-                        this.setState({error: <Error/>})
+                        this.setState({error: <Error500/>})
                 }
             }
         });
@@ -391,18 +448,35 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
         }
     }
 
+    componentWillReceiveProps(nextProps: any) {
+        if (this.props.isPreview) {
+            if (nextProps.params.articleId != this.props.params.articleId) {
+                this.retrieveArticlePreview();
+            }
+        } else {
+            if (!nextProps.params.galleryBlockId) {
+                ModalAction.do(CLOSE_MODAL, null);
+            } else if (nextProps.params.galleryBlockId != this.props.params.galleryBlockId) {
+                this.processPhoto();
+            }
+            if (nextProps.params.articleSlug != this.props.params.articleSlug) {
+                this.retrieveArticle();
+            }
+        }
+    }
+
     componentWillUnmount() {
         MediaQuerySerice.unbind(this.handleMediaQuery);
         UserAction.unbind([LOGIN, LOGOUT, UPDATE_USER, SAVE_USER], this.handleUser);
+
+        this.loadingImages.forEach((img) => {
+            img.onload = () => {};
+        });
+        this.loadingImages = [];
     }
 
     render() {
         let coverStyle = {};
-        if (this.state.article && this.state.article.cover) {
-            coverStyle = {
-                background: `url('${this.state.article.cover}') no-repeat center center`
-            }
-        }
         let titleClassName = "article__title", authorLink = '/';
 
         if (this.state.article) {
@@ -410,12 +484,11 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
             if (titleLengthState != 'regular') titleClassName += ' ' + this.checkArticleLength(this.state.article.title);
             if (this.state.article.cover) titleClassName += ' covered';
             if (this.state.article.cover || this.state.article.inverted_theme) titleClassName += ' inverted';
-            authorLink = process.env.IS_LENTACH ? '/' : `/profile/${this.state.article.owner.id}`;
+            authorLink = process.env.IS_LENTACH ? '/' : `/${this.state.article.owner.nickname}`;
         }
 
         let shiftContentStyle = {};
-        if (this.state.isDesktop && this.state.article && this.state.article.ads_enabled
-                && this.state.article.advertisement && this.state.article.advertisement[BannerID.BANNER_RIGHT_SIDE]) {
+        if (MediaQuerySerice.getScreenWidth() >= 1280 && this.getRightBanner()) {
             let offset = Math.min(0, 2 * ((MediaQuerySerice.getScreenWidth() - 650 ) / 2 - 400));
             if (offset) shiftContentStyle = {marginLeft: `${offset}px`};
         }
@@ -426,12 +499,12 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
                     <div id={"article" + this.state.article.id} className="article">
                         {/* SIDE BANNER */}
                         {this.state.isDesktop && this.state.article.ads_enabled
-                            && this.state.article.advertisement && this.state.article.advertisement[BannerID.BANNER_RIGHT_SIDE] ?
+                            && this.getRightBanner() ?
                             <div className={"banner " + BannerID.BANNER_RIGHT_SIDE}></div> : null
                         }
 
                         {/* TITLE BLOCK */}
-                        <div className={titleClassName} style={coverStyle}>
+                        <div ref={this.coverLazyLoad.bind(this)} className={titleClassName}>
                             <div className="article__title_container" style={shiftContentStyle}>
                                 <h1>{this.state.article.title}</h1>
                                 <div className="article__stats">
@@ -473,9 +546,9 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
                             </div>
                         </div>
 
-                        {this.state.article.ads_enabled ?
+                        {this.state.article.ads_enabled && this.getBanner(BannerID.BANNER_BOTTOM) ?
                             <div className="banner_container">
-                                <div className={"banner " + BannerID.BANNER_CONTENT} style={shiftContentStyle}></div>
+                                <div className={"banner " + BannerID.BANNER_BOTTOM} style={shiftContentStyle}></div>
                             </div> : null
                         }
 
@@ -591,8 +664,11 @@ class ShareLinkButton extends React.Component<{shortUrl: string, className?: str
 
 
 interface IGalleryModalProps {
-    photos: IPhoto[],
-    currentPhotoIndex: number,
+    isPreview?: boolean;
+    article?: IArticle;
+    router?: any;
+    photos: IPhoto[];
+    currentPhotoIndex: number;
 }
 
 type SwipingDirection = 'left' | 'right';
@@ -621,6 +697,9 @@ class GalleryModal extends React.Component<IGalleryModalProps, IGalleryModalStat
 
     back() {
         ModalAction.do(CLOSE_MODAL, null);
+        if (!this.props.isPreview) {
+            this.props.router.push(`/articles/${this.props.article.slug}`);
+        }
     }
 
     nextPhoto() {
@@ -699,6 +778,14 @@ class GalleryModal extends React.Component<IGalleryModalProps, IGalleryModalStat
         });
     }
 
+    lazyLoad(index: number, el: HTMLElement) {
+        // let img = new Image();
+        // img.onload = () => {
+        //     el.style.background = `url('${this.props.photos[index].image}') no-repeat center center`;
+        // };
+        // img.src = this.props.photos[index].image;
+    }
+
     componentDidMount() {
         MediaQuerySerice.listen(this.handleMediaQuery);
     }
@@ -709,9 +796,6 @@ class GalleryModal extends React.Component<IGalleryModalProps, IGalleryModalStat
 
     render() {
         let photo = this.props.photos[this.state.currentPhotoIndex];
-        let imageStyle = {
-            background: `url('${photo.image}') no-repeat center center`
-        };
         return (
             <div className="gallery_modal">
                 {this.state.isDesktop ?
@@ -738,16 +822,17 @@ class GalleryModal extends React.Component<IGalleryModalProps, IGalleryModalStat
                 {this.state.isDesktop ?
                     <div className="gallery_modal__viewport">
                         {this.getPrevPhotoIndex() != null ?
-                            <div className="gallery_modal__image_prev"
+                            <div className="gallery_modal__img gallery_modal__image_prev"
                                  style={this.getImageStyle(this.getPrevPhotoIndex())}
                                  onClick={this.prevPhoto.bind(this)}></div> :
                             <div className="gallery_modal__image_prev empty"></div>
                         }
-                        <div className="gallery_modal__image"
+                        <div ref={this.lazyLoad.bind(this, this.state.currentPhotoIndex)}
+                             className="gallery_modal__img gallery_modal__image"
                              style={this.getImageStyle(this.state.currentPhotoIndex)}
                              onClick={this.nextPhoto.bind(this)}/>
                         {this.getNextPhotoIndex() != null ?
-                            <div className="gallery_modal__image_next"
+                            <div className="gallery_modal__img gallery_modal__image_next"
                                  style={this.getImageStyle(this.getNextPhotoIndex())}
                                  onClick={this.nextPhoto.bind(this)}></div> :
                             <div className="gallery_modal__image_next empty"></div>
@@ -762,7 +847,7 @@ class GalleryModal extends React.Component<IGalleryModalProps, IGalleryModalStat
                                onSwiped={this.handleSwipe.bind(this)}>
                         <div ref="image"
                              className={"gallery_modal__image" + (this.state.swipingDirection? ' ' + this.state.swipingDirection: '')}
-                             style={imageStyle}
+                             style={this.getImageStyle(this.state.currentPhotoIndex)}
                              onClick={this.nextPhoto.bind(this)}/>
                     </Swapeable>
 

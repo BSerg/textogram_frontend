@@ -8,7 +8,6 @@ export default class LoginPage extends React.Component<any, any> {
     }
 
     handleLogin() {
-        console.log('handol');
         this.props.router.push('/');
     }
 

@@ -1,0 +1,157 @@
+@import "contstants";
+@import "mixins";
+
+.error {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100vh;
+
+  .error__wrapper {
+    display: flex;
+    flex-direction: row;
+  }
+
+  .error__image {
+    width: 150px;
+    height: 150px;
+    margin-top: -50px;
+    margin-right: -25px;
+    background-size: 150px 150px!important;
+  }
+
+  .error__content {
+    display: flex;
+    flex-direction: column;
+
+    .error__code {
+      width: 200px;
+      height: 100px;
+      background-size: 200px 100px;
+      margin-bottom: 20px;
+    }
+
+    .error__msg {
+      font-family: $family_open_sans;
+      font-size: 12px;
+      line-height: 21px;
+      letter-spacing: 1px;
+    }
+  }
+
+}
+
+.error404 {
+  .error__image {
+    background: url('../assets/images/lentach/dasha.gif') no-repeat center center;
+  }
+
+  .error__code {
+    background: url('../assets/images/404.svg') no-repeat center center;
+  }
+
+  .error__msg {
+    text-align: center;
+  }
+}
+
+.error403 {
+  .error__image {
+    background: url('../assets/images/lentach/cheap.gif') no-repeat center center;
+  }
+
+  .error__code {
+    background: url('../assets/images/403.svg') no-repeat center center;
+  }
+}
+
+.error500 {
+  .error__image {
+    background: url('../assets/images/lentach/cheap.gif') no-repeat center center;
+  }
+
+  .error__code {
+    background: url('../assets/images/500.svg') no-repeat center center;
+  }
+}
+
+// LENTACH
+
+.error_lentach {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100vh;
+
+  .error__wrapper {
+    display: flex;
+    flex-direction: row;
+  }
+
+  .error__image {
+    width: 150px;
+    height: 150px;
+    margin-top: -50px;
+    margin-right: -25px;
+    background-size: 150px 150px!important;
+  }
+
+  .error__content {
+    display: flex;
+    flex-direction: column;
+
+    .error__code {
+      width: 200px;
+      height: 100px;
+      background-size: 200px 100px;
+      margin-bottom: 20px;
+    }
+
+    .error__msg {
+      font-family: $family_open_sans;
+      font-size: 12px;
+      line-height: 21px;
+      letter-spacing: 1px;
+    }
+  }
+
+}
+
+.error404 {
+  .error__image {
+    background: url('../assets/images/lentach/dasha.gif') no-repeat center center;
+  }
+
+  .error__code {
+    background: url('../assets/images/404.svg') no-repeat center center;
+  }
+
+  .error__msg {
+    text-align: center;
+  }
+}
+
+.error403 {
+  .error__image {
+    background: url('../assets/images/lentach/cheap.gif') no-repeat center center;
+  }
+
+  .error__code {
+    background: url('../assets/images/403.svg') no-repeat center center;
+  }
+}
+
+.error500 {
+  .error__image {
+    background: url('../assets/images/lentach/cheap.gif') no-repeat center center;
+  }
+
+  .error__code {
+    background: url('../assets/images/500.svg') no-repeat center center;
+  }
+}
+

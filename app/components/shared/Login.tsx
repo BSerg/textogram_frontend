@@ -12,8 +12,8 @@ interface ILoginProps {
 }
 
 interface ILoginStateInterface {
-    phone?: string;
-    phoneError?: boolean;
+    login?: string;
+    loginError?: boolean;
     password?: string;
     passwordError?: boolean;
     passwordVisible?: boolean;
@@ -23,20 +23,17 @@ export default class Login extends React.Component<any, ILoginStateInterface> {
 
     constructor() {
         super();
-        this.state = {phone: "+7", password: "", phoneError: false, passwordError: false, passwordVisible: false}
+        this.state = {login: "", password: "", loginError: false, passwordError: false, passwordVisible: false}
     }
 
-    phoneChange(e: any) {
-        let phone: string = e.target.value;
-        if (phone.match(/^\+*\d{0,11}$/)) {
-            this.setState({phone: phone, phoneError: false, passwordError: false});
-        }
+    loginChange(e: any) {
+        this.setState({login: e.target.value, loginError: false, passwordError: false});
     }
 
     passwordChange(e: any) {
         let password: string = e.target.value;
         if (password.match(/^[^\s]*$/)) {
-            this.setState({password: password, phoneError: false, passwordError: false});
+            this.setState({password: password, loginError: false, passwordError: false});
         }
     }
 
@@ -54,14 +51,12 @@ export default class Login extends React.Component<any, ILoginStateInterface> {
     }
 
     login() {
-        let phone: string = this.state.phone;
-        phone = phone.replace('+', '');
-        UserAction.doAsync(LOGIN, {phone: phone, password: this.state.password}).then(() => {
+        let login: string = this.state.login;
+        login = login.replace('+', '');
+        UserAction.doAsync(LOGIN, {login: login, password: this.state.password}).then(() => {
             ModalAction.do(CLOSE_MODAL, null);
             this.props.onLogin && this.props.onLogin();
-        }).catch((error) => { this.setState({phoneError: true, passwordError: true}); });
-
-
+        }).catch((error) => { this.setState({loginError: true, passwordError: true}); });
     }
 
     componentDidMount() {
@@ -75,15 +70,15 @@ export default class Login extends React.Component<any, ILoginStateInterface> {
                 <div onClick={this.closeModal.bind(this)} className="close"><CloseIcon /></div>
                 <form method="post" onSubmit={this.formSubmit.bind(this)}>
                     <div>
-                        <input type="text" name="phone" value={this.state.phone}
-                               onChange={this.phoneChange.bind(this)} className={this.state.phoneError ? "error" : ""}/>
-                        <div className="hint">ЛОГИН (НОМЕР ТЕЛЕФОНА)</div>
+                        <input type="text" name="phone" value={this.state.login}
+                               onChange={this.loginChange.bind(this)} className={this.state.loginError ? "error" : ""}/>
+                        <div className="hint">ЛОГИН (НОМЕР ТЕЛЕФОНА ИЛИ E-MAIL)</div>
 
                     </div>
                     <div>
                         <input type={ this.state.passwordVisible ? "text" : "password"}
                                name="password" value={this.state.password}
-                               className={this.state.phoneError ? "error" : ""}
+                               className={this.state.loginError ? "error" : ""}
                                placeholder="Пароль"
                                onChange={this.passwordChange.bind(this)}/>
                         <div className={"hint hint_clickable" + (this.state.passwordError ? " hint_error" : "")}>ЗАБЫЛИ ПАРОЛЬ?</div>

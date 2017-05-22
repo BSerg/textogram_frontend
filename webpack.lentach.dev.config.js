@@ -1,3 +1,4 @@
+var webpack = require('webpack');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 var DefinePlugin = require('webpack/lib/DefinePlugin');
 var HTMLWebpackPluginConfig = new HtmlWebpackPlugin({
@@ -9,9 +10,10 @@ var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var CommonsChunkPlugin = require('webpack/lib/optimize/CommonsChunkPlugin');
 
 module.exports = {
-    entry: [
-        './app/index.tsx'
-    ],
+    entry: {
+        app: './app/index.tsx',
+        vendor: Object.keys(require('./package.json').dependencies)
+    },
     output: {
         path: __dirname + '/dist/lentach_dev',
         filename: 'bundle.js',
@@ -33,7 +35,7 @@ module.exports = {
             },
             {
                 test: /\.(png|jpe?g|gif|svg)$/,
-                loader: 'file-loader?name=images/[name].[ext]'
+                loader: 'file-loader?name=images/[hash].[ext]'
             },
             {
                 test: /\.(eot|ttf|woff|woff2)$/,
@@ -50,9 +52,10 @@ module.exports = {
     },
     plugins: [
         new ExtractTextPlugin('bundle.css'),
+        new webpack.optimize.CommonsChunkPlugin('vendor', 'vendor.js'),
         new DefinePlugin({
             'process.env': {
-                NODE_ENV: JSON.stringify("local"),
+                NODE_ENV: JSON.stringify("development"),
                 API_URL: JSON.stringify("http://lentachmedia.tk/api/v1"),
                 VK_APP: JSON.stringify("5951821"),
                 FB_APP: JSON.stringify("176821492828506"),

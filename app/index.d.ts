@@ -12,9 +12,11 @@ declare var twttr: any;
 
 declare var instgrm: any;
 
-declare const VK_APP_ID: string;
+declare var FB: any;
 
+declare const VK_APP_ID: string;
 
 declare class ClientJS {
     getFingerprint(): string
 }
+

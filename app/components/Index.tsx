@@ -3,6 +3,7 @@ import {Link} from 'react-router';
 import {UserAction, GET_ME, LOGIN} from '../actions/user/UserAction';
 import '../styles/lentach_index.scss';
 import LentachIndex from "./LentachIndex";
+import DefaultIndex from './DefaultIndex';
 
 
 export default class Index extends React.Component<any, any> {
@@ -30,11 +31,19 @@ export default class Index extends React.Component<any, any> {
     }
 
     redirectToProfile() {
-        if (UserAction.getStore().user && UserAction.getStore().user.id)
-            this.props.router.push('profile/' + UserAction.getStore().user.id);
+        if (UserAction.getStore().user && UserAction.getStore().user.id) {
+            if (process.env.IS_LENTACH) {
+                this.props.router.push('/' + UserAction.getStore().user.nickname);
+            }
+            else {
+                this.props.router.push('/feed');
+            }
+        }
+
     }
 
     componentDidMount() {
+        this.redirectToProfile();
         UserAction.onChange(GET_ME, this.redirectToProfile);
         UserAction.onChange(LOGIN, this.redirectToProfile);
     }
@@ -45,12 +54,6 @@ export default class Index extends React.Component<any, any> {
     }
 
     render() {
-        return (
-            process.env.IS_LENTACH ?
-                <LentachIndex/> :
-                <div className="index">
-                    <h1>__TEXTIUS__</h1>
-                </div>
-            )
+        return (process.env.IS_LENTACH ? <LentachIndex/> :<DefaultIndex />)
     }
 }
