@@ -15,6 +15,49 @@
   }
 
   .error__image {
+    display: none;
+  }
+
+  .error__content {
+    display: flex;
+    flex-direction: column;
+
+    .error__code {
+      background-size: 200px 100px!important;
+      margin-bottom: 20px;
+      font-family: $family_open_sans;
+      font-size: 100px;
+      font-weight: $font-weight-bold;
+      letter-spacing: 10px;
+      text-align: center;
+    }
+
+    .error__msg {
+      font-family: $family_open_sans;
+      font-size: 12px;
+      line-height: 21px;
+      letter-spacing: 1px;
+    }
+  }
+
+}
+
+// LENTACH
+
+.error_lentach {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100vh;
+
+  .error__wrapper {
+    display: flex;
+    flex-direction: row;
+  }
+
+  .error__image {
     width: 150px;
     height: 150px;
     margin-top: -50px;
@@ -29,7 +72,7 @@
     .error__code {
       width: 200px;
       height: 100px;
-      background-size: 200px 100px;
+      background-size: 200px 100px!important;
       margin-bottom: 20px;
     }
 
@@ -41,39 +84,38 @@
     }
   }
 
-}
+  &.error404 {
+    .error__image {
+      background: url('../assets/images/lentach/dasha.gif') no-repeat center center;
+    }
 
-.error404 {
-  .error__image {
-    background: url('../assets/images/lentach/dasha.gif') no-repeat center center;
+    .error__code {
+      background: url('../assets/images/404.svg') no-repeat center center;
+    }
+
+    .error__msg {
+      text-align: center;
+    }
   }
 
-  .error__code {
-    background: url('../assets/images/404.svg') no-repeat center center;
+  &.error403 {
+    .error__image {
+      background: url('../assets/images/lentach/cheap.gif') no-repeat center center;
+    }
+
+    .error__code {
+      background: url('../assets/images/403.svg') no-repeat center center;
+    }
   }
 
-  .error__msg {
-    text-align: center;
-  }
-}
+  &.error500 {
+    .error__image {
+      background: url('../assets/images/lentach/cheap.gif') no-repeat center center;
+    }
 
-.error403 {
-  .error__image {
-    background: url('../assets/images/lentach/cheap.gif') no-repeat center center;
-  }
-
-  .error__code {
-    background: url('../assets/images/403.svg') no-repeat center center;
-  }
-}
-
-.error500 {
-  .error__image {
-    background: url('../assets/images/lentach/cheap.gif') no-repeat center center;
-  }
-
-  .error__code {
-    background: url('../assets/images/500.svg') no-repeat center center;
+    .error__code {
+      background: url('../assets/images/500.svg') no-repeat center center;
+    }
   }
 }
 
