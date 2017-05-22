@@ -27,12 +27,17 @@ export default class Modal extends React.Component<any, IModalState> {
 
     handleOpenModal() {
         let store: any = ModalAction.getStore();
-        this.setState({opened: true, content: store.content});
+        this.setState({opened: true, content: store.content}, () => {
+            document.body.classList.add('stop-scrolling');
+        });
     }
 
     handleCloseModal() {
         let store: any = ModalAction.getStore();
-        this.setState({opened: false, content: store.content});
+        this.setState({opened: false, content: store.content}, () => {
+            document.body.classList.remove('stop-scrolling');
+
+        });
     }
 
     handleBackModal() {
