@@ -8,6 +8,7 @@ interface ILeftSideButtonProps {
     small?: boolean;
     hideDelay?: number;
     disabled?: boolean;
+    hidden?: boolean;
     hideScrollDelta?: number;
 }
 
@@ -31,7 +32,8 @@ export default class LeftSideButton extends React.Component<ILeftSideButtonProps
         small: false,
         hideDelay: 0,
         disabled: false,
-        hideScrollDelta: 100
+        hideScrollDelta: 100,
+        hidden: false
     };
 
     checkScroll() {
@@ -66,7 +68,7 @@ export default class LeftSideButton extends React.Component<ILeftSideButtonProps
         if (this.props.small) className += ' small';
         if (this.props.className) className += ' ' + this.props.className;
         if (this.props.disabled) className += ' disabled';
-        if (this.state.hidden) className += ' hidden';
+        if (this.props.hidden || this.state.hidden) className += ' hidden';
 
         let props: any = {className: className};
         if (this.props.tooltip) props['data-tooltip'] = this.props.tooltip;
