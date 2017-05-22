@@ -57,7 +57,8 @@ module.exports = {
                 API_URL: JSON.stringify("http://localhost:8000/api/v1"),
                 VK_APP: '5598086',
                 FB_APP: '1270929192923451',
-                IS_LENTACH: JSON.stringify(true)
+                IS_LENTACH: JSON.stringify(true),
+                PAYWALL_ENABLE: JSON.stringify(false)
             }
         }),
         HTMLWebpackPluginConfig

@@ -71,7 +71,8 @@ module.exports = {
                 // PROD for lentach.media
                 // "VK_APP": JSON.stringify("5955558"),
                 // "FB_APP": JSON.stringify("722837137876952"),
-                IS_LENTACH: JSON.stringify(true)
+                IS_LENTACH: JSON.stringify(true),
+                PAYWALL_ENABLE: JSON.stringify(false)
             }
         }),
         HTMLWebpackPluginConfig

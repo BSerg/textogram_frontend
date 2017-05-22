@@ -59,7 +59,8 @@ module.exports = {
                 API_URL: JSON.stringify("http://lentachmedia.tk/api/v1"),
                 VK_APP: JSON.stringify("5951821"),
                 FB_APP: JSON.stringify("176821492828506"),
-                IS_LENTACH: JSON.stringify(true)
+                IS_LENTACH: JSON.stringify(true),
+                PAYWALL_ENABLE: JSON.stringify(false)
             }
         }),
         HTMLWebpackPluginConfig
