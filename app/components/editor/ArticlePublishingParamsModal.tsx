@@ -116,30 +116,34 @@ export default class ArticlePublishingParamsModal extends React.Component<IProps
                                 disabled={this.state.article.paywall_enabled}
                                 onChange={this.handleAdsEnabledChange.bind(this)}/>
                     </div>
-                    <div onClick={this.handlePaywallEnabledChange.bind(this, !this.state.article.paywall_enabled)}
-                         className={"publishing_modal__param" + (this.state.article.paywall_enabled ? ' active' : '')}>
-                        {Captions.editor.publishPaywall}
-                        <Switch isActive={this.state.article.paywall_enabled}
-                                onChange={this.handlePaywallEnabledChange.bind(this)}/>
-                    </div>
-                    {this.state.article.paywall_enabled ?
-                        <div className="publishing_modal__paywall_price">
-                            <div className="publishing_modal__paywall_value">
-                                {Captions.editor.paywall_price}
-                                <input ref="paywallPriceInput"
-                                       type="number"
-                                       placeholder={Captions.editor.enter_paywall_price}
-                                       value={this.state.article.paywall_price}
-                                       onChange={this.handlePaywallPrice.bind(this)}
-                                       min="0" max="100000" step="1"/>
-                                {(Captions as any).shared.currency[this.state.article.paywall_currency]}
-                            </div>
 
-                                <div className="publishing_modal__paywall_help">
-                                    {Captions.editor.paywall_price_tax_help} {this.calcPaywallPrice(this.state.article.paywall_price)}{(Captions as any).shared.currency[this.state.article.paywall_currency]}
-                                </div>
-                        </div> : null
+                    {process.env.PAYWALL_ENABLE ?
+                        [
+                            <div key="paywallSwitch" onClick={this.handlePaywallEnabledChange.bind(this, !this.state.article.paywall_enabled)}
+                                 className={"publishing_modal__param" + (this.state.article.paywall_enabled ? ' active' : '')}>
+                                {Captions.editor.publishPaywall}
+                                <Switch isActive={this.state.article.paywall_enabled}
+                                        onChange={this.handlePaywallEnabledChange.bind(this)}/>
+                            </div>,
+                            this.state.article.paywall_enabled ?
+                                <div key="paywallPrice" className="publishing_modal__paywall_price">
+                                    <div className="publishing_modal__paywall_value">
+                                        {Captions.editor.paywall_price}
+                                        <input ref="paywallPriceInput"
+                                               type="number"
+                                               placeholder={Captions.editor.enter_paywall_price}
+                                               value={this.state.article.paywall_price}
+                                               onChange={this.handlePaywallPrice.bind(this)}
+                                               min="0" max="100000" step="1"/>
+                                        {(Captions as any).shared.currency[this.state.article.paywall_currency]}
+                                    </div>
+                                    <div className="publishing_modal__paywall_help">
+                                        {Captions.editor.paywall_price_tax_help} {this.calcPaywallPrice(this.state.article.paywall_price)}{(Captions as any).shared.currency[this.state.article.paywall_currency]}
+                                    </div>
+                                </div> : null
+                            ] : null
                     }
+
                 </div>
                 <div className={"publishing_modal__publish" + (this.state.blockPublish ? ' disabled' : '')}
                      onClick={this.publish.bind(this)}>
