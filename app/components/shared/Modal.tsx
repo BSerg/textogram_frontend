@@ -21,16 +21,23 @@ export default class Modal extends React.Component<any, IModalState> {
         this.handleOpenModal = this.handleOpenModal.bind(this);
         this.handleCloseModal = this.handleCloseModal.bind(this);
         this.handleBackModal = this.handleBackModal.bind(this);
+        this.handleKeyDown = this.handleKeyDown.bind(this);
+        this.handleScroll = this.handleScroll.bind(this);
     }
 
     handleOpenModal() {
         let store: any = ModalAction.getStore();
-        this.setState({opened: true, content: store.content});
+        this.setState({opened: true, content: store.content}, () => {
+            document.body.classList.add('stop-scrolling');
+        });
     }
 
     handleCloseModal() {
         let store: any = ModalAction.getStore();
-        this.setState({opened: false, content: store.content});
+        this.setState({opened: false, content: store.content}, () => {
+            document.body.classList.remove('stop-scrolling');
+
+        });
     }
 
     handleBackModal() {
@@ -38,16 +45,28 @@ export default class Modal extends React.Component<any, IModalState> {
         this.setState({opened: this.state.opened, content: store.content});
     }
 
+    handleKeyDown(e: KeyboardEvent) {
+        if (this.state.opened && e.keyCode == 27) {
+            this.handleCloseModal();
+        }
+    }
+
+    handleScroll(e: Event) {
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    e.preventDefault();
+    }
+
     componentDidMount() {
         ModalAction.onChange(OPEN_MODAL, this.handleOpenModal);
         ModalAction.onChange(CLOSE_MODAL, this.handleCloseModal);
         ModalAction.onChange(BACK_MODAL, this.handleBackModal);
+        document.addEventListener('keydown', this.handleKeyDown);
     }
 
     componentWillUnmount() {
         ModalAction.unbind(OPEN_MODAL, this.handleOpenModal);
         ModalAction.unbind(CLOSE_MODAL, this.handleCloseModal);
         ModalAction.unbind(BACK_MODAL, this.handleBackModal);
+        document.removeEventListener('keydown', this.handleKeyDown);
     }
 
     render() {

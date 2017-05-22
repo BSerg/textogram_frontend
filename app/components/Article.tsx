@@ -54,6 +54,9 @@ interface IArticle {
     url: string;
     short_url?: string;
     ads_enabled?: boolean,
+    paywall_enabled?: boolean,
+    paywall_price?: number,
+    paywall_currency?: string,
     advertisement?: any,
     inverted_theme?: boolean
 }
@@ -115,6 +118,10 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
             article.date = moment().locale('ru').calendar(null, calendarParams);
         } else {
             article.date = moment(article.published_at).locale('ru').calendar(null, calendarParams);
+        }
+
+        if (typeof article.paywall_price != 'undefined') {
+            article.paywall_price = article.paywall_price == Math.floor(article.paywall_price) ? Math.floor(article.paywall_price) : article.paywall_price;
         }
         return article;
     }
@@ -516,9 +523,15 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
 
                         {/* CONTENT */}
                         <div className="article__content_wrapper">
-                            <div className="article__content"
-                                 style={shiftContentStyle}
-                                 dangerouslySetInnerHTML={{__html: this.state.article.html}}/>
+                            {this.state.article.paywall_enabled && !this.state.article.html ?
+                                <div className="article__content article__denied">
+                                    Доступ к статье ограничен! Вы можете приобрести доступ за {this.state.article.paywall_price}{(Captions as any).shared.currency[this.state.article.paywall_currency]}
+                                </div> :
+                                <div className="article__content"
+                                     style={shiftContentStyle}
+                                     dangerouslySetInnerHTML={{__html: this.state.article.html}}/>
+                            }
+
                         </div>
 
                         {/* FOOTER */}

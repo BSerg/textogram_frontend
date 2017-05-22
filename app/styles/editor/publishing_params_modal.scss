@@ -1,0 +1,176 @@
+@import "../contstants";
+@import "../mixins";
+
+
+.publishing_modal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  color: white;
+  background-color: $color;
+
+  .publishing_modal__header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 50px;
+    text-align: center;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+
+    .publishing_modal__back {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 50px;
+      height: 50px;
+      fill: white;
+    }
+  }
+
+  .publishing_modal__content {
+    flex: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: calc(100% - #{$padding}*4);
+
+    .publishing_modal__param {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      text-transform: uppercase;
+      color: white;
+      margin: $margin 0;
+      font-size: 12px;
+      letter-spacing: 1px;
+
+      &:not(.active) {
+        color: $color5;
+      }
+    }
+  }
+
+  .publishing_modal__publish {
+    width: 100%;
+    height: 50px;
+    line-height: 50px;
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-align: center;
+    cursor: pointer;
+
+    &.disabled {
+      color: $color5;
+      cursor: auto;
+    }
+  }
+
+  .publishing_modal__close {
+    display: none;
+  }
+
+  .publishing_modal__paywall_price {
+    display: flex;
+    flex-direction: column;
+
+      .publishing_modal__paywall_value {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        text-transform: uppercase;
+        color: white;
+        font-size: 12px;
+        letter-spacing: 1px;
+
+
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button {
+          -webkit-appearance: none;
+          margin: 0;
+        }
+
+        input {
+          flex: auto;
+          width: 100%;
+          color: white;
+          background-color: $color;
+          border: none;
+          outline: none;
+          font-family: $family_open_sans;
+          font-size: 12px;
+          line-height: 30px;
+          letter-spacing: 1px;
+          text-align: right;
+        }
+      }
+
+      .publishing_modal__paywall_help {
+        font-family: $family_open_sans;
+        font-size: 10px;
+        line-height: 14px;
+        letter-spacing: 1px;
+        color: $color3;
+        text-align: right;
+      }
+  }
+
+  @include desktop {
+    position: relative;
+    align-self: center;
+    justify-self: center;
+    width: 500px;
+    height: 400px;
+
+    .publishing_modal__header {
+      width: 100%;
+      height: 75px;
+      background-color: $color8;
+    }
+
+    .publishing_modal__back {
+      display: none;
+    }
+
+    .publishing_modal__content {
+      width: 200px;
+    }
+
+    .publishing_modal__param {
+      cursor: pointer;
+
+      &.disabled {
+        cursor: auto;
+      }
+    }
+
+    .publishing_modal__publish {
+      width: 250px;
+      margin: 30px;
+      background-color: $color8;
+    }
+
+    .publishing_modal__close {
+      position: absolute;
+      top: 0;
+      right: -50px;
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+
+      svg {
+        width: 30px;
+        height: 30px;
+        fill: white;
+      }
+    }
+  }
+}

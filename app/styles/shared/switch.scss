@@ -35,7 +35,11 @@ $width: 36px;
 
     .switch__switcher {
       left: 0;
-      background-color: $color;
+      background-color: $color8;
     }
+  }
+
+  &.disabled {
+    opacity: 0.5;
   }
 }

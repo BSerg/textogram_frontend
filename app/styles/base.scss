@@ -31,3 +31,8 @@ html {
 ::selection {
   color: white; background: $color;
 }
+
+.stop-scrolling {
+  height: 100%;
+  overflow: hidden;
+}

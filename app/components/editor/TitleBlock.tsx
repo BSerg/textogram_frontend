@@ -1,18 +1,24 @@
+
 import * as React from "react";
 import {Captions, Validation} from "../../constants";
 import ContentEditable from "../shared/ContentEditable";
 import {
-    UploadImageAction, UPLOAD_IMAGE, UPLOAD_IMAGE_BASE64,
+    UploadImageAction,
+    UPLOAD_IMAGE,
+    UPLOAD_IMAGE_BASE64,
     CANCEL_UPLOAD_IMAGE
 } from "../../actions/editor/UploadImageAction";
 import {
-    ContentAction, UPDATE_TITLE_CONTENT, UPDATE_COVER_CONTENT,
-    RESET_CONTENT, UPDATE_THEME_CONTENT, SAVING_PROCESS
+    ContentAction,
+    UPDATE_TITLE_CONTENT,
+    UPDATE_COVER_CONTENT,
+    RESET_CONTENT,
+    UPDATE_THEME_CONTENT,
+    SAVING_PROCESS
 } from "../../actions/editor/ContentAction";
 import {api} from "../../api";
 import {NotificationAction, SHOW_NOTIFICATION} from "../../actions/shared/NotificationAction";
 import {Validator} from "./utils";
-import ImageEditor from "../shared/ImageEditor";
 import {MediaQuerySerice} from "../../services/MediaQueryService";
 import "../../styles/editor/title_block.scss";
 import Switch from "../shared/Switch";

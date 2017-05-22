@@ -36,9 +36,11 @@ export namespace Captions {
         content_dialog: 'Диалог',
         content_post: 'Пост',
         publish: 'Опубликовать',
+        publishUpdate: 'Обновить публикацию',
         publishingParams: 'Настройки публикации',
         publishAds: 'Реклама',
         publishLink: 'Доступ по ссылке',
+        publishPaywall: 'Paywall',
         error_embed_url: 'Некорректная ссылка',
         help_embed_video: 'Youtube, Vimeo, VK, Facebook',
         help_embed_audio: 'SoundCloud, Yandex Music, PromoDJ',
@@ -56,6 +58,7 @@ export namespace Captions {
         loading_audio: 'Загрузка аудио',
         loading_post: 'Загрузка поста',
         saving_error: 'Что-то пошло не так. Мы не можем сохранить эту публикацию.',
+        publishing_error: 'Что-то пошло не так. Мы не можем опубликовать эту публикацию.',
         article_created: 'Статья сохранена в черновиках',
         deleted_text_block: 'Текстовый блок удален',
         deleted_header_block: 'Заголовок удален',
@@ -72,12 +75,23 @@ export namespace Captions {
         restore: 'Восстановить',
         clear: 'Очистить',
         onDangerousExit: 'Несохраненные данные могут быть потеряны! Вы уверены, что хотите выйти?',
+        paywall_price: 'Стоимость',
+        enter_paywall_price: 'Введите стоимость',
+        paywall_price_tax_help: 'Стоимость доступа с учетом комиссии составит:',
     };
 
     export const shared = {
         confirmLabel: 'OK',
         cancelLabel: 'Отмена',
-        linkCopied: 'Ссылка скопирована в буфер обмена'
+        linkCopied: 'Ссылка скопирована в буфер обмена',
+        currency: {
+            RUR: '₽',
+            USD: '$',
+            EUR: '€'
+        },
+        articleRestrictedHeader: 'Доступ к статье ограничен',
+        articleRestrictedPriceCaption: 'Стоимость доступа',
+        toBuyAccessToArticle: 'Купить',
     };
 
     export const profile = {
@@ -225,6 +239,7 @@ export namespace Constants {
     export const maxImageSize = 5 * 1024 * 1024;
     export const notificationIntervalTime = 300000;
     export const desktopWidth = 1024;
+    export const paywallDefaultPriceRUR = 100;
 }
 
 export enum BlockContentTypes {

@@ -7,7 +7,6 @@ var HTMLWebpackPluginConfig = new HtmlWebpackPlugin({
     inject: 'body'
 });
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
-var CommonsChunkPlugin = require('webpack/lib/optimize/CommonsChunkPlugin');
 
 module.exports = {
     entry: {
@@ -15,9 +14,8 @@ module.exports = {
         vendor: Object.keys(require('./package.json').dependencies)
     },
     output: {
-        path: __dirname + '/dist/lentach_dev',
+        path: '/home/serega/projects/textogram/static',
         filename: 'bundle.js',
-        // vendor: ['article']
     },
     devtool: "source-map",
     resolve: {
@@ -55,10 +53,10 @@ module.exports = {
         new webpack.optimize.CommonsChunkPlugin('vendor', 'vendor.js'),
         new DefinePlugin({
             'process.env': {
-                NODE_ENV: JSON.stringify("development"),
-                API_URL: JSON.stringify("http://lentachmedia.tk/api/v1"),
-                VK_APP: JSON.stringify("5951821"),
-                FB_APP: JSON.stringify("176821492828506"),
+                NODE_ENV: JSON.stringify("local"),
+                API_URL: JSON.stringify("http://localhost:8000/api/v1"),
+                VK_APP: '5598086',
+                FB_APP: '1270929192923451',
                 IS_LENTACH: JSON.stringify(true),
                 PAYWALL_ENABLE: JSON.stringify(false)
             }
