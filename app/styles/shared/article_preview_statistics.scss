@@ -1,0 +1,159 @@
+@import "../contstants";
+@import "../mixins";
+
+.article_preview_statistics {
+  width: 100%;
+  max-width: 600px;
+  box-sizing: border-box;
+
+  padding: $padding / 2;
+  margin-bottom: $margin;
+  background-color: #FFFFFF;
+
+  cursor: pointer;
+
+  &:hover {
+    background-color: #FAFAFA;
+  }
+
+  .article_preview_statistics__title {
+    margin-bottom: $margin;
+    a {
+      font-size: 17px;
+      font-weight: $font-weight-bold;
+      color: $color;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+  }
+
+  .article_preview_statistics__info {
+    font-size: 12px;
+    &>div {
+
+      display: inline-block;
+      margin: 0 10px 0 0;
+
+      &>span {
+        margin-left: 10px;
+        font-weight: $font-weight-bold;
+      }
+    }
+  }
+}
+
+.article_preview_statistics__modal {
+  width: 100%;
+  max-width: 800px;
+  box-sizing: border-box;
+  padding: $padding;
+  background-color: #FFFFFF;
+  height: 100%;
+  max-height: 800px;
+  color: $color;
+
+  position: relative;
+
+  overflow-y: scroll;
+
+  .close {
+    width: 20px;
+    height: 20px;
+    line-height: 30px;
+    text-align: center;
+    cursor: pointer;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+
+
+    svg {
+      width: 20px;
+      height: 20px;
+      fill: #000000;
+    }
+  }
+
+  h2, h3 {
+    font-size: 17px;
+    font-weight: $font-weight-bold;
+    text-align: center;
+    margin-bottom: $margin * 2;
+    a {
+      text-decoration: none;
+      color: $color;
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  h2 {
+    font-size: 19px;
+    padding: 0 5px;
+  }
+
+  h3 {
+    font-size: 16px;
+    text-transform: uppercase;
+  }
+
+
+  .article_preview_statistics__modal_pies {
+    text-align: center;
+    width: 100%;
+    margin-bottom: $margin;
+    &>div {
+      max-width: 250px;
+      display: inline-block;
+    }
+  }
+
+
+  .article_preview_statistics__modal_views_menu {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+    width: 100%;
+
+    span {
+      margin: 0 5px;
+      font-size: 11px;
+      cursor: pointer;
+
+      &.active {
+        font-weight: $font-weight-bold;
+      }
+
+    }
+
+  }
+
+
+
+
+}
+
+@media (min-width: 1024px) {
+
+  .article_preview_statistics {
+    max-width: 800px;
+    padding: $padding;
+  }
+
+  .article_preview_statistics__modal {
+
+    .article_preview_statistics__modal_views_menu {
+      span {
+        font-size: 14px;
+      }
+    }
+
+  }
+
+}

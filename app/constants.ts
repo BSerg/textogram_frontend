@@ -127,7 +127,7 @@ export namespace Captions {
         login: "Войти",
     };
 
-    export const management = {
+    export const management: any = {
         title: "Управление профилем",
         usernamePlaceholder: "Введите имя",
         sectionAccount: 'Аккаунт',
@@ -155,7 +155,33 @@ export namespace Captions {
         drafts: "Черновики",
         draftDelete: "удалить",
 
-        avatarSave: "Сохранить"
+        avatarSave: "Сохранить",
+
+
+        audience: "Аудитория",
+
+        views_today: "За сегодня",
+        views_month: "За месяц",
+        views_last_month: "За предыдущий месяц",
+
+        age_17: "Моложе 18 лет",
+        age_18: "От 18 до 24 лет",
+        age_25: "От 25 до 34 лет",
+        age_35: "От 35 до 44 лет",
+        age_45: "Старше 45 лет",
+
+        males: "Мужчины",
+        females: "Женищины",
+
+        age: "Возраст",
+        gender: "Пол",
+        views: "Просмотры",
+
+        today_chart: "Сегодня",
+        last_day_chart: "Вчера",
+        month_chart: "Месяц",
+        last_month_chart: "Прошлый месяц",
+        full_chart: "Все",
 
     };
 
@@ -197,7 +223,7 @@ export namespace Captions {
 
 export namespace Constants {
     export const maxImageSize = 5 * 1024 * 1024;
-    export const notificationIntervalTime = 10000;
+    export const notificationIntervalTime = 300000;
     export const desktopWidth = 1024;
 }
 

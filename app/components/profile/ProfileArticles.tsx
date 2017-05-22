@@ -29,6 +29,7 @@ export default class ProfileArticles extends React.Component<IArticlesProps, IAr
     SECTION_FEED: string = 'feed';
     SECTION_ARTICLES: string = 'articles';
     SECTION_DRAFTS = 'drafts';
+    SECTION_STATISTICS = 'statistics';
 
     refs: {
         main: HTMLDivElement;
@@ -42,6 +43,19 @@ export default class ProfileArticles extends React.Component<IArticlesProps, IAr
         this.handleScroll = this.handleScroll.bind(this);
     }
 
+    getApiUrl(): string {
+        let url: string;
+
+        switch (this.props.section) {
+            case (this.SECTION_STATISTICS):
+                url = '/statistics/articles';
+                break;
+            default:
+                url = '/articles/';
+        }
+        return url;
+    }
+
     loadArticles(more: boolean = false) {
 
         let items: any[] = more ? this.state.items : [];
@@ -52,7 +66,7 @@ export default class ProfileArticles extends React.Component<IArticlesProps, IAr
 
         this.setState({items: items, isLoading: true}, () => {
 
-            let apiUrl = more ? this.state.nextUrl : '/articles/';
+            let apiUrl = more ? this.state.nextUrl : this.getApiUrl();
             let requestParams: any = {};
             if (!more) {
                 if (this.state.section == this.SECTION_ARTICLES) {
@@ -64,8 +78,11 @@ export default class ProfileArticles extends React.Component<IArticlesProps, IAr
                 else if (this.state.section == this.SECTION_FEED) {
                     requestParams.feed = true;
                 }
+                if (this.state.searchString) {
+                    requestParams.q = this.state.searchString;
+                }
 
-                requestParams.search = this.state.searchString;
+
             }
 
             api.get(apiUrl, {cancelToken: this.state.cancelSource.token, params: requestParams}).then((response: any) => {
@@ -138,7 +155,7 @@ export default class ProfileArticles extends React.Component<IArticlesProps, IAr
                 </div>
 
                 { this.state.items.map((item: any, index: number) => {
-                    return this.props.section == 'statistics' ?
+                    return this.props.section == this.SECTION_STATISTICS ?
                         <ArticlePreviewStatistics item={item} key={index}/> :
                         <ArticlePreview isFeed={isFeed} key={index} item={item} isOwner={isOwner} index={index} />
 

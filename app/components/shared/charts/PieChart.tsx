@@ -119,7 +119,7 @@ export default class PieChart extends React.Component<IChartProps, IChartState> 
         ctx.arc(this.refs.canvas.width / 2, this.refs.canvas.height / 2, radius, start, end, false);
         ctx.lineTo(this.refs.canvas.width / 2, this.refs.canvas.height / 2);
         ctx.fill();
-        ctx.stroke();
+        //ctx.stroke();
         ctx.globalAlpha = 1;
     }
 

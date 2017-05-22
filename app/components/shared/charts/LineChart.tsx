@@ -35,8 +35,8 @@ export  default class LineChart extends React.Component<IChartProps, IChartState
     OFFSET_TOP: number = 60;
     OFFSET_BOTTOM: number = 60;
 
-    POINT_RADIUS: number = 6;
-    LINE_WIDTH: number = 4;
+    POINT_RADIUS: number = 4;
+    LINE_WIDTH: number = 2;
     FONT_SIZE: number = 13;
 
 
