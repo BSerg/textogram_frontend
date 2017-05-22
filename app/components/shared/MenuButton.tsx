@@ -31,7 +31,7 @@ export default class MenuButton extends React.Component<MenuButtonPropsInterface
     static defaultProps = {
         disabled: false,
         hideDelay: 0,
-        hideScrollDelta: 50
+        hideScrollDelta: 100
     };
 
     handleClick() {
@@ -43,24 +43,16 @@ export default class MenuButton extends React.Component<MenuButtonPropsInterface
         if (scrollTop == 0) {
             this.setState({hidden: false});
         }
-        if (scrollTop > this.lastScrollPosition){
-            this.scrollDelta = 0;
-            if (this.scrollDirection != 'down') {
-                this.scrollDirection = 'down';
-                this.hideTimeout = window.setTimeout(() => {
-                    this.setState({hidden: true});
-                }, this.props.hideDelay);
-            }
+        if (scrollTop >= this.lastScrollPosition){
+            this.scrollDelta += (scrollTop - this.lastScrollPosition);
         } else {
-            if (this.scrollDirection != 'up') {
-                this.scrollDirection = 'up';
-            } else {
-                this.scrollDelta += (scrollTop - this.lastScrollPosition);
-            }
+            this.scrollDelta = 0;
+            this.setState({hidden: false});
         }
-        if (this.scrollDelta <= -this.props.hideScrollDelta) {
+        if (this.scrollDelta > this.props.hideScrollDelta) {
+            window.clearTimeout(this.hideTimeout);
             this.hideTimeout = window.setTimeout(() => {
-                this.setState({hidden: false});
+                this.setState({hidden: true});
             }, this.props.hideDelay);        }
         this.lastScrollPosition = scrollTop;
     }

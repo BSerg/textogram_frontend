@@ -7,7 +7,8 @@ interface ILeftSideButtonProps {
     onClick?: () => any;
     small?: boolean;
     hideDelay?: number;
-    disabled?: boolean
+    disabled?: boolean;
+    hideScrollDelta?: number;
 }
 
 export default class LeftSideButton extends React.Component<ILeftSideButtonProps, any> {
@@ -29,7 +30,8 @@ export default class LeftSideButton extends React.Component<ILeftSideButtonProps
     static defaultProps = {
         small: false,
         hideDelay: 0,
-        disabled: false
+        disabled: false,
+        hideScrollDelta: 100
     };
 
     checkScroll() {
@@ -37,24 +39,16 @@ export default class LeftSideButton extends React.Component<ILeftSideButtonProps
         if (scrollTop == 0) {
             this.setState({hidden: false});
         }
-        if (scrollTop > this.lastScrollPosition){
-            this.scrollDelta = 0;
-            if (this.scrollDirection != 'down') {
-                this.scrollDirection = 'down';
-                this.hideTimeout = window.setTimeout(() => {
-                    this.setState({hidden: true});
-                }, this.props.hideDelay);
-            }
+        if (scrollTop >= this.lastScrollPosition){
+            this.scrollDelta += (scrollTop - this.lastScrollPosition);
         } else {
-            if (this.scrollDirection != 'up') {
-                this.scrollDirection = 'up';
-            } else {
-                this.scrollDelta += (scrollTop - this.lastScrollPosition);
-            }
+            this.scrollDelta = 0;
+            this.setState({hidden: false});
         }
-        if (this.scrollDelta <= -20) {
+        if (this.scrollDelta > this.props.hideScrollDelta) {
+            window.clearTimeout(this.hideTimeout);
             this.hideTimeout = window.setTimeout(() => {
-                this.setState({hidden: false});
+                this.setState({hidden: true});
             }, this.props.hideDelay);        }
         this.lastScrollPosition = scrollTop;
     }
