@@ -32,7 +32,7 @@ module.exports = {
             },
             {
                 test: /\.scss$/,
-                loader: ExtractTextPlugin.extract('style', 'css!sass?sourceMap'),
+                loader: ExtractTextPlugin.extract('style', 'css!postcss!sass?sourceMap'),
             },
             {
                 test: /\.(png|jpe?g|gif|svg)$/,
@@ -50,6 +50,12 @@ module.exports = {
         preLoaders: [
             { test: /\.jsx?$/, loader: "source-map-loader" }
         ]
+    },
+    postcss: function() {
+        return [
+            require('precss'),
+            require('autoprefixer')
+        ];
     },
     plugins: [
         new ExtractTextPlugin('bundle.css'),
