@@ -160,6 +160,9 @@ export  default class LineChart extends React.Component<IChartProps, IChartState
     }
 
     redraw() {
+        if (this.state.values.length <= 1) {
+            return;
+        }
         this.state.animateTimeout && window.clearTimeout(this.state.animateTimeout);
         let ctx = this.refs.canvas.getContext('2d');
 
