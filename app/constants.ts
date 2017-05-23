@@ -178,6 +178,7 @@ export namespace Captions {
         views_today: "За сегодня",
         views_month: "За месяц",
         views_last_month: "За предыдущий месяц",
+        views_total: "Всего",
 
         age_17: "Моложе 18 лет",
         age_18: "От 18 до 24 лет",
@@ -191,6 +192,8 @@ export namespace Captions {
         age: "Возраст",
         gender: "Пол",
         views: "Просмотры",
+        views_alt: "Просмотров",
+
 
         today_chart: "Сегодня",
         last_day_chart: "Вчера",
@@ -233,7 +236,7 @@ export namespace Captions {
         otherBlockText: "У Текстиуса есть система подписок на любимых авторов, но на этом социальная составляющая ограничивается.\n\nМы все устали от бесполезных лайков и комментариев. Обратная связь в Тексиус — это показатель дохода, хорошей статистики текстов и реально заработанных денег.",
         mainBlockCaption: "Самое главное",
         mainBlockText: "Текстиус дает три инструмента монетизации:\n\n* paywall\n* баннерный обвес\n* нативная реклама\n\nАвтор сам решает какой вид рекламы для него предпочтителен."
-    }
+    };
 }
 
 export namespace Constants {
@@ -241,6 +244,13 @@ export namespace Constants {
     export const notificationIntervalTime = 300000;
     export const desktopWidth = 1024;
     export const paywallDefaultPriceRUR = 100;
+}
+
+export namespace APIData {
+    export const ages: string[] = ['age_17', 'age_18', 'age_25', 'age_35', 'age_45'];
+    export const views: string[] = ['views_today', 'views_month', 'views_last_month', 'views_total'];
+
+
 }
 
 export enum BlockContentTypes {

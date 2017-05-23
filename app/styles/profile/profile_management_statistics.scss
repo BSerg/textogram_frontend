@@ -1,0 +1,70 @@
+@import "../contstants";
+@import "../mixins";
+
+.profile_management_statistics {
+  h2 {
+    text-align: center;
+    text-transform: uppercase;
+    margin: $margin * 2 0;
+    font-size: 13px;
+    font-weight: $font-weight-bold;
+  }
+}
+
+.profile_management_statistics_view {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 5px;
+  span {
+    font-size: 10px;
+
+    &:first-child {
+      margin-bottom: 10px;
+    }
+
+    &:last-child {
+      font-size: 12px;
+      font-weight: $font-weight-bold;
+    }
+  }
+}
+
+
+.profile_management_statistics_block {
+
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+
+  &>div {
+    max-width: 250px;
+  }
+
+}
+
+@media (min-width: 1024px) {
+
+  .profile_management_statistics {
+    h2 {
+      font-size: 15px;
+    }
+  }
+
+
+  .profile_management_statistics_block {
+    justify-content: center;
+  }
+
+  .profile_management_statistics_view {
+    margin: 0 40px;
+    span {
+      font-size: 12px;
+
+      &:last-child {
+        font-size: 14px;
+      }
+    }
+
+  }
+}
