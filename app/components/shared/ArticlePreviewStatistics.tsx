@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {Link} from 'react-router';
 import '../../styles/shared/article_preview_statistics.scss';
-import {Captions} from '../../constants';
+import {Captions, APIData} from '../../constants';
 import {api} from '../../api';
 import axios from 'axios';
 import {ModalAction, OPEN_MODAL, CLOSE_MODAL} from '../../actions/shared/ModalAction';
@@ -11,6 +11,8 @@ import PieChart from './charts/PieChart';
 import LineChart from './charts/LineChart';
 
 const CloseIcon = require('babel!svg-react!../../assets/images/close.svg?name=CloseIcon');
+
+// let AGES: string[] = ['age_17', 'age_18', 'age_25', 'age_35', 'age_45'];
 
 class ArticleStatisticsModal extends React.Component<{item: any}, {isLoading?: boolean, itemData?: any, viewChart?: string, cancelSource?: any}> {
 
@@ -26,12 +28,11 @@ class ArticleStatisticsModal extends React.Component<{item: any}, {isLoading?: b
     }
 
     processData(data: any): any {
-        console.log(data);
 
         let finalData: any = {};
 
         let ageChartData: any = [];
-        ['age_17', 'age_18', 'age_25', 'age_35', 'age_45'].forEach((k: string) => {
+        APIData.ages.forEach((k: string) => {
             if (data[k] && Captions.management[k]) {
                 ageChartData.push({label: Captions.management[k], value: data[k]});
             }
@@ -54,8 +55,6 @@ class ArticleStatisticsModal extends React.Component<{item: any}, {isLoading?: b
         });
 
         finalData.lineCharts = lineCharts;
-
-        console.log(finalData);
 
         return finalData;
     }

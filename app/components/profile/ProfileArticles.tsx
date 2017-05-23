@@ -43,16 +43,28 @@ export default class ProfileArticles extends React.Component<IArticlesProps, IAr
         this.handleScroll = this.handleScroll.bind(this);
     }
 
-    getApiUrl(): string {
+    getApiUrl(searchString: string = ''): string {
         let url: string;
 
-        switch (this.props.section) {
-            case (this.SECTION_STATISTICS):
-                url = '/statistics/articles';
-                break;
-            default:
-                url = '/articles/';
+        if (searchString) {
+            switch (this.props.section) {
+                case (this.SECTION_STATISTICS):
+                    url = '/statistics/articles/search/';
+                    break;
+                default:
+                    url = '/articles/search/';
+            }
         }
+        else {
+            switch (this.props.section) {
+                case (this.SECTION_STATISTICS):
+                    url = '/statistics/articles';
+                    break;
+                default:
+                    url = '/articles/';
+            }
+        }
+
         return url;
     }
 
@@ -66,7 +78,7 @@ export default class ProfileArticles extends React.Component<IArticlesProps, IAr
 
         this.setState({items: items, isLoading: true}, () => {
 
-            let apiUrl = more ? this.state.nextUrl : this.getApiUrl();
+            let apiUrl = more ? this.state.nextUrl : this.getApiUrl(this.state.searchString);
             let requestParams: any = {};
             if (!more) {
                 if (this.state.section == this.SECTION_ARTICLES) {
