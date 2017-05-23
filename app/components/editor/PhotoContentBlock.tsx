@@ -8,21 +8,28 @@ import {
 } from "../../actions/editor/ContentBlockAction";
 import {ModalAction, OPEN_MODAL} from "../../actions/shared/ModalAction";
 import {
-    DELETE_CONTENT_BLCK, ContentAction, IContentData, UPDATE_CONTENT_BLCK,
-    MOVE_DOWN_CONTENT_BLCK, MOVE_UP_CONTENT_BLCK
+    DELETE_CONTENT_BLCK,
+    ContentAction,
+    IContentData,
+    UPDATE_CONTENT_BLCK,
+    MOVE_DOWN_CONTENT_BLCK,
+    MOVE_UP_CONTENT_BLCK
 } from "../../actions/editor/ContentAction";
 import ContentBlockPopup from "./ContentBlockPopup";
 import {PopupPanelAction, OPEN_POPUP, CLOSE_POPUP} from "../../actions/shared/PopupPanelAction";
-import {UploadImageAction, UPLOAD_IMAGE, UPDATE_PROGRESS} from "../../actions/editor/UploadImageAction";
+import {
+    UploadImageAction, UPLOAD_IMAGE, UPDATE_PROGRESS,
+    CANCEL_UPLOAD_IMAGE
+} from "../../actions/editor/UploadImageAction";
 import ProgressBar, {PROGRESS_BAR_TYPE} from "../shared/ProgressBar";
 import {DesktopBlockToolsAction, UPDATE_TOOLS} from "../../actions/editor/DesktopBlockToolsAction";
 import PopupPrompt from "../shared/PopupPrompt";
 import {PhotoModal} from "./PhotoModal";
 import {MediaQuerySerice} from "../../services/MediaQueryService";
 import "../../styles/editor/photo_content_block.scss";
-import Sortable = require('sortablejs');
 import ContentEditable from "../shared/ContentEditable";
 import {NotificationAction, SHOW_NOTIFICATION} from "../../actions/shared/NotificationAction";
+import Sortable = require('sortablejs');
 
 const AddButton = require('babel!svg-react!../../assets/images/desktop_editor_icon_gallery.svg?name=AddButton');
 const DeleteButton = require('babel!svg-react!../../assets/images/editor_delete.svg?name=DeleteButton');
@@ -338,14 +345,21 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
                     let tempURL = window.URL.createObjectURL(files[index+1]);
                     this._uploadPhoto(index + 1, {id: null, image: tempURL}, files);
                 } else {
-                    this.setState({
-                        loadingImage: false,
-                        loadingImageAmount: 0,
-                        loadingImageLoaded: 0,
-                        loadingImageFilename: null
-                    });
+                    this._uploadFinished();
                 }
             });
+        });
+    }
+
+    _uploadFinished(callback: () => any | null = null) {
+        this.setState({
+            imageUploadProgress: null,
+            loadingImage: false,
+            loadingImageAmount: 0,
+            loadingImageLoaded: 0,
+            loadingImageFilename: null
+        }, () => {
+            callback && callback();
         });
     }
 
@@ -373,6 +387,23 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
             PopupPanelAction.do(OPEN_POPUP, {content: this.getPopupContent()});
             DesktopBlockToolsAction.do(UPDATE_TOOLS, {position: this.getPosition(), tools: this.getDesktopToolsContent()})
             ContentAction.do(UPDATE_CONTENT_BLCK, {contentBlock: this.state.content});
+        });
+    }
+
+    cancelUpload() {
+        this._uploadFinished(() => {
+            let photos: IPhoto[] = [];
+            this.state.content.photos.forEach((photo: IPhoto) => {
+                if (photo.id) {
+                    photos.push(photo);
+                }
+            });
+            this.state.content.photos = photos;
+            this.setState({content: this.state.content}, () => {
+                UploadImageAction.do(CANCEL_UPLOAD_IMAGE, null);
+                NotificationAction.do(SHOW_NOTIFICATION, {content: Captions.editor.photo_upload_canceled});
+                ContentAction.do(UPDATE_CONTENT_BLCK, {contentBlock: this.state.content});
+            });
         });
     }
 
@@ -535,7 +566,8 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
                                  value={this.state.loadingImageLoaded + (this.state.imageUploadProgress.total ? this.state.imageUploadProgress.progress / this.state.imageUploadProgress.total : 0)}
                                  total={this.state.loadingImageAmount}
                                  className={this.state.loadingImage ? 'active' : ''}
-                                 label={`${Captions.editor.loading_image} (${this.state.loadingImageFilename})`}/>
+                                 label={`${Captions.editor.loading_image} (${this.state.loadingImageFilename})`}
+                                 onCancel={this.cancelUpload.bind(this)}/>
                         : null
                 }
                 <input id={"inputUpload" + this.props.content.id}
