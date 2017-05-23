@@ -53,6 +53,7 @@
     opacity: 1;
     visibility: visible;
     position: fixed;
+    z-index: 10;
     padding: 5px;
 
     box-sizing: border-box;
@@ -61,7 +62,7 @@
     font-size: 13px;
     font-family: $family_open_sans;
 
-    min-width: 120px;
+    min-width: 150px;
     min-height: 25px;
     text-align: center;
     &>div {
@@ -93,7 +94,6 @@
       }
 
       &>div {
-
         line-height: 25px;
         display: inline-block;
       }
@@ -102,6 +102,9 @@
         width: 20px;
         min-width: 20px;
         height: 20px;
+      }
+      &>div:last-child {
+        font-weight: $font-weight-bold;
       }
     }
   }

@@ -81,7 +81,7 @@ export default class ProfileManagementStatistics extends React.Component<any, {i
     }
 
     render() {
-        console.log(this.state.statData);
+
         return (
             <div className="profile_management_statistics">
                 {
