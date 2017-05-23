@@ -38,6 +38,12 @@
     .progress_bar__cancel {
       width: 10px;
       height: 10px;
+      cursor: pointer;
+
+      svg {
+        width: 10px;
+        height: 10px;
+      }
     }
   }
 

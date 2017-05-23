@@ -78,6 +78,7 @@ export namespace Captions {
         paywall_price: 'Стоимость',
         enter_paywall_price: 'Введите стоимость',
         paywall_price_tax_help: 'Стоимость доступа с учетом комиссии составит:',
+        photo_upload_canceled: 'Загрузка фото отменена',
     };
 
     export const shared = {

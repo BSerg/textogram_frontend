@@ -11,11 +11,12 @@ export enum PROGRESS_BAR_TYPE {
 
 
 interface IProgressBarProps {
-    type?: PROGRESS_BAR_TYPE
-    value?: number
-    total?: number
-    label: string
-    className?: string
+    type?: PROGRESS_BAR_TYPE;
+    value?: number;
+    total?: number;
+    label: string;
+    className?: string;
+    onCancel?: () => any;
 }
 
 interface IProgressBarState {
@@ -38,6 +39,10 @@ export default class ProgressBar extends React.Component<IProgressBarProps, IPro
         value: 0,
         total: 0,
     };
+
+    handleCancel() {
+        this.props.onCancel && this.props.onCancel();
+    }
 
     componentDidMount() {
         switch (this.props.type) {
@@ -68,7 +73,9 @@ export default class ProgressBar extends React.Component<IProgressBarProps, IPro
                     <div className="progress_bar__bar">
                         {progress ? <div className="progress_bar__item" style={barStyle}/> : null}
                     </div>
-                    <CloseIcon className="progress_bar__cancel"/>
+                    <div className="progress_bar__cancel" onClick={this.handleCancel.bind(this)}>
+                        <CloseIcon/>
+                    </div>
                 </div>
                 <div className="progress_bar__label">{this.props.label}</div>
             </div>
