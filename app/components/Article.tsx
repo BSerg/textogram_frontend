@@ -17,6 +17,7 @@ import "../styles/article.scss";
 import "../styles/banners.scss";
 import {BannerID, Captions} from "../constants";
 import LeftSideButton from "./shared/LeftSideButton";
+import AwesomeGallery from "./shared/AwesomeGallery";
 
 const EditButton = require('babel!svg-react!../assets/images/edit.svg?name=EditButton');
 const DeleteButton = require('babel!svg-react!../assets/images/redactor_icon_delete.svg?name=DeleteButton');
@@ -306,11 +307,20 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
         if (galleryId && !this.props.isPreview) {
             this.props.router.push(`/articles/${this.state.article.slug}/gallery/${galleryId}`);
         }
-        ModalAction.do(OPEN_MODAL, {content: <GalleryModal isPreview={this.props.isPreview}
-                                                           currentPhotoIndex={currentPhotoIndex}
-                                                           photos={photos}
-                                                           router={this.props.router}
-                                                           article={this.state.article}/>});
+        let content = <GalleryModal isPreview={this.props.isPreview}
+                                    currentPhotoIndex={currentPhotoIndex}
+                                    photos={photos}
+                                    router={this.props.router}
+                                    article={this.state.article}/>;
+        let onClose = () => {
+            ModalAction.do(CLOSE_MODAL, null);
+            if (!this.props.isPreview) {
+                this.props.router.push(`/articles/${this.state.article.slug}`);
+            }
+        };
+        let content1 = <AwesomeGallery photos={photos} currentPhotoIndex={currentPhotoIndex} onClose={onClose}/>;
+        ModalAction.do(OPEN_MODAL, {content: content1});
+
     }
 
     closeSharePopup() {

@@ -1,0 +1,113 @@
+@import "../contstants";
+@import "../mixins";
+
+.awesome_gallery {
+  @include no-select();
+  position: relative;
+  background-color: $color5;
+
+  .awesome_gallery__header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 50px;
+    letter-spacing: 1px;
+    font-size: $font-size6;
+    font-weight: $font-weight-bold;
+    line-height: 50px;
+    text-align: center;
+    color: white;
+    background-color: rgba(black, 0.5);
+  }
+
+  .awesome_gallery__back {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 50px;
+    height: 50px;
+  }
+
+  .awesome_gallery__caption {
+    position: absolute;
+    bottom: 0;
+    left: 25%;
+    width: 50%;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: $family_open_sans;
+    font-size: $font-size6;
+    color: white;
+    text-align: center;
+    line-height: 20px;
+    overflow: hidden;
+  }
+
+  @include desktop {
+    .awesome_gallery__header {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      font-weight: $font-weight;
+
+      .awesome_gallery__prev, .awesome_gallery__next {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        font-family: $family_open_sans;
+        font-size: 10px;
+        letter-spacing: 1px;
+        color: white;
+        text-transform: uppercase;
+        line-height: 12px;
+        margin: 0 30px;
+        cursor: pointer;
+
+        svg {
+          fill: white;
+          width: 30px;
+          height: 30px;
+        }
+
+        &:hover {
+          color: $color3;
+
+          svg {
+            fill: $color3;
+          }
+        }
+      }
+
+      .awesome_gallery__prev svg {
+        @include scale(-1, 1);
+      }
+
+      .awesome_gallery__close {
+        position: absolute;
+        top: 0;
+        right: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 50px;
+        height: 50px;
+        cursor: pointer;
+
+        svg {
+          width: 15px;
+          height: 15px;
+          fill: white;
+        }
+
+        &:hover svg {
+          fill: $color3;
+        }
+      }
+    }
+  }
+
+}
