@@ -94,7 +94,7 @@ class AwesomeGalleryPhotoCanvas {
                 this.context.drawImage(photo.img, photo.drawX, photo.drawY, photo.drawWidth, photo.drawHeight);
             } else {
                 this.context.beginPath();
-                this.context.fillStyle = '#FFFFFF';
+                this.context.fillStyle = '#333333';
                 this.context.rect(photo.drawX, photo.drawY, photo.drawWidth, photo.drawHeight);
                 this.context.fill();
             }
@@ -139,7 +139,7 @@ export default class AwesomeGallery extends React.Component<IProps, IState> {
     static defaultProps = {
         currentPhotoIndex: 0,
         tick: 25,
-        jumpTime: 300
+        jumpTime: 300,
     };
 
     constructor(props: any) {

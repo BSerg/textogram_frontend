@@ -47,10 +47,6 @@
   }
 
   @include desktop {
-    canvas {
-      cursor: move;
-    }
-    
     .awesome_gallery__header {
       display: flex;
       flex-direction: row;

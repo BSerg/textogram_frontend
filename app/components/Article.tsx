@@ -307,7 +307,7 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
         if (galleryId && !this.props.isPreview) {
             this.props.router.push(`/articles/${this.state.article.slug}/gallery/${galleryId}`);
         }
-        let content = <GalleryModal isPreview={this.props.isPreview}
+        let oldGallery = <GalleryModal isPreview={this.props.isPreview}
                                     currentPhotoIndex={currentPhotoIndex}
                                     photos={photos}
                                     router={this.props.router}
@@ -318,8 +318,8 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
                 this.props.router.push(`/articles/${this.state.article.slug}`);
             }
         };
-        let content1 = <AwesomeGallery photos={photos} currentPhotoIndex={currentPhotoIndex} onClose={onClose}/>;
-        ModalAction.do(OPEN_MODAL, {content: content1});
+        let newGallery = <AwesomeGallery photos={photos} currentPhotoIndex={currentPhotoIndex} onClose={onClose}/>;
+        ModalAction.do(OPEN_MODAL, {content: this.state.isDesktop ? newGallery : oldGallery});
 
     }
 
