@@ -117,6 +117,7 @@ interface IState {
     photoCanvas?: AwesomeGalleryPhotoCanvas;
     photoCanvasZoom?: number;
     photoCanvasOffset?: {x: number, y: number};
+    photoCenterOffset?: {x: number, y: number};
     drawProcess?: number;
     isDesktop?: boolean;
     canvasWidth?: number;
@@ -125,9 +126,12 @@ interface IState {
     photoFrameWidth?: number;
     photoFrameHeight?: number;
     jumpTimeCountdown?: number;
+    freeMode?: boolean;
 }
 
 export default class AwesomeGallery extends React.Component<IProps, IState> {
+    mouseDownPoint: {x: number, y: number} | null;
+
     refs: {
         canvas: HTMLCanvasElement
     };
@@ -151,10 +155,16 @@ export default class AwesomeGallery extends React.Component<IProps, IState> {
             photoFrameHeight: MediaQuerySerice.getIsDesktop() ? MediaQuerySerice.getScreenHeight() - 128 : MediaQuerySerice.getScreenHeight() - 100,
             jumpTimeCountdown: 0,
             photoCanvasOffset: {x: 0, y: 0},
-            isDesktop: MediaQuerySerice.getIsDesktop()
+            photoCenterOffset: {x: 0, y: 0},
+            isDesktop: MediaQuerySerice.getIsDesktop(),
+            freeMode: false
         };
         this.handleMediaQuery = this.handleMediaQuery.bind(this);
         this.handleKeyDown = this.handleKeyDown.bind(this);
+        this.handleWeelMouse = this.handleWeelMouse.bind(this);
+        this.handleMouseDown = this.handleMouseDown.bind(this);
+        this.handleMouseUp = this.handleMouseUp.bind(this);
+        this.handleMouseMove = this.handleMouseMove.bind(this);
     }
 
     close() {
@@ -173,25 +183,31 @@ export default class AwesomeGallery extends React.Component<IProps, IState> {
         if (!photoCanvasMapItem) return;
         if (!init && this.state.jumpTimeCountdown > 0) {
             let delta = this.props.tick / this.state.jumpTimeCountdown;
-            let targetZoom;
-            if (photoCanvasMapItem.ratio >= this.state.canvasRatio) {
-                targetZoom = this.state.photoFrameWidth/photoCanvasMapItem.width;
-                this.state.photoCanvasZoom += (targetZoom - this.state.photoCanvasZoom) * delta;
+            if (this.state.freeMode) {
+                console.log('FREE MODE')
             } else {
-                targetZoom =this.state.photoFrameHeight/photoCanvasMapItem.height;
-                this.state.photoCanvasZoom += (targetZoom - this.state.photoCanvasZoom) * delta;
+                let targetZoom;
+                if (photoCanvasMapItem.ratio >= this.state.canvasRatio) {
+                    targetZoom = this.state.photoFrameWidth/photoCanvasMapItem.width;
+                    this.state.photoCanvasZoom += (targetZoom - this.state.photoCanvasZoom) * delta;
+                } else {
+                    targetZoom =this.state.photoFrameHeight/photoCanvasMapItem.height;
+                    this.state.photoCanvasZoom += (targetZoom - this.state.photoCanvasZoom) * delta;
+                }
+                this.state.photoCanvasOffset.x -= (this.state.photoCanvasOffset.x - photoCanvasMapItem.centerX * targetZoom) * delta;
+                this.state.photoCanvasOffset.y -= (this.state.photoCanvasOffset.y - photoCanvasMapItem.centerY * targetZoom) * delta;
             }
-            this.state.photoCanvasOffset.x -= (this.state.photoCanvasOffset.x - photoCanvasMapItem.centerX * targetZoom) * delta;
-            this.state.photoCanvasOffset.y -= (this.state.photoCanvasOffset.y - photoCanvasMapItem.centerY * targetZoom) * delta;
             this.state.jumpTimeCountdown -= this.props.tick;
         } else {
-            if (photoCanvasMapItem.ratio >= this.state.canvasRatio) {
-                this.state.photoCanvasZoom = this.state.photoFrameWidth / photoCanvasMapItem.width;
-            } else {
-                this.state.photoCanvasZoom = this.state.photoFrameHeight / photoCanvasMapItem.height;
+            if (!this.state.freeMode) {
+                if (photoCanvasMapItem.ratio >= this.state.canvasRatio) {
+                    this.state.photoCanvasZoom = this.state.photoFrameWidth / photoCanvasMapItem.width;
+                } else {
+                    this.state.photoCanvasZoom = this.state.photoFrameHeight / photoCanvasMapItem.height;
+                }
+                this.state.photoCanvasOffset.x = photoCanvasMapItem.centerX * this.state.photoCanvasZoom;
+                this.state.photoCanvasOffset.y = photoCanvasMapItem.centerY * this.state.photoCanvasZoom;
             }
-            this.state.photoCanvasOffset.x = photoCanvasMapItem.centerX * this.state.photoCanvasZoom;
-            this.state.photoCanvasOffset.y = photoCanvasMapItem.centerY * this.state.photoCanvasZoom;
         }
     }
 
@@ -200,8 +216,8 @@ export default class AwesomeGallery extends React.Component<IProps, IState> {
             let ctx = this.refs.canvas.getContext('2d');
 
             let x, y, width, height;
-            x = this.refs.canvas.width / 2 - this.state.photoCanvasOffset.x;
-            y = this.refs.canvas.height / 2 - this.state.photoCanvasOffset.y;
+            x = this.refs.canvas.width / 2 - this.state.photoCanvasOffset.x - this.state.photoCenterOffset.x;
+            y = this.refs.canvas.height / 2 - this.state.photoCanvasOffset.y - this.state.photoCenterOffset.y;
             width = this.state.photoCanvas.canvas.width * this.state.photoCanvasZoom;
             height = this.state.photoCanvas.canvas.height * this.state.photoCanvasZoom;
 
@@ -216,6 +232,8 @@ export default class AwesomeGallery extends React.Component<IProps, IState> {
     }
 
     goToPhoto(index: number) {
+        this.state.freeMode = false;
+        this.state.photoCenterOffset = {x: 0, y: 0};
         if (index >= this.props.photos.length) {
             index = 0;
         } else if (index < 0) {
@@ -232,6 +250,17 @@ export default class AwesomeGallery extends React.Component<IProps, IState> {
         this.goToPhoto(this.state.currentPhotoIndex - 1);
     }
 
+    zoom(zoomValue: number) {
+        if (zoomValue < 0.01) return;
+        this.state.freeMode = true;
+        let photoCanvasMapItem = this.state.photoCanvas.photoMap[this.state.currentPhotoIndex];
+        this.state.photoCanvasOffset.x = photoCanvasMapItem.centerX * zoomValue;
+        this.state.photoCanvasOffset.y = photoCanvasMapItem.centerY * zoomValue;
+        this.state.photoCenterOffset.x *= zoomValue / this.state.photoCanvasZoom;
+        this.state.photoCenterOffset.y *= zoomValue / this.state.photoCanvasZoom;
+        this.state.photoCanvasZoom = zoomValue;
+    }
+
     handleKeyDown(e: KeyboardEvent) {
         if (e.keyCode == 37) {
             this.prevPhoto();
@@ -241,6 +270,44 @@ export default class AwesomeGallery extends React.Component<IProps, IState> {
             e.preventDefault();
             e.stopPropagation();
             this.close();
+        }
+    }
+
+    handleWeelMouse(e: MouseWheelEvent) {
+        let deltaY = e.wheelDeltaY;
+        if (deltaY > 0) {
+            this.zoom(this.state.photoCanvasZoom * 1.1);
+        } else {
+            this.zoom(this.state.photoCanvasZoom / 1.1);
+        }
+    }
+
+    handleMouseDown(e: MouseEvent) {
+        this.mouseDownPoint = {x: e.clientX, y: e.clientY};
+    }
+
+    handleMouseUp(e: MouseEvent) {
+        this.mouseDownPoint = null;
+    }
+
+    handleMouseMove(e: MouseEvent) {
+        if (this.mouseDownPoint) {
+            let d = this.state.photoCanvas.photoMap[this.state.currentPhotoIndex];
+            let deltaX = this.mouseDownPoint.x - e.clientX;
+            let deltaY = this.mouseDownPoint.y - e.clientY;
+
+            if (d.width * this.state.photoCanvasZoom > this.state.canvasWidth) {
+                this.state.photoCenterOffset.x += deltaX;
+                this.state.photoCenterOffset.x = Math.sign(this.state.photoCenterOffset.x) * Math.min(Math.abs(this.state.photoCenterOffset.x), 0.4 * d.width * this.state.photoCanvasZoom);
+            }
+
+            if (d.height * this.state.photoCanvasZoom > this.state.canvasHeight) {
+                this.state.photoCenterOffset.y += deltaY;
+                this.state.photoCenterOffset.y = Math.sign(this.state.photoCenterOffset.y) * Math.min(Math.abs(this.state.photoCenterOffset.y), 0.4 * d.height * this.state.photoCanvasZoom);
+            }
+
+            this.mouseDownPoint.x = e.clientX;
+            this.mouseDownPoint.y = e.clientY;
         }
     }
 
@@ -271,18 +338,26 @@ export default class AwesomeGallery extends React.Component<IProps, IState> {
         }, this.props.tick);
         MediaQuerySerice.listen(this.handleMediaQuery);
         document.addEventListener('keydown', this.handleKeyDown);
+        document.addEventListener('wheel', this.handleWeelMouse);
+        document.addEventListener('mousedown', this.handleMouseDown);
+        document.addEventListener('mouseup', this.handleMouseUp);
+        document.addEventListener('mousemove', this.handleMouseMove);
     }
 
     componentWillUnmount() {
         window.clearInterval(this.state.drawProcess);
         MediaQuerySerice.unbind(this.handleMediaQuery);
         document.removeEventListener('keydown', this.handleKeyDown);
+        document.removeEventListener('wheel', this.handleWeelMouse);
+        document.removeEventListener('mousedown', this.handleMouseDown);
+        document.removeEventListener('mouseup', this.handleMouseUp);
+        document.removeEventListener('mousemove', this.handleMouseMove);
     }
 
     render() {
         let currentPhoto = this.props.photos.length ? this.props.photos[this.state.currentPhotoIndex] : null;
         return (
-            <div className={this.getClassName()}>
+            <div draggable={false} className={this.getClassName()}>
 
                 {this.state.isDesktop ?
                     <div className="awesome_gallery__header">
@@ -305,7 +380,7 @@ export default class AwesomeGallery extends React.Component<IProps, IState> {
                     </div>
                 }
 
-                <canvas width={this.state.canvasWidth} height={this.state.canvasHeight} ref="canvas"/>
+                <canvas draggable={false} width={this.state.canvasWidth} height={this.state.canvasHeight} ref="canvas"/>
 
                 {currentPhoto && currentPhoto.caption ?
                     <div className="awesome_gallery__caption">
