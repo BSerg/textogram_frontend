@@ -204,7 +204,7 @@ export default class ImageEditorRefactored extends React.Component<IProps, IStat
                 this._drawImage(image);
             };
             image.crossOrigin = 'anonymous';
-            image.src = this.state.image.image;
+            image.src = this.state.image.image + '?_=' + new Date().getTime();
         } else {
             this.state.image = this.fitImage(this.state.image);
             this._drawImage(this.state.imageObject);
