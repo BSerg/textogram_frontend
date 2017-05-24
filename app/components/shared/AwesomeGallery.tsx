@@ -276,9 +276,9 @@ export default class AwesomeGallery extends React.Component<IProps, IState> {
     handleWeelMouse(e: MouseWheelEvent) {
         let deltaY = e.wheelDeltaY;
         if (deltaY > 0) {
-            this.zoom(this.state.photoCanvasZoom * 1.1);
+            this.zoom(this.state.photoCanvasZoom * 1.05);
         } else {
-            this.zoom(this.state.photoCanvasZoom / 1.1);
+            this.zoom(this.state.photoCanvasZoom / 1.05);
         }
     }
 
@@ -296,15 +296,15 @@ export default class AwesomeGallery extends React.Component<IProps, IState> {
             let deltaX = this.mouseDownPoint.x - e.clientX;
             let deltaY = this.mouseDownPoint.y - e.clientY;
 
-            if (d.width * this.state.photoCanvasZoom > this.state.canvasWidth) {
+            // if (d.width * this.state.photoCanvasZoom > this.state.canvasWidth) {
                 this.state.photoCenterOffset.x += deltaX;
                 this.state.photoCenterOffset.x = Math.sign(this.state.photoCenterOffset.x) * Math.min(Math.abs(this.state.photoCenterOffset.x), 0.4 * d.width * this.state.photoCanvasZoom);
-            }
+            // }
 
-            if (d.height * this.state.photoCanvasZoom > this.state.canvasHeight) {
+            // if (d.height * this.state.photoCanvasZoom > this.state.canvasHeight) {
                 this.state.photoCenterOffset.y += deltaY;
                 this.state.photoCenterOffset.y = Math.sign(this.state.photoCenterOffset.y) * Math.min(Math.abs(this.state.photoCenterOffset.y), 0.4 * d.height * this.state.photoCanvasZoom);
-            }
+            // }
 
             this.mouseDownPoint.x = e.clientX;
             this.mouseDownPoint.y = e.clientY;
