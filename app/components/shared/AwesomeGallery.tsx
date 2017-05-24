@@ -194,6 +194,8 @@ export default class AwesomeGallery extends React.Component<IProps, IState> {
                     targetZoom =this.state.photoFrameHeight/photoCanvasMapItem.height;
                     this.state.photoCanvasZoom += (targetZoom - this.state.photoCanvasZoom) * delta;
                 }
+                this.state.photoCenterOffset.x *= delta;
+                this.state.photoCenterOffset.y *= delta;
                 this.state.photoCanvasOffset.x -= (this.state.photoCanvasOffset.x - photoCanvasMapItem.centerX * targetZoom) * delta;
                 this.state.photoCanvasOffset.y -= (this.state.photoCanvasOffset.y - photoCanvasMapItem.centerY * targetZoom) * delta;
             }
