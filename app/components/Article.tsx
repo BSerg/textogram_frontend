@@ -371,7 +371,7 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
     }
 
     coverLazyLoad(el: HTMLElement) {
-        if (this.state.article && this.state.article.cover) {
+        if (el && this.state.article && this.state.article.cover) {
             let img = new Image();
             img.onload = () => {
                 el.style.background = `url('${this.state.article.cover}') no-repeat center center`;
