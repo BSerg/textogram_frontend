@@ -302,7 +302,9 @@ export default class AwesomeGallery extends React.Component<IProps, IState> {
     }
 
     handleWeelMouse(e: MouseWheelEvent) {
-        let delta = e.wheelDelta;
+        let delta = e.wheelDelta || -e.deltaY;
+        if (!delta) return;
+        console.log(delta)
         if (delta > 0) {
             this.zoom(this.state.photoCanvasZoom * 1.05);
         } else {
