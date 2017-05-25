@@ -319,7 +319,7 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
             }
         };
         let newGallery = <AwesomeGallery photos={photos} currentPhotoIndex={currentPhotoIndex} onClose={onClose}/>;
-        ModalAction.do(OPEN_MODAL, {content: this.state.isDesktop ? newGallery : oldGallery});
+        ModalAction.do(OPEN_MODAL, {content: this.state.isDesktop && this.props.params.new == 'new' ? newGallery : oldGallery});
 
     }
 
