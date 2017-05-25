@@ -68,6 +68,11 @@ class AwesomeGalleryPhotoHandler {
             this.update();
         };
         img.src = photo.image;
+
+        if ( img.complete || img.complete === undefined ) {
+            img.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==";
+            img.src = photo.image;
+        }
         return photo;
     }
 
