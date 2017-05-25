@@ -1,10 +1,11 @@
 import * as React from 'react';
-import {Captions} from '../../constants';
+import {Captions, Constants} from '../../constants';
 import {withRouter, Link} from 'react-router';
 
 import ProfileManagementNotifications from './ProfileManagementNotifications';
 import ProfileManagementAccount from './ProfileManagementAccount';
 import ProfileManagementStatistics from './ProfileManagementStatistics';
+import ProfileManagementPaywall from './ProfileManagementPaywall';
 
 import {MediaQuerySerice} from '../../services/MediaQueryService';
 
@@ -26,6 +27,7 @@ interface IManagementProps {
     router?: any;
     params?: any;
 }
+
 
 interface IManagementState {
     user?: any;
@@ -55,11 +57,14 @@ class ProfileManagementClass extends React.Component<IManagementProps, IManageme
     SECTION_ACCOUNT = 'account';
     SECTION_NOTIFICATIONS = 'notifications';
     SECTION_STATISTICS = 'statistics';
+    SECTION_PAYWALL = 'paywall';
 
     SECTIONS: {name: string, caption: string, to: string, section: any}[] = [
         {name: this.SECTION_ACCOUNT, caption: Captions.management.sectionAccount, to: '/manage/account', section: <ProfileManagementAccount />},
         {name: this.SECTION_NOTIFICATIONS, caption: Captions.management.sectionNotifications, to: '/manage/notifications', section: <ProfileManagementNotifications />},
         {name: this.SECTION_STATISTICS, caption: Captions.management.sectionStatistics, to: '/manage/statistics', section: <ProfileManagementStatistics/>},
+        {name: this.SECTION_PAYWALL, caption: 'Paywall', to: '/manage/paywall', section: <ProfileManagementPaywall />},
+
     ];
 
 
@@ -156,6 +161,9 @@ class ProfileManagementClass extends React.Component<IManagementProps, IManageme
     textEdit(type: string, e: any) {
         let val: string = e.target.value;
         if (type == 'name' ) {
+            if (val.length > Constants.maxUsernameLength) {
+                return;
+            }
             this.state.nameSaveTimeout && window.clearTimeout(this.state.nameSaveTimeout);
             this.setState({newName: val}, () => {
                 this.state.nameSaveTimeout = window.setTimeout(() => {
@@ -164,6 +172,9 @@ class ProfileManagementClass extends React.Component<IManagementProps, IManageme
             });
         }
         else if (type == 'description') {
+            if (val.length > Constants.maxDescriptionLength) {
+                return;
+            }
             this.setState({newDescription: val});
         }
     }
@@ -302,6 +313,7 @@ class ProfileManagementClass extends React.Component<IManagementProps, IManageme
                                         placeholder="Введите описание"
                                         onChange={this.contentEdit.bind(this)}
                                         onBlur={this.toggleEdit.bind(this, 'description', false)}
+                                        maxTextLength={Constants.maxDescriptionLength}
                                         allowLineBreak={false}/>
                                 </div>
 

@@ -10,6 +10,7 @@ interface IArticlesProps {
     userId?: number;
     section: string;
     isSelf?: boolean;
+    dataCallback?: (data: any) => any;
 }
 
 interface IArticlesState {
@@ -30,6 +31,7 @@ export default class ProfileArticles extends React.Component<IArticlesProps, IAr
     SECTION_ARTICLES: string = 'articles';
     SECTION_DRAFTS = 'drafts';
     SECTION_STATISTICS = 'statistics';
+    SECTION_PAYWALL = 'paywall';
 
     refs: {
         main: HTMLDivElement;

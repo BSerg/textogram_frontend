@@ -56,14 +56,7 @@ export default class PieChart extends React.Component<IChartProps, IChartState> 
     }
 
     clear(ctx: CanvasRenderingContext2D) {
-        // ctx.fillStyle = this.props.bgColor;
-        // ctx.fillRect(0, 0, this.refs.canvas.width, this.refs.canvas.height);
         ctx.clearRect(0, 0, this.refs.canvas.width, this.refs.canvas.height);
-        // let lineWidth: number = this.refs.canvas.width/this.refs.canvas.getBoundingClientRect().width;
-        // this.drawLine(ctx, 0, 0, this.refs.canvas.width, 0, lineWidth, this.props.borderColor);
-        // this.drawLine(ctx, this.refs.canvas.width, 0, this.refs.canvas.width, this.refs.canvas.height, lineWidth, this.props.borderColor);
-        // this.drawLine(ctx, this.refs.canvas.width, this.refs.canvas.height, 0, this.refs.canvas.height, lineWidth, this.props.borderColor);
-        // this.drawLine(ctx, 0, this.refs.canvas.height, 0, 0, lineWidth, this.props.borderColor);
     }
 
     numToHex(n: number): string {
@@ -175,31 +168,24 @@ export default class PieChart extends React.Component<IChartProps, IChartState> 
                 this.positionInfoDiv(clientX, clientY, rect);
             });
         }
+        this.positionInfoDiv(clientX, clientY, rect);
     }
 
     positionInfoDiv(x: number, y: number, canvasRect: ClientRect) {
-        this.refs.info.style.top = y + 10 + 'px';
-        this.refs.info.style.left = x + 10 + 'px';
-    }
+        let top: number = y + 10;
+        let left: number = x + 10;
 
-    mouseLeaveHandle(e: any) {
-
-        let rect: ClientRect = this.refs.canvas.getBoundingClientRect();
-        console.log(rect);
-        console.log(e.clientX);
-        console.log(e.clientY);
-
-        if (e.clientX >= rect.left && e.clientY >= rect.top && e.clientX < rect.right && e.clientY < rect.bottom) {
-            console.log('here');
-            this.mouseMoveHandle(e);
+        let width: number = this.refs.info.getBoundingClientRect().width;
+        if ((left + width) > window.innerWidth) {
+            left = window.innerWidth - width;
         }
-        else if (this.state.displayNodeIndex != null) {
-            this.setState({displayNodeIndex: null}, this.redrawArcs.bind(this));
-        }
+
+        this.refs.info.style.top = top + 'px';
+        this.refs.info.style.left = left + 'px';
     }
 
     componentWillReceiveProps(nextProps: IChartProps) {
-        this.setState({values: this.processValues(nextProps.values)}, this.draw.bind(this));
+        this.setState({values: this.processValues(nextProps.values), displayNodeIndex: null, arcs: [], total: 0}, this.draw.bind(this));
     }
 
     componentDidMount() {

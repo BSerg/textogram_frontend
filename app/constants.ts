@@ -244,6 +244,8 @@ export namespace Constants {
     export const notificationIntervalTime = 300000;
     export const desktopWidth = 1024;
     export const paywallDefaultPriceRUR = 100;
+    export const maxUsernameLength: number = 30;
+    export const maxDescriptionLength: number = 140;
 }
 
 export namespace APIData {

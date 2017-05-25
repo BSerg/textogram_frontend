@@ -202,28 +202,40 @@ export  default class LineChart extends React.Component<IChartProps, IChartState
         if (displayNodeIndex != this.state.displayNodeIndex) {
             this.setState({displayNodeIndex: displayNodeIndex}, () => {
                 this.redraw();
-                this.positionInfoDiv(clientX, clientY, rect);
+                this.positionInfoDiv(rect);
             });
         }
     }
 
-    positionInfoDiv(x: number, y: number, canvasRect: ClientRect) {
-        this.refs.info.style.left = x + 10 + 'px';
+    mouseLeaveHandle() {
+        if (this.state.displayNodeIndex != null) {
+            this.setState({displayNodeIndex: null});
+        }
+    }
 
-        let rect: ClientRect = this.refs.info.getBoundingClientRect();
-        if (x + rect.width > canvasRect.right) {
-            this.refs.info.style.left = (canvasRect.right - rect.width) + 'px';
-        }
-        if ( x + rect.width > window.innerWidth) {
-            this.refs.info.style.left = window.innerWidth - rect.width > 0 ? (window.innerWidth - rect.width) + 'px' : '0';
-        }
-        if (this.state.lineCoordinates.length && this.state.displayNodeIndex != null) {
-            this.refs.info.style.top = (canvasRect.top + 10 + this.state.lineCoordinates[this.state.displayNodeIndex].y * (canvasRect.height / this.refs.canvas.height)) + 'px';
+
+    positionInfoDiv(canvasRect: ClientRect) {
+
+
+        if (this.state.displayNodeIndex != null && this.state.lineCoordinates && this.state.lineCoordinates.length) {
+            let rect: ClientRect = this.refs.info.getBoundingClientRect();
+
+            let x: number = canvasRect.left + this.state.lineCoordinates[this.state.displayNodeIndex].x * (canvasRect.width / this.refs.canvas.width) - rect.width / 2;
+            let y: number = canvasRect.top + this.state.lineCoordinates[this.state.displayNodeIndex].y * (canvasRect.height / this.refs.canvas.height) + 10;
+
+            if ((x + rect.width) > window.innerWidth) {
+                x = window.innerWidth - rect.width;
+            }
+
+
+            this.refs.info.style.top = y + 'px';
+            this.refs.info.style.left = x + 'px';
+
         }
     }
 
     componentWillReceiveProps(nextProps: {values: IChartNode[], type?: string}) {
-        this.setState({values: nextProps.values}, this.draw.bind(this));
+        this.setState({values: nextProps.values, displayNodeIndex: null, lineCoordinates: [], max: 0}, this.draw.bind(this));
     }
 
     componentDidMount() {
@@ -238,7 +250,7 @@ export  default class LineChart extends React.Component<IChartProps, IChartState
 
     render() {
         return (
-            <div className="chart_builder chart_line" style={{position: 'relative'}} >
+            <div className="chart_builder chart_line" style={{position: 'relative'}} onMouseLeave={this.mouseLeaveHandle.bind(this)}>
                 {
                     this.props.title ? (<div className="chart_title">{this.props.title}</div>) : null
                 }
