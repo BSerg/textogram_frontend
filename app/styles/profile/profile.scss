@@ -124,10 +124,12 @@ $content-main-width: 340px;
 
   .profile_user_text {
     text-align: center;
+    width: 100%;
   }
 
   .username, .description {
     text-align: center;
+    word-wrap: break-word;
   }
 
   .username, .description, .subscription {

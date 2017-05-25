@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Captions} from '../../constants';
+import {Captions, Constants} from '../../constants';
 import {withRouter, Link} from 'react-router';
 
 import ProfileManagementNotifications from './ProfileManagementNotifications';
@@ -27,6 +27,7 @@ interface IManagementProps {
     router?: any;
     params?: any;
 }
+
 
 interface IManagementState {
     user?: any;
@@ -160,6 +161,9 @@ class ProfileManagementClass extends React.Component<IManagementProps, IManageme
     textEdit(type: string, e: any) {
         let val: string = e.target.value;
         if (type == 'name' ) {
+            if (val.length > Constants.maxUsernameLength) {
+                return;
+            }
             this.state.nameSaveTimeout && window.clearTimeout(this.state.nameSaveTimeout);
             this.setState({newName: val}, () => {
                 this.state.nameSaveTimeout = window.setTimeout(() => {
@@ -168,6 +172,9 @@ class ProfileManagementClass extends React.Component<IManagementProps, IManageme
             });
         }
         else if (type == 'description') {
+            if (val.length > Constants.maxDescriptionLength) {
+                return;
+            }
             this.setState({newDescription: val});
         }
     }
@@ -306,6 +313,7 @@ class ProfileManagementClass extends React.Component<IManagementProps, IManageme
                                         placeholder="Введите описание"
                                         onChange={this.contentEdit.bind(this)}
                                         onBlur={this.toggleEdit.bind(this, 'description', false)}
+                                        maxTextLength={Constants.maxDescriptionLength}
                                         allowLineBreak={false}/>
                                 </div>
 
