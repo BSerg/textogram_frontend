@@ -1,5 +1,6 @@
 var webpack = require('webpack');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
+var webpack = require('webpack');
 var DefinePlugin = require('webpack/lib/DefinePlugin');
 var JavaScriptObfuscator = require('webpack-obfuscator');
 var HTMLWebpackPluginConfig = new HtmlWebpackPlugin({
@@ -16,11 +17,8 @@ module.exports = {
     },
     output: {
         path: __dirname + '/dist/prod',
-        // path: '/home/serega/projects/lentach/static',
         filename: 'bundle.js',
-        // publicPath: '/static/'
     },
-    devtool: "source-map",
     resolve: {
         extensions: ["", ".webpack.js", ".web.js", ".ts", ".tsx", ".js", ".jsx", ".css", ".sass"]
     },
@@ -59,17 +57,17 @@ module.exports = {
     },
     plugins: [
         new ExtractTextPlugin('bundle.css'),
-        new webpack.optimize.CommonsChunkPlugin('vendor', 'vendor.js'),
-        new JavaScriptObfuscator ({
-            rotateUnicodeArray: true
-        }),
+        new webpack.optimize.CommonsChunkPlugin("vendor", "vendor.js"),
+        // new JavaScriptObfuscator ({
+        //     rotateUnicodeArray: true
+        // }),
         new DefinePlugin({
             "process.env": {
                 NODE_ENV: JSON.stringify('production'),
-                API_URL: "http://localhost:8000/api/v1",
-                VK_APP: JSON.stringify(""),
-                FB_APP: JSON.stringify(""),
-                GOOGLE_APP: JSON.stringify("40195744486-2lr3lt2adencnt9k54rc1mhl4a4kh70i.apps.googleusercontent.com"),
+                API_URL: JSON.stringify("http://prod.textius.tk/api/v1"),
+                VK_APP: JSON.stringify("6048004"),
+                FB_APP: JSON.stringify("1522363627833978"),
+                IS_LENTACH: JSON.stringify(false),
                 PAYWALL_ENABLE: JSON.stringify(false)
             }
         }),
