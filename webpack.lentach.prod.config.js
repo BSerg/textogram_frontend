@@ -51,7 +51,6 @@ module.exports = {
     },
     postcss: function() {
         return [
-            // require('postcss-smart-import'),
             require('precss'),
             require('autoprefixer')
         ];
