@@ -7,8 +7,8 @@ import axios from 'axios';
 import {ModalAction, OPEN_MODAL, CLOSE_MODAL} from '../../actions/shared/ModalAction';
 import Loading from '../shared/Loading';
 import * as moment from 'moment';
-import PieChart from './charts/PieChart';
-import LineChart from './charts/LineChart';
+import PieChartSvg from './charts/PieChartSvg';
+import LineChartSvg from './charts/LineChartSvg';
 
 const CloseIcon = require('babel!svg-react!../../assets/images/close.svg?name=CloseIcon');
 
@@ -97,12 +97,12 @@ class ArticleStatisticsModal extends React.Component<{item: any}, {isLoading?: b
                     {
                         this.state.itemData.age ? (
                             <div>
-                                <PieChart values={this.state.itemData.age} title={Captions.management.age} displayPercent={true} showLegend={false}/>
+                                <PieChartSvg values={this.state.itemData.age} title={Captions.management.age} displayPercent={true} showLegend={false}/>
                             </div>) : null
                     }
                     {
                         this.state.itemData.gender ? (
-                            <div><PieChart values={this.state.itemData.gender} title={Captions.management.gender} displayPercent={true} showLegend={false}/></div>
+                            <div><PieChartSvg values={this.state.itemData.gender} title={Captions.management.gender} displayPercent={true} showLegend={false}/></div>
                         ) : null
                     }
                 </div>
@@ -122,7 +122,7 @@ class ArticleStatisticsModal extends React.Component<{item: any}, {isLoading?: b
                             </div>
                             {
                                 this.state.itemData.lineCharts[this.state.viewChart] ?
-                                    <LineChart values={this.state.itemData.lineCharts[this.state.viewChart]} /> : null
+                                    <LineChartSvg values={this.state.itemData.lineCharts[this.state.viewChart]} /> : null
                             }
                         </div>
                     ) : null

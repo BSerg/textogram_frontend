@@ -187,7 +187,7 @@ export namespace Captions {
         age_45: "Старше 45 лет",
 
         males: "Мужчины",
-        females: "Женищины",
+        females: "Женщины",
 
         age: "Возраст",
         gender: "Пол",

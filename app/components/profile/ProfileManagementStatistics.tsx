@@ -1,30 +1,12 @@
 import * as React from 'react';
-import LineChart from '../shared/charts/LineChart';
-import PieChart from '../shared/charts/PieChart';
+import PieChartSvg from '../shared/charts/PieChartSvg';
 import './ProfileArticles';
 import ProfileArticles from "./ProfileArticles";
 import {api} from '../../api';
 import axios from 'axios';
 import {Captions, APIData} from '../../constants';
 import '../../styles/profile/profile_management_statistics.scss'
-
-
-function displayNumber(n: number) {
-    if (!n && n != 0) {
-        return '0'
-    }
-    else if (n < 1000) {
-        return n.toString();
-    }
-
-    else if (n >= 1000 && n < 1000000) {
-        return (Math.round(n / 100) / 10).toString() + 'K';
-    }
-    else if (n >= 1000000) {
-        return (Math.round(n / 100000) / 10).toString() + 'M';
-    }
-}
-
+import {displayNumber} from './utils'
 
 import Loading from '../shared/Loading';
 
@@ -110,16 +92,16 @@ export default class ProfileManagementStatistics extends React.Component<any, {i
                         <h2 key="header">{Captions.management.audience}</h2>,
                         <div key="data" className="profile_management_statistics_block">
                             {
-                                this.state.statData.age ? <PieChart values={this.state.statData.age}
+                                this.state.statData.age ? <PieChartSvg values={this.state.statData.age}
                                                                      showLegend={false}
                                                                      title={Captions.management.age}
                                                                      displayPercent={true}/> : null
                             }
                             {
-                                this.state.statData.gender ? <PieChart values={this.state.statData.gender}
-                                                                       showLegend={false}
-                                                                       title={Captions.management.gender}
-                                                                       displayPercent={true}/> : null
+                                this.state.statData.gender ? <PieChartSvg values={this.state.statData.gender}
+                                                                           showLegend={false}
+                                                                           title={Captions.management.gender}
+                                                                           displayPercent={true}/> : null
                             }
 
                         </div>
