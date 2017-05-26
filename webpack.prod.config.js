@@ -64,9 +64,9 @@ module.exports = {
         new DefinePlugin({
             "process.env": {
                 NODE_ENV: JSON.stringify('production'),
-                API_URL: JSON.stringify("http://prod.textius.tk/api/v1"),
-                VK_APP: JSON.stringify("6048004"),
-                FB_APP: JSON.stringify("1522363627833978"),
+                API_URL: JSON.stringify("http://textius.com/api/v1"),
+                VK_APP: JSON.stringify("6048359"),
+                FB_APP: JSON.stringify("129250137643057"),
                 IS_LENTACH: JSON.stringify(false),
                 PAYWALL_ENABLE: JSON.stringify(false)
             }
