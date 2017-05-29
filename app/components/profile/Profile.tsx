@@ -87,7 +87,7 @@ export default class Profile extends React.Component<IProfileProps|any, IProfile
 
     logoutHandle() {
         if (this.state.currentSection == this.SECTION_FEED || this.state.currentSection == this.SECTION_DRAFTS) {
-            this.props.router.push('/');
+            this.props.history.push('/');
         }
     }
 

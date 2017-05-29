@@ -92,8 +92,8 @@ class App  extends React.Component<any, any> {
                         <Route path="/articles/:articleId/preview" component={ArticlePreview}/>
                         <Route path="/articles/:articleSlug/gallery/:galleryBlockId" component={Article}/>
                         <Route path="/articles/:articleSlug" component={Article}/>
-                        <Route path="/:slug" component={Profile}/>
                         <Route path="/:slug/:subsection" component={Profile}/>
+                        <Route path="/:slug" component={Profile}/>
                         <Route component={Error404}/>
                     </Switch>
 

@@ -33,10 +33,10 @@ export default class Index extends React.Component<any, any> {
     redirectToProfile() {
         if (UserAction.getStore().user && UserAction.getStore().user.id) {
             if (process.env.IS_LENTACH) {
-                this.props.router.push('/' + UserAction.getStore().user.nickname);
+                this.props.history.push('/' + UserAction.getStore().user.nickname);
             }
             else {
-                this.props.router.push('/feed');
+                this.props.history.push('/feed');
             }
         }
 
