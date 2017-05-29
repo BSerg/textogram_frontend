@@ -106,9 +106,9 @@ export default class Editor extends React.Component<any, any> {
         this.handleExit = this.handleExit.bind(this);
     }
 
-    static defaultProps: any = {
-        newArticle: false
-    };
+    // static defaultProps: any = {
+    //     newArticle: false
+    // };
 
     route(url: string) {
         this.props.history.push(url);
@@ -684,6 +684,6 @@ export class NewArticleEditor extends React.Component<any, any> {
     }
 
     render() {
-        return <Editor newArticle={true} history={this.props.history}/>;
+        return <Editor newArticle={true} match={this.props.match} history={this.props.history}/>;
     }
 }

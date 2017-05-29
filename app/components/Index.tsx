@@ -10,7 +10,7 @@ export default class Index extends React.Component<any, any> {
     constructor() {
         super();
         this.state = {
-            authenticated: !!localStorage.getItem('authToken')
+            authenticated: process.env.IS_BROWSER && !!localStorage.getItem('authToken')
         };
         this.redirectToProfile = this.redirectToProfile.bind(this);
     }
@@ -20,14 +20,19 @@ export default class Index extends React.Component<any, any> {
     };
 
     fakeAuth() {
-        let token = this.refs.fakeAuthToken.value;
-        localStorage.setItem('authToken', token);
-        this.setState({authenticated: true});
+        if (process.env.IS_BROWSER) {
+            let token = this.refs.fakeAuthToken.value;
+            localStorage.setItem('authToken', token);
+            this.setState({authenticated: true});
+        }
+
     }
 
     logout() {
-        localStorage.removeItem('authToken');
-        this.setState({authenticated: false});
+        if (process.env.IS_BROWSER) {
+            localStorage.removeItem('authToken');
+            this.setState({authenticated: false});
+        }
     }
 
     redirectToProfile() {

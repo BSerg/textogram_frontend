@@ -1,13 +1,14 @@
 import {Router, Request, Response, NextFunction} from 'express';
+import {StaticRouter} from 'react-router-dom';
 import * as React from 'react';
 import * as ReactDOMServer from 'react-dom/server';
-import Base from '../../components/Base';
+// import Base from '../../components/Base';
 import BaseNew from '../../components/BaseNew';
-import Index from '../../components/DefaultIndex';
-import DefaultIndex from "../../components/DefaultIndex";
+import Index from '../../components/Index';
 
 
-let ReactApp = React.createFactory(DefaultIndex);
+let ReactApp = React.createFactory(BaseNew);
+
 
 class BaseRouter {
     router: Router;
@@ -18,7 +19,10 @@ class BaseRouter {
     }
 
     getIndex(req: Request, res: Response, next: NextFunction) {
-        let html = ReactDOMServer.renderToString(ReactApp({props: {params: {}}}));
+        let html = ReactDOMServer.renderToString(
+            <StaticRouter><Index /></StaticRouter>
+
+        );
         res.end(html)
     }
     init() {

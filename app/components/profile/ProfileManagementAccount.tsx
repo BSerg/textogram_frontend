@@ -42,7 +42,7 @@ interface  IProfileSocialLinkState {
     placeholder?: string;
 }
 
-class ProfileSocialLink extends React.Component<IProfileSocialLinkProps, IProfileSocialLinkState> {
+class ProfileSocialLink extends React.Component<IProfileSocialLinkProps|any, IProfileSocialLinkState|any> {
 
     constructor() {
         super();

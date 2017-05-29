@@ -10,7 +10,7 @@ import {displayNumber} from './utils'
 
 import Loading from '../shared/Loading';
 
-export default class ProfileManagementStatistics extends React.Component<any, {items?: any[], statData?: any, isLoading?: boolean, cancelSource?: any}> {
+export default class ProfileManagementStatistics extends React.Component<any, {items?: any[], statData?: any, isLoading?: boolean, cancelSource?: any}|any> {
 
     constructor() {
         super();

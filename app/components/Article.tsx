@@ -93,9 +93,9 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
         shortUrlInput: HTMLInputElement
     };
 
-    static defaultProps:any = {
-        isPreview: false
-    };
+    // static defaultProps:any = {
+    //     isPreview: false
+    // };
 
     handleUser() {
         let user = UserAction.getStore().user;
@@ -599,7 +599,7 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
     }
 }
 
-class ShareLinkButton extends React.Component<{shortUrl: string, className?: string}, {process?: boolean, copied?: boolean}> {
+class ShareLinkButton extends React.Component<{shortUrl: string, className?: string}|any, {process?: boolean, copied?: boolean}|any> {
     refs: {
         element: HTMLDivElement
     };
@@ -612,9 +612,9 @@ class ShareLinkButton extends React.Component<{shortUrl: string, className?: str
         };
     }
 
-    static defaultProps = {
-        className: ''
-    };
+    // static defaultProps = {
+    //     className: ''
+    // };
 
     process() {
         this.setState({process: true}, () => {
