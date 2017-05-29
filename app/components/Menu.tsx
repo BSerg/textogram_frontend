@@ -429,7 +429,10 @@ export default class Menu extends React.Component<any, IMenuStateInterface> {
     checkOpen(isDesktop: boolean) {
         if (isDesktop != this.state.isDesktop) {
             this.setState({isDesktop: isDesktop}, () => {
-                MenuAction.do(TOGGLE,  isDesktop && Boolean( parseInt(localStorage.getItem('menuOpen'))));
+
+                let open = isDesktop && Boolean( parseInt(localStorage.getItem('menuOpen')));
+
+                MenuAction.do(TOGGLE, process.env.IS_BROWSER ? open : false);
             });
         }
     }
