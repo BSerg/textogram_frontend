@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Link} from 'react-router';
+import {Link} from 'react-router-dom';
 import {UserAction, GET_ME, LOGIN} from '../actions/user/UserAction';
 import '../styles/lentach_index.scss';
 import LentachIndex from "./LentachIndex";

@@ -24,7 +24,7 @@ interface IEditableImageModalState {
     isDesktop?: boolean;
 }
 
-export default class EditableImageModal extends React.Component<IEditableImageModalProps, IEditableImageModalState> {
+export default class EditableImageModal extends React.Component<IEditableImageModalProps|any, IEditableImageModalState|any> {
     constructor(props: any) {
         super(props);
         this.state = {
@@ -39,6 +39,7 @@ export default class EditableImageModal extends React.Component<IEditableImageMo
     };
 
     handleMediaQuery(isDesktop: boolean) {
+
         if (this.state.isDesktop != isDesktop) {
             this.setState({isDesktop: isDesktop});
         }

@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import axios from 'axios';
-import {Link} from 'react-router';
+import {Link} from 'react-router-dom';
 import {api} from '../../api';
 import '../../styles/profile/profile_authors.scss';
 import Loading from '../shared/Loading';

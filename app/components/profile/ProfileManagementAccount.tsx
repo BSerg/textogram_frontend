@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import {UserAction, SAVE_USER, UPDATE_USER} from '../../actions/user/UserAction';
 import SocialIcon from '../shared/SocialIcon';
-import {Link} from 'react-router';
+import {Link} from 'react-router-dom';
 import Loading from '../shared/Loading';
 
 import {api} from '../../api';

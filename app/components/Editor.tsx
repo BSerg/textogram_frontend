@@ -73,7 +73,7 @@ interface IEditorState {
 }
 
 
-export default class Editor extends React.Component<IEditorProps, IEditorState> {
+export default class Editor extends React.Component<any, any> {
     forceUpdateContent: (forceUpdate?: boolean) => void;
 
     refs: {
@@ -106,12 +106,12 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
         this.handleExit = this.handleExit.bind(this);
     }
 
-    static defaultProps = {
+    static defaultProps: any = {
         newArticle: false
     };
 
     route(url: string) {
-        this.props.router.push(url);
+        this.props.history.push(url);
     }
 
     createArticle(article: any) {
@@ -300,7 +300,6 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
 
             let onUpdate = (article: any) => {
                 Object.assign(this.state.article, article);
-                console.log(this.state.article)
                 this._updateArticle();
             };
 
@@ -413,8 +412,8 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
         }, () => {
             this.resetContent();
         });
-        if (this.props.params && this.props.params.articleId != nextProps.params.articleId) {
-            this.loadArticle(nextProps.params.articleId);
+        if (this.props.match.params && this.props.match.params.articleId != nextProps.match.params.articleId) {
+            this.loadArticle(nextProps.match.params.articleId);
         }
     }
 
@@ -448,7 +447,7 @@ export default class Editor extends React.Component<IEditorProps, IEditorState> 
                 this.resetContent();
             });
         } else {
-            this.loadArticle(this.props.params.articleId);
+            this.loadArticle(this.props.match.params.articleId);
         }
 
         document.addEventListener('click', this.handleDocumentClick);
@@ -685,6 +684,6 @@ export class NewArticleEditor extends React.Component<any, any> {
     }
 
     render() {
-        return <Editor router={this.props.router} newArticle={true}/>;
+        return <Editor newArticle={true} history={this.props.history}/>;
     }
 }

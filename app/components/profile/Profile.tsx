@@ -1,6 +1,7 @@
 import * as React from 'react';
 
-import {Link, withRouter} from 'react-router';
+import {withRouter} from 'react-router';
+import {Link} from 'react-router-dom';
 
 import '../../styles/common.scss';
 import '../../styles/profile/profile.scss';
@@ -53,7 +54,7 @@ interface IProfileState {
     cancelSource?: any;
 }
 
-class ProfileClass extends React.Component<IProfileProps, IProfileState> {
+export default class Profile extends React.Component<IProfileProps|any, IProfileState|any> {
 
     SECTION_FEED: string = 'feed';
     SECTION_ARTICLES: string = 'articles';
@@ -218,8 +219,8 @@ class ProfileClass extends React.Component<IProfileProps, IProfileState> {
     }
 
     componentWillReceiveProps(nextProps: any) {
-        if (nextProps.params.slug != this.props.params.slug || nextProps.params.subsection != this.props.params.subsection) {
-            this.getUserData(nextProps.params.slug, nextProps.params.subsection);
+        if (nextProps.match.params.slug != this.props.match.params.slug || nextProps.match.params.subsection != this.props.match.params.subsection) {
+            this.getUserData(nextProps.match.params.slug, nextProps.match.params.subsection);
         }
     }
 
@@ -245,8 +246,7 @@ class ProfileClass extends React.Component<IProfileProps, IProfileState> {
     componentDidMount() {
         MediaQuerySerice.listen(this.checkDesktop);
 
-
-        this.getUserData(this.props.params.slug, this.props.params.subsection);
+        this.getUserData(this.props.match.params.slug, this.props.match.params.subsection);
 
         UserAction.onChange([GET_ME, LOGIN, LOGOUT], this.handleUserChange);
         UserAction.onChange(LOGOUT, this.logoutHandle);
@@ -422,6 +422,6 @@ class ProfileClass extends React.Component<IProfileProps, IProfileState> {
     }
 }
 
-let Profile = withRouter(ProfileClass);
-
-export default Profile;
+// let Profile = withRouter(ProfileClass);
+//
+// export default Profile;

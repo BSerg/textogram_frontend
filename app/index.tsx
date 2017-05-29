@@ -1,6 +1,7 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import {Router, Route, browserHistory, IndexRoute} from "react-router";
+import {Router} from "react-router";
+import {Route, BrowserRouter, Switch} from 'react-router-dom';
 import Base from "./components/Base";
 import IndexPage from "./components/Index";
 import Article, {ArticlePreview} from "./components/Article";
@@ -14,7 +15,7 @@ import {UserAction, GET_ME} from "./actions/user/UserAction";
 import "core-js/shim";
 import LoginPage from "./components/LoginPage";
 
-class App extends React.Component<any, any> {
+class App  extends React.Component<any, any> {
     constructor(props: any) {
         super(props);
     }
@@ -77,29 +78,38 @@ class App extends React.Component<any, any> {
 
     render() {
         return (
-            <Router history={browserHistory}>
-                <Route path="/" component={Base}>
-                    <IndexRoute component={IndexPage}/>
-                    <Route path="login" component={LoginPage} />
-                    <Route path="home/:id" component={IndexPage} />
-                    <Route path="articles/new" component={NewArticleEditor}/>
-                    <Route path="articles/:articleId/edit" component={Editor}/>
-                    <Route path="articles/:articleId/preview" component={ArticlePreview}/>
-                    <Route path="articles/:articleSlug/gallery/:galleryBlockId" component={Article}/>
-                    <Route path="articles/:articleSlug" component={Article}/>
-                    <Route path="manage" component={ProfileManagement}/>
-                    <Route path="manage/:section" component={ProfileManagement}/>
-                    <Route path="url_shorten" component={UrlShortener}/>
-                    <Route path="auth/twitter/" component={TwitterAuth}/>
+            <BrowserRouter>
+                <Base>
+                    <Switch>
+                        <Route exact path="/" component={IndexPage}/>
+                        <Route path="/login" component={LoginPage} />
+                        <Route path="/manage/:section" component={ProfileManagement}/>
+                        <Route path="/manage" component={ProfileManagement}/>
+                        <Route path="/url_shorten" component={UrlShortener}/>
+                        <Route path="/auth/twitter/" component={TwitterAuth}/>
+                        <Route path="/articles/new" component={NewArticleEditor}/>
+                        <Route path="/articles/:articleId/edit" component={Editor}/>
+                        <Route path="/articles/:articleId/preview" component={ArticlePreview}/>
+                        <Route path="/articles/:articleSlug/gallery/:galleryBlockId" component={Article}/>
+                        <Route path="/articles/:articleSlug" component={Article}/>
+                        <Route path="/:slug" component={Profile}/>
+                        <Route path="/:slug/:subsection" component={Profile}/>
+                        <Route component={Error404}/>
+                    </Switch>
 
-                    <Route path=":slug" component={Profile}/>
-                    <Route path=":slug/:subsection" component={Profile}/>
-                </Route>
-                <Route path="*" component={() => {return <Error404/>}}/>
-            </Router>
+                </Base>
+
+            </BrowserRouter>
         )
     }
 }
+
+
+// class App extends React.Component<any, any> {
+//     render() {
+        {/*return (<div></div>);*/}
+    // }
+// }
 
 ReactDOM.render(<App/>, document.getElementById("app"));
 

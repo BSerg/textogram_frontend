@@ -19,8 +19,8 @@ export interface IPhoto {
 PhotoContentBlockAction.registerAsync(ADD_IMAGE, (store, data: IPhoto) => {
     return new Promise((resolve, reject) => {
         let formData = new FormData();
-        formData.append('content_item', data.content_item);
-        formData.append('position', data.position);
+        formData.append('content_item', data.content_item.toString());
+        formData.append('position', data.position.toString());
         formData.append('image', data.image);
         api.post('/article/content/photo/', formData).then((response: any) => {
             console.log(response);

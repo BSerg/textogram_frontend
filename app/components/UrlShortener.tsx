@@ -1,5 +1,5 @@
 import * as React from "react";
-import {Link} from "react-router";
+import {Link} from "react-router-dom";
 import {GET_ME, LOGIN, LOGOUT, UserAction} from "../actions/user/UserAction";
 import {Error404} from "./Error";
 import {api} from "../api";

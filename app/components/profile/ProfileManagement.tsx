@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {Captions, Constants} from '../../constants';
-import {withRouter, Link} from 'react-router';
+import {withRouter} from 'react-router';
+import {Link} from 'react-router-dom';
 
 import ProfileManagementNotifications from './ProfileManagementNotifications';
 import ProfileManagementAccount from './ProfileManagementAccount';
@@ -45,7 +46,7 @@ interface IManagementState {
     descriptionSaveTimeout?: number;
 }
 
-class ProfileManagementClass extends React.Component<IManagementProps, IManagementState> {
+class ProfileManagementClass extends React.Component<any, any> {
 
     refs: {
         inputAvatar: HTMLInputElement;
@@ -229,15 +230,14 @@ class ProfileManagementClass extends React.Component<IManagementProps, IManageme
 
 
     componentWillReceiveProps(nextProps: any) {
-
-        if (nextProps.params.section != this.props.params.section) {
-            this.setSection(nextProps.params.section);
+        if (nextProps.match.params.section != this.props.match.params.section) {
+            this.setSection(nextProps.match.params.section);
         }
     }
 
     componentDidMount() {
 
-        this.setSection(this.props.params.section);
+        this.setSection(this.props.match.params.section);
         MediaQuerySerice.listen(this.checkDesktop);
         UserAction.onChange([GET_ME, LOGIN, LOGOUT, SAVE_USER, UPDATE_USER, USER_REJECT], this.setUser);
         UserAction.onChange(LOGOUT, this.logoutHandle);

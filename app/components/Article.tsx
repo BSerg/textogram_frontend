@@ -1,5 +1,5 @@
 import * as React from "react";
-import {Link} from "react-router";
+import {Link} from "react-router-dom";
 import {IContentData} from "../actions/editor/ContentAction";
 import {api} from "../api";
 import Error, {Error404, Error500, Error403} from "./Error";
@@ -75,7 +75,7 @@ interface IArticleState {
     isDesktop?: boolean;
 }
 
-export default class Article extends React.Component<IArticleProps, IArticleState> {
+export default class Article extends React.Component<IArticleProps|any, IArticleState|any> {
     private loadingImages: HTMLImageElement[];
 
     constructor(props: any) {
@@ -93,7 +93,7 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
         shortUrlInput: HTMLInputElement
     };
 
-    static defaultProps = {
+    static defaultProps:any = {
         isPreview: false
     };
 
@@ -105,7 +105,7 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
     }
 
     editArticle() {
-        this.state.article && this.props.router.push(`/articles/${this.state.article.id}/edit`);
+        this.state.article && this.props.history.push(`/articles/${this.state.article.id}/edit`);
     }
 
     processArticle(article: IArticle) {
@@ -275,7 +275,7 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
                         this.loadingImages.push(img);
                     }
                 }
-                if (this.props.params.galleryBlockId && this.props.params.galleryBlockId == gallery.getAttribute('id')) {
+                if (this.props.match.params.galleryBlockId && this.props.match.params.galleryBlockId == gallery.getAttribute('id')) {
                     this.openGalleryModal(0, photoData);
                 }
             } catch (err) {}
@@ -305,7 +305,7 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
 
     openGalleryModal(currentPhotoIndex: number, photos: any[], galleryId: string = null) {
         if (galleryId && !this.props.isPreview) {
-            this.props.router.push(`/articles/${this.state.article.slug}/gallery/${galleryId}`);
+            this.props.history.push(`/articles/${this.state.article.slug}/gallery/${galleryId}`);
         }
         let oldGallery = <GalleryModal isPreview={this.props.isPreview}
                                     currentPhotoIndex={currentPhotoIndex}
@@ -315,7 +315,7 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
         let onClose = () => {
             ModalAction.do(CLOSE_MODAL, null);
             if (!this.props.isPreview) {
-                this.props.router.push(`/articles/${this.state.article.slug}`);
+                this.props.history.push(`/articles/${this.state.article.slug}`);
             }
         };
         let newGallery = <AwesomeGallery photos={photos} currentPhotoIndex={currentPhotoIndex} onClose={onClose}/>;
@@ -385,9 +385,9 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
     }
 
     _publish() {
-        api.post(`/articles/editor/${this.props.params.articleId}/publish/`).then((response: any) => {
+        api.post(`/articles/editor/${this.props.match.params.articleId}/publish/`).then((response: any) => {
             NotificationAction.do(SHOW_NOTIFICATION, {content: 'Поздравляем, ваш материал опубликован.'});
-            this.props.router.push(`/articles/${this.state.article.slug}/`);
+            this.props.history.push(`/articles/${this.state.article.slug}/`);
         });
     }
 
@@ -403,7 +403,7 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
     }
 
     retrieveArticle() {
-        api.get(`/articles/${this.props.params.articleSlug}/`).then((response: any) => {
+        api.get(`/articles/${this.props.match.params.articleSlug}/`).then((response: any) => {
             let data = response.data;
             this.loadArticle(data);
         }).catch((err: any) => {
@@ -424,7 +424,7 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
     }
 
     retrieveArticlePreview() {
-        api.get(`/articles/${this.props.params.articleId}/preview/`).then((response: any) => {
+        api.get(`/articles/${this.props.match.params.articleId}/preview/`).then((response: any) => {
             let data = response.data;
             this.loadArticle(data);
         }).catch((err: any) => {
@@ -445,7 +445,7 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
     }
 
     route(url: string) {
-        this.props.router.push(url);
+        this.props.history.push(url);
     }
 
     componentDidMount() {
@@ -460,16 +460,16 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
 
     componentWillReceiveProps(nextProps: any) {
         if (this.props.isPreview) {
-            if (nextProps.params.articleId != this.props.params.articleId) {
+            if (nextProps.match.params.articleId != this.props.match.params.articleId) {
                 this.retrieveArticlePreview();
             }
         } else {
-            if (!nextProps.params.galleryBlockId) {
+            if (!nextProps.match.params.galleryBlockId) {
                 ModalAction.do(CLOSE_MODAL, null);
-            } else if (nextProps.params.galleryBlockId != this.props.params.galleryBlockId) {
+            } else if (nextProps.match.params.galleryBlockId != this.props.match.params.galleryBlockId) {
                 this.processPhoto();
             }
-            if (nextProps.params.articleSlug != this.props.params.articleSlug) {
+            if (nextProps.match.params.articleSlug != this.props.match.params.articleSlug) {
                 this.retrieveArticle();
             }
         }
@@ -690,7 +690,7 @@ interface IGalleryModalState {
 }
 
 
-class GalleryModal extends React.Component<IGalleryModalProps, IGalleryModalState> {
+class GalleryModal extends React.Component<IGalleryModalProps|any, IGalleryModalState|any> {
     refs: {
         image: HTMLDivElement
     };
@@ -708,7 +708,7 @@ class GalleryModal extends React.Component<IGalleryModalProps, IGalleryModalStat
     back() {
         ModalAction.do(CLOSE_MODAL, null);
         if (!this.props.isPreview) {
-            this.props.router.push(`/articles/${this.props.article.slug}`);
+            this.props.history.push(`/articles/${this.props.article.slug}`);
         }
     }
 

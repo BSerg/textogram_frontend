@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Link} from 'react-router';
+import {Link} from 'react-router-dom';
 import '../../styles/shared/article_preview_statistics.scss';
 import {Captions, APIData} from '../../constants';
 import {api} from '../../api';

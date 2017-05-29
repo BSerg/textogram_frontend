@@ -1,5 +1,6 @@
 import * as React from 'react';
-import {withRouter, Link} from 'react-router';
+import {withRouter} from 'react-router';
+import {Link} from 'react-router-dom';
 import {api} from '../../api';
 
 import * as moment from 'moment';
@@ -65,7 +66,7 @@ interface IArticlePreviewStateInterface {
 
 
 
-class ArticlePreviewClass extends React.Component<IArticlePreviewPropsInterface, IArticlePreviewStateInterface> {
+class ArticlePreviewClass extends React.Component<IArticlePreviewPropsInterface|any, IArticlePreviewStateInterface|any> {
 
     constructor() {
         super();
