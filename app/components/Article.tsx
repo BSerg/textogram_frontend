@@ -486,6 +486,7 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
     }
 
     render() {
+        console.log(this.props);
         let coverStyle = {};
         let titleClassName = "article__title", authorLink = '/';
 
@@ -503,6 +504,9 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
             if (offset) shiftContentStyle = {marginLeft: `${offset}px`};
         }
 
+        if (!this.state.article && this.props.renderedArticle) {
+            this.state.article = this.props.renderedArticle;
+        }
         return (
             !this.state.error ?
                 this.state.article ?

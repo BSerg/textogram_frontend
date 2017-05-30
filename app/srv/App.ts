@@ -3,6 +3,7 @@ import * as express from 'express';
 import * as cors from 'cors';
 import * as bodyParser from 'body-parser';
 import {baseRoutes} from './routes/BaseRouter';
+import {articleRoutes} from './routes/ArticleRouter';
 
 
 class AppClass {
@@ -25,7 +26,15 @@ class AppClass {
     }
 
     routes() {
+        this.express.set('view engine', 'ejs');
+        this.express.set('views', '/Users/mihailkuznetsov/PycharmProjects/textogram_frontend/server_bundle/' + 'views');
         this.express.use('/', baseRoutes);
+        this.express.use('/articles', articleRoutes);
+        // console.log(__filename);
+        if (process.env.NODE_ENV != 'production') {
+            this.express.use('/static', express.static(process.env.STATIC_ROOT));
+        }
+
     }
 }
 
