@@ -27,19 +27,11 @@ class ArticleRouter {
                 let RenderedArticle: React.StatelessComponent<any> = (props: any) => {
                     return (<Article renderedArticle={article} {...props}/>);
                 };
-
-                {/*let RenderedArticle = <Article renderedArticle={data} />;*/}
-
-                let html = ReactDOMServer.renderToString(<StaticRouter context={{}}>
-                    <Base>
-                        <Route path="/:articleSlug" component={RenderedArticle} />
-                    </Base>
-                </StaticRouter>);
-                res.render('index.ejs', {reactOutput: html});
+                let html = ReactDOMServer.renderToString(<StaticRouter context={{}}><Base><RenderedArticle /></Base></StaticRouter>);
+                res.render('index.ejs', {reactData: html});
             }
             catch (error) {
-                console.log('error');
-                res.render('index.ejs', {});
+                res.render('index.ejs', {reactData: ''});
             }
             // res.end(JSON.parse(data).html);
 

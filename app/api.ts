@@ -19,11 +19,17 @@ export let api = axios.create({
 
 api.interceptors.request.use(function(config: any) {
     if (process.env.IS_BROWSER) {
+
         let token = window.localStorage.getItem('authToken');
         if (token) {
             config.headers['Authorization'] = 'Token ' + localStorage.getItem('authToken');
         }
         config.headers['X-Fingerprint'] = fingerprint;
+        config.headers['Access-Control-Allow-Origin'] = '*';
+        config.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, OPTIONS, PATCH, DELETE';
+        config.headers['Access-Control-Allow-Headers'] = 'Origin, Accept, Content-Type, X-Requested-With, X-CSRF-Token';
     }
+    console.log(config);
+
     return config;
 });

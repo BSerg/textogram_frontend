@@ -65,7 +65,8 @@ interface IArticle {
 interface IArticleProps {
     isPreview?: boolean,
     params?: any,
-    router?: any
+    router?: any,
+    renderedArticle?: any
 }
 
 interface IArticleState {
@@ -82,7 +83,7 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
         super(props);
         this.loadingImages = [];
         this.state = {
-            article: null,
+            article: props.renderedArticle || null,
             isSelf: false,
             isDesktop: MediaQuerySerice.getIsDesktop(),
         };
@@ -486,7 +487,7 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
     }
 
     render() {
-        console.log(this.props);
+        // console.log(this.props);
         let coverStyle = {};
         let titleClassName = "article__title", authorLink = '/';
 
@@ -504,9 +505,9 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
             if (offset) shiftContentStyle = {marginLeft: `${offset}px`};
         }
 
-        if (!this.state.article && this.props.renderedArticle) {
-            this.state.article = this.props.renderedArticle;
-        }
+        // if (!this.state.article && this.props.renderedArticle) {
+        //     this.state.article = this.props.renderedArticle;
+        // }
         return (
             !this.state.error ?
                 this.state.article ?
