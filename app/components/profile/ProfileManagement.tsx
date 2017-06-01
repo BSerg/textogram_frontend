@@ -64,7 +64,7 @@ class ProfileManagementClass extends React.Component<any, any> {
         {name: this.SECTION_ACCOUNT, caption: Captions.management.sectionAccount, to: '/manage/account', section: <ProfileManagementAccount />},
         {name: this.SECTION_NOTIFICATIONS, caption: Captions.management.sectionNotifications, to: '/manage/notifications', section: <ProfileManagementNotifications />},
         {name: this.SECTION_STATISTICS, caption: Captions.management.sectionStatistics, to: '/manage/statistics', section: <ProfileManagementStatistics/>},
-        {name: this.SECTION_PAYWALL, caption: 'Paywall', to: '/manage/paywall', section: <ProfileManagementPaywall />},
+        // {name: this.SECTION_PAYWALL, caption: 'Paywall', to: '/manage/paywall', section: <ProfileManagementPaywall />},
 
     ];
 
