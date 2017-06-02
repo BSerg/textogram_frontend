@@ -25,7 +25,7 @@ interface ISubscribersState {
     searchString?: string;
     searchTimeout?: number;
     nextUrl?: string;
-    cancelSource?: any;
+    // cancelSource?: any;
     isLoading?: boolean;
     menuOpen?: boolean;
 }
@@ -38,9 +38,11 @@ export default class ProfileAuthorList extends React.Component<ISubscribersProps
         search: HTMLInputElement;
     };
 
+    cancelSource: any;
+
     constructor() {
         super();
-        this.state = {searchString: "", nextUrl: null, cancelSource: null, items: [], isLoading: false, menuOpen: MenuAction.getStore().open};
+        this.state = {searchString: "", nextUrl: null, items: [], isLoading: false, menuOpen: MenuAction.getStore().open};
         this.setMenuOpen = this.setMenuOpen.bind(this);
         this.setInputPosition = this.setInputPosition.bind(this);
     }
@@ -48,12 +50,10 @@ export default class ProfileAuthorList extends React.Component<ISubscribersProps
     loadItems(more: boolean = false) {
         let items: any[] = more ? this.state.items : [];
 
-        if (this.state.cancelSource) {
-            this.state.cancelSource.cancel();
-        }
+        this.cancelSource && this.cancelSource.cancel();
 
         let CancelToken = axios.CancelToken;
-        this.state.cancelSource = CancelToken.source();
+        this.cancelSource = CancelToken.source();
 
         this.setState({items: items, isLoading: true}, () => {
             let requestParams: any = {};
@@ -64,7 +64,7 @@ export default class ProfileAuthorList extends React.Component<ISubscribersProps
                 requestParams.search_string = this.state.searchString;
             }
 
-            api.get(apiUrl, {cancelToken: this.state.cancelSource.token, params: requestParams}).then((response: any) => {
+            api.get(apiUrl, {cancelToken: this.cancelSource.token, params: requestParams}).then((response: any) => {
                 let results = response.data.results || [];
                 results.forEach((r: any) => {
                         r.isNew = true;
@@ -81,7 +81,7 @@ export default class ProfileAuthorList extends React.Component<ISubscribersProps
 
     searchInput(e: any) {
         this.state.searchTimeout && window.clearTimeout(this.state.searchTimeout);
-        this.state.cancelSource && this.state.cancelSource.cancel();
+        this.cancelSource && this.cancelSource.cancel();
         this.setState({ searchString: e.target.value, items: [], isLoading: true }, () => {
             this.state.searchTimeout = window.setTimeout(this.loadItems.bind(this), 500);
         })
@@ -113,6 +113,7 @@ export default class ProfileAuthorList extends React.Component<ISubscribersProps
         this.refs.search.focus();
         MenuAction.onChange([TOGGLE], this.setMenuOpen);
         this.loadItems();
+        console.log('here');
         // this.setInputPosition();
         // window.addEventListener('resize', this.setInputPosition);
     }
@@ -120,7 +121,7 @@ export default class ProfileAuthorList extends React.Component<ISubscribersProps
     componentWillUnmount() {
         MenuAction.unbind([TOGGLE], this.setMenuOpen);
         this.state.searchTimeout && window.clearTimeout(this.state.searchTimeout);
-        this.state.cancelSource && this.state.cancelSource.cancel();
+        this.cancelSource && this.cancelSource.cancel();
         // window.removeEventListener('resize', this.setInputPosition);
     }
 

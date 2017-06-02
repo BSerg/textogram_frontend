@@ -20,9 +20,9 @@ interface IArticlesState {
     items?: any[];
     nextUrl?: string;
     isLoading?: boolean;
-    cancelSource?: any;
+    // cancelSource?: any;
     searchString?: string;
-    searchTimeout?: number;
+    // searchTimeout?: number;
 }
 
 export default class ProfileArticles extends React.Component<IArticlesProps, IArticlesState> {
@@ -33,6 +33,9 @@ export default class ProfileArticles extends React.Component<IArticlesProps, IAr
     SECTION_STATISTICS = 'statistics';
     SECTION_PAYWALL = 'paywall';
 
+    cancelSource: any;
+    searchTimeout: number;
+
     refs: {
         main: HTMLDivElement;
         search: HTMLInputElement;
@@ -40,7 +43,7 @@ export default class ProfileArticles extends React.Component<IArticlesProps, IAr
 
     constructor() {
         super();
-        this.state = { items: [], nextUrl: null,  isLoading: false, cancelSource: null, searchString: ''};
+        this.state = { items: [], nextUrl: null,  isLoading: false, searchString: ''};
 
         this.handleScroll = this.handleScroll.bind(this);
     }
@@ -74,9 +77,9 @@ export default class ProfileArticles extends React.Component<IArticlesProps, IAr
 
         let items: any[] = more ? this.state.items : [];
 
-        this.state.cancelSource && this.state.cancelSource.cancel();
+        this.cancelSource && this.cancelSource.cancel();
         let CancelToken = axios.CancelToken;
-        this.state.cancelSource = CancelToken.source();
+        this.cancelSource = CancelToken.source();
 
         this.setState({items: items, isLoading: true}, () => {
 
@@ -99,7 +102,7 @@ export default class ProfileArticles extends React.Component<IArticlesProps, IAr
 
             }
 
-            api.get(apiUrl, {cancelToken: this.state.cancelSource.token, params: requestParams}).then((response: any) => {
+            api.get(apiUrl, {cancelToken: this.cancelSource.token, params: requestParams}).then((response: any) => {
                 let results: any = response.data.results || [];
                 results.forEach((r: any) => {
                     r.isNew = true;
@@ -115,10 +118,10 @@ export default class ProfileArticles extends React.Component<IArticlesProps, IAr
     }
 
     searchInput(e: any) {
-        this.state.searchTimeout && window.clearTimeout(this.state.searchTimeout);
-        this.state.cancelSource && this.state.cancelSource.cancel();
+        this.searchTimeout && window.clearTimeout(this.searchTimeout);
+        this.cancelSource && this.cancelSource.cancel();
         this.setState({searchString: e.target.value, items: [], isLoading: true}, () => {
-            this.state.searchTimeout = window.setTimeout(this.loadArticles.bind(this), 500);
+            this.searchTimeout = window.setTimeout(this.loadArticles.bind(this), 500);
 
         })
     }
@@ -134,8 +137,8 @@ export default class ProfileArticles extends React.Component<IArticlesProps, IAr
 
         if (nextProps.userId != this.state.userId || nextProps.section != this.state.section || nextProps.isSelf != this.state.isSelf) {
 
-            this.state.searchTimeout && window.clearTimeout(this.state.searchTimeout);
-            this.state.cancelSource && this.state.cancelSource.cancel();
+            this.searchTimeout && window.clearTimeout(this.searchTimeout);
+            this.cancelSource && this.cancelSource.cancel();
 
             this.setState({ userId: nextProps.userId, searchString: '', section: nextProps.section, isSelf: nextProps.isSelf }, () => {
                 this.refs.search.focus();
@@ -152,8 +155,8 @@ export default class ProfileArticles extends React.Component<IArticlesProps, IAr
 
     componentWillUnmount() {
         window.removeEventListener('scroll', this.handleScroll);
-        this.state.cancelSource && this.state.cancelSource.cancel();
-        this.state.searchTimeout && window.clearTimeout(this.state.searchTimeout);
+        this.cancelSource && this.cancelSource.cancel();
+        this.searchTimeout && window.clearTimeout(this.searchTimeout);
     }
 
     render() {

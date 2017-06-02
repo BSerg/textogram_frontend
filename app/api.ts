@@ -29,7 +29,13 @@ api.interceptors.request.use(function(config: any) {
         config.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, OPTIONS, PATCH, DELETE';
         config.headers['Access-Control-Allow-Headers'] = 'Origin, Accept, Content-Type, X-Requested-With, X-CSRF-Token';
     }
-    console.log(config);
 
     return config;
+});
+
+// let cacheBaseUrl: string = process.env.API_URL.toString() || '';
+
+
+export let cacheApi = axios.create({
+    baseURL: process.env.CACHE_API_URL,
 });

@@ -51,7 +51,7 @@ interface IProfileState {
     isLoading?: boolean;
     canSubscribe?: boolean;
     additionalPage?: any;
-    cancelSource?: any;
+    // cancelSource?: any;
 }
 
 export default class Profile extends React.Component<IProfileProps|any, IProfileState|any> {
@@ -63,11 +63,12 @@ export default class Profile extends React.Component<IProfileProps|any, IProfile
     SECTION_FOLLOWERS: string = 'followers';
     SECTION_FOLLOWING: string = 'following';
 
+    cancelSource: any;
 
     constructor(props: any) {
         super(props);
         this.state = {user: null, error: null, isLoading: false, isSelf: false, selfDrafts: 0, showSubscribers: true,
-            isDesktop: MediaQuerySerice.getIsDesktop(), canSubscribe: false, additionalPage: null, cancelSource: null};
+            isDesktop: MediaQuerySerice.getIsDesktop(), canSubscribe: false, additionalPage: null};
         this.handleUserChange = this.handleUserChange.bind(this);
         this.checkDesktop = this.checkDesktop.bind(this);
         this.setDrafts = this.setDrafts.bind(this);
@@ -146,11 +147,11 @@ export default class Profile extends React.Component<IProfileProps|any, IProfile
             if (this.state.isLoading) {
                 return;
             }
-            this.state.cancelSource && this.state.cancelSource.cancel();
-            this.state.cancelSource =  axios.CancelToken.source();
+            this.cancelSource && this.cancelSource.cancel();
+            this.cancelSource =  axios.CancelToken.source();
             if (!this.state.user || (slug != this.state.user.nickname)) {
                 this.setState({error: null, isLoading: true}, () => {
-                    api.get('users/' + slug + '/', { cancelToken: this.state.cancelSource.token }).then((response: any) => {
+                    api.get('users/' + slug + '/', { cancelToken: this.cancelSource.token }).then((response: any) => {
                         let isSelf: boolean = Boolean(response.data && UserAction.getStore().user && (UserAction.getStore().user.id == response.data.id));
                         let canSubscribe: boolean = Boolean(UserAction.getStore().user && !isSelf);
 
@@ -258,10 +259,7 @@ export default class Profile extends React.Component<IProfileProps|any, IProfile
         UserAction.unbind(LOGOUT, this.logoutHandle);
         UserAction.unbind(UPDATE_USER_DRAFTS, this.setDrafts);
         MediaQuerySerice.unbind(this.checkDesktop);
-
-        if (this.state.cancelSource) {
-            this.state.cancelSource.cancel();
-        }
+        this.cancelSource && this.cancelSource.cancel();
     }
 
     render() {

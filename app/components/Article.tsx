@@ -1,7 +1,7 @@
 import * as React from "react";
 import {Link} from "react-router-dom";
 import {IContentData} from "../actions/editor/ContentAction";
-import {api} from "../api";
+import {api, cacheApi} from "../api";
 import Error, {Error404, Error500, Error403} from "./Error";
 import {UserAction, LOGIN, LOGOUT, UPDATE_USER, SAVE_USER} from "../actions/user/UserAction";
 import {ModalAction, OPEN_MODAL, CLOSE_MODAL} from "../actions/shared/ModalAction";
@@ -404,7 +404,11 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
     }
 
     retrieveArticle() {
-        api.get(`/articles/${this.props.match.params.articleSlug}/`).then((response: any) => {
+
+        let retrieveAPI = process.env.USE_CACHE_API ? cacheApi : api;
+        console.log('retr');
+        console.log(process.env.USE_CACHE_API);
+        retrieveAPI.get(`/articles/${this.props.match.params.articleSlug}/`).then((response: any) => {
             let data = response.data;
             this.loadArticle(data);
         }).catch((err: any) => {

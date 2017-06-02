@@ -5,6 +5,8 @@ import * as bodyParser from 'body-parser';
 import {baseRoutes} from './routes/BaseRouter';
 import {articleRoutes} from './routes/ArticleRouter';
 
+import {apiRoutes} from './routes/ApiRouter';
+
 
 class AppClass {
     public express: express.Application;
@@ -30,6 +32,7 @@ class AppClass {
         this.express.set('views', '/Users/mihailkuznetsov/PycharmProjects/textogram_frontend/server_bundle/' + 'views');
         this.express.use('/', baseRoutes);
         this.express.use('/articles', articleRoutes);
+        this.express.use('/api/v1', apiRoutes);
         // console.log(__filename);
         if (process.env.NODE_ENV != 'production') {
             this.express.use('/static', express.static(process.env.STATIC_ROOT));
