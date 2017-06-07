@@ -99,10 +99,10 @@
       background-size: contain;
     }
 
-    //&.image_sub_block_main {
-    //  height: 245px;
-    //  background: url('../assets/images/imac_small.jpg') no-repeat center center;
-    //}
+    &.image_sub_block_main {
+      height: 245px;
+      background: url('../assets/images/imac_small.jpg') no-repeat center center;
+    }
   }
 
   .index_registration {
