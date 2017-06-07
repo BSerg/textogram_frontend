@@ -79,11 +79,30 @@
     height: 206px;
     background-color: #7F7F7F;
 
-
-    &.image_sub_block_main {
-      height: 245px;
-      background: url('../assets/images/imac_small.jpg') no-repeat center center #FFFFFF;
+    &.index_image_sub_block_0 {
+      background: url('../assets/images/landing_editor.jpg') no-repeat center center;
+      background-size: contain;
     }
+
+    &.index_image_sub_block_1 {
+      background: url('../assets/images/landing_text.jpg') no-repeat center center;
+      background-size: contain;
+    }
+
+    &.index_image_sub_block_2 {
+      background: url('../assets/images/landing_author.jpg') no-repeat center center;
+      background-size: contain;
+    }
+
+    &.index_image_sub_block_3 {
+      background: url('../assets/images/landing_main.jpg') no-repeat center center;
+      background-size: contain;
+    }
+
+    //&.image_sub_block_main {
+    //  height: 245px;
+    //  background: url('../assets/images/imac_small.jpg') no-repeat center center;
+    //}
   }
 
   .index_registration {
@@ -326,7 +345,6 @@
 
     .index_image_sub_block {
       height: 695px;
-
 
       &.image_sub_block_main {
         height: 1000px;

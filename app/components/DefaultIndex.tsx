@@ -81,7 +81,7 @@ export default class DefaultIndex extends React.Component<any, {screenWidth?: nu
                 {
                     this.BLOCKS.map((block: {key: string, caption: string, content: any}, index: number) => {
                         return <div key={block.key} className={"index_block" + (block.key == "main" ? " index_block_main" : "") }>
-                            <div className="index_image_sub_block"></div>
+                            <div className={"index_image_sub_block index_image_sub_block_" + index}></div>
                             <div className={"index_info_sub_block" + (index % 2 == 0 ? " even" : " odd")}>
                                 <h3>{block.caption}</h3>
                                 <div dangerouslySetInnerHTML={{__html: block.content}}></div>
