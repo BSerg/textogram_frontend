@@ -74,11 +74,7 @@ export default class DefaultIndex extends React.Component<any, {screenWidth?: nu
                     <div className="index_image_sub_block image_sub_block_main"></div>
                 </div>
 
-                {
-                    this.state.screenWidth < 768 ? (<RegistrationBlock />) : null
-                }
-
-                {
+                {this.state.screenWidth >= 768 ?
                     this.BLOCKS.map((block: {key: string, caption: string, content: any}, index: number) => {
                         return <div key={block.key} className={"index_block" + (block.key == "main" ? " index_block_main" : "") }>
                             <div className={"index_image_sub_block index_image_sub_block_" + index}></div>
@@ -87,7 +83,7 @@ export default class DefaultIndex extends React.Component<any, {screenWidth?: nu
                                 <div dangerouslySetInnerHTML={{__html: block.content}}></div>
                             </div>
                         </div>
-                    })
+                    }) : null
                 }
 
                 <RegistrationBlock className={"index_registration_bottom"} />
@@ -96,8 +92,9 @@ export default class DefaultIndex extends React.Component<any, {screenWidth?: nu
                     <span><Link to="mailto:we@textius.com">we@textius.com</Link></span>
                     <span><Link to="/terms">Rules and Terms</Link></span>
                     <span>© Textius, beta 2017</span>
-
-                    <div className="index_scroll" onClick={this.scrollTop.bind(this)}></div>
+                    {this.state.screenWidth >= 768 ?
+                        <div className="index_scroll" onClick={this.scrollTop.bind(this)}></div> : null
+                    }
                 </div>
 
             </div>)
