@@ -1,5 +1,6 @@
 import * as React from "react";
 import axios from 'axios';
+import * as cookie from 'js-cookie';
 
 import Action from "../Action";
 import {Constants} from '../../constants';
@@ -63,7 +64,10 @@ UploadImageAction.registerAsync(UPLOAD_IMAGE, (store, data: {articleId: number, 
         };
 
         xhr.open("POST", process.env.API_URL + '/articles/editor/images/', true);
-        xhr.setRequestHeader('Authorization', 'Token ' + localStorage.getItem('authToken'));
+        let jwt = cookie.get('jwt');
+        if (jwt) {
+            xhr.setRequestHeader('Authorization', 'Bearer ' + jwt);
+        }
         xhr.setRequestHeader('Accept', 'application/json');
         xhr.send(formData);
     })
