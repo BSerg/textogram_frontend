@@ -123,7 +123,7 @@
       margin-bottom: 15px;
     }
 
-    .login_block div {
+    .login_block a {
       width: 50px;
       height: 50px;
 
@@ -134,7 +134,7 @@
       }
     }
 
-    .login_block div:hover {
+    .login_block a:hover {
       background-color: #FFFFFF;
     }
   }
@@ -248,7 +248,7 @@
           font-weight: $font-weight-bold;
 
           .login_block {
-            div {
+            a {
               width: 35px;
               height: 35px;
               svg {
@@ -278,7 +278,7 @@
         }
       }
       .login_block {
-        div {
+        a {
           width: 50px;
           height: 50px;
           svg {
@@ -363,7 +363,7 @@
         }
       }
       .login_block {
-        div {
+        a {
           width: 65px;
           height: 65px;
           padding: 0 10px;

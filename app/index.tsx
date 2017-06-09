@@ -1,3 +1,4 @@
+import * as cookie from 'js-cookie';
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import {Router, Route, browserHistory, IndexRoute} from "react-router";
@@ -10,7 +11,7 @@ import {Error404} from "./components/Error";
 import ProfileManagement from "./components/profile/ProfileManagement";
 import TwitterAuth from "./components/TwitterAuth";
 import UrlShortener from "./components/UrlShortener";
-import {UserAction, GET_ME} from "./actions/user/UserAction";
+import {UserAction, GET_ME, LOGIN} from "./actions/user/UserAction";
 import "core-js/shim";
 import LoginPage from "./components/LoginPage";
 
@@ -70,8 +71,10 @@ class App extends React.Component<any, any> {
             }
         }
         window.setTimeout(onGAPILoad.bind(this), 0);
-        if (window.localStorage.getItem('authToken')) {
-            UserAction.doAsync(GET_ME, null);
+
+        let token = cookie.get('jwt') || window.localStorage.getItem('authToken')
+        if (token) {
+            UserAction.doAsync(LOGIN, {token: token});
         }
     }
 
