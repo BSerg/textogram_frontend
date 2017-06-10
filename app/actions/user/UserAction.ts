@@ -77,7 +77,6 @@ UserAction.registerAsync(LOGIN, (store, data: any) => {
 
 UserAction.registerAsync(LOGOUT, (store, data: any) => {
     store.user = null;
-    cookie.remove('jwt');
     localStorage.removeItem('authToken');
     document.cookie = 'authToken=;expires=-1';
 
