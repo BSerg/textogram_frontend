@@ -69,7 +69,7 @@ UserAction.registerAsync(LOGIN, (store, data: any) => {
             // document.cookie = 'authToken=' + response.data.token;
             resolve(response.data);
         }).catch((error) => {
-            NotificationAction.do(SHOW_NOTIFICATION, {content: "Ошибка аутентификации"})
+            NotificationAction.do(SHOW_NOTIFICATION, {content: "Ошибка аутентификации"});
             reject(error);
         })
     });
@@ -84,7 +84,7 @@ UserAction.registerAsync(LOGOUT, (store, data: any) => {
         api.post('/logout/').then((response: any) => {
             resolve(response.data);
         }).catch((error) => {
-            resolve(error);
+            reject(error);
         })
     });
 });
