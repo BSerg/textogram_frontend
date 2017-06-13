@@ -23,7 +23,7 @@ interface ISubscribersState {
 
     items?: any[];
     searchString?: string;
-    searchTimeout?: number;
+    // searchTimeout?: number;
     nextUrl?: string;
     // cancelSource?: any;
     isLoading?: boolean;
@@ -39,6 +39,7 @@ export default class ProfileAuthorList extends React.Component<ISubscribersProps
     };
 
     cancelSource: any;
+    searchTimeout: number;
 
     constructor() {
         super();
@@ -80,10 +81,10 @@ export default class ProfileAuthorList extends React.Component<ISubscribersProps
     }
 
     searchInput(e: any) {
-        this.state.searchTimeout && window.clearTimeout(this.state.searchTimeout);
+        this.searchTimeout && window.clearTimeout(this.searchTimeout);
         this.cancelSource && this.cancelSource.cancel();
         this.setState({ searchString: e.target.value, items: [], isLoading: true }, () => {
-            this.state.searchTimeout = window.setTimeout(this.loadItems.bind(this), 500);
+            this.searchTimeout = window.setTimeout(this.loadItems.bind(this), 500);
         })
     }
 
@@ -120,7 +121,7 @@ export default class ProfileAuthorList extends React.Component<ISubscribersProps
 
     componentWillUnmount() {
         MenuAction.unbind([TOGGLE], this.setMenuOpen);
-        this.state.searchTimeout && window.clearTimeout(this.state.searchTimeout);
+        this.searchTimeout && window.clearTimeout(this.searchTimeout);
         this.cancelSource && this.cancelSource.cancel();
         // window.removeEventListener('resize', this.setInputPosition);
     }

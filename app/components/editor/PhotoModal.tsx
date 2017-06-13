@@ -73,19 +73,21 @@ export class PhotoModal extends React.Component<IPhotoDesktopModalProps, IPhotoD
     }
 
     nextPhoto() {
-        this.state.currentPhotoIndex++;
-        if (this.state.currentPhotoIndex >= this.state.photos.length) {
-            this.state.currentPhotoIndex = 0;
+        let currentPhotoIndex = this.state.currentPhotoIndex + 1;
+        // this.state.currentPhotoIndex++;
+        if (currentPhotoIndex >= this.state.photos.length) {
+            currentPhotoIndex = 0;
         }
-        this.setState({currentPhotoIndex: this.state.currentPhotoIndex});
+        this.setState({currentPhotoIndex: currentPhotoIndex});
     }
 
     prevPhoto() {
-        this.state.currentPhotoIndex--;
-        if (this.state.currentPhotoIndex < 0) {
-            this.state.currentPhotoIndex = this.state.photos.length - 1;
+        let currentPhotoIndex = this.state.currentPhotoIndex - 1;
+        // this.state.currentPhotoIndex--;
+        if (currentPhotoIndex < 0) {
+            currentPhotoIndex = this.state.photos.length - 1;
         }
-        this.setState({currentPhotoIndex: this.state.currentPhotoIndex});
+        this.setState({currentPhotoIndex: currentPhotoIndex});
     }
 
     getPrevPhotoIndex() {

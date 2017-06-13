@@ -7,10 +7,12 @@ interface ILoadingProps {
 
 interface ILoadingState {
     indicatedIndex?: number;
-    interval?: number;
+    // interval?: number;
 }
 
 export default class Loading extends React.Component<ILoadingProps, ILoadingState> {
+
+    interval: number;
 
     NUMBER_OF_INDICATORS: number = 3;
     INTERVAL_DURATION: number = 200;
@@ -31,12 +33,11 @@ export default class Loading extends React.Component<ILoadingProps, ILoadingStat
     }
 
     componentDidMount() {
-
-        this.state.interval = window.setInterval(this.changeIndicators, this.INTERVAL_DURATION);
+        this.interval = window.setInterval(this.changeIndicators, this.INTERVAL_DURATION);
     }
 
     componentWillUnmount() {
-        window.clearInterval(this.state.interval);
+        window.clearInterval(this.interval);
     }
 
     render() {

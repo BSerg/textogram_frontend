@@ -28,10 +28,12 @@ interface INotificationState {
     isRead?: boolean;
     isUpdating?: boolean;
     isNew?: boolean;
-    newTimeout?: number;
+    // newTimeout?: number;
 }
 
 class ProfileNotification extends React.Component<INotificationProps, INotificationState> {
+
+    newTimeout: number;
 
     constructor() {
         super();
@@ -76,11 +78,11 @@ class ProfileNotification extends React.Component<INotificationProps, INotificat
 
     componentDidMount() {
         this.setState({isRead: this.props.item.is_read});
-        this.state.newTimeout = window.setTimeout(this.setNotNew, 0);
+        this.newTimeout = window.setTimeout(this.setNotNew, 0);
     }
 
     componentWillUnmount() {
-        window.clearTimeout(this.state.newTimeout);
+        this.newTimeout && window.clearTimeout(this.newTimeout);
     }
 
     render() {

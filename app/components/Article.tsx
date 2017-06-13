@@ -406,8 +406,6 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
     retrieveArticle() {
 
         let retrieveAPI = process.env.USE_CACHE_API ? cacheApi : api;
-        console.log('retr');
-        console.log(process.env.USE_CACHE_API);
         retrieveAPI.get(`/articles/${this.props.match.params.articleSlug}/`).then((response: any) => {
             let data = response.data;
             this.loadArticle(data);

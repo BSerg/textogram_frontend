@@ -36,7 +36,7 @@ interface IRegistrationStateInterface {
     passwordVisible?: boolean,
 }
 
-class RegistrationClass extends React.Component<IRegistrationPropsInterface, IRegistrationStateInterface> {
+class RegistrationClass extends React.Component<IRegistrationPropsInterface|any, IRegistrationStateInterface|any> {
 
     static defaultProps: any = {
         isForgotPassword: false,
