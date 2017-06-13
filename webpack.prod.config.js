@@ -65,6 +65,7 @@ module.exports = {
             "process.env": {
                 NODE_ENV: JSON.stringify('production'),
                 API_URL: JSON.stringify("https://textius.com/api/v1"),
+                AUTH_SERVICE_URL: JSON.stringify("https://auth.textius.com"),
                 VK_APP: JSON.stringify("6048359"),
                 FB_APP: JSON.stringify("129250137643057"),
                 GOOGLE_APP: JSON.stringify("396019225298-532t6cn73h7jbs9uf49n2peljdleuimg.apps.googleusercontent.com"),
