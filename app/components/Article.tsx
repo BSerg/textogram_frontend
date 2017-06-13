@@ -489,7 +489,6 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
     }
 
     render() {
-        // console.log(this.props);
         let coverStyle = {};
         let titleClassName = "article__title", authorLink = '/';
 

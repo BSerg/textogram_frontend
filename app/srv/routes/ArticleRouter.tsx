@@ -43,6 +43,7 @@ class ArticleRouter {
     }
     init() {
         this.router.get('/:articleSlug', this.getArticle);
+        this.router.get('/:articleSlug/gallery/:galleryUid', this.getArticle);
     }
 }
 

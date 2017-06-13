@@ -34,7 +34,11 @@ class BaseRouter {
         res.render('index.ejs', {reactData: html});
     }
 
-    getArticle(req: Request, res: Response, next: NextFunction) {
+    getDefault(req: Request, res: Response, next: NextFunction) {
+        res.render('index.ejs', {reactData: ''});
+    }
+
+    /*getArticle(req: Request, res: Response, next: NextFunction) {
 
         let articleSlug = req.params.articleSlug || '';
 
@@ -59,10 +63,12 @@ class BaseRouter {
                 msg: 'not found'
             });
         });
-    }
+    }*/
 
     init() {
         this.router.get('/', this.getIndex);
+        this.router.get('/:anySlug', this.getDefault);
+
     }
 }
 
