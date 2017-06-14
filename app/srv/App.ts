@@ -28,8 +28,9 @@ class AppClass {
     }
 
     routes() {
+        console.log('');
         this.express.set('view engine', 'ejs');
-        this.express.set('views', '/Users/mihailkuznetsov/PycharmProjects/textogram_frontend/server_bundle/' + 'views');
+        this.express.set('views', process.env.VIEWS_DIR);
         this.express.use('/', baseRoutes);
         this.express.use('/articles', articleRoutes);
         this.express.use('/api/v1', apiRoutes);
