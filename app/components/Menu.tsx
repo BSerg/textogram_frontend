@@ -283,11 +283,11 @@ class UserMenu extends React.Component<IUserMenuProps|any, any> {
 
     logout(e: any) {
         e.stopPropagation();
-        UserAction.do(LOGOUT, null);
-        if (!this.props.isDesktop) {
-            MenuAction.do(TOGGLE, null);
-        }
-
+        window.location.href = process.env.AUTH_SERVICE_URL + '/logout' + '?redirect_url=' + window.location.href;
+        // UserAction.do(LOGOUT, null);
+        // if (!this.props.isDesktop) {
+        //     MenuAction.do(TOGGLE, null);
+        // }
     }
 
     stopClosePropagation(e: any) {

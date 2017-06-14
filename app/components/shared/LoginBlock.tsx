@@ -100,7 +100,7 @@ export default class LoginBlock extends React.Component<any, ILoginBlockStateInt
     }
 
 
-    render() {
+    _render() {
         return (
             <div className="login_block">
                 {
@@ -111,10 +111,26 @@ export default class LoginBlock extends React.Component<any, ILoginBlockStateInt
                             </div>)
                     })
                 }
-                {/*<div onClick={this.login.bind(this, 'vk')}>vk</div>*/}
-                {/*<div  onClick={this.login.bind(this, 'fb')}>fb</div>*/}
-                {/*<div onClick={this.login.bind(this, 'twitter')}>twitter</div>*/}
-                {/*<div  onClick={this.login.bind(this, 'google')}>google</div>*/}
+            </div>);
+    }
+
+    render() {
+        function getOAuthLink(link: string, social: string) {
+            let currentLocation = window.location.href;
+            return (
+                <a target="_self" href={process.env.AUTH_SERVICE_URL + link + '?redirect_url=' + currentLocation}>
+                    <SocialIcon social={social}/>
+                </a>
+            )
+        }
+        return (
+            <div className="login_block">
+                {[
+                    getOAuthLink('/oauth/vk', 'vk'),
+                    getOAuthLink('/oauth/facebook', 'fb'),
+                    getOAuthLink('/oauth/twitter', 'twitter'),
+                    getOAuthLink('/oauth/google', 'google')
+                ]}
             </div>);
     }
 }

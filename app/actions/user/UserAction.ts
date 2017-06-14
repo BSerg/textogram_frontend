@@ -1,6 +1,8 @@
-import * as React from 'react';
-import Action from '../Action';
-import {api} from '../../api';
+import * as cookie from "js-cookie";
+import * as React from "react";
+import Action from "../Action";
+import {api} from "../../api";
+import {NotificationAction, SHOW_NOTIFICATION} from "../shared/NotificationAction";
 
 export const GET_ME = 'get_me';
 export const LOGIN = 'login';
@@ -43,8 +45,8 @@ UserAction.registerAsync(GET_ME, (store, data: any) => {
         store.getPromise = new Promise((resolve, reject) => {
             api.get('/users/me/').then((response: any) => {
                 store.user = response.data;
-                localStorage.setItem('authToken', response.data.token);
-                document.cookie = 'authToken=' + response.data.token;
+                // localStorage.setItem('authToken', response.data.token);
+                // document.cookie = 'authToken=' + response.data.token;
                 resolve(response.data);
             }).catch((error) => {
                 localStorage.removeItem('authToken');
@@ -63,35 +65,26 @@ UserAction.registerAsync(LOGIN, (store, data: any) => {
     return new Promise((resolve, reject) => {
         api.post('/login/', data).then((response: any) => {
             store.user = response.data;
-            localStorage.setItem('authToken', response.data.token);
-            document.cookie = 'authToken=' + response.data.token;
+            // localStorage.setItem('authToken', response.data.token);
+            // document.cookie = 'authToken=' + response.data.token;
             resolve(response.data);
         }).catch((error) => {
+            NotificationAction.do(SHOW_NOTIFICATION, {content: "Ошибка аутентификации"});
             reject(error);
         })
     });
 });
 
 UserAction.registerAsync(LOGOUT, (store, data: any) => {
-
-    if (store.user) {
-        if (store.user.social == 'vk') {
-            VK.Auth.logout((response) => {});
-        }
-        else if (store.user.social == 'fb') {
-            FB.logout(() => {});
-        }
-    }
     store.user = null;
     localStorage.removeItem('authToken');
     document.cookie = 'authToken=;expires=-1';
-
 
     return new Promise((resolve, reject) => {
         api.post('/logout/').then((response: any) => {
             resolve(response.data);
         }).catch((error) => {
-            resolve(error);
+            reject(error);
         })
     });
 });

@@ -589,13 +589,20 @@
       }
 
       .login_block {
-        div {
+        a {
+          display: flex;
+          align-items: center;
+          justify-content: center;
           background-color: #000000;
           width: 35px;
           height: 35px;
+          text-decoration: none;
+          @include border_radius(35px);
+
           svg {
             width: 20px;
             height: 20px;
+            fill: #FFFFFF;
           }
         }
       }

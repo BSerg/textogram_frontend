@@ -79,10 +79,29 @@
     height: 206px;
     background-color: #7F7F7F;
 
+    &.index_image_sub_block_0 {
+      background: url('../assets/images/landing_editor.jpg') no-repeat center center;
+      background-size: contain;
+    }
+
+    &.index_image_sub_block_1 {
+      background: url('../assets/images/landing_text.jpg') no-repeat center center;
+      background-size: contain;
+    }
+
+    &.index_image_sub_block_2 {
+      background: url('../assets/images/landing_author.jpg') no-repeat center center;
+      background-size: contain;
+    }
+
+    &.index_image_sub_block_3 {
+      background: url('../assets/images/landing_main.jpg') no-repeat center center;
+      background-size: contain;
+    }
 
     &.image_sub_block_main {
       height: 245px;
-      background: url('../assets/images/imac_small.jpg') no-repeat center center #FFFFFF;
+      background: url('../assets/images/imac_small.jpg') no-repeat center center;
     }
   }
 
@@ -104,17 +123,18 @@
       margin-bottom: 15px;
     }
 
-    .login_block div {
-      width: 30px;
-      height: 30px;
+    .login_block a {
+      width: 50px;
+      height: 50px;
+
       svg {
         fill: $color;
-        width: 22px;
-        height: 22px;
+        width: 32px;
+        height: 32px;
       }
     }
 
-    .login_block div:hover {
+    .login_block a:hover {
       background-color: #FFFFFF;
     }
   }
@@ -228,7 +248,7 @@
           font-weight: $font-weight-bold;
 
           .login_block {
-            div {
+            a {
               width: 35px;
               height: 35px;
               svg {
@@ -258,7 +278,7 @@
         }
       }
       .login_block {
-        div {
+        a {
           width: 50px;
           height: 50px;
           svg {
@@ -327,7 +347,6 @@
     .index_image_sub_block {
       height: 695px;
 
-
       &.image_sub_block_main {
         height: 1000px;
         background-image: url('../assets/images/imac_large.jpg');
@@ -344,7 +363,7 @@
         }
       }
       .login_block {
-        div {
+        a {
           width: 65px;
           height: 65px;
           padding: 0 10px;

@@ -65,6 +65,7 @@ module.exports = {
             "process.env": {
                 NODE_ENV: JSON.stringify('production'),
                 API_URL: JSON.stringify("http://lentach.media/api/v1"),
+                AUTH_SERVICE_URL: JSON.stringify("http://auth.lentach.media"),
                 VK_APP: JSON.stringify("5951821"),
                 FB_APP: JSON.stringify("176821492828506"),
                 // PROD for lentach.media

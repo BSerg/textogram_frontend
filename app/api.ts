@@ -1,4 +1,6 @@
 import axios from 'axios';
+import * as cookie from 'js-cookie';
+import 'clientjs/dist/client.min.js';
 
 if (process.env.IS_BROWSER) {
     require('clientjs/dist/client.min.js');
@@ -15,21 +17,17 @@ export let api = axios.create({
     baseURL: process.env.API_URL,
 });
 
-// export let api = axios.Axios.
-
 api.interceptors.request.use(function(config: any) {
-    if (process.env.IS_BROWSER) {
-
-        let token = window.localStorage.getItem('authToken');
+    let jwt = cookie.get('jwt');
+    if (jwt) {
+        config.headers['Authorization'] = 'Bearer ' + jwt;
+    } else {
+        let token = cookie.get('jwt') || window.localStorage.getItem('authToken');
         if (token) {
             config.headers['Authorization'] = 'Token ' + localStorage.getItem('authToken');
         }
-        config.headers['X-Fingerprint'] = fingerprint;
-        config.headers['Access-Control-Allow-Origin'] = '*';
-        config.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, OPTIONS, PATCH, DELETE';
-        config.headers['Access-Control-Allow-Headers'] = 'Origin, Accept, Content-Type, X-Requested-With, X-CSRF-Token';
     }
-
+    config.headers['X-Fingerprint'] = fingerprint;
     return config;
 });
 
