@@ -28,17 +28,15 @@ class AppClass {
     }
 
     routes() {
-        console.log('');
         this.express.set('view engine', 'ejs');
-        this.express.set('views', process.env.VIEWS_DIR);
-        this.express.use('/', baseRoutes);
-        this.express.use('/articles', articleRoutes);
-        this.express.use('/api/v1', apiRoutes);
-        // console.log(__filename);
         if (process.env.NODE_ENV != 'production') {
             this.express.use('/static', express.static(process.env.STATIC_ROOT));
+            this.express.use('/data', express.static(process.env.MEDIA_ROOT));
         }
-
+        this.express.set('views', process.env.VIEWS_DIR);
+        this.express.use('/articles', articleRoutes);
+        this.express.use('/api/v1', apiRoutes);
+        this.express.use('/', baseRoutes);
     }
 }
 

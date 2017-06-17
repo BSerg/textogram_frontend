@@ -115,12 +115,12 @@ export default class Profile extends React.Component<IProfileProps|any, IProfile
                         isSelf: true, canSubscribe: false, selfDrafts: UserAction.getStore().user.drafts || 0});
             }
             else {
-                UserAction.doAsync(GET_ME, null).then((user: any) => {
+                UserAction.doAsync(LOGIN, null).then((user: any) => {
                     this.setState({user: UserAction.getStore().user, currentSection: currentSection,
                         isSelf: true, canSubscribe: false, selfDrafts: UserAction.getStore().user.drafts || 0});
                 }).catch((error) => {
                     console.log('pushhh');
-                    this.props.router.push('/');
+                    this.props.history.push('/');
                 });
             }
 

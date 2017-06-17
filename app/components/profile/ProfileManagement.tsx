@@ -119,7 +119,6 @@ class ProfileManagementClass extends React.Component<any, any> {
                 return;
             }
             fd.append('first_name', userNameArr[0]);
-
             fd.append('last_name', userNameArr.length > 1 ? userNameArr.slice(1).join(' ') : '');
         }
         else if (type == 'description') {
@@ -142,7 +141,10 @@ class ProfileManagementClass extends React.Component<any, any> {
         let stateData: any = {};
 
         if (type == 'name') {
-            stateData = {nameEdit: edit, descriptionEdit: false, newName: this.state.user.first_name + ' ' + this.state.user.last_name};
+            let newName = this.state.user.first_name ? ((this.state.user.first_name || '') + ' ' + (this.state.user.last_name || '')) :
+                (this.state.user.last_name || '');
+            stateData = {nameEdit: edit, descriptionEdit: false,
+                newName: newName};
             // this.setState();
         }
         else if (type == 'description') {

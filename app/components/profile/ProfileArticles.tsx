@@ -69,11 +69,18 @@ export default class ProfileArticles extends React.Component<IArticlesProps, IAr
                     url = '/articles/';
             }
         }
-
         return url;
     }
 
     loadArticles(more: boolean = false) {
+        if (process.env.USE_CACHE_API && this.props.section == this.SECTION_ARTICLES) {
+            return this._loadArticlesCache(more);
+        }
+        return this._loadArticles(more);
+        // return this._loadArticles;
+    }
+
+    _loadArticles(more: boolean = false) {
 
         let items: any[] = more ? this.state.items : [];
 
@@ -115,6 +122,10 @@ export default class ProfileArticles extends React.Component<IArticlesProps, IAr
                 }
             });
         });
+    }
+
+    _loadArticlesCache(more: boolean = false) {
+        this.setState({items: [], isLoading: false});
     }
 
     searchInput(e: any) {
@@ -160,7 +171,6 @@ export default class ProfileArticles extends React.Component<IArticlesProps, IAr
     }
 
     render() {
-
         let isFeed = this.state.section == this.SECTION_FEED;
         let isOwner = this.state.section == this.SECTION_DRAFTS || (this.state.isSelf && (this.state.section == this.SECTION_ARTICLES));
         return (

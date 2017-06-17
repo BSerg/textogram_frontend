@@ -23,56 +23,6 @@ class App  extends React.Component<any, any> {
 
     componentDidMount() {
 
-        window.vkAsyncInit = function() {
-            VK.init({
-              apiId: process.env.VK_APP
-            });
-        };
-
-        setTimeout(function() {
-            let el = document.createElement("script");
-            el.type = "text/javascript";
-            el.src = "//vk.com/js/api/openapi.js";
-            el.async = true;
-            document.getElementById("vk_api_transport").appendChild(el);
-        }, 0);
-
-        (window as any).fbAsyncInit = function() {
-            FB.init({
-                appId      : process.env.FB_APP,
-                xfbml      : true,
-                version    : 'v2.8'
-            });
-        }.bind(this);
-
-        setTimeout(function () {
-            (function(d, s, id) {
-              let js: any, fjs: any = d.getElementsByTagName(s)[0];
-              if (d.getElementById(id)) return;
-              js = d.createElement(s); js.id = id;
-              js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.8";
-              fjs.parentNode.insertBefore(js, fjs);
-            }(document, 'script', 'facebook-jssdk'));
-        }, 0);
-
-        function onGAPILoad() {
-            try {
-                gapi.load('client:auth2', () => {
-
-                    gapi.auth2.init({
-                        client_id: process.env.GOOGLE_APP,
-                        cookie_policy: 'single_host_origin',
-                        scope: 'profile'
-                    }).then(() => {
-                        gapi.auth2.getAuthInstance();
-                    }, () => {});
-                });
-            } catch (e) {
-                window.setTimeout(onGAPILoad.bind(this), 0)
-            }
-        }
-        window.setTimeout(onGAPILoad.bind(this), 0);
-
         let token = cookie.get('jwt') || window.localStorage.getItem('authToken')
         if (token) {
             UserAction.doAsync(LOGIN, {token: token});

@@ -1,7 +1,6 @@
 // import * as dotenv from 'dotenv';
 // dotenv.config();
 
-console.log(process.env.VIEWS_DIR);
 
 import * as http from 'http';
 import * as debug from 'debug';

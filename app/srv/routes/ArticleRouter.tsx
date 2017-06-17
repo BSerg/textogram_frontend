@@ -5,6 +5,7 @@ import * as ReactDOMServer from 'react-dom/server';
 import db from '../db';
 import Base from '../../components/Base';
 import Article from '../../components/Article';
+import {Error404} from '../../components/Error';
 
 
 class ArticleRouter {
@@ -16,10 +17,9 @@ class ArticleRouter {
     }
 
     getArticle(req: Request, res: Response, next: NextFunction) {
-
         let articleSlug = req.params.articleSlug || '';
 
-        db.get('article:' + articleSlug, (data: string) => {
+        db.getArticle(req, articleSlug, (data: string) => {
 
             try {
                 let article = JSON.parse(data);
@@ -33,12 +33,11 @@ class ArticleRouter {
             catch (error) {
                 res.render('index.ejs', {reactData: ''});
             }
-            // res.end(JSON.parse(data).html);
 
         }, (error: any) => {
-            res.status(404).send({
-                msg: 'not found'
-            });
+
+            let html = ReactDOMServer.renderToString(<StaticRouter context={{}}><Base><Error404/></Base></StaticRouter>);
+            res.render('index.ejs', {reactData: html});
         });
     }
     init() {

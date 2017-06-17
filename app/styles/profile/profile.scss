@@ -141,6 +141,12 @@ $content-main-width: 340px;
     text-transform: uppercase;
     text-decoration: none;
     color: $color;
+    span {
+      display: block;
+      //background-color: red;
+      min-width: 100px;
+      min-height: 20px;
+    }
 
     margin: 5px 0;
 

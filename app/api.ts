@@ -1,7 +1,5 @@
 import axios from 'axios';
 import * as cookie from 'js-cookie';
-import 'clientjs/dist/client.min.js';
-
 if (process.env.IS_BROWSER) {
     require('clientjs/dist/client.min.js');
 }
@@ -19,6 +17,7 @@ export let api = axios.create({
 
 api.interceptors.request.use(function(config: any) {
     let jwt = cookie.get('jwt');
+    // console.log(jwt);
     if (jwt) {
         config.headers['Authorization'] = 'Bearer ' + jwt;
     } else {
@@ -28,6 +27,7 @@ api.interceptors.request.use(function(config: any) {
         }
     }
     config.headers['X-Fingerprint'] = fingerprint;
+    // console.log(config);
     return config;
 });
 

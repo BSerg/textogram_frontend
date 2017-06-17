@@ -84,7 +84,6 @@ export default class ProfileManagementStatistics extends React.Component<any, {i
                                     })
                                 }
                             </div>
-
                         </div>
                     ) : null
                 }
