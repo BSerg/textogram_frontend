@@ -6,7 +6,7 @@ class DataClient {
     ARTICLE_PAGE_SIZE: number = 20;
 
     constructor() {
-        this.client = redis.createClient(6379, '127.0.0.1', {db: '5'});
+        this.client = redis.createClient(process.env.REDIS_PORT, process.env.REDIS_HOST, {db: process.env.REDIS_DB});
         this.init();
     }
 
@@ -44,6 +44,7 @@ class DataClient {
         if (!req.query.user && !req.query.feed ) {
             return error();
         }
+
         let key = req.query.user ? `user:${req.query.user}:articles` : 'none';
         this.client.zcard(key, (cardErr: any, cardData: any) => {
             if (!cardData) {

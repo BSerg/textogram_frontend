@@ -18,7 +18,7 @@ import {api} from '../../api';
 import axios from 'axios';
 
 import {Error404} from '../Error';
-import {UserAction, GET_ME, LOGIN, LOGOUT, UPDATE_USER_DRAFTS} from "../../actions/user/UserAction";
+import {UserAction, GET_ME, LOGIN, LOGOUT, USER_REJECT, UPDATE_USER_DRAFTS} from "../../actions/user/UserAction";
 
 import {Captions} from '../../constants';
 
@@ -73,6 +73,7 @@ export default class Profile extends React.Component<IProfileProps|any, IProfile
         this.checkDesktop = this.checkDesktop.bind(this);
         this.setDrafts = this.setDrafts.bind(this);
         this.logoutHandle = this.logoutHandle.bind(this);
+        // this.getUserData = this.getUserData.bind(this);
     }
 
     handleUserChange() {
@@ -82,12 +83,19 @@ export default class Profile extends React.Component<IProfileProps|any, IProfile
         stateData.selfDrafts = isSelf ? UserAction.getStore().user.drafts || 0 : 0;
         stateData.additionalPage = null;
         if (stateData.isSelf != this.state.isSelf || stateData.canSubscribe != this.state.canSubscribe ) {
-            this.setState(stateData);
+            this.setState(stateData, () => {
+                this.getUserData(this.props.match.params.slug, this.props.match.params.subsection);
+            });
         }
     }
 
     logoutHandle() {
-        if (this.state.currentSection == this.SECTION_FEED || this.state.currentSection == this.SECTION_DRAFTS) {
+        console.log('reject');
+        console.log(this.state);
+        if (this.state.currentSection == this.SECTION_FEED ||
+            this.state.currentSection == this.SECTION_DRAFTS ||
+            ['drafts', 'feed'].indexOf(this.props.match.params.slug) != -1
+        ) {
             this.props.history.push('/');
         }
     }
@@ -115,13 +123,13 @@ export default class Profile extends React.Component<IProfileProps|any, IProfile
                         isSelf: true, canSubscribe: false, selfDrafts: UserAction.getStore().user.drafts || 0});
             }
             else {
-                UserAction.doAsync(LOGIN, null).then((user: any) => {
+                /*UserAction.doAsync(LOGIN, null).then((user: any) => {
                     this.setState({user: UserAction.getStore().user, currentSection: currentSection,
                         isSelf: true, canSubscribe: false, selfDrafts: UserAction.getStore().user.drafts || 0});
                 }).catch((error) => {
                     console.log('pushhh');
                     this.props.history.push('/');
-                });
+                });*/
             }
 
         }
@@ -250,13 +258,13 @@ export default class Profile extends React.Component<IProfileProps|any, IProfile
         this.getUserData(this.props.match.params.slug, this.props.match.params.subsection);
 
         UserAction.onChange([GET_ME, LOGIN, LOGOUT], this.handleUserChange);
-        UserAction.onChange(LOGOUT, this.logoutHandle);
+        UserAction.onChange([LOGOUT, USER_REJECT], this.logoutHandle);
         UserAction.onChange(UPDATE_USER_DRAFTS, this.setDrafts);
     }
 
     componentWillUnmount() {
         UserAction.unbind([GET_ME, LOGIN, LOGOUT], this.handleUserChange);
-        UserAction.unbind(LOGOUT, this.logoutHandle);
+        UserAction.unbind([LOGOUT, USER_REJECT], this.logoutHandle);
         UserAction.unbind(UPDATE_USER_DRAFTS, this.setDrafts);
         MediaQuerySerice.unbind(this.checkDesktop);
         this.cancelSource && this.cancelSource.cancel();

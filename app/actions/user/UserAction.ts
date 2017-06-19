@@ -70,6 +70,7 @@ UserAction.registerAsync(LOGIN, (store, data: any) => {
             resolve(response.data);
         }).catch((error) => {
             NotificationAction.do(SHOW_NOTIFICATION, {content: "Ошибка аутентификации"});
+            UserAction.do(USER_REJECT, null);
             reject(error);
         })
     });

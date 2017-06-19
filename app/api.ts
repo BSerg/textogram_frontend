@@ -9,31 +9,32 @@ if (process.env.IS_BROWSER) {
 const client = process.env.IS_BROWSER ? new ClientJS() : null;
 const fingerprint = client ? client.getFingerprint() : null;
 
-
-
-export let api = axios.create({
-    baseURL: process.env.API_URL,
-});
-
-api.interceptors.request.use(function(config: any) {
+let interceptor = function(config: any) {
     let jwt = cookie.get('jwt');
     // console.log(jwt);
     if (jwt) {
         config.headers['Authorization'] = 'Bearer ' + jwt;
     } else {
         let token = cookie.get('jwt') || window.localStorage.getItem('authToken');
+        console.log(cookie.get('jwt'));
+        console.log(window.localStorage.getItem('authToken'));
+        console.log(token);
         if (token) {
             config.headers['Authorization'] = 'Token ' + localStorage.getItem('authToken');
         }
     }
     config.headers['X-Fingerprint'] = fingerprint;
-    // console.log(config);
     return config;
+};
+
+export let api = axios.create({
+    baseURL: process.env.API_URL,
 });
 
-// let cacheBaseUrl: string = process.env.API_URL.toString() || '';
-
+api.interceptors.request.use(interceptor);
 
 export let cacheApi = axios.create({
     baseURL: process.env.CACHE_API_URL,
 });
+
+cacheApi.interceptors.request.use(interceptor);

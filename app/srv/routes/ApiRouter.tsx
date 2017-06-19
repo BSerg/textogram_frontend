@@ -37,8 +37,9 @@ class ApiRouter {
     }
 
     init() {
-        this.router.get('/articles/:articleSlug', this.getArticle);
+        this.router.get('/articles/search/', this.getArticles);
         this.router.get('/articles/', this.getArticles);
+        this.router.get('/articles/:articleSlug', this.getArticle);
         this.router.get('/*', this.getNotFound);
     }
 }

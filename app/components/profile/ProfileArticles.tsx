@@ -1,10 +1,11 @@
 import * as React from 'react';
 
 import axios from 'axios';
-import {api} from '../../api';
+import {api, cacheApi} from '../../api';
 import ArticlePreview from '../shared/ArticlePreview';
 import ArticlePreviewStatistics from '../shared/ArticlePreviewStatistics';
 import Loading from '../shared/Loading';
+import {scryRenderedComponentsWithType} from "react-dom/test-utils";
 
 interface IArticlesProps {
     userId?: number;
@@ -50,7 +51,7 @@ export default class ProfileArticles extends React.Component<IArticlesProps, IAr
 
     getApiUrl(searchString: string = ''): string {
         let url: string;
-
+        // let baseUrl: string = process.env.USE_CACHE_API && this.props.section == this.SECTION_ARTICLES ? '' : '';
         if (searchString) {
             switch (this.props.section) {
                 case (this.SECTION_STATISTICS):
@@ -72,15 +73,15 @@ export default class ProfileArticles extends React.Component<IArticlesProps, IAr
         return url;
     }
 
-    loadArticles(more: boolean = false) {
-        if (process.env.USE_CACHE_API && this.props.section == this.SECTION_ARTICLES) {
-            return this._loadArticlesCache(more);
-        }
-        return this._loadArticles(more);
+    // loadArticles(more: boolean = false) {
+    //     if (process.env.USE_CACHE_API && this.props.section == this.SECTION_ARTICLES) {
+    //         return this._loadArticlesCache(more);
+    //     }
+    //     return this._loadArticles(more);
         // return this._loadArticles;
-    }
+    // }
 
-    _loadArticles(more: boolean = false) {
+    loadArticles(more: boolean = false) {
 
         let items: any[] = more ? this.state.items : [];
 
@@ -105,18 +106,24 @@ export default class ProfileArticles extends React.Component<IArticlesProps, IAr
                 if (this.state.searchString) {
                     requestParams.q = this.state.searchString;
                 }
-
-
             }
+            let requestApi: any = process.env.USE_CACHE_API && this.state.section == this.SECTION_ARTICLES ? cacheApi : api;
 
-            api.get(apiUrl, {cancelToken: this.cancelSource.token, params: requestParams}).then((response: any) => {
-                let results: any = response.data.results || [];
-                results.forEach((r: any) => {
-                    r.isNew = true;
-                });
-                items = items.concat(results);
+            requestApi.get(apiUrl, {cancelToken: this.cancelSource.token, params: requestParams}).then((response: any) => {
+                // let results: any = response.data.results || [];
+                try {
+                    let results: any = (response.data.results || []).map((r: any) => {
+                        let res = typeof r == 'string' ? JSON.parse(r) : r;
+                        res.isNew = true;
+                        return res;
+                    });
+                    items = items.concat(results);
+                }
+                catch (error) {
+                    return;
+                }
                 this.setState({items: items, nextUrl: response.data.next, isLoading: false});
-            }).catch((error) => {
+            }).catch((error: any) => {
                 if (!axios.isCancel(error)) {
                     this.setState({isLoading: false});
                 }
@@ -124,9 +131,9 @@ export default class ProfileArticles extends React.Component<IArticlesProps, IAr
         });
     }
 
-    _loadArticlesCache(more: boolean = false) {
-        this.setState({items: [], isLoading: false});
-    }
+    // _loadArticlesCache(more: boolean = false) {
+    //     this.setState({items: [], isLoading: false});
+    // }
 
     searchInput(e: any) {
         this.searchTimeout && window.clearTimeout(this.searchTimeout);
