@@ -28,18 +28,13 @@ class AwesomeGalleryPhotoHandler {
     photos: IPhotoExtended[];
     currentPhotoIndex: number;
     photoMap: any;
-    canvas: HTMLCanvasElement;
-    context: CanvasRenderingContext2D;
     isDesktop: boolean;
-    highlightedPhotoIndex: number;
 
     constructor(photos: IPhotoExtended[], currentPhotoIndex: number = 0) {
-        this.canvas = document.createElement('canvas');
         this.photos = photos;
         this.currentPhotoIndex = currentPhotoIndex;
         this.photoMap = [];
         this.isDesktop = MediaQuerySerice.getIsDesktop();
-        this.highlightedPhotoIndex = -1;
         this.load();
     }
 
@@ -49,10 +44,6 @@ class AwesomeGalleryPhotoHandler {
 
     setCurrentPhotoIndex(index: number) {
         this.currentPhotoIndex = index;
-    }
-
-    setHighlightedPhotoIndex(index: number) {
-        this.highlightedPhotoIndex = index;
     }
 
     loadPhoto(photo: IPhotoExtended) {
@@ -113,6 +104,44 @@ class AwesomeGalleryPhotoHandler {
     }
 }
 
+
+interface IAwesomeGalleryItem {
+    isCurrent?: boolean;
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    img: string;
+    isVisible?: boolean;
+}
+
+class AwesomeGalleryItem extends React.Component<IAwesomeGalleryItem, any> {
+    constructor(props: any) {
+        super(props);
+    }
+
+    render() {
+        let className = "awesome_gallery__item", 
+            style = {
+                top: this.props.y + 'px', 
+                left: this.props.x + 'px',
+                width: this.props.width + 'px',
+                height: this.props.height + 'px'
+            };
+        if (this.props.isCurrent) className += ' active';
+        if (this.props.img) {
+            Object.assign(style, {background: `url('${this.props.img}')`});
+        } else {
+            className += ' loading';
+        }
+
+        return (
+            <div className={className} style={style}></div>
+        );
+    }
+}
+
+
 interface IProps {
     currentPhotoIndex?: number;
     photos: IPhoto[];
@@ -126,19 +155,12 @@ interface IState {
     currentPhotoIndex?: number;
     loadedPhotoCount?: number;
     photoHandler?: AwesomeGalleryPhotoHandler;
-    // photoCanvasZoom?: number;
-    // photoCanvasOffset?: {x: number, y: number};
-    // photoCenterOffset?: {x: number, y: number};
-    // drawProcess?: number;
     isDesktop?: boolean;
     canvasWidth?: number;
     canvasHeight?: number;
     canvasRatio?: number;
     photoFrameWidth?: number;
     photoFrameHeight?: number;
-    // jumpTimeCountdown?: number;
-    // freeMode?: boolean;
-    // highlightedPhotoIndex?: number;
 }
 
 export default class AwesomeGallery extends React.Component<IProps, IState> {
@@ -150,7 +172,6 @@ export default class AwesomeGallery extends React.Component<IProps, IState> {
     photoFrameHeight: number;
     jumpTimeCountdown: number;
     freeMode: boolean;
-    highlightedPhotoIndex: number;
     mouseDownPoint: {x: number, y: number} | null;
 
     refs: {
@@ -178,7 +199,6 @@ export default class AwesomeGallery extends React.Component<IProps, IState> {
         };
         this.jumpTimeCountdown = 0;
         this.freeMode = false;
-        this.highlightedPhotoIndex = -1;
         this.photoCanvasOffset = {x: 0, y: 0};
         this.photoCenterOffset = {x: 0, y: 0},
         this.handleMediaQuery = this.handleMediaQuery.bind(this);
@@ -202,72 +222,15 @@ export default class AwesomeGallery extends React.Component<IProps, IState> {
     update(init: boolean = false) {
         if (!this.state.photoHandler) return;
         let photoCanvasMapItem = this.state.photoHandler.photoMap[this.state.currentPhotoIndex];
-        if (!photoCanvasMapItem) return;
-        if (!init && this.jumpTimeCountdown > 0) {
-            let delta = this.props.tick / this.jumpTimeCountdown;
-            if (this.freeMode) {}
-            else {
-                let targetZoom;
-                if (photoCanvasMapItem.ratio >= this.state.canvasRatio) {
-                    targetZoom = this.state.photoFrameWidth/photoCanvasMapItem.width;
-                    this.photoCanvasZoom += (targetZoom - this.photoCanvasZoom) * delta;
-                } else {
-                    targetZoom =this.state.photoFrameHeight/photoCanvasMapItem.height;
-                    this.photoCanvasZoom += (targetZoom - this.photoCanvasZoom) * delta;
-                }
-                this.photoCenterOffset.x *= delta;
-                this.photoCenterOffset.y *= delta;
-                this.photoCanvasOffset.x -= (this.photoCanvasOffset.x - photoCanvasMapItem.centerX * targetZoom) * delta;
-                this.photoCanvasOffset.y -= (this.photoCanvasOffset.y - photoCanvasMapItem.centerY * targetZoom) * delta;
-            }
-            this.jumpTimeCountdown -= this.props.tick;
-        } else {
-            if (!this.freeMode) {
-                if (photoCanvasMapItem.ratio >= this.state.canvasRatio) {
-                    this.photoCanvasZoom = this.state.photoFrameWidth / photoCanvasMapItem.width;
-                } else {
-                    this.photoCanvasZoom = this.state.photoFrameHeight / photoCanvasMapItem.height;
-                }
-                this.photoCanvasOffset.x = photoCanvasMapItem.centerX * this.photoCanvasZoom;
-                this.photoCanvasOffset.y = photoCanvasMapItem.centerY * this.photoCanvasZoom;
-            }
-        }
-    }
-
-    draw() {
-        if (this.state.photoHandler) {
-            let ctx = this.refs.canvas.getContext('2d');
-
-            let x, y, width, height;
-            x = this.refs.canvas.width / 2 - this.photoCanvasOffset.x - this.photoCenterOffset.x;
-            y = this.refs.canvas.height / 2 - this.photoCanvasOffset.y - this.photoCenterOffset.y;
-            width = this.state.photoHandler.canvas.width * this.photoCanvasZoom;
-            height = this.state.photoHandler.canvas.height * this.photoCanvasZoom;
-
-            if (this.props.background) {
-                ctx.fillStyle = this.props.background;
-                ctx.fillRect(0, 0, this.refs.canvas.width, this.refs.canvas.height);
+        if (photoCanvasMapItem && !this.freeMode) {
+            if (photoCanvasMapItem.ratio >= this.state.canvasRatio) {
+                this.photoCanvasZoom = this.state.photoFrameWidth / photoCanvasMapItem.width;
             } else {
-                ctx.clearRect(0, 0, this.refs.canvas.width, this.refs.canvas.height);
+                this.photoCanvasZoom = this.state.photoFrameHeight / photoCanvasMapItem.height;
             }
-            ctx.drawImage(this.state.photoHandler.canvas, x, y, width, height);
-
-            this.state.photoHandler.photos.forEach((photo: IPhotoExtended, index: number) => {
-                let rect = this.getPhotoRect(this.state.photoHandler.photoMap[index]);
-                if (([this.state.currentPhotoIndex - 1, this.state.currentPhotoIndex, this.state.currentPhotoIndex + 1] as any).includes(index) || rect.visible) {
-                    if (photo.img) {
-                        ctx.drawImage(photo.img, rect.x, rect.y, rect.width, rect.height);
-                        if (index != this.state.currentPhotoIndex) {
-                            ctx.fillStyle = this.highlightedPhotoIndex == index ? 'rgba(0, 0, 0, 0.5)' : 'rgba(0, 0, 0, 0.75)';
-                            ctx.fillRect(rect.x, rect.y, rect.width, rect.height);
-                        }
-                    } else {
-                        photo.load();
-                        ctx.fillStyle = '#333333';
-                        ctx.fillRect(rect.x, rect.y, rect.width, rect.height);
-                    }
-                }
-            });
+            this.photoCanvasOffset.x = photoCanvasMapItem.centerX * this.photoCanvasZoom;
+            this.photoCanvasOffset.y = photoCanvasMapItem.centerY * this.photoCanvasZoom;
+            this.forceUpdate();
         }
     }
 
@@ -303,11 +266,12 @@ export default class AwesomeGallery extends React.Component<IProps, IState> {
         this.photoCenterOffset.x *= zoomValue / this.photoCanvasZoom;
         this.photoCenterOffset.y *= zoomValue / this.photoCanvasZoom;
         this.photoCanvasZoom = zoomValue;
+        this.forceUpdate();
     }
 
     getPhotoRect(photoMapItem: any) {
-        let x = -this.photoCanvasOffset.x - this.photoCenterOffset.x + this.refs.canvas.width / 2 + photoMapItem.x * this.photoCanvasZoom;
-        let y = -this.photoCanvasOffset.y - this.photoCenterOffset.y  + this.refs.canvas.height / 2 + photoMapItem.y * this.photoCanvasZoom;
+        let x = -this.photoCanvasOffset.x - this.photoCenterOffset.x + this.state.canvasWidth / 2 + photoMapItem.x * this.photoCanvasZoom;
+        let y = -this.photoCanvasOffset.y - this.photoCenterOffset.y  + this.state.canvasHeight / 2 + photoMapItem.y * this.photoCanvasZoom;
         let width = photoMapItem.width * this.photoCanvasZoom;
         let height = photoMapItem.height * this.photoCanvasZoom;
         let visible = (x < this.state.canvasWidth && x + width > 0 && y < this.state.canvasHeight && y + height > 0);
@@ -351,12 +315,10 @@ export default class AwesomeGallery extends React.Component<IProps, IState> {
 
     handleMouseUp(e: MouseEvent) {
         this.mouseDownPoint = null;
-        this.refs.canvas.style.cursor = 'auto';
     }
 
     handleMouseMove(e: MouseEvent) {
-        if (this.mouseDownPoint) {
-            this.refs.canvas.style.cursor = 'move';
+        if (this.mouseDownPoint && this.freeMode) {
             let d = this.state.photoHandler.photoMap[this.state.currentPhotoIndex];
             let deltaX = this.mouseDownPoint.x - e.clientX;
             let deltaY = this.mouseDownPoint.y - e.clientY;
@@ -368,25 +330,13 @@ export default class AwesomeGallery extends React.Component<IProps, IState> {
 
             this.mouseDownPoint.x = e.clientX;
             this.mouseDownPoint.y = e.clientY;
-        } else if (this.jumpTimeCountdown == 0) {
-            this.refs.canvas.style.cursor = 'auto';
-            for (let index = 0; index < this.state.photoHandler.photoMap.length; index++) {
-                let p = this.state.photoHandler.photoMap[index];
-                let rect = this.getPhotoRect(p);
-                if (rect.visible && e.clientX >= rect.x && e.clientX <= rect.x + rect.width && e.clientY >= rect.y && e.clientY <= rect.y + rect.height) {
-                    this.refs.canvas.style.cursor = 'pointer';
-                    this.highlightedPhotoIndex = index;
-                    this.state.photoHandler.setHighlightedPhotoIndex(index);
-                    this.state.photoHandler.update();
-                    break;
-                }
-            }
+            this.forceUpdate();
         }
-
     }
 
     private getClassName() {
         let className = "awesome_gallery";
+        if (this.freeMode) className += ' free_mode';
         return className;
     }
 
@@ -408,7 +358,6 @@ export default class AwesomeGallery extends React.Component<IProps, IState> {
         window.clearInterval(this.drawProcess);
         this.drawProcess = window.setInterval(() => {
             this.update();
-            this.draw();
         }, this.props.tick);
         MediaQuerySerice.listen(this.handleMediaQuery);
         document.addEventListener('keydown', this.handleKeyDown);
@@ -430,6 +379,11 @@ export default class AwesomeGallery extends React.Component<IProps, IState> {
 
     render() {
         let currentPhoto = this.props.photos.length ? this.props.photos[this.state.currentPhotoIndex] : null;
+        let photoRects = this.state.photoHandler.photos.map((photo: IPhotoExtended, index: number) => {
+            let rect = Object.assign(this.getPhotoRect(this.state.photoHandler.photoMap[index]), {image: photo.image});
+            if (!photo.img && rect.visible) photo.load();
+            return rect;
+        });
         return (
             <div draggable={false} className={this.getClassName()}>
 
@@ -454,7 +408,15 @@ export default class AwesomeGallery extends React.Component<IProps, IState> {
                     </div>
                 }
 
-                <canvas draggable={false} width={this.state.canvasWidth} height={this.state.canvasHeight} ref="canvas"/>
+                {photoRects.map((rect: any, index: number) => {
+                    return <AwesomeGalleryItem key={'photo' + index} 
+                                               isCurrent={this.state.currentPhotoIndex == index}
+                                               img={rect.image} 
+                                               x={rect.x} 
+                                               y={rect.y} 
+                                               width={rect.width} 
+                                               height={rect.height}/>
+                })}                
 
                 {currentPhoto && currentPhoto.caption ?
                     <div className="awesome_gallery__caption">
