@@ -15,10 +15,10 @@ import PopupPrompt from "../shared/PopupPrompt";
 import {ContentBlockAction, DEACTIVATE_CONTENT_BLOCK} from "../../actions/editor/ContentBlockAction";
 import {validateEmbed} from "./utils";
 
-const DeleteButton = require('babel!svg-react!../../assets/images/redactor_icon_delete.svg?name=DeleteButton');
-const ConfirmButton = require('babel!svg-react!../../assets/images/redactor_icon_confirm.svg?name=ConfirmButton');
-const BackButton = require('babel!svg-react!../../assets/images/back.svg?name=BackButton');
-const CloseButton = require('babel!svg-react!../../assets/images/close.svg?name=CloseButton');
+const DeleteButton = require('-!babel-loader!svg-react-loader!../../assets/images/redactor_icon_delete.svg?name=DeleteButton');
+const ConfirmButton = require('-!babel-loader!svg-react-loader!../../assets/images/redactor_icon_confirm.svg?name=ConfirmButton');
+const BackButton = require('-!babel-loader!svg-react-loader!../../assets/images/back.svg?name=BackButton');
+const CloseButton = require('-!babel-loader!svg-react-loader!../../assets/images/close.svg?name=CloseButton');
 
 
 interface IEmbedModalProps {

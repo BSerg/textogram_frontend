@@ -4,8 +4,8 @@ import '../../styles/shared/editable_image_modal.scss';
 import {ModalAction, CLOSE_MODAL} from "../../actions/shared/ModalAction";
 import {MediaQuerySerice} from "../../services/MediaQueryService";
 
-const CloseIcon = require('babel!svg-react!../../assets/images/cancel_btn.svg?name=CloseIcon');
-const ConfirmIcon = require('babel!svg-react!../../assets/images/ok_btn.svg?name=ConfirmIcon');
+const CloseIcon = require('-!babel-loader!svg-react-loader!../../assets/images/cancel_btn.svg?name=CloseIcon');
+const ConfirmIcon = require('-!babel-loader!svg-react-loader!../../assets/images/ok_btn.svg?name=ConfirmIcon');
 
 interface IEditableImageModalProps {
     image: HTMLImageElement;

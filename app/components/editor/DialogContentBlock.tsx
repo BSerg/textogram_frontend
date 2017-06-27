@@ -20,7 +20,7 @@ import {DesktopBlockToolsAction, UPDATE_TOOLS} from "../../actions/editor/Deskto
 import EditableImageModal from "../shared/EditableImageModal";
 import {ModalAction, OPEN_MODAL} from "../../actions/shared/ModalAction";
 
-const AddButton = require('babel!svg-react!../../assets/images/desktop_editor_icon_add.svg?name=AddButton');
+const AddButton = require('-!babel-loader!svg-react-loader!../../assets/images/desktop_editor_icon_add.svg?name=AddButton');
 
 export interface IParticipant {
     id: number

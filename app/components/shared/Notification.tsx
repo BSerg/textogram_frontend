@@ -2,7 +2,7 @@ import * as React from 'react';
 import {NotificationAction, SHOW_NOTIFICATION, CLOSE_NOTIFICATION} from '../../actions/shared/NotificationAction';
 import '../../styles/shared/notification.scss';
 
-const CloseIcon = require('babel!svg-react!../../assets/images/close.svg?name=CloseIcon');
+const CloseIcon = require('-!babel-loader!svg-react-loader!../../assets/images/close.svg?name=CloseIcon');
 
 type NotificationType = 'normal' | 'error';
 

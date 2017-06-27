@@ -5,11 +5,11 @@ import {ModalAction, CLOSE_MODAL} from "../../actions/shared/ModalAction";
 import "../../styles/editor/photo_modal.scss";
 import {MediaQuerySerice} from "../../services/MediaQueryService";
 
-const DeleteButton = require('babel!svg-react!../../assets/images/redactor_icon_delete.svg?name=DeleteButton');
-const ConfirmButton = require('babel!svg-react!../../assets/images/redactor_icon_confirm.svg?name=ConfirmButton');
-const BackButton = require('babel!svg-react!../../assets/images/back.svg?name=BackButton');
-const CloseButton = require('babel!svg-react!../../assets/images/close.svg?name=CloseButton');
-const ArrowButton = require('babel!svg-react!../../assets/images/arrow.svg?name=ArrowButton');
+const DeleteButton = require('-!babel-loader!svg-react-loader!../../assets/images/redactor_icon_delete.svg?name=DeleteButton');
+const ConfirmButton = require('-!babel-loader!svg-react-loader!../../assets/images/redactor_icon_confirm.svg?name=ConfirmButton');
+const BackButton = require('-!babel-loader!svg-react-loader!../../assets/images/back.svg?name=BackButton');
+const CloseButton = require('-!babel-loader!svg-react-loader!../../assets/images/close.svg?name=CloseButton');
+const ArrowButton = require('-!babel-loader!svg-react-loader!../../assets/images/arrow.svg?name=ArrowButton');
 
 
 interface IPhoto {

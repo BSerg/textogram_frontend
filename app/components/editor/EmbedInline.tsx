@@ -6,7 +6,7 @@ import "../../styles/editor/embed_inline.scss";
 import {InlineBlockAction, CLOSE_INLINE_BLOCK} from "../../actions/editor/InlineBlockAction";
 import {validateEmbed} from "./utils";
 
-const CloseButton = require('babel!svg-react!../../assets/images/close.svg?name=CloseButton');
+const CloseButton = require('-!babel-loader!svg-react-loader!../../assets/images/close.svg?name=CloseButton');
 
 
 interface IEmbedInlineProps {

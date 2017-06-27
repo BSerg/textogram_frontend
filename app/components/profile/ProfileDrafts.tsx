@@ -2,7 +2,7 @@ import * as React from 'react';
 import ProfileArticles from './ProfileArticles';
 import {MenuAction, TOGGLE} from '../../actions/MenuAction';
 
-const CloseIcon = require('babel!svg-react!../../assets/images/close.svg?name=CloseIcon');
+const CloseIcon = require('-!babel-loader!svg-react-loader!../../assets/images/close.svg?name=CloseIcon');
 
 
 interface IDraftsProps {

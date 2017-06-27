@@ -21,13 +21,13 @@ import {DesktopBlockToolsAction, UPDATE_TOOLS} from "../../actions/editor/Deskto
 import PopupPrompt from "../shared/PopupPrompt";
 import {ContentEditableAction, RESET_FORMAT_TOOL} from "../../actions/shared/ContentEditableAction";
 
-const DeleteButton = require('babel!svg-react!../../assets/images/editor_delete.svg?name=DeleteButton');
-const UpIcon = require('babel!svg-react!../../assets/images/editor_up.svg?name=UpIcon');
-const DownIcon = require('babel!svg-react!../../assets/images/editor_down.svg?name=DownIcon');
-const BoldIcon = require('babel!svg-react!../../assets/images/desktop_editor_icon_bold.svg?name=BoldIcon');
-const ItalicIcon = require('babel!svg-react!../../assets/images/desktop_editor_icon_italic.svg?name=ItalicIcon');
-const URLIcon = require('babel!svg-react!../../assets/images/desktop_editor_icon_link.svg?name=URLIcon');
-const CloseIcon = require('babel!svg-react!../../assets/images/close_small.svg?name=CloseIcon');
+const DeleteButton = require('-!babel-loader!svg-react-loader!../../assets/images/editor_delete.svg?name=DeleteButton');
+const UpIcon = require('-!babel-loader!svg-react-loader!../../assets/images/editor_up.svg?name=UpIcon');
+const DownIcon = require('-!babel-loader!svg-react-loader!../../assets/images/editor_down.svg?name=DownIcon');
+const BoldIcon = require('-!babel-loader!svg-react-loader!../../assets/images/desktop_editor_icon_bold.svg?name=BoldIcon');
+const ItalicIcon = require('-!babel-loader!svg-react-loader!../../assets/images/desktop_editor_icon_italic.svg?name=ItalicIcon');
+const URLIcon = require('-!babel-loader!svg-react-loader!../../assets/images/desktop_editor_icon_link.svg?name=URLIcon');
+const CloseIcon = require('-!babel-loader!svg-react-loader!../../assets/images/close_small.svg?name=CloseIcon');
 
 
 interface IBaseContnentBlockProps {

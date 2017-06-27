@@ -28,7 +28,7 @@ import PopupPrompt from "../shared/PopupPrompt";
 import ContentBlockPopup from "./ContentBlockPopup";
 import {UPDATE_TOOLS, DesktopBlockToolsAction} from "../../actions/editor/DesktopBlockToolsAction";
 
-const ClearPhotoIcon = require('babel!svg-react!../../assets/images/desktop_editor_icon_clear_round.svg?name=ClearPhotoIcon');
+const ClearPhotoIcon = require('-!babel-loader!svg-react-loader!../../assets/images/desktop_editor_icon_clear_round.svg?name=ClearPhotoIcon');
 
 
 interface IQuoteContent {

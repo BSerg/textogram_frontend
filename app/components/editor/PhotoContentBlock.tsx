@@ -31,12 +31,12 @@ import ContentEditable from "../shared/ContentEditable";
 import {NotificationAction, SHOW_NOTIFICATION} from "../../actions/shared/NotificationAction";
 import Sortable = require('sortablejs');
 
-const AddButton = require('babel!svg-react!../../assets/images/desktop_editor_icon_gallery.svg?name=AddButton');
-const DeleteButton = require('babel!svg-react!../../assets/images/editor_delete.svg?name=DeleteButton');
-const BackButton = require('babel!svg-react!../../assets/images/back.svg?name=BackButton');
+const AddButton = require('-!babel-loader!svg-react-loader!../../assets/images/desktop_editor_icon_gallery.svg?name=AddButton');
+const DeleteButton = require('-!babel-loader!svg-react-loader!../../assets/images/editor_delete.svg?name=DeleteButton');
+const BackButton = require('-!babel-loader!svg-react-loader!../../assets/images/back.svg?name=BackButton');
 
-const ResizeBig = require('babel!svg-react!../../assets/images/desktop_editor_icon_fullsize.svg?name=ResizeBig');
-const ResizeSmall = require('babel!svg-react!../../assets/images/desktop_editor_icon_crop.svg?name=ResizeSmall');
+const ResizeBig = require('-!babel-loader!svg-react-loader!../../assets/images/desktop_editor_icon_fullsize.svg?name=ResizeBig');
+const ResizeSmall = require('-!babel-loader!svg-react-loader!../../assets/images/desktop_editor_icon_crop.svg?name=ResizeSmall');
 
 type PhotoSize = 'original' | 'cropped';
 

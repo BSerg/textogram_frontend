@@ -26,13 +26,13 @@ import {ModalAction, OPEN_MODAL} from '../../actions/shared/ModalAction';
 import {MediaQuerySerice} from '../../services/MediaQueryService';
 import ProfileSocialLinkList from "./ProfileSocialLinkList";
 
-const VKIcon = require('babel!svg-react!../../assets/images/profile_social_icon_vk.svg?name=VKIcon');
-const FBIcon = require('babel!svg-react!../../assets/images/profile_social_icon_fb.svg?name=FBIcon');
-const ConfirmIcon = require('babel!svg-react!../../assets/images/redactor_icon_confirm.svg?name=ConfirmIcon');
-const SubscriptionIcon = require('babel!svg-react!../../assets/images/profile_subscription_icon.svg?name=SubscriptionIcon');
-const EditIcon = require('babel!svg-react!../../assets/images/edit.svg?name=EditIcon');
-const CloseIcon = require('babel!svg-react!../../assets/images/close.svg?name=CloseIcon');
-const SettingsIcon = require('babel!svg-react!../../assets/images/settings.svg?name=SettingsIcon');
+const VKIcon = require('-!babel-loader!svg-react-loader!../../assets/images/profile_social_icon_vk.svg?name=VKIcon');
+const FBIcon = require('-!babel-loader!svg-react-loader!../../assets/images/profile_social_icon_fb.svg?name=FBIcon');
+const ConfirmIcon = require('-!babel-loader!svg-react-loader!../../assets/images/redactor_icon_confirm.svg?name=ConfirmIcon');
+const SubscriptionIcon = require('-!babel-loader!svg-react-loader!../../assets/images/profile_subscription_icon.svg?name=SubscriptionIcon');
+const EditIcon = require('-!babel-loader!svg-react-loader!../../assets/images/edit.svg?name=EditIcon');
+const CloseIcon = require('-!babel-loader!svg-react-loader!../../assets/images/close.svg?name=CloseIcon');
+const SettingsIcon = require('-!babel-loader!svg-react-loader!../../assets/images/settings.svg?name=SettingsIcon');
 
 interface IProfileProps {
     router?: any;

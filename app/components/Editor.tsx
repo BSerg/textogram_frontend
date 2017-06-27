@@ -50,8 +50,8 @@ import "../styles/editor.scss";
 import "../styles/shared/left_tool_panel.scss";
 import ArticlePublishingParamsModal from "./editor/ArticlePublishingParamsModal";
 
-const PreviewButton = require('babel!svg-react!../assets/images/preview.svg?name=PreviewButton');
-const PublishButton = require('babel!svg-react!../assets/images/publish.svg?name=PublishButton');
+const PreviewButton = require('-!babel-loader!svg-react-loader!../assets/images/preview.svg?name=PreviewButton');
+const PublishButton = require('-!babel-loader!svg-react-loader!../assets/images/publish.svg?name=PublishButton');
 
 
 interface IEditorProps {

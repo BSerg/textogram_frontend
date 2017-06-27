@@ -15,24 +15,20 @@ interface IProps {
     onChange?: (imageBase64?: string) => any;
 }
 
-interface IState {
-    positionX?: number;
-    positionY?: number;
-    imageWidth?: number;
-    imageHeight?: number;
-    canvasCtx?: CanvasRenderingContext2D
-    zoomValue?: number
-    dragInitPoint?: {x: number, y: number}
-    dragProcess?: boolean
-}
+export default class ImageEditorSimple extends React.Component<IProps, any> {
+    positionX: number;
+    positionY: number;
+    imageWidth: number;
+    imageHeight: number;
+    canvasCtx: CanvasRenderingContext2D
+    zoomValue: number
+    dragInitPoint: {x: number, y: number}
+    dragProcess: boolean;
 
-export default class ImageEditorSimple extends React.Component<IProps, IState> {
     constructor(props: any) {
         super(props);
-        this.state = {
-            dragProcess: false,
-            zoomValue: 1
-        };
+        this.dragProcess = false;
+        this.zoomValue = 1;
         this.handleMouseMove = this.handleMouseMove.bind(this);
         this.handleMouseDown = this.handleMouseDown.bind(this);
         this.handleMouseUp = this.handleMouseUp.bind(this);
@@ -52,10 +48,10 @@ export default class ImageEditorSimple extends React.Component<IProps, IState> {
     };
 
     translateParams() {
-        let width = this.state.imageWidth * this.state.zoomValue;
-        let height = this.state.imageHeight * this.state.zoomValue;
-        let x = this.state.positionX - (width - this.state.imageWidth) / 2;
-        let y = this.state.positionY - (height - this.state.imageHeight) / 2;
+        let width = this.imageWidth * this.state.zoomValue;
+        let height = this.imageHeight * this.state.zoomValue;
+        let x = this.positionX - (width - this.imageWidth) / 2;
+        let y = this.positionY - (height - this.imageHeight) / 2;
         console.log(x, y, width, height);
         return {x: x, y: y, width: width, height: height};
     }
@@ -63,22 +59,32 @@ export default class ImageEditorSimple extends React.Component<IProps, IState> {
     handleZoom() {
         let zoom = (parseInt(this.refs.zoomInput.value) * (this.props.maxZoom - 1)/10 + 1);
         let dZoom = (zoom - this.state.zoomValue) / this.state.zoomValue;
-        let dWidth = this.state.imageWidth * dZoom;
-        this.state.imageWidth += dWidth;
-        let dHeight = this.state.imageHeight * dZoom;
-        this.state.imageHeight += dHeight;
-        this.state.positionX -= dWidth/2;
-        if (this.state.positionX > 0) this.state.positionX = 0;
-        if (this.state.positionX + this.state.imageWidth < this.props.width) {
-            this.state.positionX = this.props.width - this.state.imageWidth;
+        let dWidth = this.imageWidth * dZoom;
+        let imageWidth = this.imageWidth + dWidth;
+        let dHeight = this.imageHeight * dZoom;
+        let imageHeight = this.imageHeight + dHeight;
+        let positionX = this.positionX - dWidth/2;
+        if (this.positionX > 0) {
+            positionX = 0;
         }
-        this.state.positionY -= dHeight/2;
-        if (this.state.positionY > 0) this.state.positionY = 0;
-        if (this.state.positionY + this.state.imageHeight < this.props.height) {
-            this.state.positionY = this.props.height - this.state.imageHeight;
+        if (this.positionX + this.imageWidth < this.props.width) {
+            positionX = this.props.width - this.imageWidth;
         }
-        this.state.zoomValue = zoom;
-        this.setState(this.state, () => {
+        let positionY = this.positionY - dHeight/2;
+        if (this.positionY > 0) {
+            positionY = 0;
+        }
+        if (this.positionY + this.imageHeight < this.props.height) {
+            positionY = this.props.height - this.imageHeight;
+        }
+        let zoomValue = zoom;
+        this.setState({
+            imageWidth: imageWidth, 
+            imageHeight: imageHeight,
+            positionX: positionX,
+            positionY: positionY,
+            zoomValue: zoomValue
+        }, () => {
             this.drawImage();
         });
     }
@@ -97,26 +103,26 @@ export default class ImageEditorSimple extends React.Component<IProps, IState> {
         if (this.state.dragProcess) {
             this.setState({
                 dragProcess: false,
-                dragInitPoint: this.state.dragInitPoint
+                dragInitPoint: this.dragInitPoint
             });
         }
     }
 
     handleMouseMove(e: Event) {
-        if (this.state.dragInitPoint && this.state.dragProcess) {
-            let dX = (e as MouseEvent).clientX - this.state.dragInitPoint.x;
-            let dY = (e as MouseEvent).clientY - this.state.dragInitPoint.y;
-            this.state.dragInitPoint = {x: (e as MouseEvent).clientX, y: (e as MouseEvent).clientY};
+        if (this.dragInitPoint && this.state.dragProcess) {
+            let dX = (e as MouseEvent).clientX - this.dragInitPoint.x;
+            let dY = (e as MouseEvent).clientY - this.dragInitPoint.y;
+            this.dragInitPoint = {x: (e as MouseEvent).clientX, y: (e as MouseEvent).clientY};
 
-            this.state.positionX += dX;
-            this.state.positionY += dY;
-            if (this.state.positionX > 0) {this.state.positionX = 0}
-            if (this.state.positionX + this.state.imageWidth < this.props.width) {
-                this.state.positionX = this.props.width - this.state.imageWidth;
+            this.positionX += dX;
+            this.positionY += dY;
+            if (this.positionX > 0) {this.positionX = 0}
+            if (this.positionX + this.imageWidth < this.props.width) {
+                this.positionX = this.props.width - this.imageWidth;
             }
-            if (this.state.positionY > 0) {this.state.positionY = 0}
-            if (this.state.positionY + this.state.imageHeight < this.props.height) {
-                this.state.positionY = this.props.height - this.state.imageHeight;
+            if (this.positionY > 0) {this.positionY = 0}
+            if (this.positionY + this.imageHeight < this.props.height) {
+                this.positionY = this.props.height - this.imageHeight;
             }
             this.drawImage();
         }
@@ -146,10 +152,10 @@ export default class ImageEditorSimple extends React.Component<IProps, IState> {
         let ctx = tempCanvas.getContext('2d');
         ctx.drawImage(
             this.props.image,
-            this.state.positionX,
-            this.state.positionY,
-            this.state.imageWidth,
-            this.state.imageHeight
+            this.positionX,
+            this.positionY,
+            this.imageWidth,
+            this.imageHeight
         );
         if (this.props.outputWidth && this.props.outputHeight) {
             let outputCanvas = document.createElement('canvas');
@@ -166,8 +172,8 @@ export default class ImageEditorSimple extends React.Component<IProps, IState> {
     drawImage() {
         this.state.canvasCtx.clearRect(0, 0, this.props.width, this.props.height);
         this.state.canvasCtx.drawImage(
-            this.props.image, this.state.positionX, this.state.positionY,
-            this.state.imageWidth, this.state.imageHeight
+            this.props.image, this.positionX, this.positionY,
+            this.imageWidth, this.imageHeight
         );
         switch (this.props.foregroundShape) {
             case 'circle':
@@ -205,10 +211,10 @@ export default class ImageEditorSimple extends React.Component<IProps, IState> {
             x = 0;
             y = (this.props.height - height) / 2;
         }
-        this.state.positionX = x;
-        this.state.positionY = y;
-        this.state.imageWidth = width;
-        this.state.imageHeight = height;
+        this.positionX = x;
+        this.positionY = y;
+        this.imageWidth = width;
+        this.imageHeight = height;
         this.drawImage();
     }
 

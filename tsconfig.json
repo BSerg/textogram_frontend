@@ -9,7 +9,7 @@
         "experimentalDecorators": true
     },
     "include": [
-      "./app/*"
+      "./app/**/*"
     ],
     "files": [
         "./app/index.d.ts",

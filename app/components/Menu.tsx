@@ -14,12 +14,12 @@ import LoginBlock from './shared/LoginBlock';
 
 import {MediaQuerySerice} from '../services/MediaQueryService';
 import '../styles/menu.scss';
-const ExitIcon = require('babel!svg-react!../assets/images/exit-icon.svg?name=ExitIcon');
-const InfoIcon = require('babel!svg-react!../assets/images/info-icon.svg?name=InfoIcon');
-const SettingsIcon = require('babel!svg-react!../assets/images/settings.svg?name=SettingsIcon');
-const CloseIcon = require('babel!svg-react!../assets/images/close.svg?name=CloseIcon');
+const ExitIcon = require('-!babel-loader!svg-react-loader!../assets/images/exit-icon.svg?name=ExitIcon');
+const InfoIcon = require('-!babel-loader!svg-react-loader!../assets/images/info-icon.svg?name=InfoIcon');
+const SettingsIcon = require('-!babel-loader!svg-react-loader!../assets/images/settings.svg?name=SettingsIcon');
+const CloseIcon = require('-!babel-loader!svg-react-loader!../assets/images/close.svg?name=CloseIcon');
 
-const NotificationIcon = require('babel!svg-react!../assets/images/notification_icon.svg?name=NotificationIcon');
+const NotificationIcon = require('-!babel-loader!svg-react-loader!../assets/images/notification_icon.svg?name=NotificationIcon');
 
 
 interface DefaultMenuPropsInterface {

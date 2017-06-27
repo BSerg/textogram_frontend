@@ -10,7 +10,7 @@ import * as moment from 'moment';
 import PieChartSvg from './charts/PieChartSvg';
 import LineChartSvg from './charts/LineChartSvg';
 
-const CloseIcon = require('babel!svg-react!../../assets/images/close.svg?name=CloseIcon');
+const CloseIcon = require('-!babel-loader!svg-react-loader!../../assets/images/close.svg?name=CloseIcon');
 
 // let AGES: string[] = ['age_17', 'age_18', 'age_25', 'age_35', 'age_45'];
 

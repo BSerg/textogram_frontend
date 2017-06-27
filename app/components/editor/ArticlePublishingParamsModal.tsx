@@ -4,8 +4,8 @@ import {ModalAction, CLOSE_MODAL} from "../../actions/shared/ModalAction";
 import Switch from "../shared/Switch";
 import "../../styles/editor/publishing_params_modal.scss";
 
-const BackButton = require('babel!svg-react!../../assets/images/back.svg?name=BackButton');
-const CloseButton = require('babel!svg-react!../../assets/images/close_small.svg?name=CloseButton');
+const BackButton = require('-!babel-loader!svg-react-loader!../../assets/images/back.svg?name=BackButton');
+const CloseButton = require('-!babel-loader!svg-react-loader!../../assets/images/close_small.svg?name=CloseButton');
 
 interface IProps {
     article: any;

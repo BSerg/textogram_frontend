@@ -33,6 +33,8 @@ interface IState {
 }
 
 export default class ImageEditor extends React.Component<IProps, IState> {
+    dragInitPoint: {x: number, y: number};
+
     constructor(props: any) {
         super(props);
         this.state = {
@@ -112,8 +114,8 @@ export default class ImageEditor extends React.Component<IProps, IState> {
         if (!this.state.dragProcess) {
             this.setState({
                 dragProcess: true,
-                dragInitPoint: dragPoint
             }, () => {
+                this.dragInitPoint = dragPoint
                 document.addEventListener('mousemove', this.handleMouseMove);
                 document.addEventListener('mouseup', this.handleMouseUp);
             });
@@ -126,7 +128,6 @@ export default class ImageEditor extends React.Component<IProps, IState> {
                 dragProcess: false,
                 image: this.state.image,
                 imageObject: this.state.imageObject,
-                dragInitPoint: this.state.dragInitPoint
             }, () => {
                 document.removeEventListener('mousemove', this.handleMouseMove);
                 document.removeEventListener('mouseup', this.handleMouseUp);
@@ -136,10 +137,10 @@ export default class ImageEditor extends React.Component<IProps, IState> {
     }
 
     handleMouseMove(e: Event) {
-        if (this.state.dragInitPoint) {
-            let dX = (e as MouseEvent).clientX - this.state.dragInitPoint.x;
-            let dY = (e as MouseEvent).clientY - this.state.dragInitPoint.y;
-            this.state.dragInitPoint = {x: (e as MouseEvent).clientX, y: (e as MouseEvent).clientY};
+        if (this.dragInitPoint) {
+            let dX = (e as MouseEvent).clientX - this.dragInitPoint.x;
+            let dY = (e as MouseEvent).clientY - this.dragInitPoint.y;
+            this.dragInitPoint = {x: (e as MouseEvent).clientX, y: (e as MouseEvent).clientY};
             this.state.image.position_x += dX;
             this.state.image.position_y += dY;
             if (this.state.image.position_x > 0) {this.state.image.position_x = 0}
@@ -220,10 +221,10 @@ export default class ImageEditor extends React.Component<IProps, IState> {
         if (!this.state.imageObject) {
             let image = new Image();
             image.onload = () => {
-                this.state.imageObject = image;
+                let imageObject = image;
                 this._drawImage(image);
-                this.state.zoomValue = this.image2zoom();
-                this.setState({zoomValue: this.state.zoomValue});
+                let zoomValue = this.image2zoom();
+                this.setState({zoomValue: zoomValue, imageObject: imageObject});
             };
             image.src = this.state.image.image;
         } else {

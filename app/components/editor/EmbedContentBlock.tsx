@@ -25,7 +25,7 @@ import EmbedInline from "./EmbedInline";
 import {DesktopBlockToolsAction, UPDATE_TOOLS} from "../../actions/editor/DesktopBlockToolsAction";
 import PopupPrompt from "../shared/PopupPrompt";
 
-const EditButton = require('babel!svg-react!../../assets/images/desktop_editor_icon_embed_edit.svg?name=EditButton');
+const EditButton = require('-!babel-loader!svg-react-loader!../../assets/images/desktop_editor_icon_embed_edit.svg?name=EditButton');
 
 export interface IEmbedContent {
     id: string

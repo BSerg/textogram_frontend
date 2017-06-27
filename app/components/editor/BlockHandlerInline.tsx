@@ -4,7 +4,7 @@ import {BlockContentTypes, Captions} from "../../constants";
 import "../../styles/editor/block_handler_inline.scss";
 import {InlineBlockAction, CLOSE_INLINE_BLOCK} from "../../actions/editor/InlineBlockAction";
 
-const CloseIcon = require('babel!svg-react!../../assets/images/close.svg?name=CloseIcon');
+const CloseIcon = require('-!babel-loader!svg-react-loader!../../assets/images/close.svg?name=CloseIcon');
 
 
 interface IBlockHandlerInline {

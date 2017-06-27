@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import '../../styles/shared/progress_bar.scss';
 
-const CloseIcon = require('babel!svg-react!../../assets/images/close.svg?name=CloseIcon');
+const CloseIcon = require('-!babel-loader!svg-react-loader!../../assets/images/close.svg?name=CloseIcon');
 
 export enum PROGRESS_BAR_TYPE {
     INDETERMINATE = 1,

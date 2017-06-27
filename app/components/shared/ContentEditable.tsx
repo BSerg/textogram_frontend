@@ -45,13 +45,13 @@ interface ContentEditableState {
     contentText?: string
     textFormatMode?: boolean
     selectionState?: ISelection | null
-    textFormatPopupId?: string
     isDesktop?: boolean
 }
 
 export default class ContentEditable extends React.Component<ContentEditableProps, ContentEditableState> {
     private handleChangeDelayProcess: number;
     private formatPopupId: string;
+    private textFormatPopupId: string
     private selectionModifyingProcess: boolean;
     private selection: Selection;
     private range: Range;
@@ -70,9 +70,9 @@ export default class ContentEditable extends React.Component<ContentEditableProp
             content: '',
             contentText: '',
             textFormatMode: false,
-            textFormatPopupId: null,
             isDesktop: MediaQuerySerice.getIsDesktop()
         };
+        this.textFormatPopupId = null;
         this.handleMediaQuery = this.handleMediaQuery.bind(this);
     }
     static defaultProps = {
@@ -230,9 +230,9 @@ export default class ContentEditable extends React.Component<ContentEditableProp
         this.props.onFocus && this.props.onFocus();
     }
     handleBlur() {
-        if (this.state.textFormatPopupId) {
-            PopupPanelAction.do(CLOSE_POPUP, {id: this.state.textFormatPopupId});
-            this.state.textFormatPopupId = null;
+        if (this.textFormatPopupId) {
+            PopupPanelAction.do(CLOSE_POPUP, {id: this.textFormatPopupId});
+            this.textFormatPopupId = null;
         }
         this.props.onBlur && this.props.onBlur();
     }

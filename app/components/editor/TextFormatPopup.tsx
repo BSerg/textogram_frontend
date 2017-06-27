@@ -2,11 +2,11 @@ import * as React from 'react';
 import '../../styles/editor/text_format_popup.scss';
 import {PopupPanelAction, BACK_POPUP, CLOSE_POPUP} from "../../actions/shared/PopupPanelAction";
 
-const BoldIcon = require('babel!svg-react!../../assets/images/select_bold.svg?name=BoldIcon');
-const ItalicIcon = require('babel!svg-react!../../assets/images/select_italic.svg?name=ItalicIcon');
-const LinkIcon = require('babel!svg-react!../../assets/images/select_link.svg?name=LinkIcon');
-const UnLinkIcon = require('babel!svg-react!../../assets/images/select_unlink.svg?name=UnLinkIcon');
-const CloseIcon = require('babel!svg-react!../../assets/images/close.svg?name=CloseIcon');
+const BoldIcon = require('-!babel-loader!svg-react-loader!../../assets/images/select_bold.svg?name=BoldIcon');
+const ItalicIcon = require('-!babel-loader!svg-react-loader!../../assets/images/select_italic.svg?name=ItalicIcon');
+const LinkIcon = require('-!babel-loader!svg-react-loader!../../assets/images/select_link.svg?name=LinkIcon');
+const UnLinkIcon = require('-!babel-loader!svg-react-loader!../../assets/images/select_unlink.svg?name=UnLinkIcon');
+const CloseIcon = require('-!babel-loader!svg-react-loader!../../assets/images/close.svg?name=CloseIcon');
 
 
 interface IProps {

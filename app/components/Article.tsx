@@ -19,16 +19,16 @@ import {BannerID, Captions} from "../constants";
 import LeftSideButton from "./shared/LeftSideButton";
 import AwesomeGallery from "./shared/AwesomeGallery";
 
-const EditButton = require('babel!svg-react!../assets/images/edit.svg?name=EditButton');
-const DeleteButton = require('babel!svg-react!../assets/images/redactor_icon_delete.svg?name=DeleteButton');
-const BackButton = require('babel!svg-react!../assets/images/back.svg?name=BackButton');
-const ViewIcon = require('babel!svg-react!../assets/images/views_white.svg?name=ViewIcon');
-const CloseIcon = require('babel!svg-react!../assets/images/close_white.svg?name=CloseIcon');
-const ArrowButton = require('babel!svg-react!../assets/images/arrow.svg?name=ArrowButton');
-const ShareButton = require('babel!svg-react!../assets/images/share.svg?name=ShareButton');
-const EditBlackButton = require('babel!svg-react!../assets/images/edit-small.svg?name=EditBlackButton');
-const PublishButton = require('babel!svg-react!../assets/images/publish.svg?name=PublishButton');
-const ConfirmButton = require('babel!svg-react!../assets/images/editor_confirm.svg?name=ConfirmButton');
+const EditButton = require('-!babel-loader!svg-react-loader!../assets/images/edit.svg?name=EditButton');
+const DeleteButton = require('-!babel-loader!svg-react-loader!../assets/images/redactor_icon_delete.svg?name=DeleteButton');
+const BackButton = require('-!babel-loader!svg-react-loader!../assets/images/back.svg?name=BackButton');
+const ViewIcon = require('-!babel-loader!svg-react-loader!../assets/images/views_white.svg?name=ViewIcon');
+const CloseIcon = require('-!babel-loader!svg-react-loader!../assets/images/close_white.svg?name=CloseIcon');
+const ArrowButton = require('-!babel-loader!svg-react-loader!../assets/images/arrow.svg?name=ArrowButton');
+const ShareButton = require('-!babel-loader!svg-react-loader!../assets/images/share.svg?name=ShareButton');
+const EditBlackButton = require('-!babel-loader!svg-react-loader!../assets/images/edit-small.svg?name=EditBlackButton');
+const PublishButton = require('-!babel-loader!svg-react-loader!../assets/images/publish.svg?name=PublishButton');
+const ConfirmButton = require('-!babel-loader!svg-react-loader!../assets/images/editor_confirm.svg?name=ConfirmButton');
 
 
 interface IPhoto {id: number, image: string, preview?: string, caption?: string}

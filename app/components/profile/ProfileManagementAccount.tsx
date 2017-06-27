@@ -10,11 +10,11 @@ import axios from 'axios';
 
 import '../../styles/profile/profile_management_account.scss';
 
-const ConfirmIcon = require('babel!svg-react!../../assets/images/redactor_icon_confirm.svg?name=ConfirmIcon');
-const CloseIcon = require('babel!svg-react!../../assets/images/close.svg?name=CloseIcon');
+const ConfirmIcon = require('-!babel-loader!svg-react-loader!../../assets/images/redactor_icon_confirm.svg?name=ConfirmIcon');
+const CloseIcon = require('-!babel-loader!svg-react-loader!../../assets/images/close.svg?name=CloseIcon');
 
-const VisibilityIcon = require('babel!svg-react!../../assets/images/profile_visibility_icon.svg?name=VisibilityIcon');
-const VisibilityOffIcon = require('babel!svg-react!../../assets/images/profile_visibility_off_icon.svg?name=VisibilityOffIcon');
+const VisibilityIcon = require('-!babel-loader!svg-react-loader!../../assets/images/profile_visibility_icon.svg?name=VisibilityIcon');
+const VisibilityOffIcon = require('-!babel-loader!svg-react-loader!../../assets/images/profile_visibility_off_icon.svg?name=VisibilityOffIcon');
 
 interface ISocialLink {
     id: number | null;
