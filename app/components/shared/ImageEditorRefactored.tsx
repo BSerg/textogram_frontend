@@ -62,36 +62,36 @@ export default class ImageEditorRefactored extends React.Component<IProps, any> 
     };
 
     fitImage(image: IImage) {
-        let _image = Object.assign({offset_x: 0, offset_y: 0, zoom: 1}, image);
-        _image.zoom = Math.max(1, _image.zoom);
-        _image.zoom = Math.min(this.props.maxZoom, _image.zoom);
-        let aspectRatio = _image.width / _image.height;
+        let fitImage = Object.assign({offset_x: 0, offset_y: 0, zoom: 1}, image);
+        fitImage.zoom = Math.max(1, fitImage.zoom);
+        fitImage.zoom = Math.min(this.props.maxZoom, fitImage.zoom);
+        let aspectRatio = fitImage.width / fitImage.height;
         let canvasAspectRatio = this.width / this.height;
 
         // fit size
         if (aspectRatio >= canvasAspectRatio) {
-            _image.height = this.height;
-            _image.width = aspectRatio * _image.height;
+            fitImage.height = this.height;
+            fitImage.width = aspectRatio * fitImage.height;
         } else {
-            _image.width = this.width;
-            _image.height = _image.width / aspectRatio;
+            fitImage.width = this.width;
+            fitImage.height = fitImage.width / aspectRatio;
         }
 
         // fix offset
-        let _image_real_width = _image.width * _image.zoom;
-        let _image_real_height = _image.height * _image.zoom;
+        let _image_real_width = fitImage.width * fitImage.zoom;
+        let _image_real_height = fitImage.height * fitImage.zoom;
 
-        let _image_x = this.width / 2 + _image.offset_x - _image_real_width / 2;
-        let _image_y = this.height / 2 + _image.offset_y - _image_real_height / 2;
-        if (_image_x > 0) _image.offset_x = _image_real_width / 2 - this.width / 2;
+        let _image_x = this.width / 2 + fitImage.offset_x - _image_real_width / 2;
+        let _image_y = this.height / 2 + fitImage.offset_y - _image_real_height / 2;
+        if (_image_x > 0) fitImage.offset_x = _image_real_width / 2 - this.width / 2;
         if (_image_x + _image_real_width < this.width) {
-            _image.offset_x = this.width / 2 - _image_real_width / 2;
+            fitImage.offset_x = this.width / 2 - _image_real_width / 2;
         }
-        if (_image_y > 0) _image.offset_y = _image_real_height / 2 - this.height / 2;
+        if (_image_y > 0) fitImage.offset_y = _image_real_height / 2 - this.height / 2;
         if (_image_y + _image_real_height < this.height) {
-            _image.offset_y = this.height / 2 - _image_real_height / 2;
+            fitImage.offset_y = this.height / 2 - _image_real_height / 2;
         }
-        return _image
+        return fitImage
     }
 
     handleZoom() {
@@ -100,38 +100,28 @@ export default class ImageEditorRefactored extends React.Component<IProps, any> 
         this.image.offset_x += this.image.offset_x / 2 * dZoom;
         this.image.offset_y += this.image.offset_y / 2 * dZoom;
         this.image.zoom = zoomValue;
-        this.setState({image: this.fitImage(this.image)}, () => {
-            this.drawImage();
-            this.props.onChange && this.props.onChange(this.image, this._getBase64Image());
-        });
+        this.image = this.fitImage(this.image);
+        this.drawImage();
+        this.props.onChange && this.props.onChange(this.image, this._getBase64Image());
+        this.forceUpdate();
     }
 
     handleMouseDown(e: Event) {
         if (!this.props.enableDrag) return;
-        let dragPoint = {x: (e as MouseEvent).clientX, y: (e as MouseEvent).clientY};
         if (!this.dragProcess) {
-            this.setState({
-                dragProcess: true,
-                dragInitPoint: dragPoint
-            }, () => {
-                document.addEventListener('mousemove', this.handleMouseMove);
-                document.addEventListener('mouseup', this.handleMouseUp);
-            });
+            this.dragProcess = true;
+            this.dragInitPoint = {x: (e as MouseEvent).clientX, y: (e as MouseEvent).clientY};
+            document.addEventListener('mousemove', this.handleMouseMove);
+            document.addEventListener('mouseup', this.handleMouseUp);
         }
     }
 
     handleMouseUp(e: Event) {
         if (this.dragProcess) {
-            this.setState({
-                dragProcess: false,
-                image: this.image,
-                imageObject: this.imageObject,
-                dragInitPoint: this.dragInitPoint
-            }, () => {
-                document.removeEventListener('mousemove', this.handleMouseMove);
-                document.removeEventListener('mouseup', this.handleMouseUp);
-                this.props.onChange && this.props.onChange(this.image, this._getBase64Image());
-            });
+            this.dragProcess = false;
+            document.removeEventListener('mousemove', this.handleMouseMove);
+            document.removeEventListener('mouseup', this.handleMouseUp);
+            this.props.onChange && this.props.onChange(this.image, this._getBase64Image());
         }
     }
 
@@ -207,10 +197,8 @@ export default class ImageEditorRefactored extends React.Component<IProps, any> 
     }
 
     initCanvas() {
-        let ctx = this.refs.canvas.getContext('2d');
-        this.setState({canvasCtx: ctx}, () => {
-            this.drawImage();
-        });
+        this.canvasCtx = this.refs.canvas.getContext('2d');
+        this.drawImage();
     }
 
     componentDidMount() {
