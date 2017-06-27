@@ -48,8 +48,8 @@ export default class ImageEditorSimple extends React.Component<IProps, any> {
     };
 
     translateParams() {
-        let width = this.imageWidth * this.state.zoomValue;
-        let height = this.imageHeight * this.state.zoomValue;
+        let width = this.imageWidth * this.zoomValue;
+        let height = this.imageHeight * this.zoomValue;
         let x = this.positionX - (width - this.imageWidth) / 2;
         let y = this.positionY - (height - this.imageHeight) / 2;
         console.log(x, y, width, height);
@@ -58,58 +58,43 @@ export default class ImageEditorSimple extends React.Component<IProps, any> {
 
     handleZoom() {
         let zoom = (parseInt(this.refs.zoomInput.value) * (this.props.maxZoom - 1)/10 + 1);
-        let dZoom = (zoom - this.state.zoomValue) / this.state.zoomValue;
+        let dZoom = (zoom - this.zoomValue) / this.zoomValue;
         let dWidth = this.imageWidth * dZoom;
-        let imageWidth = this.imageWidth + dWidth;
+        this.imageWidth += dWidth;
         let dHeight = this.imageHeight * dZoom;
-        let imageHeight = this.imageHeight + dHeight;
-        let positionX = this.positionX - dWidth/2;
+        this.imageHeight += dHeight;
+        this.positionX -= dWidth/2;
         if (this.positionX > 0) {
-            positionX = 0;
+            this.positionX = 0;
         }
         if (this.positionX + this.imageWidth < this.props.width) {
-            positionX = this.props.width - this.imageWidth;
+            this.positionX = this.props.width - this.imageWidth;
         }
-        let positionY = this.positionY - dHeight/2;
+        this.positionY -= dHeight/2;
         if (this.positionY > 0) {
-            positionY = 0;
+            this.positionY = 0;
         }
         if (this.positionY + this.imageHeight < this.props.height) {
-            positionY = this.props.height - this.imageHeight;
+            this.positionY = this.props.height - this.imageHeight;
         }
-        let zoomValue = zoom;
-        this.setState({
-            imageWidth: imageWidth, 
-            imageHeight: imageHeight,
-            positionX: positionX,
-            positionY: positionY,
-            zoomValue: zoomValue
-        }, () => {
-            this.drawImage();
-        });
+        this.zoomValue = zoom;
+        this.drawImage();
     }
 
     handleMouseDown(e: Event) {
         let dragPoint = {x: (e as MouseEvent).clientX, y: (e as MouseEvent).clientY};
-        if (!this.state.dragProcess) {
-            this.setState({
-                dragProcess: true,
-                dragInitPoint: dragPoint
-            });
+        if (!this.dragProcess) {
+            this.dragProcess = true;
+            this.dragInitPoint = dragPoint;
         }
     }
 
     handleMouseUp(e: Event) {
-        if (this.state.dragProcess) {
-            this.setState({
-                dragProcess: false,
-                dragInitPoint: this.dragInitPoint
-            });
-        }
+        this.dragProcess = false;
     }
 
     handleMouseMove(e: Event) {
-        if (this.dragInitPoint && this.state.dragProcess) {
+        if (this.dragInitPoint && this.dragProcess) {
             let dX = (e as MouseEvent).clientX - this.dragInitPoint.x;
             let dY = (e as MouseEvent).clientY - this.dragInitPoint.y;
             this.dragInitPoint = {x: (e as MouseEvent).clientX, y: (e as MouseEvent).clientY};
@@ -257,7 +242,7 @@ export default class ImageEditorSimple extends React.Component<IProps, any> {
                     <div className="image_editor_simple__control">
                         <input type="range" min="0" max="10" step="1"
                                ref="zoomInput"
-                               value={(this.state.zoomValue - 1) * 10}
+                               value={(this.zoomValue - 1) * 10}
                                onChange={this.handleZoom.bind(this)}/>
                     </div> : null
                 }
