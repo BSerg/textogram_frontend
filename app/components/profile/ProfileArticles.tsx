@@ -70,6 +70,9 @@ export default class ProfileArticles extends React.Component<IArticlesProps, IAr
                     url = '/articles/';
             }
         }
+        if ([this.SECTION_ARTICLES].indexOf(this.props.section) != -1 ) {
+            url = '/_' + url;
+        }
         return url;
     }
 
@@ -107,9 +110,9 @@ export default class ProfileArticles extends React.Component<IArticlesProps, IAr
                     requestParams.q = this.state.searchString;
                 }
             }
-            let requestApi: any = process.env.USE_CACHE_API && this.state.section == this.SECTION_ARTICLES ? cacheApi : api;
+            // let requestApi: any = process.env.USE_CACHE_API && this.state.section == this.SECTION_ARTICLES ? cacheApi : api;
 
-            requestApi.get(apiUrl, {cancelToken: this.cancelSource.token, params: requestParams}).then((response: any) => {
+            api.get(apiUrl, {cancelToken: this.cancelSource.token, params: requestParams}).then((response: any) => {
                 // let results: any = response.data.results || [];
                 try {
                     let results: any = (response.data.results || []).map((r: any) => {

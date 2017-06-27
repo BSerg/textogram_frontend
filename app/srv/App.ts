@@ -35,7 +35,7 @@ class AppClass {
         }
         this.express.set('views', process.env.VIEWS_DIR);
         this.express.use('/articles', articleRoutes);
-        this.express.use('/api/v1', apiRoutes);
+        this.express.use('/api/v1/_', apiRoutes);
         this.express.use('/', baseRoutes);
     }
 }

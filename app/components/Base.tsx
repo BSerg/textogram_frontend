@@ -82,11 +82,9 @@ export default class Base extends React.Component<any, any> {
     }
 
     componentWillMount() {
-        // console.log(process.env.IS_BROWSER);
         if (process.env.IS_BROWSER) {
 
             let appServer = document.getElementById('app_server');
-            // console.log(appServer);
             if (appServer) {
                 appServer.parentNode.removeChild(appServer);
             }
