@@ -70,7 +70,7 @@ export default class ProfileArticles extends React.Component<IArticlesProps, IAr
                     url = '/articles/';
             }
         }
-        if ([this.SECTION_ARTICLES].indexOf(this.props.section) != -1 ) {
+        if ([this.SECTION_ARTICLES, this.SECTION_FEED].indexOf(this.props.section) != -1 ) {
             url = '/_' + url;
         }
         return url;
@@ -110,15 +110,17 @@ export default class ProfileArticles extends React.Component<IArticlesProps, IAr
                     requestParams.q = this.state.searchString;
                 }
             }
-            // let requestApi: any = process.env.USE_CACHE_API && this.state.section == this.SECTION_ARTICLES ? cacheApi : api;
-
+            
             api.get(apiUrl, {cancelToken: this.cancelSource.token, params: requestParams}).then((response: any) => {
-                // let results: any = response.data.results || [];
+
                 try {
                     let results: any = (response.data.results || []).map((r: any) => {
                         let res = typeof r == 'string' ? JSON.parse(r) : r;
-                        res.isNew = true;
-                        return res;
+                        try {
+                            res.isNew = true;
+                            return res;
+                        }
+                        catch (error) {}
                     });
                     items = items.concat(results);
                 }
@@ -128,7 +130,7 @@ export default class ProfileArticles extends React.Component<IArticlesProps, IAr
                 this.setState({items: items, nextUrl: response.data.next, isLoading: false});
             }).catch((error: any) => {
                 if (!axios.isCancel(error)) {
-                    this.setState({isLoading: false});
+                    this.setState({isLoading: false, nextUrl: null});
                 }
             });
         });
