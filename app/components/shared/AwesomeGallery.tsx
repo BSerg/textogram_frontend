@@ -1,5 +1,9 @@
 import * as React from 'react';
 import {MediaQuerySerice} from "../../services/MediaQueryService";
+import * as Swipeable from 'react-swipeable';
+if (process.env.IS_BROWSER) {
+    const Hammer = require('hammerjs');
+}
 
 import '../../styles/shared/awesome_gallery.scss';
 
@@ -19,7 +23,7 @@ interface IPhotoExtended extends IPhoto {
     drawHeight?: number;
     drawX?: number;
     drawY?: number;
-    load?: () => any;
+    load?: (callback: () => any) => any;
 }
 
 class AwesomeGalleryPhotoHandler {
@@ -46,17 +50,18 @@ class AwesomeGalleryPhotoHandler {
         this.currentPhotoIndex = index;
     }
 
-    loadPhoto(photo: IPhotoExtended) {
+    loadPhoto(photo: IPhotoExtended, callback: () => any = () => {}) {
         if (photo.img) return;
         photo.img = null;
         let img = new Image();
         img.crossOrigin = 'anonymous';
         img.onload = () => {
-            photo.img = img;
             photo.width = img.width;
             photo.height = img.height;
             photo.ratio = photo.width / photo.height;
+            photo.img = img;
             this.update();
+            callback();
         };
         img.src = photo.image;
 
@@ -67,9 +72,9 @@ class AwesomeGalleryPhotoHandler {
         return photo;
     }
 
-    load() {
+    load(callback: () => any = () => {}) {
         this.photos.forEach((photo: IPhotoExtended) => {
-            photo.load = this.loadPhoto.bind(this, photo);
+            photo.load = this.loadPhoto.bind(this, photo, callback);
         });
         this.update();
     }
@@ -156,6 +161,7 @@ interface IState {
     loadedPhotoCount?: number;
     photoHandler?: AwesomeGalleryPhotoHandler;
     isDesktop?: boolean;
+    orientation?: string | number;
     canvasWidth?: number;
     canvasHeight?: number;
     canvasRatio?: number;
@@ -173,9 +179,13 @@ export default class AwesomeGallery extends React.Component<IProps, IState> {
     jumpTimeCountdown: number;
     freeMode: boolean;
     mouseDownPoint: {x: number, y: number} | null;
+    swipeDelta: number;
+    swipingDirection: string;
+    hammer: any;
 
     refs: {
-        canvas: HTMLCanvasElement
+        canvas: HTMLCanvasElement,
+        root: HTMLDivElement
     };
 
     static defaultProps = {
@@ -196,6 +206,7 @@ export default class AwesomeGallery extends React.Component<IProps, IState> {
             photoFrameWidth: MediaQuerySerice.getIsDesktop() ? MediaQuerySerice.getScreenWidth() * 0.8 : MediaQuerySerice.getScreenWidth(),
             photoFrameHeight: MediaQuerySerice.getIsDesktop() ? MediaQuerySerice.getScreenHeight() - 128 : MediaQuerySerice.getScreenHeight() - 100,
             isDesktop: MediaQuerySerice.getIsDesktop(),
+            orientation: MediaQuerySerice.getOrientation()
         };
         this.jumpTimeCountdown = 0;
         this.freeMode = false;
@@ -243,9 +254,9 @@ export default class AwesomeGallery extends React.Component<IProps, IState> {
             index = this.props.photos.length - 1;
         }
         this.setState({currentPhotoIndex: index}, () => {
-            this.jumpTimeCountdown = this.props.jumpTime;
             this.state.photoHandler.setCurrentPhotoIndex(this.state.currentPhotoIndex);
             this.state.photoHandler.update();
+            this.update();
         });
     }
 
@@ -341,30 +352,81 @@ export default class AwesomeGallery extends React.Component<IProps, IState> {
     }
 
     handleMediaQuery(isDesktop: boolean) {
+        let width, height, orientation = MediaQuerySerice.getOrientation();
+        if (orientation == 'undefined' || orientation == 0) {
+            width = MediaQuerySerice.getScreenWidth()
+            height = MediaQuerySerice.getScreenHeight() 
+        } else if (orientation == 90) {
+            width = MediaQuerySerice.getScreenHeight()
+            height = MediaQuerySerice.getScreenWidth() 
+        }
         this.setState({
             isDesktop: isDesktop,
-            canvasWidth: MediaQuerySerice.getScreenWidth(),
-            canvasHeight: MediaQuerySerice.getScreenHeight(),
-            canvasRatio: MediaQuerySerice.getScreenWidth() / MediaQuerySerice.getScreenHeight(),
-            photoFrameWidth: MediaQuerySerice.getIsDesktop() ? MediaQuerySerice.getScreenWidth() * 0.8 : MediaQuerySerice.getScreenWidth(),
-            photoFrameHeight: MediaQuerySerice.getIsDesktop() ? MediaQuerySerice.getScreenHeight() - 128 : MediaQuerySerice.getScreenHeight() - 100,
+            orientation: orientation,
+            canvasWidth: width,
+            canvasHeight: height,
+            canvasRatio: width / height,
+            photoFrameWidth: MediaQuerySerice.getIsDesktop() ? width * 0.8 : width,
+            photoFrameHeight: MediaQuerySerice.getIsDesktop() ? height - 128 : height - 100,
         }, () => {
             this.state.photoHandler.setIsDesktop(isDesktop);
             this.state.photoHandler.update();
+            this.update();
+            console.log('MEDIA QUERY TRIGGERED', MediaQuerySerice.getOrientation(), MediaQuerySerice.getScreenWidth())
+        });
+    }
+
+    // Swipeable methods
+
+    swiping(e: React.TouchEvent<any>, deltaX: number, deltaY: number, absX: number, absY: number, velocity: number) {
+    }
+
+    swiped(e: React.TouchEvent<any>, deltaX: number, deltaY: number, isFlick: boolean, velocity: number) {
+        this.swipeDelta = 0;
+    }
+
+    swipingRight(event: React.TouchEvent<any>, delta: number) {
+        if (!this.swipeDelta) this.swipeDelta = delta;
+        this.photoCenterOffset.x += (this.swipeDelta - delta);
+        this.swipeDelta = delta;
+        this.forceUpdate();
+
+    }
+    
+    swipingLeft(event: React.TouchEvent<any>, delta: number) {
+        if (!this.swipeDelta) this.swipeDelta = delta;
+        this.photoCenterOffset.x -= (this.swipeDelta - delta);
+        this.swipeDelta = delta;
+        this.forceUpdate();
+    }
+
+    swipedRight(event: React.TouchEvent<any>, delta: number, isFlick: boolean) {
+        this.prevPhoto();
+    }
+    
+    swipedLeft(event: React.TouchEvent<any>, delta: number, isFlick: boolean) {
+        this.nextPhoto();
+    }
+
+    initHammer() {
+        this.hammer = new Hammer(this.refs.root);
+        this.hammer.get('pinch').set({ enable: true });
+        this.hammer.on('pinch', (ev: any) => {
+            console.log('PINCH', ev);
         });
     }
 
     componentDidMount() {
-        window.clearInterval(this.drawProcess);
-        this.drawProcess = window.setInterval(() => {
-            this.update();
-        }, this.props.tick);
+        this.goToPhoto(this.state.currentPhotoIndex);
         MediaQuerySerice.listen(this.handleMediaQuery);
         document.addEventListener('keydown', this.handleKeyDown);
         document.addEventListener('wheel', this.handleWeelMouse);
         document.addEventListener('mousedown', this.handleMouseDown);
         document.addEventListener('mouseup', this.handleMouseUp);
         document.addEventListener('mousemove', this.handleMouseMove);
+        if (process.env.IS_BROWSER) {
+            this.initHammer();
+        }
     }
 
     componentWillUnmount() {
@@ -380,49 +442,66 @@ export default class AwesomeGallery extends React.Component<IProps, IState> {
     render() {
         let currentPhoto = this.props.photos.length ? this.props.photos[this.state.currentPhotoIndex] : null;
         let photoRects = this.state.photoHandler.photos.map((photo: IPhotoExtended, index: number) => {
-            let rect = Object.assign(this.getPhotoRect(this.state.photoHandler.photoMap[index]), {image: photo.image});
-            if (!photo.img && rect.visible) photo.load();
+            let rect = Object.assign(this.getPhotoRect(this.state.photoHandler.photoMap[index]), {image: photo.img ? photo.image : ''});
+            // console.log('PHOTO', index, rect)
+            if (!photo.img && (rect.visible || [this.state.currentPhotoIndex - 1, this.state.currentPhotoIndex, this.state.currentPhotoIndex + 1].indexOf(index) != -1)) {
+                console.log('IMAGE FOR LOAD', index, rect)
+                this.state.photoHandler.loadPhoto.bind(this)(photo, () => {
+                    this.state.photoHandler.update();
+                    this.update();
+                });
+            }
             return rect;
         });
         return (
-            <div draggable={false} className={this.getClassName()}>
+        
+            <div ref="root" draggable={false} className={this.getClassName()}>
 
-                {this.state.isDesktop ?
-                    <div className="awesome_gallery__header">
-                        <div className="awesome_gallery__prev" onClick={this.prevPhoto.bind(this)}>
-                            <ArrowButton/> НАЗАД
-                        </div>
-                        <div className="awesome_gallery__counter">
-                            {this.state.currentPhotoIndex + 1}/{this.props.photos.length}
-                        </div>
-                        <div className="awesome_gallery__next" onClick={this.nextPhoto.bind(this)}>
-                            ДАЛЕЕ <ArrowButton/>
-                        </div>
-                        <div className="awesome_gallery__close" onClick={this.close.bind(this)}><CloseIcon/></div>
-                    </div> :
-                    <div className="awesome_gallery__header">
-                        <BackButton className="awesome_gallery__back" onClick={this.close.bind(this)}/>
-                        <div className="awesome_gallery__counter">
-                            {this.state.currentPhotoIndex + 1}/{this.props.photos.length}
-                        </div>
-                    </div>
-                }
+                <Swipeable 
+                onSwiping={this.swiping.bind(this)}
+                onSwiped={this.swiped.bind(this)} 
+                onSwipingRight={this.swipingRight.bind(this)} 
+                onSwipingLeft={this.swipingLeft.bind(this)} 
+                onSwipedRight={this.swipedRight.bind(this)} 
+                onSwipedLeft={this.swipedLeft.bind(this)}>
 
-                {photoRects.map((rect: any, index: number) => {
-                    return <AwesomeGalleryItem key={'photo' + index} 
-                                               isCurrent={this.state.currentPhotoIndex == index}
-                                               img={rect.image} 
-                                               x={rect.x} 
-                                               y={rect.y} 
-                                               width={rect.width} 
-                                               height={rect.height}/>
-                })}                
+                    {this.state.isDesktop ?
+                        <div className="awesome_gallery__header">
+                            <div className="awesome_gallery__prev" onClick={this.prevPhoto.bind(this)}>
+                                <ArrowButton/> НАЗАД
+                            </div>
+                            <div className="awesome_gallery__counter">
+                                {this.state.currentPhotoIndex + 1}/{this.props.photos.length}
+                            </div>
+                            <div className="awesome_gallery__next" onClick={this.nextPhoto.bind(this)}>
+                                ДАЛЕЕ <ArrowButton/>
+                            </div>
+                            <div className="awesome_gallery__close" onClick={this.close.bind(this)}><CloseIcon/></div>
+                        </div> :
+                        <div className="awesome_gallery__header">
+                            <BackButton className="awesome_gallery__back" onClick={this.close.bind(this)}/>
+                            <div className="awesome_gallery__counter">
+                                {this.state.currentPhotoIndex + 1}/{this.props.photos.length}
+                            </div>
+                        </div>
+                    }
 
-                {currentPhoto && currentPhoto.caption ?
-                    <div className="awesome_gallery__caption">
-                        {currentPhoto.caption}
-                    </div> : null
-                }
+                    {photoRects.map((rect: any, index: number) => {
+                        return <AwesomeGalleryItem key={'photo' + index} 
+                                                isCurrent={this.state.currentPhotoIndex == index}
+                                                img={rect.image} 
+                                                x={rect.x} 
+                                                y={rect.y} 
+                                                width={rect.width} 
+                                                height={rect.height}/>
+                    })}                
+
+                    {currentPhoto && currentPhoto.caption ?
+                        <div className="awesome_gallery__caption">
+                            {currentPhoto.caption}
+                        </div> : null
+                    }
+                </Swipeable>
             </div>
         )
     }
