@@ -228,6 +228,7 @@ export default class AwesomeGallery extends React.Component<IProps, IState> {
         this.handleMouseUp = this.handleMouseUp.bind(this);
         this.handleMouseMove = this.handleMouseMove.bind(this);
         this.handleOrientationChange = this.handleOrientationChange.bind(this);
+        this.handleTouchEnd = this.handleTouchEnd.bind(this);
     }
 
     close() {
@@ -431,6 +432,13 @@ export default class AwesomeGallery extends React.Component<IProps, IState> {
         });
     }
 
+    handleTouchEnd(e: TouchEvent) {
+        console.log('TOUCHEND', e.touches.length)
+        if (!e.touches.length) {
+            this.pinchZoom = 1;
+        }
+    }
+
     componentDidMount() {
         this.goToPhoto(this.state.currentPhotoIndex);
         MediaQuerySerice.listen(this.handleMediaQuery);
@@ -440,6 +448,7 @@ export default class AwesomeGallery extends React.Component<IProps, IState> {
         document.addEventListener('mouseup', this.handleMouseUp);
         document.addEventListener('mousemove', this.handleMouseMove);
         window.addEventListener('orientationchange', this.handleOrientationChange);
+        document.addEventListener('touchend', this.handleTouchEnd);
         if (process.env.IS_BROWSER) {
             this.initHammer();
         }
@@ -454,6 +463,7 @@ export default class AwesomeGallery extends React.Component<IProps, IState> {
         document.removeEventListener('mouseup', this.handleMouseUp);
         document.removeEventListener('mousemove', this.handleMouseMove);
         window.removeEventListener('orientationchange', this.handleOrientationChange);
+        document.removeEventListener('touchend', this.handleTouchEnd);
     }
 
     render() {
