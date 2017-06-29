@@ -37,7 +37,24 @@ class BaseRouter {
     }
 
     getProfile(req: Request, res: Response, next: NextFunction) {
-        db.get(req, `user:${req.params.profileSlug}`, (data) => {
+        db.get(`${process.env.CACHE_KEY_PREFIX}:user:${req.params.profileSlug}`).then((data: any) => {
+            try {
+                let user = JSON.parse(data);
+                let RenderedProfile: React.StatelessComponent<any> = (props: any) => {
+                    return (<Profile renderedUser={user} {...props}/>);
+                };
+                let html = ReactDOMServer.renderToString(
+                    <StaticRouter context={{}}><Base><RenderedProfile /></Base></StaticRouter>
+                );
+                res.render('index.ejs', {reactData: html});
+            }
+            catch(error) {
+                res.render('index.ejs', {reactData: ''});
+            }
+        }).catch(() => {
+            res.render('index.ejs', {reactData: ''});
+        })
+        /*db.get(`${process.env.CACHE_KEY_PREFIX}:user:${req.params.profileSlug}`, (data) => {
             try {
                 let user = JSON.parse(data);
                 let RenderedProfile: React.StatelessComponent<any> = (props: any) => {
@@ -53,7 +70,7 @@ class BaseRouter {
             }
         }, () => {
             res.render('index.ejs', {reactData: ''});
-        })
+        })*/
         
     }
 

@@ -93,7 +93,6 @@ UserAction.registerAsync(LOGOUT, (store, data: any) => {
 UserAction.registerAsync(UPDATE_USER, (store, data: any) => {
     return new Promise((resolve, reject) => {
         api.patch('/users/me/', data).then((response: any) => {
-            console.log(response.data);
             store.user = response.data;
             resolve(response.data);
         }).catch((error) => {

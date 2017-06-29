@@ -1,5 +1,6 @@
 import {Router, Request, Response, NextFunction} from 'express';
 import db from '../db';
+import {saveArticleViews} from '../tasks';
 
 class ApiRouter {
     router: Router;
@@ -12,22 +13,32 @@ class ApiRouter {
     getArticle(req: Request, res: Response, next: NextFunction) {
         let articleSlug = req.params.articleSlug || '';
 
-        db.getArticle(req, articleSlug, (data: any)  => {
-            res.end(data);
-
-        }, (error: any) => {
-            res.status(404).send({
-                msg: 'not found'
-            });
+        db.getArticle(req).then((data: any) => {
+            try {
+                let d = JSON.parse(data);
+                db.get(`${process.env.CACHE_KEY_PREFIX}:article:${req.params.articleSlug || ''}:views_count`).then((count: string) => {   
+                    try {
+                        d.views = parseInt(count);
+                    }
+                    catch(error) {}
+                    finally { res.send(d); }
+                }).catch(() => { res.send(d); })
+                saveArticleViews(req, d);
+            }
+            catch(error) {
+                res.status(500).send({msg: 'article error'});
+            }
+        }).catch(() => {
+            res.status(404).send({msg: 'not found'});
         });
     }
 
     getArticles(req: Request, res: Response, next: NextFunction) {
-        db.getArticles(req, (data: any) => {
+        db.getArticles(req).then((data) => {
             res.end(data);
-        }, (error: any) => {
+        }).catch(() => {
             res.status(404).send({msg: 'not found'});
-        });
+        })
 
         // res.end(JSON.stringify({'results': []}));
     }

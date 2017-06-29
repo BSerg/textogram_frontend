@@ -51,7 +51,6 @@ export default class ProfileArticles extends React.Component<IArticlesProps, IAr
 
     getApiUrl(searchString: string = ''): string {
         let url: string;
-        // let baseUrl: string = process.env.USE_CACHE_API && this.props.section == this.SECTION_ARTICLES ? '' : '';
         if (searchString) {
             switch (this.props.section) {
                 case (this.SECTION_STATISTICS):
@@ -70,19 +69,11 @@ export default class ProfileArticles extends React.Component<IArticlesProps, IAr
                     url = '/articles/';
             }
         }
-        if ([this.SECTION_ARTICLES, this.SECTION_FEED].indexOf(this.props.section) != -1 ) {
+        if (process.env.USE_CACHE_API && [this.SECTION_ARTICLES, this.SECTION_FEED].indexOf(this.props.section) != -1 ) {
             url = '/_' + url;
         }
         return url;
     }
-
-    // loadArticles(more: boolean = false) {
-    //     if (process.env.USE_CACHE_API && this.props.section == this.SECTION_ARTICLES) {
-    //         return this._loadArticlesCache(more);
-    //     }
-    //     return this._loadArticles(more);
-        // return this._loadArticles;
-    // }
 
     loadArticles(more: boolean = false) {
 
@@ -135,10 +126,6 @@ export default class ProfileArticles extends React.Component<IArticlesProps, IAr
             });
         });
     }
-
-    // _loadArticlesCache(more: boolean = false) {
-    //     this.setState({items: [], isLoading: false});
-    // }
 
     searchInput(e: any) {
         this.searchTimeout && window.clearTimeout(this.searchTimeout);
