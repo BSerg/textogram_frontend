@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {MediaQuerySerice} from "../../services/MediaQueryService";
 import * as Swipeable from 'react-swipeable';
+import Loading from './Loading';
 if (process.env.IS_BROWSER) {
     const Hammer = require('hammerjs');
 }
@@ -139,14 +140,15 @@ class AwesomeGalleryItem extends React.Component<IAwesomeGalleryItem, any> {
                 height: this.props.height + 'px'
             };
         if (this.props.isCurrent) className += ' active';
-        if (this.props.img) {
-            Object.assign(style, {background: `url('${this.props.img}')`});
-        } else {
-            className += ' loading';
-        }
+        if (this.props.img) className += ' done';
 
         return (
-            <div className={className} style={style} onClick={this.handleClick.bind(this)}></div>
+            <div className={className} style={style} onClick={this.handleClick.bind(this)}>
+                <div 
+                    className="awesome_gallery__image" 
+                    style={this.props.img ? {background: `url('${this.props.img}') no-repeat center center`} : {}}></div>
+                {!this.props.img ? <Loading/> : null}
+            </div>
         );
     }
 }

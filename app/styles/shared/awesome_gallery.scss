@@ -17,11 +17,35 @@
 
   .awesome_gallery__item {
     position: absolute;
-    background-color: $color;
-    background-size: cover!important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
 
-    &::after {
+    .loading {
+      & > div {
+        background-color: white;
+      }
+    }
+
+    .awesome_gallery__image {
+      @include transition(500ms);
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-size: cover!important;
+      opacity: 0;
+    }
+
+    &.done {
+      .awesome_gallery__image {
+        opacity: 1;
+      }
+    }
+
+    &.done::after {
       @include transition();
       content: '';
       display: block;
@@ -42,16 +66,6 @@
     &:not(.active):hover {
       &::after {
         background-color: rgba(black, 0.1);
-      }
-    }
-
-    &.loading::after {
-      display: flex;
-      align-content: center;
-      justify-content: center;
-
-      &::after {
-        content: 'Загрузка...';
       }
     }
   }
