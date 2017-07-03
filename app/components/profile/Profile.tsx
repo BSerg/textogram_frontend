@@ -38,6 +38,7 @@ interface IProfileProps {
     router?: any;
     params?: any;
     section?: any;
+    renderedUser?: any;
 }
 
 interface IProfileState {
@@ -51,7 +52,7 @@ interface IProfileState {
     isLoading?: boolean;
     canSubscribe?: boolean;
     additionalPage?: any;
-    // cancelSource?: any;
+    renderedArticles?: any;
 }
 
 export default class Profile extends React.Component<IProfileProps|any, IProfileState|any> {
@@ -67,15 +68,15 @@ export default class Profile extends React.Component<IProfileProps|any, IProfile
 
     constructor(props: any) {
         super(props);
-        this.state = {user: null, error: null, isLoading: false, isSelf: false, selfDrafts: 0, showSubscribers: true,
-            isDesktop: MediaQuerySerice.getIsDesktop(), canSubscribe: false, additionalPage: null};
+        this.state = {user: props.renderedUser || null, error: null, isLoading: false, isSelf: false, 
+            selfDrafts: 0, showSubscribers: true, isDesktop: MediaQuerySerice.getIsDesktop(), 
+            canSubscribe: false, additionalPage: null};
         this.handleUserChange = this.handleUserChange.bind(this);
         this.checkDesktop = this.checkDesktop.bind(this);
         this.setDrafts = this.setDrafts.bind(this);
         this.logoutHandle = this.logoutHandle.bind(this);
-        // this.getUserData = this.getUserData.bind(this);
     }
-
+    
     handleUserChange() {
         let isSelf: boolean =  Boolean(this.state.user && UserAction.getStore().user && (UserAction.getStore().user.id == this.state.user.id));
         let stateData: any = { canSubscribe: Boolean(UserAction.getStore().user && !isSelf) };
@@ -120,25 +121,16 @@ export default class Profile extends React.Component<IProfileProps|any, IProfile
             }
             if (UserAction.getStore().user) {
                 this.setState({user: UserAction.getStore().user, currentSection: currentSection,
-                        isSelf: true, canSubscribe: false, selfDrafts: UserAction.getStore().user.drafts || 0});
+                    isSelf: true, canSubscribe: false, selfDrafts: UserAction.getStore().user.drafts || 0}, () => {
+                        document.title = `${this.state.user.first_name} ${this.state.user.last_name}`;
+                    });
             }
-            else {
-                /*UserAction.doAsync(LOGIN, null).then((user: any) => {
-                    this.setState({user: UserAction.getStore().user, currentSection: currentSection,
-                        isSelf: true, canSubscribe: false, selfDrafts: UserAction.getStore().user.drafts || 0});
-                }).catch((error) => {
-                    console.log('pushhh');
-                    this.props.history.push('/');
-                });*/
-            }
-
         }
         else  {
             if (!subsection) {
                 currentSection = this.SECTION_ARTICLES;
             }
             else {
-
                 switch (subsection) {
                     case 'followers':
                         currentSection = this.SECTION_FOLLOWERS;
@@ -171,6 +163,8 @@ export default class Profile extends React.Component<IProfileProps|any, IProfile
                             isLoading: false,
                             canSubscribe: canSubscribe,
                             selfDrafts: isSelf ? UserAction.getStore().user.drafts || 0 : 0,
+                        }, () => {
+                            document.title = `${this.state.user.first_name} ${this.state.user.last_name}`;
                         });
                     }).catch((error) => {
                         if (!axios.isCancel(error)) {
@@ -186,7 +180,7 @@ export default class Profile extends React.Component<IProfileProps|any, IProfile
     }
 
     setSection(sectionName: string) {
-        if (this.state.isSelf && [this.SECTION_FEED, this.SECTION_ARTICLES ].includes(sectionName)) {
+        if (this.state.isSelf && [this.SECTION_FEED, this.SECTION_ARTICLES ].indexOf(sectionName) != -1) {
             this.setState({currentSection: sectionName});
         }
         else {
@@ -380,10 +374,7 @@ export default class Profile extends React.Component<IProfileProps|any, IProfile
                              ) : null
                          }
 
-
-                         {
-                             this.state.isDesktop ? (<div className="divider"></div>) : null
-                         }
+                         {this.state.isDesktop ? (<div className="divider"></div>) : null}
 
                          { this.state.isDesktop && this.state.canSubscribe ? (
                              this.state.user.is_subscribed ? (
@@ -415,19 +406,11 @@ export default class Profile extends React.Component<IProfileProps|any, IProfile
                                  </div>
                              ) : null
                          }
-                         {
-                             DisplayComponent
-                         }
+                         {DisplayComponent}
 
                      </div>
-
-
                  </div>
              </div>
         )
     }
 }
-
-// let Profile = withRouter(ProfileClass);
-//
-// export default Profile;

@@ -4,6 +4,7 @@ import * as cors from 'cors';
 import * as bodyParser from 'body-parser';
 import {baseRoutes} from './routes/BaseRouter';
 import {articleRoutes} from './routes/ArticleRouter';
+import * as cookieParser from 'cookie-parser';
 
 import {apiRoutes} from './routes/ApiRouter';
 
@@ -25,6 +26,7 @@ class AppClass {
         this.express.use(bodyParser.json());
         this.express.use(cors(this.corsOptions));
         this.express.use(bodyParser.urlencoded({ extended: false }));
+        this.express.use(cookieParser());
     }
 
     routes() {

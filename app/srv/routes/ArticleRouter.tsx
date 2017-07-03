@@ -17,10 +17,7 @@ class ArticleRouter {
     }
 
     getArticle(req: Request, res: Response, next: NextFunction) {
-        let articleSlug = req.params.articleSlug || '';
-
-        db.getArticle(req, articleSlug, (data: string) => {
-
+        db.getArticle(req).then((data: any) => {
             try {
                 let article = JSON.parse(data);
 
@@ -33,9 +30,7 @@ class ArticleRouter {
             catch (error) {
                 res.render('index.ejs', {reactData: ''});
             }
-
-        }, (error: any) => {
-
+        }).catch(() => {
             let html = ReactDOMServer.renderToString(<StaticRouter context={{}}><Base><Error404/></Base></StaticRouter>);
             res.render('index.ejs', {reactData: html});
         });
