@@ -5,6 +5,7 @@ import {api} from '../../api';
 import ArticlePreview from '../shared/ArticlePreview';
 import ArticlePreviewStatistics from '../shared/ArticlePreviewStatistics';
 import Loading from '../shared/Loading';
+import {scryRenderedComponentsWithType} from "react-dom/test-utils";
 
 interface IArticlesProps {
     userId?: number;
@@ -20,9 +21,9 @@ interface IArticlesState {
     items?: any[];
     nextUrl?: string;
     isLoading?: boolean;
-    cancelSource?: any;
+    // cancelSource?: any;
     searchString?: string;
-    searchTimeout?: number;
+    // searchTimeout?: number;
 }
 
 export default class ProfileArticles extends React.Component<IArticlesProps, IArticlesState> {
@@ -33,6 +34,9 @@ export default class ProfileArticles extends React.Component<IArticlesProps, IAr
     SECTION_STATISTICS = 'statistics';
     SECTION_PAYWALL = 'paywall';
 
+    cancelSource: any;
+    searchTimeout: number;
+
     refs: {
         main: HTMLDivElement;
         search: HTMLInputElement;
@@ -40,14 +44,13 @@ export default class ProfileArticles extends React.Component<IArticlesProps, IAr
 
     constructor() {
         super();
-        this.state = { items: [], nextUrl: null,  isLoading: false, cancelSource: null, searchString: ''};
+        this.state = { items: [], nextUrl: null,  isLoading: false, searchString: ''};
 
         this.handleScroll = this.handleScroll.bind(this);
     }
 
     getApiUrl(searchString: string = ''): string {
         let url: string;
-
         if (searchString) {
             switch (this.props.section) {
                 case (this.SECTION_STATISTICS):
@@ -66,7 +69,9 @@ export default class ProfileArticles extends React.Component<IArticlesProps, IAr
                     url = '/articles/';
             }
         }
-
+        if (process.env.USE_CACHE_API && [this.SECTION_ARTICLES, this.SECTION_FEED].indexOf(this.props.section) != -1 ) {
+            url = '/_' + url;
+        }
         return url;
     }
 
@@ -74,9 +79,9 @@ export default class ProfileArticles extends React.Component<IArticlesProps, IAr
 
         let items: any[] = more ? this.state.items : [];
 
-        this.state.cancelSource && this.state.cancelSource.cancel();
+        this.cancelSource && this.cancelSource.cancel();
         let CancelToken = axios.CancelToken;
-        this.state.cancelSource = CancelToken.source();
+        this.cancelSource = CancelToken.source();
 
         this.setState({items: items, isLoading: true}, () => {
 
@@ -95,30 +100,38 @@ export default class ProfileArticles extends React.Component<IArticlesProps, IAr
                 if (this.state.searchString) {
                     requestParams.q = this.state.searchString;
                 }
-
-
             }
+            
+            api.get(apiUrl, {cancelToken: this.cancelSource.token, params: requestParams}).then((response: any) => {
 
-            api.get(apiUrl, {cancelToken: this.state.cancelSource.token, params: requestParams}).then((response: any) => {
-                let results: any = response.data.results || [];
-                results.forEach((r: any) => {
-                    r.isNew = true;
-                });
-                items = items.concat(results);
+                try {
+                    let results: any = (response.data.results || []).map((r: any) => {
+                        let res = typeof r == 'string' ? JSON.parse(r) : r;
+                        try {
+                            res.isNew = true;
+                            return res;
+                        }
+                        catch (error) {}
+                    });
+                    items = items.concat(results);
+                }
+                catch (error) {
+                    return;
+                }
                 this.setState({items: items, nextUrl: response.data.next, isLoading: false});
-            }).catch((error) => {
+            }).catch((error: any) => {
                 if (!axios.isCancel(error)) {
-                    this.setState({isLoading: false});
+                    this.setState({isLoading: false, nextUrl: null});
                 }
             });
         });
     }
 
     searchInput(e: any) {
-        this.state.searchTimeout && window.clearTimeout(this.state.searchTimeout);
-        this.state.cancelSource && this.state.cancelSource.cancel();
+        this.searchTimeout && window.clearTimeout(this.searchTimeout);
+        this.cancelSource && this.cancelSource.cancel();
         this.setState({searchString: e.target.value, items: [], isLoading: true}, () => {
-            this.state.searchTimeout = window.setTimeout(this.loadArticles.bind(this), 500);
+            this.searchTimeout = window.setTimeout(this.loadArticles.bind(this), 500);
 
         })
     }
@@ -134,8 +147,8 @@ export default class ProfileArticles extends React.Component<IArticlesProps, IAr
 
         if (nextProps.userId != this.state.userId || nextProps.section != this.state.section || nextProps.isSelf != this.state.isSelf) {
 
-            this.state.searchTimeout && window.clearTimeout(this.state.searchTimeout);
-            this.state.cancelSource && this.state.cancelSource.cancel();
+            this.searchTimeout && window.clearTimeout(this.searchTimeout);
+            this.cancelSource && this.cancelSource.cancel();
 
             this.setState({ userId: nextProps.userId, searchString: '', section: nextProps.section, isSelf: nextProps.isSelf }, () => {
                 this.refs.search.focus();
@@ -152,12 +165,11 @@ export default class ProfileArticles extends React.Component<IArticlesProps, IAr
 
     componentWillUnmount() {
         window.removeEventListener('scroll', this.handleScroll);
-        this.state.cancelSource && this.state.cancelSource.cancel();
-        this.state.searchTimeout && window.clearTimeout(this.state.searchTimeout);
+        this.cancelSource && this.cancelSource.cancel();
+        this.searchTimeout && window.clearTimeout(this.searchTimeout);
     }
 
     render() {
-
         let isFeed = this.state.section == this.SECTION_FEED;
         let isOwner = this.state.section == this.SECTION_DRAFTS || (this.state.isSelf && (this.state.section == this.SECTION_ARTICLES));
         return (

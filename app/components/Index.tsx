@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Link} from 'react-router';
+import {Link} from 'react-router-dom';
 import {UserAction, GET_ME, LOGIN} from '../actions/user/UserAction';
 import '../styles/lentach_index.scss';
 import LentachIndex from "./LentachIndex";
@@ -10,7 +10,7 @@ export default class Index extends React.Component<any, any> {
     constructor() {
         super();
         this.state = {
-            authenticated: !!localStorage.getItem('authToken')
+            authenticated: process.env.IS_BROWSER && !!localStorage.getItem('authToken')
         };
         this.redirectToProfile = this.redirectToProfile.bind(this);
     }
@@ -20,23 +20,28 @@ export default class Index extends React.Component<any, any> {
     };
 
     fakeAuth() {
-        let token = this.refs.fakeAuthToken.value;
-        localStorage.setItem('authToken', token);
-        this.setState({authenticated: true});
+        if (process.env.IS_BROWSER) {
+            let token = this.refs.fakeAuthToken.value;
+            localStorage.setItem('authToken', token);
+            this.setState({authenticated: true});
+        }
+
     }
 
     logout() {
-        localStorage.removeItem('authToken');
-        this.setState({authenticated: false});
+        if (process.env.IS_BROWSER) {
+            localStorage.removeItem('authToken');
+            this.setState({authenticated: false});
+        }
     }
 
     redirectToProfile() {
         if (UserAction.getStore().user && UserAction.getStore().user.id) {
             if (process.env.IS_LENTACH) {
-                this.props.router.push('/' + UserAction.getStore().user.nickname);
+                this.props.history.push('/' + UserAction.getStore().user.nickname);
             }
             else {
-                this.props.router.push('/feed');
+                this.props.history.push('/feed');
             }
         }
 

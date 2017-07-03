@@ -1,5 +1,5 @@
 import * as React from "react";
-import {Link} from "react-router";
+import {Link} from "react-router-dom";
 import {IContentData} from "../actions/editor/ContentAction";
 import {api} from "../api";
 import Error, {Error404, Error500, Error403} from "./Error";
@@ -19,16 +19,16 @@ import {BannerID, Captions} from "../constants";
 import LeftSideButton from "./shared/LeftSideButton";
 import AwesomeGallery from "./shared/AwesomeGallery";
 
-const EditButton = require('babel!svg-react!../assets/images/edit.svg?name=EditButton');
-const DeleteButton = require('babel!svg-react!../assets/images/redactor_icon_delete.svg?name=DeleteButton');
-const BackButton = require('babel!svg-react!../assets/images/back.svg?name=BackButton');
-const ViewIcon = require('babel!svg-react!../assets/images/views_white.svg?name=ViewIcon');
-const CloseIcon = require('babel!svg-react!../assets/images/close_white.svg?name=CloseIcon');
-const ArrowButton = require('babel!svg-react!../assets/images/arrow.svg?name=ArrowButton');
-const ShareButton = require('babel!svg-react!../assets/images/share.svg?name=ShareButton');
-const EditBlackButton = require('babel!svg-react!../assets/images/edit-small.svg?name=EditBlackButton');
-const PublishButton = require('babel!svg-react!../assets/images/publish.svg?name=PublishButton');
-const ConfirmButton = require('babel!svg-react!../assets/images/editor_confirm.svg?name=ConfirmButton');
+const EditButton = require('-!babel-loader!svg-react-loader!../assets/images/edit.svg?name=EditButton');
+const DeleteButton = require('-!babel-loader!svg-react-loader!../assets/images/redactor_icon_delete.svg?name=DeleteButton');
+const BackButton = require('-!babel-loader!svg-react-loader!../assets/images/back.svg?name=BackButton');
+const ViewIcon = require('-!babel-loader!svg-react-loader!../assets/images/views_white.svg?name=ViewIcon');
+const CloseIcon = require('-!babel-loader!svg-react-loader!../assets/images/close_white.svg?name=CloseIcon');
+const ArrowButton = require('-!babel-loader!svg-react-loader!../assets/images/arrow.svg?name=ArrowButton');
+const ShareButton = require('-!babel-loader!svg-react-loader!../assets/images/share.svg?name=ShareButton');
+const EditBlackButton = require('-!babel-loader!svg-react-loader!../assets/images/edit-small.svg?name=EditBlackButton');
+const PublishButton = require('-!babel-loader!svg-react-loader!../assets/images/publish.svg?name=PublishButton');
+const ConfirmButton = require('-!babel-loader!svg-react-loader!../assets/images/editor_confirm.svg?name=ConfirmButton');
 
 
 interface IPhoto {id: number, image: string, preview?: string, caption?: string}
@@ -65,7 +65,8 @@ interface IArticle {
 interface IArticleProps {
     isPreview?: boolean,
     params?: any,
-    router?: any
+    router?: any,
+    renderedArticle?: any
 }
 
 interface IArticleState {
@@ -75,14 +76,14 @@ interface IArticleState {
     isDesktop?: boolean;
 }
 
-export default class Article extends React.Component<IArticleProps, IArticleState> {
+export default class Article extends React.Component<IArticleProps|any, IArticleState|any> {
     private loadingImages: HTMLImageElement[];
 
     constructor(props: any) {
         super(props);
         this.loadingImages = [];
         this.state = {
-            article: null,
+            article: props.renderedArticle || null,
             isSelf: false,
             isDesktop: MediaQuerySerice.getIsDesktop(),
         };
@@ -93,9 +94,9 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
         shortUrlInput: HTMLInputElement
     };
 
-    static defaultProps = {
-        isPreview: false
-    };
+    // static defaultProps:any = {
+    //     isPreview: false
+    // };
 
     handleUser() {
         let user = UserAction.getStore().user;
@@ -105,7 +106,7 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
     }
 
     editArticle() {
-        this.state.article && this.props.router.push(`/articles/${this.state.article.id}/edit`);
+        this.state.article && this.props.history.push(`/articles/${this.state.article.id}/edit`);
     }
 
     processArticle(article: IArticle) {
@@ -275,7 +276,7 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
                         this.loadingImages.push(img);
                     }
                 }
-                if (this.props.params.galleryBlockId && this.props.params.galleryBlockId == gallery.getAttribute('id')) {
+                if (this.props.match.params.galleryBlockId && this.props.match.params.galleryBlockId == gallery.getAttribute('id')) {
                     this.openGalleryModal(0, photoData);
                 }
             } catch (err) {}
@@ -305,7 +306,7 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
 
     openGalleryModal(currentPhotoIndex: number, photos: any[], galleryId: string = null) {
         if (galleryId && !this.props.isPreview) {
-            this.props.router.push(`/articles/${this.state.article.slug}/gallery/${galleryId}`);
+            this.props.history.push(`/articles/${this.state.article.slug}/gallery/${galleryId}`);
         }
         let oldGallery = <GalleryModal isPreview={this.props.isPreview}
                                     currentPhotoIndex={currentPhotoIndex}
@@ -315,11 +316,12 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
         let onClose = () => {
             ModalAction.do(CLOSE_MODAL, null);
             if (!this.props.isPreview) {
-                this.props.router.push(`/articles/${this.state.article.slug}`);
+                this.props.history.push(`/articles/${this.state.article.slug}`);
             }
         };
         let newGallery = <AwesomeGallery photos={photos} currentPhotoIndex={currentPhotoIndex} onClose={onClose}/>;
-        ModalAction.do(OPEN_MODAL, {content: this.state.isDesktop ? newGallery : oldGallery});
+        // ModalAction.do(OPEN_MODAL, {content: this.state.isDesktop ? newGallery : oldGallery});
+        ModalAction.do(OPEN_MODAL, {content: newGallery});
 
     }
 
@@ -385,9 +387,9 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
     }
 
     _publish() {
-        api.post(`/articles/editor/${this.props.params.articleId}/publish/`).then((response: any) => {
+        api.post(`/articles/editor/${this.props.match.params.articleId}/publish/`).then((response: any) => {
             NotificationAction.do(SHOW_NOTIFICATION, {content: 'Поздравляем, ваш материал опубликован.'});
-            this.props.router.push(`/articles/${this.state.article.slug}/`);
+            this.props.history.push(`/articles/${this.state.article.slug}/`);
         });
     }
 
@@ -403,7 +405,9 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
     }
 
     retrieveArticle() {
-        api.get(`/articles/${this.props.params.articleSlug}/`).then((response: any) => {
+
+        // let retrieveAPI = process.env.USE_CACHE_API ? cacheApi : api;
+        api.get(`${process.env.USE_CACHE_API ? '/_' : ''}/articles/${this.props.match.params.articleSlug}/`).then((response: any) => {
             let data = response.data;
             this.loadArticle(data);
         }).catch((err: any) => {
@@ -424,7 +428,7 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
     }
 
     retrieveArticlePreview() {
-        api.get(`/articles/${this.props.params.articleId}/preview/`).then((response: any) => {
+        api.get(`/articles/${this.props.match.params.articleId}/preview/`).then((response: any) => {
             let data = response.data;
             this.loadArticle(data);
         }).catch((err: any) => {
@@ -445,7 +449,7 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
     }
 
     route(url: string) {
-        this.props.router.push(url);
+        this.props.history.push(url);
     }
 
     componentDidMount() {
@@ -460,16 +464,16 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
 
     componentWillReceiveProps(nextProps: any) {
         if (this.props.isPreview) {
-            if (nextProps.params.articleId != this.props.params.articleId) {
+            if (nextProps.match.params.articleId != this.props.match.params.articleId) {
                 this.retrieveArticlePreview();
             }
         } else {
-            if (!nextProps.params.galleryBlockId) {
+            if (!nextProps.match.params.galleryBlockId) {
                 ModalAction.do(CLOSE_MODAL, null);
-            } else if (nextProps.params.galleryBlockId != this.props.params.galleryBlockId) {
+            } else if (nextProps.match.params.galleryBlockId != this.props.match.params.galleryBlockId) {
                 this.processPhoto();
             }
-            if (nextProps.params.articleSlug != this.props.params.articleSlug) {
+            if (nextProps.match.params.articleSlug != this.props.match.params.articleSlug) {
                 this.retrieveArticle();
             }
         }
@@ -503,6 +507,9 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
             if (offset) shiftContentStyle = {marginLeft: `${offset}px`};
         }
 
+        // if (!this.state.article && this.props.renderedArticle) {
+        //     this.state.article = this.props.renderedArticle;
+        // }
         return (
             !this.state.error ?
                 this.state.article ?
@@ -599,7 +606,7 @@ export default class Article extends React.Component<IArticleProps, IArticleStat
     }
 }
 
-class ShareLinkButton extends React.Component<{shortUrl: string, className?: string}, {process?: boolean, copied?: boolean}> {
+class ShareLinkButton extends React.Component<{shortUrl: string, className?: string}|any, {process?: boolean, copied?: boolean}|any> {
     refs: {
         element: HTMLDivElement
     };
@@ -612,9 +619,9 @@ class ShareLinkButton extends React.Component<{shortUrl: string, className?: str
         };
     }
 
-    static defaultProps = {
-        className: ''
-    };
+    // static defaultProps = {
+    //     className: ''
+    // };
 
     process() {
         this.setState({process: true}, () => {
@@ -690,7 +697,7 @@ interface IGalleryModalState {
 }
 
 
-class GalleryModal extends React.Component<IGalleryModalProps, IGalleryModalState> {
+class GalleryModal extends React.Component<IGalleryModalProps|any, IGalleryModalState|any> {
     refs: {
         image: HTMLDivElement
     };
@@ -708,7 +715,7 @@ class GalleryModal extends React.Component<IGalleryModalProps, IGalleryModalStat
     back() {
         ModalAction.do(CLOSE_MODAL, null);
         if (!this.props.isPreview) {
-            this.props.router.push(`/articles/${this.props.article.slug}`);
+            this.props.history.push(`/articles/${this.props.article.slug}`);
         }
     }
 

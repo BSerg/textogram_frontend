@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {Link} from 'react-router';
+import {Link} from 'react-router-dom';
 import '../../styles/shared/article_preview_statistics.scss';
 import {Captions, APIData} from '../../constants';
 import {api} from '../../api';
@@ -10,13 +10,15 @@ import * as moment from 'moment';
 import PieChartSvg from './charts/PieChartSvg';
 import LineChartSvg from './charts/LineChartSvg';
 
-const CloseIcon = require('babel!svg-react!../../assets/images/close.svg?name=CloseIcon');
+const CloseIcon = require('-!babel-loader!svg-react-loader!../../assets/images/close.svg?name=CloseIcon');
 
 // let AGES: string[] = ['age_17', 'age_18', 'age_25', 'age_35', 'age_45'];
 
-class ArticleStatisticsModal extends React.Component<{item: any}, {isLoading?: boolean, itemData?: any, viewChart?: string, cancelSource?: any}> {
+class ArticleStatisticsModal extends React.Component<{item: any}, {isLoading?: boolean, itemData?: any, viewChart?: string}> {
 
     VIEW_CHARTS: string[] = ['today_chart', 'last_day_chart', 'month_chart', 'last_month_chart', 'full_chart'];
+
+    cancelSource: any;
 
     constructor() {
         super();
@@ -60,10 +62,10 @@ class ArticleStatisticsModal extends React.Component<{item: any}, {isLoading?: b
     }
 
     componentDidMount() {
-        this.state.cancelSource && this.state.cancelSource.cancel();
-        this.state.cancelSource = axios.CancelToken.source();
+        this.cancelSource && this.cancelSource.cancel();
+        this.cancelSource = axios.CancelToken.source();
 
-        api.get('/statistics/articles/' + this.props.item.id + '/', {cancelToken: this.state.cancelSource.token}).then((response) => {
+        api.get('/statistics/articles/' + this.props.item.id + '/', {cancelToken: this.cancelSource.token}).then((response) => {
             this.setState({itemData: this.processData(response.data), isLoading: false, viewChart: this.VIEW_CHARTS[0]});
         }).catch((error) => {
             if (!axios.isCancel(error)) {
@@ -73,7 +75,7 @@ class ArticleStatisticsModal extends React.Component<{item: any}, {isLoading?: b
     }
 
     componentWillUnmount() {
-        this.state.cancelSource && this.state.cancelSource.cancel();
+        this.cancelSource && this.cancelSource.cancel();
 
     }
 

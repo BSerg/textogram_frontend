@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import {UserAction, SAVE_USER, UPDATE_USER} from '../../actions/user/UserAction';
 import SocialIcon from '../shared/SocialIcon';
-import {Link} from 'react-router';
+import {Link} from 'react-router-dom';
 import Loading from '../shared/Loading';
 
 import {api} from '../../api';
@@ -10,11 +10,11 @@ import axios from 'axios';
 
 import '../../styles/profile/profile_management_account.scss';
 
-const ConfirmIcon = require('babel!svg-react!../../assets/images/redactor_icon_confirm.svg?name=ConfirmIcon');
-const CloseIcon = require('babel!svg-react!../../assets/images/close.svg?name=CloseIcon');
+const ConfirmIcon = require('-!babel-loader!svg-react-loader!../../assets/images/redactor_icon_confirm.svg?name=ConfirmIcon');
+const CloseIcon = require('-!babel-loader!svg-react-loader!../../assets/images/close.svg?name=CloseIcon');
 
-const VisibilityIcon = require('babel!svg-react!../../assets/images/profile_visibility_icon.svg?name=VisibilityIcon');
-const VisibilityOffIcon = require('babel!svg-react!../../assets/images/profile_visibility_off_icon.svg?name=VisibilityOffIcon');
+const VisibilityIcon = require('-!babel-loader!svg-react-loader!../../assets/images/profile_visibility_icon.svg?name=VisibilityIcon');
+const VisibilityOffIcon = require('-!babel-loader!svg-react-loader!../../assets/images/profile_visibility_off_icon.svg?name=VisibilityOffIcon');
 
 interface ISocialLink {
     id: number | null;
@@ -42,7 +42,7 @@ interface  IProfileSocialLinkState {
     placeholder?: string;
 }
 
-class ProfileSocialLink extends React.Component<IProfileSocialLinkProps, IProfileSocialLinkState> {
+class ProfileSocialLink extends React.Component<IProfileSocialLinkProps|any, IProfileSocialLinkState|any> {
 
     constructor() {
         super();
@@ -220,8 +220,8 @@ interface IAccountState {
     nickname?: string;
     nicknameChecking?: boolean;
     nicknameCorrect?: boolean;
-    cancelSource?: any;
-    nicknameCheckTimeout?: number;
+    // cancelSource?: any;
+    // nicknameCheckTimeout?: number;
     userSaving?: boolean;
 }
 
@@ -232,9 +232,11 @@ export default class ProfileManagementAccount extends React.Component<any, IAcco
     constructor() {
         super();
         this.state = { authAccount: null, socialLinks: [], activeSocial: '', nickname: '', nicknameChecking: false,
-            nicknameCorrect: true, userSaving: false, nicknameCheckTimeout: null, cancelSource: null
-        };
+            nicknameCorrect: true, userSaving: false };
     }
+
+    cancelSource: any;
+    nicknameCheckTimeout: number;
 
     nicknameChange(e: any) {
         let val: string = e.target.value;
@@ -244,18 +246,18 @@ export default class ProfileManagementAccount extends React.Component<any, IAcco
     }
 
     checkNickname() {
-        this.state.cancelSource && this.state.cancelSource.cancel();
+        this.cancelSource && this.cancelSource.cancel();
         if (this.state.nickname.length < 4) {
             this.setState({nicknameChecking: false, nicknameCorrect: false});
         }
         else {
-            this.state.cancelSource =  axios.CancelToken.source();
+            this.cancelSource =  axios.CancelToken.source();
             this.setState({nicknameChecking: true, nicknameCorrect: true}, () => {
-                this.state.nicknameCheckTimeout && window.clearTimeout(this.state.nicknameCheckTimeout);
-                this.state.nicknameCheckTimeout = window.setTimeout(() => {
+                this.nicknameCheckTimeout && window.clearTimeout(this.nicknameCheckTimeout);
+                this.nicknameCheckTimeout = window.setTimeout(() => {
                     api.get('/users/check_nickname/',
                             {params: {nickname: this.state.nickname},
-                            cancelToken: this.state.cancelSource.token}).then((response: any) => {
+                            cancelToken: this.cancelSource.token}).then((response: any) => {
                                 this.setState({nicknameChecking: false, nicknameCorrect: true});
                     }).catch((error) => {
                         this.setState({nicknameChecking: false, nicknameCorrect: false});
@@ -314,8 +316,8 @@ export default class ProfileManagementAccount extends React.Component<any, IAcco
     }
 
     componentWillUnmount() {
-        this.state.cancelSource && this.state.cancelSource.cancel();
-        this.state.nicknameCheckTimeout && window.clearTimeout(this.state.nicknameCheckTimeout);
+        this.cancelSource && this.cancelSource.cancel();
+        this.nicknameCheckTimeout && window.clearTimeout(this.nicknameCheckTimeout);
     }
 
     render() {

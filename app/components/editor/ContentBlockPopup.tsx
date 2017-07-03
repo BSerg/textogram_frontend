@@ -3,10 +3,10 @@ import {PopupPanelAction, CLOSE_POPUP} from "../../actions/shared/PopupPanelActi
 import {ContentBlockAction, DEACTIVATE_CONTENT_BLOCK} from "../../actions/editor/ContentBlockAction";
 import "../../styles/editor/content_block_popup.scss";
 
-const DeleteButton = require('babel!svg-react!../../assets/images/editor_delete.svg?name=DeleteButton');
-const ConfirmButton = require('babel!svg-react!../../assets/images/editor_confirm.svg?name=ConfirmButton');
-const MoveUpIcon = require('babel!svg-react!../../assets/images/editor_up.svg?name=MoveUpIcon');
-const MoveDownIcon = require('babel!svg-react!../../assets/images/editor_down.svg?name=MoveDownIcon');
+const DeleteButton = require('-!babel-loader!svg-react-loader!../../assets/images/editor_delete.svg?name=DeleteButton');
+const ConfirmButton = require('-!babel-loader!svg-react-loader!../../assets/images/editor_confirm.svg?name=ConfirmButton');
+const MoveUpIcon = require('-!babel-loader!svg-react-loader!../../assets/images/editor_up.svg?name=MoveUpIcon');
+const MoveDownIcon = require('-!babel-loader!svg-react-loader!../../assets/images/editor_down.svg?name=MoveDownIcon');
 
 interface IContentBlockPopupProps {
     extraContent?: JSX.Element|JSX.Element[]

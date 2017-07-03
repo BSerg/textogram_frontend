@@ -3,8 +3,8 @@ import {Captions} from "../../constants";
 import {ModalAction, CLOSE_MODAL} from "../../actions/shared/ModalAction";
 import "../../styles/editor/url_modal.scss";
 
-const ConfirmButton = require('babel!svg-react!../../assets/images/redactor_icon_confirm.svg?name=ConfirmButton');
-const BackButton = require('babel!svg-react!../../assets/images/back.svg?name=BackButton');
+const ConfirmButton = require('-!babel-loader!svg-react-loader!../../assets/images/redactor_icon_confirm.svg?name=ConfirmButton');
+const BackButton = require('-!babel-loader!svg-react-loader!../../assets/images/back.svg?name=BackButton');
 
 
 export default class URLModal extends React.Component<{onURL?: (url: string) => any}, any> {

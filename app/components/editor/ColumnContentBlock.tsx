@@ -27,7 +27,7 @@ import {DesktopBlockToolsAction, UPDATE_TOOLS} from "../../actions/editor/Deskto
 import ContentBlockPopup from "./ContentBlockPopup";
 import PopupPrompt from "../shared/PopupPrompt";
 
-const ClearPhotoIcon = require('babel!svg-react!../../assets/images/desktop_editor_icon_clear_square.svg?name=ClearPhotoIcon');
+const ClearPhotoIcon = require('-!babel-loader!svg-react-loader!../../assets/images/desktop_editor_icon_clear_square.svg?name=ClearPhotoIcon');
 
 
 interface IColumnContent {
@@ -122,20 +122,19 @@ export default class ColumnContentBlock extends React.Component<IColumnContentBl
     }
 
     handleChange(content: string, contentText: string) {
-        this.state.content.value = toMarkdown(content);
-        this.state.firstLetter = contentText.trim().length ? contentText[0] : 'T';
+        let firstLetter = contentText.trim().length ? contentText[0] : 'T';
         let validationState = this.updateValidationState();
         if (!validationState.isValid) {
             NotificationAction.do(
                 SHOW_NOTIFICATION,
-                {content: Object.values(validationState.messages).join(', ')}
+                {content: (Object as any).values(validationState.messages).join(', ')}
             );
         }
         this.state.content.__meta = {is_valid: validationState.isValid};
         this.setState({
-            content: this.state.content,
+            content: Object.assign(this.state.content, {value: toMarkdown(content)}),
             contentIsLong: this.checkContentIsLong(this.state.content.value),
-            firstLetter: this.state.firstLetter
+            firstLetter: firstLetter
         }, () => {
             ContentAction.do(UPDATE_CONTENT_BLCK, {contentBlock: this.state.content});
         });

@@ -10,7 +10,9 @@ import {displayNumber} from './utils'
 
 import Loading from '../shared/Loading';
 
-export default class ProfileManagementStatistics extends React.Component<any, {items?: any[], statData?: any, isLoading?: boolean, cancelSource?: any}> {
+export default class ProfileManagementStatistics extends React.Component<any, {items?: any[], statData?: any, isLoading?: boolean}|any> {
+
+    cancelSource: any;
 
     constructor() {
         super();
@@ -42,10 +44,10 @@ export default class ProfileManagementStatistics extends React.Component<any, {i
     }
 
     getStatistics() {
-        this.state.cancelSource && this.state.cancelSource.cancel();
-        this.state.cancelSource = axios.CancelToken.source();
+        this.cancelSource && this.cancelSource.cancel();
+        this.cancelSource = axios.CancelToken.source();
 
-        api.get('/statistics/common/', {cancelToken: this.state.cancelSource.token}).then((response: any) => {
+        api.get('/statistics/common/', {cancelToken: this.cancelSource.token}).then((response: any) => {
             this.setState({statData: this.processData(response.data), isLoading: false});
         }).catch((error) => {
             if (!axios.isCancel(error)) {
@@ -59,7 +61,7 @@ export default class ProfileManagementStatistics extends React.Component<any, {i
     }
 
     componentWillUnmount() {
-        this.state.cancelSource && this.state.cancelSource.cancel();
+        this.cancelSource && this.cancelSource.cancel();
     }
 
     render() {
@@ -82,7 +84,6 @@ export default class ProfileManagementStatistics extends React.Component<any, {i
                                     })
                                 }
                             </div>
-
                         </div>
                     ) : null
                 }

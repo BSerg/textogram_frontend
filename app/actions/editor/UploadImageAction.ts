@@ -34,7 +34,7 @@ UploadImageAction.registerAsync(UPLOAD_IMAGE, (store, data: {articleId: number, 
             reject('Error. Image exceeds max size limit');
         }
         let formData = new FormData();
-        formData.append('article', data.articleId);
+        formData.append('article', data.articleId.toString());
         formData.append('image', data.image);
 
         let xhr = new XMLHttpRequest();

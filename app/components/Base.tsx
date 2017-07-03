@@ -81,6 +81,17 @@ export default class Base extends React.Component<any, any> {
         MediaQuerySerice.unbind(this.handleMediaQuery);
     }
 
+    componentWillMount() {
+        if (process.env.IS_BROWSER) {
+
+            let appServer = document.getElementById('app_server');
+            if (appServer) {
+                appServer.parentNode.removeChild(appServer);
+            }
+
+        }
+    }
+
     render() {
         return (
             <div className="container">

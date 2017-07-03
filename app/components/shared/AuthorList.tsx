@@ -1,12 +1,12 @@
 import * as React from 'react';
-import {Link} from 'react-router';
+import {Link} from 'react-router-dom';
 
 import {Captions, Constants} from '../../constants';
 
 import '../../styles/shared/author_list.scss';
 
-const CloseIcon = require('babel!svg-react!../../assets/images/close.svg?name=CloseIcon');
-const ConfirmIcon = require('babel!svg-react!../../assets/images/redactor_icon_confirm.svg?name=ConfirmIcon');
+const CloseIcon = require('-!babel-loader!svg-react-loader!../../assets/images/close.svg?name=CloseIcon');
+const ConfirmIcon = require('-!babel-loader!svg-react-loader!../../assets/images/redactor_icon_confirm.svg?name=ConfirmIcon');
 
 interface IAuthorListPropsInterface {
     items: any[],

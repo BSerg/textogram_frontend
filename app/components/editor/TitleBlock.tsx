@@ -59,7 +59,6 @@ interface TitleBlockStateInterface {
     coverClipped?: ICoverClipped | null
     isValid?: boolean
     coverLoading?: boolean
-    loadingCoverName?: string;
     isActive?: boolean
     canvas?: any
     isDesktop?: boolean
@@ -68,6 +67,7 @@ interface TitleBlockStateInterface {
 export default class TitleBlock extends React.Component<TitleBlockPropsInterface, TitleBlockStateInterface> {
     private uid: string;
     private coverClippedProcess: number;
+    private loadingCoverName: string;
 
     constructor(props: any) {
         super(props);
@@ -167,7 +167,7 @@ export default class TitleBlock extends React.Component<TitleBlockPropsInterface
         this.cancelUploadCover();
         ContentAction.do(SAVING_PROCESS, true);
         var file = this.refs.fileInput.files[0];
-        this.state.loadingCoverName = file.name;
+        this.loadingCoverName = file.name;
         UploadImageAction.doAsync(UPLOAD_IMAGE, {articleId: articleId, image: file}).then((data: any) => {
             data.editable = file.type != 'image/gif';
             this.setState({cover: data, coverLoading: false}, () => {
@@ -182,9 +182,9 @@ export default class TitleBlock extends React.Component<TitleBlockPropsInterface
     }
 
     cancelUploadCover() {
-        if (this.state.loadingCoverName) {
-            this.state.loadingCoverName = null;
-            UploadImageAction.do(CANCEL_UPLOAD_IMAGE, this.state.loadingCoverName);
+        if (this.loadingCoverName) {
+            this.loadingCoverName = null;
+            UploadImageAction.do(CANCEL_UPLOAD_IMAGE, this.loadingCoverName);
             this.setState({coverLoading: false});
         }
     }

@@ -1,5 +1,6 @@
 import * as React from 'react';
-import {Link, withRouter} from 'react-router';
+import {withRouter} from 'react-router';
+import {Link} from 'react-router-dom';
 import {api} from '../api';
 
 import {MenuAction, TOGGLE} from '../actions/MenuAction';
@@ -13,12 +14,12 @@ import LoginBlock from './shared/LoginBlock';
 
 import {MediaQuerySerice} from '../services/MediaQueryService';
 import '../styles/menu.scss';
-const ExitIcon = require('babel!svg-react!../assets/images/exit-icon.svg?name=ExitIcon');
-const InfoIcon = require('babel!svg-react!../assets/images/info-icon.svg?name=InfoIcon');
-const SettingsIcon = require('babel!svg-react!../assets/images/settings.svg?name=SettingsIcon');
-const CloseIcon = require('babel!svg-react!../assets/images/close.svg?name=CloseIcon');
+const ExitIcon = require('-!babel-loader!svg-react-loader!../assets/images/exit-icon.svg?name=ExitIcon');
+const InfoIcon = require('-!babel-loader!svg-react-loader!../assets/images/info-icon.svg?name=InfoIcon');
+const SettingsIcon = require('-!babel-loader!svg-react-loader!../assets/images/settings.svg?name=SettingsIcon');
+const CloseIcon = require('-!babel-loader!svg-react-loader!../assets/images/close.svg?name=CloseIcon');
 
-const NotificationIcon = require('babel!svg-react!../assets/images/notification_icon.svg?name=NotificationIcon');
+const NotificationIcon = require('-!babel-loader!svg-react-loader!../assets/images/notification_icon.svg?name=NotificationIcon');
 
 
 interface DefaultMenuPropsInterface {
@@ -37,7 +38,7 @@ interface IDefaultMenuStateInterface {
 
 }
 
-class DefaultMenu extends React.Component<DefaultMenuPropsInterface, IDefaultMenuStateInterface> {
+class DefaultMenu extends React.Component<DefaultMenuPropsInterface|any, IDefaultMenuStateInterface|any> {
 
     constructor() {
         super();
@@ -92,7 +93,7 @@ class DefaultMenu extends React.Component<DefaultMenuPropsInterface, IDefaultMen
 
     handleUrlClick(url: string, e: any) {
         e.stopPropagation();
-        this.props.router.push(url);
+        this.props.history.push(url);
         MenuAction.do(TOGGLE, false);
     }
 
@@ -202,7 +203,7 @@ interface NotificationBlockPropsInterface {
     showZero?: boolean;
 }
 
-class NotificationBlock extends React.Component<NotificationBlockPropsInterface, any> {
+class NotificationBlock extends React.Component<NotificationBlockPropsInterface|any, any> {
 
     constructor() {
         super();
@@ -215,7 +216,7 @@ class NotificationBlock extends React.Component<NotificationBlockPropsInterface,
     }
 
     openNotifications() {
-        this.props.router.push('/manage/notifications');
+        this.props.history.push('/manage/notifications');
         if (!MediaQuerySerice.getIsDesktop()) {
             MenuAction.do(TOGGLE, false);
         }
@@ -261,7 +262,7 @@ interface IUserMenuProps {
     router?: any;
 }
 
-class UserMenu extends React.Component<IUserMenuProps, any> {
+class UserMenu extends React.Component<IUserMenuProps|any, any> {
 
     constructor(props: any) {
         super(props)
@@ -269,13 +270,13 @@ class UserMenu extends React.Component<IUserMenuProps, any> {
 
     goToProfile(e: any) {
         e.stopPropagation();
-        this.props.router.push('/profile/' + this.props.user.id);
+        this.props.history.push('/' + this.props.user.slug);
         MenuAction.do(TOGGLE, false);
     }
 
     createArticle() {
         api.post('/articles/editor/').then((response: any) => {
-            this.props.router.push('/articles/' + response.data.id + '/edit/');
+            this.props.history.push('/articles/' + response.data.id + '/new/');
         }).catch((error) => {});
         MenuAction.do(TOGGLE, false);
     }
@@ -299,7 +300,7 @@ class UserMenu extends React.Component<IUserMenuProps, any> {
 
     handleUrlClick(url: string, e: any) {
         e.stopPropagation();
-        this.props.router.push(url);
+        this.props.history.push(url);
         if (!this.props.isDesktop) {
             MenuAction.do(TOGGLE, false);
         }
@@ -404,7 +405,7 @@ interface IMenuStateInterface {
     isDesktop?: boolean;
 }
 
-export default class Menu extends React.Component<any, IMenuStateInterface> {
+export default class Menu extends React.Component<any, IMenuStateInterface|any> {
 
     constructor() {
         super();
@@ -429,7 +430,10 @@ export default class Menu extends React.Component<any, IMenuStateInterface> {
     checkOpen(isDesktop: boolean) {
         if (isDesktop != this.state.isDesktop) {
             this.setState({isDesktop: isDesktop}, () => {
-                MenuAction.do(TOGGLE,  isDesktop && Boolean( parseInt(localStorage.getItem('menuOpen'))));
+
+                let open = isDesktop && Boolean( parseInt(localStorage.getItem('menuOpen')));
+
+                MenuAction.do(TOGGLE, process.env.IS_BROWSER ? open : false);
             });
         }
     }

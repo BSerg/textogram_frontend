@@ -27,27 +27,22 @@ interface IProps {
     onChange?: (image: IImage, imageBase64?: string) => any
 }
 
-interface IState {
-    image?: IImage
-    imageObject?: HTMLImageElement
-    canvasCtx?: CanvasRenderingContext2D
-    width?: number
-    height?: number
-    dragInitPoint?: {x: number, y: number}
-    dragProcess?: boolean
+export default class ImageEditorRefactored extends React.Component<IProps, any> {
+    image: IImage;
+    imageObject: HTMLImageElement;
+    canvasCtx: CanvasRenderingContext2D;
+    width: number;
+    height: number;
+    dragInitPoint: {x: number, y: number};
+    dragProcess: boolean;
+    zoomValue: number;
 
-    zoomValue?: number
-}
-
-export default class ImageEditorRefactored extends React.Component<IProps, IState> {
     constructor(props: any) {
         super(props);
-        this.state = {
-            image: this.props.image,
-            width: this.props.width,
-            height: this.props.height,
-            dragProcess: false,
-        };
+        this.image = this.props.image;
+        this.width = this.props.width;
+        this.height = this.props.height;
+        this.dragProcess = false;
         this.handleMouseMove = this.handleMouseMove.bind(this);
         this.handleMouseDown = this.handleMouseDown.bind(this);
         this.handleMouseUp = this.handleMouseUp.bind(this);
@@ -67,86 +62,76 @@ export default class ImageEditorRefactored extends React.Component<IProps, IStat
     };
 
     fitImage(image: IImage) {
-        let _image = Object.assign({offset_x: 0, offset_y: 0, zoom: 1}, image);
-        _image.zoom = Math.max(1, _image.zoom);
-        _image.zoom = Math.min(this.props.maxZoom, _image.zoom);
-        let aspectRatio = _image.width / _image.height;
-        let canvasAspectRatio = this.state.width / this.state.height;
+        let fitImage = Object.assign({offset_x: 0, offset_y: 0, zoom: 1}, image);
+        fitImage.zoom = Math.max(1, fitImage.zoom);
+        fitImage.zoom = Math.min(this.props.maxZoom, fitImage.zoom);
+        let aspectRatio = fitImage.width / fitImage.height;
+        let canvasAspectRatio = this.width / this.height;
 
         // fit size
         if (aspectRatio >= canvasAspectRatio) {
-            _image.height = this.state.height;
-            _image.width = aspectRatio * _image.height;
+            fitImage.height = this.height;
+            fitImage.width = aspectRatio * fitImage.height;
         } else {
-            _image.width = this.state.width;
-            _image.height = _image.width / aspectRatio;
+            fitImage.width = this.width;
+            fitImage.height = fitImage.width / aspectRatio;
         }
 
         // fix offset
-        let _image_real_width = _image.width * _image.zoom;
-        let _image_real_height = _image.height * _image.zoom;
+        let _image_real_width = fitImage.width * fitImage.zoom;
+        let _image_real_height = fitImage.height * fitImage.zoom;
 
-        let _image_x = this.state.width / 2 + _image.offset_x - _image_real_width / 2;
-        let _image_y = this.state.height / 2 + _image.offset_y - _image_real_height / 2;
-        if (_image_x > 0) _image.offset_x = _image_real_width / 2 - this.state.width / 2;
-        if (_image_x + _image_real_width < this.state.width) {
-            _image.offset_x = this.state.width / 2 - _image_real_width / 2;
+        let _image_x = this.width / 2 + fitImage.offset_x - _image_real_width / 2;
+        let _image_y = this.height / 2 + fitImage.offset_y - _image_real_height / 2;
+        if (_image_x > 0) fitImage.offset_x = _image_real_width / 2 - this.width / 2;
+        if (_image_x + _image_real_width < this.width) {
+            fitImage.offset_x = this.width / 2 - _image_real_width / 2;
         }
-        if (_image_y > 0) _image.offset_y = _image_real_height / 2 - this.state.height / 2;
-        if (_image_y + _image_real_height < this.state.height) {
-            _image.offset_y = this.state.height / 2 - _image_real_height / 2;
+        if (_image_y > 0) fitImage.offset_y = _image_real_height / 2 - this.height / 2;
+        if (_image_y + _image_real_height < this.height) {
+            fitImage.offset_y = this.height / 2 - _image_real_height / 2;
         }
-        return _image
+        return fitImage
     }
 
     handleZoom() {
         let zoomValue = (parseInt(this.refs.zoomInput.value) * (this.props.maxZoom - 1)/10 + 1);
-        let dZoom = zoomValue - this.state.image.zoom;
-        this.state.image.offset_x += this.state.image.offset_x / 2 * dZoom;
-        this.state.image.offset_y += this.state.image.offset_y / 2 * dZoom;
-        this.state.image.zoom = zoomValue;
-        this.setState({image: this.fitImage(this.state.image)}, () => {
-            this.drawImage();
-            this.props.onChange && this.props.onChange(this.state.image, this._getBase64Image());
-        });
+        let dZoom = zoomValue - this.image.zoom;
+        this.image.offset_x += this.image.offset_x / 2 * dZoom;
+        this.image.offset_y += this.image.offset_y / 2 * dZoom;
+        this.image.zoom = zoomValue;
+        this.image = this.fitImage(this.image);
+        this.drawImage();
+        this.props.onChange && this.props.onChange(this.image, this._getBase64Image());
+        this.forceUpdate();
     }
 
     handleMouseDown(e: Event) {
         if (!this.props.enableDrag) return;
-        let dragPoint = {x: (e as MouseEvent).clientX, y: (e as MouseEvent).clientY};
-        if (!this.state.dragProcess) {
-            this.setState({
-                dragProcess: true,
-                dragInitPoint: dragPoint
-            }, () => {
-                document.addEventListener('mousemove', this.handleMouseMove);
-                document.addEventListener('mouseup', this.handleMouseUp);
-            });
+        if (!this.dragProcess) {
+            this.dragProcess = true;
+            this.dragInitPoint = {x: (e as MouseEvent).clientX, y: (e as MouseEvent).clientY};
+            document.addEventListener('mousemove', this.handleMouseMove);
+            document.addEventListener('mouseup', this.handleMouseUp);
         }
     }
 
     handleMouseUp(e: Event) {
-        if (this.state.dragProcess) {
-            this.setState({
-                dragProcess: false,
-                image: this.state.image,
-                imageObject: this.state.imageObject,
-                dragInitPoint: this.state.dragInitPoint
-            }, () => {
-                document.removeEventListener('mousemove', this.handleMouseMove);
-                document.removeEventListener('mouseup', this.handleMouseUp);
-                this.props.onChange && this.props.onChange(this.state.image, this._getBase64Image());
-            });
+        if (this.dragProcess) {
+            this.dragProcess = false;
+            document.removeEventListener('mousemove', this.handleMouseMove);
+            document.removeEventListener('mouseup', this.handleMouseUp);
+            this.props.onChange && this.props.onChange(this.image, this._getBase64Image());
         }
     }
 
     handleMouseMove(e: Event) {
-        if (this.state.dragInitPoint) {
-            let dX = (e as MouseEvent).clientX - this.state.dragInitPoint.x;
-            let dY = (e as MouseEvent).clientY - this.state.dragInitPoint.y;
-            this.state.dragInitPoint = {x: (e as MouseEvent).clientX, y: (e as MouseEvent).clientY};
-            this.state.image.offset_x += dX;
-            this.state.image.offset_y += dY;
+        if (this.dragInitPoint) {
+            let dX = (e as MouseEvent).clientX - this.dragInitPoint.x;
+            let dY = (e as MouseEvent).clientY - this.dragInitPoint.y;
+            this.dragInitPoint = {x: (e as MouseEvent).clientX, y: (e as MouseEvent).clientY};
+            this.image.offset_x += dX;
+            this.image.offset_y += dY;
             this.drawImage();
         }
     }
@@ -170,52 +155,50 @@ export default class ImageEditorRefactored extends React.Component<IProps, IStat
 
     private _getBase64Image() {
         let tempCanvas = document.createElement('canvas');
-        tempCanvas.width = this.state.width;
-        tempCanvas.height = this.state.height;
+        tempCanvas.width = this.width;
+        tempCanvas.height = this.height;
         let ctx = tempCanvas.getContext('2d');
-        let x = this.state.width / 2 + this.state.image.offset_x - this.state.image.width * this.state.image.zoom / 2,
-            y = this.state.height / 2 + this.state.image.offset_y - this.state.image.height * this.state.image.zoom / 2,
-            width = this.state.image.width * this.state.image.zoom,
-            height = this.state.image.height * this.state.image.zoom;
-        ctx.drawImage(this.state.imageObject, x, y, width, height);
+        let x = this.width / 2 + this.image.offset_x - this.image.width * this.image.zoom / 2,
+            y = this.height / 2 + this.image.offset_y - this.image.height * this.image.zoom / 2,
+            width = this.image.width * this.image.zoom,
+            height = this.image.height * this.image.zoom;
+        ctx.drawImage(this.imageObject, x, y, width, height);
         return tempCanvas.toDataURL();
     }
 
     private _drawImage(img: HTMLImageElement) {
-        let x = this.state.width / 2 + this.state.image.offset_x - this.state.image.width * this.state.image.zoom / 2,
-            y = this.state.height / 2 + this.state.image.offset_y - this.state.image.height * this.state.image.zoom / 2,
-            width = this.state.image.width * this.state.image.zoom,
-            height = this.state.image.height * this.state.image.zoom;
+        let x = this.width / 2 + this.image.offset_x - this.image.width * this.image.zoom / 2,
+            y = this.height / 2 + this.image.offset_y - this.image.height * this.image.zoom / 2,
+            width = this.image.width * this.image.zoom,
+            height = this.image.height * this.image.zoom;
 
-        this.state.canvasCtx.clearRect(0, 0, this.state.width, this.state.height);
-        this.state.canvasCtx.drawImage(img, x, y, width, height);
-        this.state.canvasCtx.fillStyle = this.props.foregroundColor;
-        this.state.canvasCtx.fillRect(0, 0, this.state.width, this.state.height);
+        this.canvasCtx.clearRect(0, 0, this.width, this.height);
+        this.canvasCtx.drawImage(img, x, y, width, height);
+        this.canvasCtx.fillStyle = this.props.foregroundColor;
+        this.canvasCtx.fillRect(0, 0, this.width, this.height);
     }
 
     private drawImage() {
-        if (!this.state.imageObject) {
+        if (!this.imageObject) {
             let image = new Image();
             image.onload = () => {
-                this.state.imageObject = image;
-                this.state.image.width = image.width;
-                this.state.image.height = image.height;
-                this.state.image = this.fitImage(this.state.image);
+                this.imageObject = image;
+                this.image.width = image.width;
+                this.image.height = image.height;
+                this.image = this.fitImage(this.image);
                 this._drawImage(image);
             };
             image.crossOrigin = 'anonymous';
-            image.src = this.state.image.image + '?_=' + new Date().getTime();
+            image.src = this.image.image + '?_=' + new Date().getTime();
         } else {
-            this.state.image = this.fitImage(this.state.image);
-            this._drawImage(this.state.imageObject);
+            this.image = this.fitImage(this.image);
+            this._drawImage(this.imageObject);
         }
     }
 
     initCanvas() {
-        let ctx = this.refs.canvas.getContext('2d');
-        this.setState({canvasCtx: ctx}, () => {
-            this.drawImage();
-        });
+        this.canvasCtx = this.refs.canvas.getContext('2d');
+        this.drawImage();
     }
 
     componentDidMount() {
@@ -251,15 +234,15 @@ export default class ImageEditorRefactored extends React.Component<IProps, IStat
         return (
             <div className="image_editor_alt">
                 <canvas ref="canvas"
-                        width={this.state.width}
-                        height={this.state.height}
+                        width={this.width}
+                        height={this.height}
                         onMouseDown={this.handleMouseDown.bind(this)}/>
                 {this.props.enableZoom ?
                     <div className="image_editor_alt__control"
-                         style={{width: this.state.height - 60 + 'px', right: -this.state.height / 2 + 200 + 'px'}}>
+                         style={{width: this.height - 60 + 'px', right: -this.height / 2 + 200 + 'px'}}>
                         <input type="range" min="0" max="10" step="1"
                                ref="zoomInput"
-                               value={(this.state.image.zoom - 1) * 10}
+                               value={(this.image.zoom - 1) * 10}
                                onChange={this.handleZoom.bind(this)}/>
                     </div> : null
                 }

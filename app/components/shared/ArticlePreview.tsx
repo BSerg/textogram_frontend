@@ -1,5 +1,6 @@
 import * as React from 'react';
-import {withRouter, Link} from 'react-router';
+import {withRouter} from 'react-router';
+import {Link} from 'react-router-dom';
 import {api} from '../../api';
 
 import * as moment from 'moment';
@@ -13,11 +14,11 @@ import {Captions} from '../../constants';
 import '../../styles/shared/article_preview.scss';
 import '../../styles/shared/article_preview_control.scss';
 
-const ViewsIcon = require('babel!svg-react!../../assets/images/views_icon.svg?name=ViewsIcon');
-const LockIcon = require('babel!svg-react!../../assets/images/lock.svg?name=LockIcon');
-const CloseIcon = require('babel!svg-react!../../assets/images/close.svg?name=CloseIcon');
-const EditIcon = require('babel!svg-react!../../assets/images/edit.svg?name=EditIcon');
-const MoreIcon = require('babel!svg-react!../../assets/images/more_vertical.svg?name=MoreIcon');
+const ViewsIcon = require('-!babel-loader!svg-react-loader!../../assets/images/views_icon.svg?name=ViewsIcon');
+const LockIcon = require('-!babel-loader!svg-react-loader!../../assets/images/lock.svg?name=LockIcon');
+const CloseIcon = require('-!babel-loader!svg-react-loader!../../assets/images/close.svg?name=CloseIcon');
+const EditIcon = require('-!babel-loader!svg-react-loader!../../assets/images/edit.svg?name=EditIcon');
+const MoreIcon = require('-!babel-loader!svg-react-loader!../../assets/images/more_vertical.svg?name=MoreIcon');
 
 interface IControlProps {
     item: any,
@@ -65,7 +66,7 @@ interface IArticlePreviewStateInterface {
 
 
 
-class ArticlePreviewClass extends React.Component<IArticlePreviewPropsInterface, IArticlePreviewStateInterface> {
+class ArticlePreviewClass extends React.Component<IArticlePreviewPropsInterface|any, IArticlePreviewStateInterface|any> {
 
     constructor() {
         super();

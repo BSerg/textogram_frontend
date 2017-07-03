@@ -1,7 +1,8 @@
 import * as cookie from 'js-cookie';
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import {Router, Route, browserHistory, IndexRoute} from "react-router";
+import {Router} from "react-router";
+import {Route, BrowserRouter, Switch} from 'react-router-dom';
 import Base from "./components/Base";
 import IndexPage from "./components/Index";
 import Article, {ArticlePreview} from "./components/Article";
@@ -11,98 +12,60 @@ import {Error404} from "./components/Error";
 import ProfileManagement from "./components/profile/ProfileManagement";
 import TwitterAuth from "./components/TwitterAuth";
 import UrlShortener from "./components/UrlShortener";
-import {UserAction, GET_ME, LOGIN} from "./actions/user/UserAction";
+import {UserAction, GET_ME, LOGIN, USER_REJECT} from "./actions/user/UserAction";
 import "core-js/shim";
 import LoginPage from "./components/LoginPage";
 
-class App extends React.Component<any, any> {
+class App  extends React.Component<any, any> {
     constructor(props: any) {
         super(props);
     }
 
     componentDidMount() {
 
-        window.vkAsyncInit = function() {
-            VK.init({
-              apiId: process.env.VK_APP
-            });
-        };
-
-        setTimeout(function() {
-            let el = document.createElement("script");
-            el.type = "text/javascript";
-            el.src = "//vk.com/js/api/openapi.js";
-            el.async = true;
-            document.getElementById("vk_api_transport").appendChild(el);
-        }, 0);
-
-        (window as any).fbAsyncInit = function() {
-            FB.init({
-                appId      : process.env.FB_APP,
-                xfbml      : true,
-                version    : 'v2.8'
-            });
-        }.bind(this);
-
-        setTimeout(function () {
-            (function(d, s, id) {
-              let js: any, fjs: any = d.getElementsByTagName(s)[0];
-              if (d.getElementById(id)) return;
-              js = d.createElement(s); js.id = id;
-              js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.8";
-              fjs.parentNode.insertBefore(js, fjs);
-            }(document, 'script', 'facebook-jssdk'));
-        }, 0);
-
-        function onGAPILoad() {
-            try {
-                gapi.load('client:auth2', () => {
-
-                    gapi.auth2.init({
-                        client_id: process.env.GOOGLE_APP,
-                        cookie_policy: 'single_host_origin',
-                        scope: 'profile'
-                    }).then(() => {
-                        gapi.auth2.getAuthInstance();
-                    }, () => {});
-                });
-            } catch (e) {
-                window.setTimeout(onGAPILoad.bind(this), 0)
-            }
-        }
-        window.setTimeout(onGAPILoad.bind(this), 0);
-
         let token = cookie.get('jwt') || window.localStorage.getItem('authToken')
         if (token) {
             UserAction.doAsync(LOGIN, {token: token});
+        }
+        else {
+            UserAction.do(USER_REJECT, null);
         }
     }
 
     render() {
         return (
-            <Router history={browserHistory}>
-                <Route path="/" component={Base}>
-                    <IndexRoute component={IndexPage}/>
-                    <Route path="login" component={LoginPage} />
-                    <Route path="home/:id" component={IndexPage} />
-                    <Route path="articles/new" component={NewArticleEditor}/>
-                    <Route path="articles/:articleId/edit" component={Editor}/>
-                    <Route path="articles/:articleId/preview" component={ArticlePreview}/>
-                    <Route path="articles/:articleSlug/gallery/:galleryBlockId" component={Article}/>
-                    <Route path="articles/:articleSlug" component={Article}/>
-                    <Route path="manage" component={ProfileManagement}/>
-                    <Route path="manage/:section" component={ProfileManagement}/>
-                    <Route path="url_shorten" component={UrlShortener}/>
-                    <Route path="auth/twitter/" component={TwitterAuth}/>
+            <BrowserRouter>
+                <Base>
+                    <Switch>
+                        <Route exact path="/" component={IndexPage}/>
+                        <Route path="/login" component={LoginPage} />
+                        <Route path="/manage/:section" component={ProfileManagement}/>
+                        <Route path="/manage" component={ProfileManagement}/>
+                        <Route path="/url_shorten" component={UrlShortener}/>
+                        <Route path="/auth/twitter/" component={TwitterAuth}/>
+                        <Route path="/articles/new" component={NewArticleEditor}/>
+                        <Route path="/articles/:articleId/edit" component={Editor}/>
+                        <Route path="/articles/:articleId/preview" component={ArticlePreview}/>
+                        <Route path="/articles/:articleSlug/gallery/:galleryBlockId" component={Article}/>
+                        <Route path="/articles/:articleSlug" component={Article}/>
+                        <Route path="/:slug/:subsection" component={Profile}/>
+                        <Route path="/:slug" component={Profile}/>
+                        <Route component={Error404}/>
+                    </Switch>
 
-                    <Route path=":slug" component={Profile}/>
-                    <Route path=":slug/:subsection" component={Profile}/>
-                </Route>
-                <Route path="*" component={() => {return <Error404/>}}/>
-            </Router>
+                </Base>
+
+            </BrowserRouter>
         )
     }
 }
+
+
+// class App extends React.Component<any, any> {
+//     render() {
+        {/*return (<div></div>);*/}
+    // }
+// }
 
 ReactDOM.render(<App/>, document.getElementById("app"));
 

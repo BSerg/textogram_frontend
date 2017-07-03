@@ -4,9 +4,9 @@ import '../styles/default_index.scss';
 import {Captions} from '../constants';
 import {MediaQuerySerice} from '../services/MediaQueryService';
 import * as marked from 'marked';
-import {Link} from 'react-router'
+import {Link} from 'react-router-dom';
 
-class RegistrationBlock extends React.Component<{className?: string}, any> {
+class RegistrationBlock extends React.Component<{className?: string}|any, any> {
     render() {
         return (
             <div className={"index_registration" + (this.props.className ? " " + this.props.className : "")}>
@@ -17,7 +17,7 @@ class RegistrationBlock extends React.Component<{className?: string}, any> {
 }
 
 
-export default class DefaultIndex extends React.Component<any, {screenWidth?: number, screenHeight?: number, scrollInterval?: number}> {
+export default class DefaultIndex extends React.Component<any, {screenWidth?: number, screenHeight?: number, scrollInterval?: number}|any> {
 
 
     BLOCKS: {key: string, caption: string, content: any}[] = [

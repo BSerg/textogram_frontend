@@ -28,10 +28,12 @@ interface INotificationState {
     isRead?: boolean;
     isUpdating?: boolean;
     isNew?: boolean;
-    newTimeout?: number;
+    // newTimeout?: number;
 }
 
 class ProfileNotification extends React.Component<INotificationProps, INotificationState> {
+
+    newTimeout: number;
 
     constructor() {
         super();
@@ -76,11 +78,11 @@ class ProfileNotification extends React.Component<INotificationProps, INotificat
 
     componentDidMount() {
         this.setState({isRead: this.props.item.is_read});
-        this.state.newTimeout = window.setTimeout(this.setNotNew, 0);
+        this.newTimeout = window.setTimeout(this.setNotNew, 0);
     }
 
     componentWillUnmount() {
-        window.clearTimeout(this.state.newTimeout);
+        this.newTimeout && window.clearTimeout(this.newTimeout);
     }
 
     render() {
@@ -97,7 +99,7 @@ class ProfileNotification extends React.Component<INotificationProps, INotificat
 interface INotificationsState {
     items?: any[];
     isLoading?: boolean;
-    cancelSource?: any;
+    // cancelSource?: any;
     nextUrl?: string;
 }
 
@@ -107,10 +109,12 @@ export default class ProfileManagementNotifications extends React.Component<any,
         main: HTMLDivElement;
     };
 
+    cancelSource: any;
+
     constructor() {
         super();
 
-        this.state = {items: [], isLoading: false, cancelSource: null, nextUrl: ''};
+        this.state = {items: [], isLoading: false, nextUrl: ''};
         this.handleScroll = this.handleScroll.bind(this);
         this.checkNewItems = this.checkNewItems.bind(this);
     }
@@ -122,11 +126,9 @@ export default class ProfileManagementNotifications extends React.Component<any,
         }
         let items = more ? this.state.items : [];
 
-        if (this.state.cancelSource) {
-            this.state.cancelSource.cancel();
-        }
+        this.cancelSource && this.cancelSource.cancel();
 
-        this.state.cancelSource = axios.CancelToken.source();
+        this.cancelSource = axios.CancelToken.source();
 
         this.setState({isLoading: true, items: items}, () => {
 
@@ -136,7 +138,7 @@ export default class ProfileManagementNotifications extends React.Component<any,
 
 
 
-            api.get(apiUrl, {cancelToken: this.state.cancelSource.token, params: requestParams}).then((response: any) => {
+            api.get(apiUrl, {cancelToken: this.cancelSource.token, params: requestParams}).then((response: any) => {
 
                 let stateData: any = { isLoading: false };
 
@@ -180,8 +182,8 @@ export default class ProfileManagementNotifications extends React.Component<any,
     componentWillUnmount() {
         window.removeEventListener('scroll', this.handleScroll);
         UserNotificationAction.unbind(CHECK_NOTIFICATIONS, this.checkNewItems);
-        if (this.state.cancelSource) {
-            this.state.cancelSource.cancel();
+        if (this.cancelSource) {
+            this.cancelSource.cancel();
         }
     }
 

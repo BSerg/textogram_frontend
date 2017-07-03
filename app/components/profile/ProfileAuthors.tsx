@@ -6,7 +6,7 @@ import {ModalAction, CLOSE_MODAL} from '../../actions/shared/ModalAction';
 import {MediaQuerySerice} from '../../services/MediaQueryService';
 
 import {Captions} from '../../constants';
-const CloseIcon = require('babel!svg-react!../../assets/images/close.svg?name=CloseIcon');
+const CloseIcon = require('-!babel-loader!svg-react-loader!../../assets/images/close.svg?name=CloseIcon');
 
 
 

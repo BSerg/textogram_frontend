@@ -4,7 +4,7 @@ import {BlockContentTypes, Captions} from '../../constants';
 import {ModalAction, CLOSE_MODAL} from '../../actions/shared/ModalAction';
 import '../../styles/editor/block_handler_modal.scss';
 
-const CloseIcon = require('babel!svg-react!../../assets/images/close.svg?name=CloseIcon');
+const CloseIcon = require('-!babel-loader!svg-react-loader!../../assets/images/close.svg?name=CloseIcon');
 
 
 interface IBlockHandlerModal {

@@ -9,7 +9,7 @@ import {
 import "../../styles/editor/deleted_content_block_inline.scss";
 import {MediaQuerySerice} from "../../services/MediaQueryService";
 
-const CloseButton = require('babel!svg-react!../../assets/images/close.svg?name=CloseButton');
+const CloseButton = require('-!babel-loader!svg-react-loader!../../assets/images/close.svg?name=CloseButton');
 
 
 

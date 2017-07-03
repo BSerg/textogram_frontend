@@ -11,20 +11,20 @@ import {InlineBlockAction, OPEN_INLINE_BLOCK} from "../../actions/editor/InlineB
 import {BlockHandlerInline} from "./BlockHandlerInline";
 import EmbedInline from "./EmbedInline";
 
-const AddIcon = require('babel!svg-react!../../assets/images/redactor_icon_add.svg?name=AddIcon');
-const SwapIcon = require('babel!svg-react!../../assets/images/redactor_icon_swing.svg?name=SwapIcon');
-const TextIcon = require('babel!svg-react!../../assets/images/redactor_icon_text.svg?name=TextIcon');
-const HeaderIcon = require('babel!svg-react!../../assets/images/redactor_icon_h2.svg?name=HeaderIcon');
-const LeadIcon = require('babel!svg-react!../../assets/images/redactor_icon_lead.svg?name=LeadIcon');
-const VideoIcon = require('babel!svg-react!../../assets/images/redactor_icon_video.svg?name=VideoIcon');
-const AudioIcon = require('babel!svg-react!../../assets/images/redactor_icon_music.svg?name=AudioIcon');
-const PhotoIcon = require('babel!svg-react!../../assets/images/redactor_icon_image.svg?name=PhotoIcon');
-const PostIcon = require('babel!svg-react!../../assets/images/redactor_icon_post.svg?name=PostIcon');
-const QuoteIcon = require('babel!svg-react!../../assets/images/redactor_icon_quote.svg?name=QuoteIcon');
-const ColumnsIcon = require('babel!svg-react!../../assets/images/redactor_icon_column.svg?name=ColumnsIcon');
-const ListIcon = require('babel!svg-react!../../assets/images/redactor_icon_list.svg?name=ListIcon');
-const DialogIcon = require('babel!svg-react!../../assets/images/redactor_icon_dialog.svg?name=DialogIcon');
-const PhraseIcon = require('babel!svg-react!../../assets/images/redactor_icon_phrase.svg?name=PhraseIcon');
+const AddIcon = require('-!babel-loader!svg-react-loader!../../assets/images/redactor_icon_add.svg?name=AddIcon');
+const SwapIcon = require('-!babel-loader!svg-react-loader!../../assets/images/redactor_icon_swing.svg?name=SwapIcon');
+const TextIcon = require('-!babel-loader!svg-react-loader!../../assets/images/redactor_icon_text.svg?name=TextIcon');
+const HeaderIcon = require('-!babel-loader!svg-react-loader!../../assets/images/redactor_icon_h2.svg?name=HeaderIcon');
+const LeadIcon = require('-!babel-loader!svg-react-loader!../../assets/images/redactor_icon_lead.svg?name=LeadIcon');
+const VideoIcon = require('-!babel-loader!svg-react-loader!../../assets/images/redactor_icon_video.svg?name=VideoIcon');
+const AudioIcon = require('-!babel-loader!svg-react-loader!../../assets/images/redactor_icon_music.svg?name=AudioIcon');
+const PhotoIcon = require('-!babel-loader!svg-react-loader!../../assets/images/redactor_icon_image.svg?name=PhotoIcon');
+const PostIcon = require('-!babel-loader!svg-react-loader!../../assets/images/redactor_icon_post.svg?name=PostIcon');
+const QuoteIcon = require('-!babel-loader!svg-react-loader!../../assets/images/redactor_icon_quote.svg?name=QuoteIcon');
+const ColumnsIcon = require('-!babel-loader!svg-react-loader!../../assets/images/redactor_icon_column.svg?name=ColumnsIcon');
+const ListIcon = require('-!babel-loader!svg-react-loader!../../assets/images/redactor_icon_list.svg?name=ListIcon');
+const DialogIcon = require('-!babel-loader!svg-react-loader!../../assets/images/redactor_icon_dialog.svg?name=DialogIcon');
+const PhraseIcon = require('-!babel-loader!svg-react-loader!../../assets/images/redactor_icon_phrase.svg?name=PhraseIcon');
 
 type Size = "small" | "normal";
 

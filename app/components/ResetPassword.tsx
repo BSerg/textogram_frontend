@@ -2,9 +2,9 @@ import * as React from 'react';
 import {ModalAction, CLOSE_MODAL} from '../actions/shared/ModalAction';
 import {api} from '../api';
 import {Captions} from '../constants';
-const CloseIcon = require('babel!svg-react!../assets/images/close.svg?name=CloseIcon');
-const VisibilityIcon = require('babel!svg-react!../assets/images/profile_visibility_icon.svg?name=VisibilityIcon');
-const VisibilityOffIcon = require('babel!svg-react!../assets/images/profile_visibility_off_icon.svg?name=VisibilityOffIcon');
+const CloseIcon = require('-!babel-loader!svg-react-loader!../assets/images/close.svg?name=CloseIcon');
+const VisibilityIcon = require('-!babel-loader!svg-react-loader!../assets/images/profile_visibility_icon.svg?name=VisibilityIcon');
+const VisibilityOffIcon = require('-!babel-loader!svg-react-loader!../assets/images/profile_visibility_off_icon.svg?name=VisibilityOffIcon');
 
 interface ResetPasswordStateInterface {
     currentStep?: number,

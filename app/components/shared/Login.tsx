@@ -3,9 +3,9 @@ import {ModalAction, OPEN_MODAL, CLOSE_MODAL} from '../../actions/shared/ModalAc
 import {UserAction, LOGIN} from '../../actions/user/UserAction';
 import '../../styles/shared/login.scss';
 
-const VisibilityIcon = require('babel!svg-react!../../assets/images/profile_visibility_icon.svg?name=VisibilityIcon');
-const VisibilityOffIcon = require('babel!svg-react!../../assets/images/profile_visibility_off_icon.svg?name=VisibilityOffIcon');
-const CloseIcon = require('babel!svg-react!../../assets/images/close.svg?name=CloseIcon');
+const VisibilityIcon = require('-!babel-loader!svg-react-loader!../../assets/images/profile_visibility_icon.svg?name=VisibilityIcon');
+const VisibilityOffIcon = require('-!babel-loader!svg-react-loader!../../assets/images/profile_visibility_off_icon.svg?name=VisibilityOffIcon');
+const CloseIcon = require('-!babel-loader!svg-react-loader!../../assets/images/close.svg?name=CloseIcon');
 
 interface ILoginProps {
     onLogin?: () => any
