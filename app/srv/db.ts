@@ -45,16 +45,6 @@ class DataClient {
         })
     }
 
-    saveArticleViews(req: Request, articleData: any) {
-        /*console.log('SAVE_HERE');
-        this.client.incr(`${process.env.CACHE_KEY_PREFIX}:article:${req.params.articleSlug || ''}:views_count`);
-        let user = getUserFromRequest(req) || '';
-        
-        console.log(user);
-        console.log(req.headers['x-fingerprint']);
-        console.log(articleData.ads_enabled ? 1 : 0);*/
-    }
-
     getArticles(req: Request): Promise<any> {
 
         return new Promise((resolve, reject) => {
@@ -78,7 +68,6 @@ class DataClient {
                 }).catch(() => { reject(); });
             }
         })
-            
     }
 
     private getSearchKeys(query: any): string[]|null {
@@ -157,7 +146,6 @@ class DataClient {
             }
             let urlParams: string = Object.keys(params).map(k => {return `${k}=${params[k]}`;}).join('&');
             return `${url}?${urlParams}`;
-
         }
         return null;
     }

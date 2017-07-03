@@ -4,14 +4,11 @@ if (process.env.IS_BROWSER) {
     require('clientjs/dist/client.min.js');
 }
 
-
-
 const client = process.env.IS_BROWSER ? new ClientJS() : null;
 const fingerprint = client ? client.getFingerprint() : null;
 
 let interceptor = function(config: any) {
     let jwt = cookie.get('jwt');
-    // console.log(jwt);
     if (jwt) {
         config.headers['Authorization'] = 'Bearer ' + jwt;
     } else {
@@ -32,9 +29,3 @@ export let api = axios.create({
 });
 
 api.interceptors.request.use(interceptor);
-
-export let cacheApi = axios.create({
-    baseURL: process.env.CACHE_API_URL,
-});
-
-cacheApi.interceptors.request.use(interceptor);

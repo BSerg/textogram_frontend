@@ -53,25 +53,13 @@ class BaseRouter {
             }
         }).catch(() => {
             res.render('index.ejs', {reactData: ''});
-        })
-        /*db.get(`${process.env.CACHE_KEY_PREFIX}:user:${req.params.profileSlug}`, (data) => {
-            try {
-                let user = JSON.parse(data);
-                let RenderedProfile: React.StatelessComponent<any> = (props: any) => {
-                    return (<Profile renderedUser={user} {...props}/>);
-                };
-                let html = ReactDOMServer.renderToString(
-                    <StaticRouter context={{}}><Base><RenderedProfile /></Base></StaticRouter>
-                );
-                res.render('index.ejs', {reactData: html});
-            }
-            catch(error) {
-                res.render('index.ejs', {reactData: ''});
-            }
-        }, () => {
-            res.render('index.ejs', {reactData: ''});
-        })*/
-        
+        });
+    }
+
+    getShortUrl(req: Request, res: Response, next: NextFunction) {
+        db.get(`${process.env.CACHE_KEY_PREFIX}:s:${req.params.urlCode}`).then(url => {
+            res.redirect(url);
+        }).catch((error) => {next();});
     }
 
     getDefault(req: Request, res: Response, next: NextFunction) {
@@ -81,6 +69,7 @@ class BaseRouter {
     init() {
         this.router.get('/', this.getIndex);
         this.router.get(/\/(manage|feed).*/, this.getDefault);
+        this.router.get('/:urlCode', this.getShortUrl);
         this.router.get('/:profileSlug/*', this.getProfile);
         this.router.get('/:profileSlug', this.getProfile);
         this.router.get('/*', this.getDefault);

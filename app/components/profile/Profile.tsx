@@ -53,7 +53,6 @@ interface IProfileState {
     canSubscribe?: boolean;
     additionalPage?: any;
     renderedArticles?: any;
-    // cancelSource?: any;
 }
 
 export default class Profile extends React.Component<IProfileProps|any, IProfileState|any> {
@@ -76,7 +75,6 @@ export default class Profile extends React.Component<IProfileProps|any, IProfile
         this.checkDesktop = this.checkDesktop.bind(this);
         this.setDrafts = this.setDrafts.bind(this);
         this.logoutHandle = this.logoutHandle.bind(this);
-        // this.getUserData = this.getUserData.bind(this);
     }
     
     handleUserChange() {
@@ -123,25 +121,16 @@ export default class Profile extends React.Component<IProfileProps|any, IProfile
             }
             if (UserAction.getStore().user) {
                 this.setState({user: UserAction.getStore().user, currentSection: currentSection,
-                        isSelf: true, canSubscribe: false, selfDrafts: UserAction.getStore().user.drafts || 0});
+                    isSelf: true, canSubscribe: false, selfDrafts: UserAction.getStore().user.drafts || 0}, () => {
+                        document.title = `${this.state.user.first_name} ${this.state.user.last_name}`;
+                    });
             }
-            else {
-                /*UserAction.doAsync(LOGIN, null).then((user: any) => {
-                    this.setState({user: UserAction.getStore().user, currentSection: currentSection,
-                        isSelf: true, canSubscribe: false, selfDrafts: UserAction.getStore().user.drafts || 0});
-                }).catch((error) => {
-                    console.log('pushhh');
-                    this.props.history.push('/');
-                });*/
-            }
-
         }
         else  {
             if (!subsection) {
                 currentSection = this.SECTION_ARTICLES;
             }
             else {
-
                 switch (subsection) {
                     case 'followers':
                         currentSection = this.SECTION_FOLLOWERS;
@@ -174,6 +163,8 @@ export default class Profile extends React.Component<IProfileProps|any, IProfile
                             isLoading: false,
                             canSubscribe: canSubscribe,
                             selfDrafts: isSelf ? UserAction.getStore().user.drafts || 0 : 0,
+                        }, () => {
+                            document.title = `${this.state.user.first_name} ${this.state.user.last_name}`;
                         });
                     }).catch((error) => {
                         if (!axios.isCancel(error)) {
@@ -383,10 +374,7 @@ export default class Profile extends React.Component<IProfileProps|any, IProfile
                              ) : null
                          }
 
-
-                         {
-                             this.state.isDesktop ? (<div className="divider"></div>) : null
-                         }
+                         {this.state.isDesktop ? (<div className="divider"></div>) : null}
 
                          { this.state.isDesktop && this.state.canSubscribe ? (
                              this.state.user.is_subscribed ? (
@@ -418,19 +406,11 @@ export default class Profile extends React.Component<IProfileProps|any, IProfile
                                  </div>
                              ) : null
                          }
-                         {
-                             DisplayComponent
-                         }
+                         {DisplayComponent}
 
                      </div>
-
-
                  </div>
              </div>
         )
     }
 }
-
-// let Profile = withRouter(ProfileClass);
-//
-// export default Profile;
