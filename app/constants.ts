@@ -285,22 +285,22 @@ export namespace Embed {
     export const urlRegex = {
         POST: [
             // Twitter
-            /^https:\/\/twitter\.com\/\w+\/status\/\d+$/,
+            /^https:\/\/twitter\.com\/\w+\/status\/\d+\/?([&?][\w\-]+=[^&]+)*$/,
             // Instagram
-            /^https:\/\/www\.instagram\.com\/p\/[\w\-_]+\/?$/,
+            /^https:\/\/www\.instagram\.com\/p\/[\w\-_]+\/?([&?][\w\-]+=[^&]+)*$/,
             // Facebook
-            /^https:\/\/(www|ru-ru)\.facebook\.com\/[\w\-_.]+\/(posts|videos)\/\d+$/,
+            /^https:\/\/(www|ru-ru)\.facebook\.com\/[\w\-_.]+\/(posts|videos)\/\d+\/?([&?][\w\-]+=[^&]+)*$/,
         ],
         VIDEO: [
             // Facebook
-            /^https:\/\/(www|ru-ru)\.facebook\.com\/[\w\-_.]+\/videos\/\d+\/?$/,
+            /^https:\/\/(www|ru-ru)\.facebook\.com\/[\w\-_.]+\/videos\/\d+\/?([&?][\w\-]+=[^&]+)*$/,
             // VK
-            /^https:\/\/vk\.com\/video-?\d+_\d+$/,
+            /^https:\/\/vk\.com\/video-?\d+_\d+\$/,
             // Youtube
-            /^https:\/\/www\.youtube\.com\/watch\?v=[\w\-_]+$/,
-            /^https:\/\/youtu\.be\/[\w\-_]+$/,
+            /^https:\/\/www\.youtube\.com\/watch\?v=[\w\-_]+(&[\w\-]+=[^&]+)*$/,
+            /^https:\/\/youtu\.be\/[\w\-_]+([?&][\w\-]+=[^&]+)*$/,
             // Vimeo
-            /^https:\/\/vimeo\.com\/\d+$/,
+            /^https:\/\/vimeo\.com\/\d+(#\w+=\w+)?$/,
             // Coub
             /^https?:\/\/coub\.com\/view\/\w+$/
         ],
