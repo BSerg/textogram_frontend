@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import axios from 'axios';
-import {api, cacheApi} from '../../api';
+import {api} from '../../api';
 import ArticlePreview from '../shared/ArticlePreview';
 import ArticlePreviewStatistics from '../shared/ArticlePreviewStatistics';
 import Loading from '../shared/Loading';

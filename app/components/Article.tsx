@@ -1,7 +1,7 @@
 import * as React from "react";
 import {Link} from "react-router-dom";
 import {IContentData} from "../actions/editor/ContentAction";
-import {api, cacheApi} from "../api";
+import {api} from "../api";
 import Error, {Error404, Error500, Error403} from "./Error";
 import {UserAction, LOGIN, LOGOUT, UPDATE_USER, SAVE_USER} from "../actions/user/UserAction";
 import {ModalAction, OPEN_MODAL, CLOSE_MODAL} from "../actions/shared/ModalAction";
