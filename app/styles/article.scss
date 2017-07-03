@@ -728,6 +728,32 @@ $block_margin_desktop: 25px;
 
     }
   }
+
+  .article__restricted_access {
+    padding: 20px;
+    border: 1px solid $color7;
+
+    .article__restricted_access_header {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: flex-start;
+      margin-bottom: 30px;
+      color: $color5;
+      font-family: $family_open_sans;
+      font-size: 12px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+
+      svg {
+        width: 20px;
+        height: 20px;
+        margin-right: 10px;
+        fill: transparent;
+        stroke: $color;
+      }
+    }
+  }
 }
 
 .article__footer {

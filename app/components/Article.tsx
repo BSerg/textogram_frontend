@@ -3,7 +3,7 @@ import {Link} from "react-router-dom";
 import {IContentData} from "../actions/editor/ContentAction";
 import {api} from "../api";
 import Error, {Error404, Error500, Error403} from "./Error";
-import {UserAction, LOGIN, LOGOUT, UPDATE_USER, SAVE_USER} from "../actions/user/UserAction";
+import {UserAction, LOGIN, LOGOUT, UPDATE_USER, SAVE_USER, USER_REJECT} from "../actions/user/UserAction";
 import {ModalAction, OPEN_MODAL, CLOSE_MODAL} from "../actions/shared/ModalAction";
 import * as moment from "moment";
 import SocialIcon from "./shared/SocialIcon";
@@ -13,6 +13,7 @@ import * as Swapeable from "react-swipeable";
 import PopupPrompt from "./shared/PopupPrompt";
 import {NotificationAction, SHOW_NOTIFICATION} from "../actions/shared/NotificationAction";
 import Loading from "./shared/Loading";
+import LoginBlock from "./shared/LoginBlock";
 import "../styles/article.scss";
 import "../styles/banners.scss";
 import {BannerID, Captions} from "../constants";
@@ -29,6 +30,7 @@ const ShareButton = require('-!babel-loader!svg-react-loader!../assets/images/sh
 const EditBlackButton = require('-!babel-loader!svg-react-loader!../assets/images/edit-small.svg?name=EditBlackButton');
 const PublishButton = require('-!babel-loader!svg-react-loader!../assets/images/publish.svg?name=PublishButton');
 const ConfirmButton = require('-!babel-loader!svg-react-loader!../assets/images/editor_confirm.svg?name=ConfirmButton');
+const LockButton = require('-!babel-loader!svg-react-loader!../assets/images/lock.svg?name=LockButton');
 
 
 interface IPhoto {id: number, image: string, preview?: string, caption?: string}
@@ -72,6 +74,7 @@ interface IArticleProps {
 interface IArticleState {
     article?: IArticle | null;
     error?: any;
+    user?: any;
     isSelf?: boolean;
     isDesktop?: boolean;
 }
@@ -84,6 +87,7 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
         this.loadingImages = [];
         this.state = {
             article: props.renderedArticle || null,
+            user: UserAction.getStore().user,
             isSelf: false,
             isDesktop: MediaQuerySerice.getIsDesktop(),
         };
@@ -100,8 +104,8 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
 
     handleUser() {
         let user = UserAction.getStore().user;
-        if (user && this.state.article) {
-            this.setState({isSelf: user.id == this.state.article.owner.id});
+        if (this.state.article) {
+            this.setState({user: user, isSelf: user && user.id == this.state.article.owner.id});
         }
     }
 
@@ -454,7 +458,7 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
 
     componentDidMount() {
         MediaQuerySerice.listen(this.handleMediaQuery);
-        UserAction.onChange([LOGIN, LOGOUT, UPDATE_USER, SAVE_USER], this.handleUser);
+        UserAction.onChange([LOGIN, LOGOUT, UPDATE_USER, SAVE_USER, USER_REJECT], this.handleUser);
         if (this.props.isPreview) {
             this.retrieveArticlePreview();
         } else {
@@ -541,8 +545,18 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
                         {/* CONTENT */}
                         <div className="article__content_wrapper">
                             {this.state.article.paywall_enabled && !this.state.article.html ?
-                                <div className="article__content article__denied">
-                                    Доступ к статье ограничен! Вы можете приобрести доступ за {this.state.article.paywall_price}{(Captions as any).shared.currency[this.state.article.paywall_currency]}
+                                <div className="article__content article__restricted_access">
+                                    <div className="article__restricted_access_header">
+                                        <LockButton/> Доступ к статье ограничен автором
+                                    </div>
+                                    {!this.state.user ? 
+                                        <div className="article__restricted_access_auths">
+
+                                            <div>Вам необходимо авторизоваться:</div>
+                                            <LoginBlock/>
+                                        </div> : 
+                                        <div>__FORM__</div>
+                                    }
                                 </div> :
                                 <div className="article__content"
                                      style={shiftContentStyle}
