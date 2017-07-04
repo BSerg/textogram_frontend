@@ -807,6 +807,7 @@ $block_margin_desktop: 25px;
       margin-top: 30px;
 
       .restricted_access__submit {
+        display: block;
         width: 200px;
         height: 64px;
         text-align: center;
@@ -814,6 +815,8 @@ $block_margin_desktop: 25px;
         background-color: $color;
         color: white;
         cursor: pointer;
+        border: none;
+        font-size: 18px;
 
         &:hover {
 

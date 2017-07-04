@@ -451,6 +451,23 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
         });
     }
 
+    loadPaymentForm(el: HTMLFormElement) {
+        console.log('GET FORM', el)
+        api.get('payments/form/?article_id=' + this.state.article.id).then((response: any) => {
+            el.setAttribute('action', response.data.action);
+            Object.keys(response.data.form).forEach(field => {
+                let input = document.createElement('input');
+                input.setAttribute('type', 'hidden');
+                input.setAttribute('name', field);
+                input.setAttribute('value', response.data.form[field]);
+                el.appendChild(input);
+            });
+
+        }).catch(err => {
+            console.log(err);
+        });
+    }
+
     route(url: string) {
         this.props.history.push(url);
     }
@@ -571,7 +588,9 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
                                                 <LoginBlock/>
                                             </div> : 
                                             <div className="restricted_access__form">
-                                                <div className="restricted_access__submit">Купить</div>
+                                                <form method="post" ref={this.loadPaymentForm.bind(this)}>
+                                                    <button className="restricted_access__submit">Купить</button>
+                                                </form>
                                             </div>
                                         }
                                     </div>
