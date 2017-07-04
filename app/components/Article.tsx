@@ -3,7 +3,7 @@ import {Link} from "react-router-dom";
 import {IContentData} from "../actions/editor/ContentAction";
 import {api} from "../api";
 import Error, {Error404, Error500, Error403} from "./Error";
-import {UserAction, LOGIN, LOGOUT, UPDATE_USER, SAVE_USER, USER_REJECT} from "../actions/user/UserAction";
+import { UserAction, LOGIN, LOGOUT, UPDATE_USER, SAVE_USER, USER_REJECT, GET_ME } from "../actions/user/UserAction";
 import {ModalAction, OPEN_MODAL, CLOSE_MODAL} from "../actions/shared/ModalAction";
 import * as moment from "moment";
 import SocialIcon from "./shared/SocialIcon";
@@ -75,7 +75,6 @@ interface IArticleState {
     article?: IArticle | null;
     error?: any;
     user?: any;
-    isSelf?: boolean;
     isDesktop?: boolean;
 }
 
@@ -88,10 +87,10 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
         this.state = {
             article: props.renderedArticle || null,
             user: UserAction.getStore().user,
-            isSelf: false,
             isDesktop: MediaQuerySerice.getIsDesktop(),
         };
         this.handleMediaQuery = this.handleMediaQuery.bind(this);
+        this.handleUser = this.handleUser.bind(this);
     }
 
     refs: {
@@ -103,10 +102,7 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
     // };
 
     handleUser() {
-        let user = UserAction.getStore().user;
-        if (this.state.article) {
-            this.setState({user: user, isSelf: user && user.id == this.state.article.owner.id});
-        }
+        this.setState({user: UserAction.getStore().user});
     }
 
     editArticle() {
@@ -370,9 +366,8 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
     }
 
     loadArticle(data: IArticle) {
-        let isSelf = UserAction.getStore().user ? UserAction.getStore().user.id == data.owner.id : false;
         let articleContent = this.processArticle(data);
-        this.setState({article: articleContent, isSelf: isSelf}, () => {
+        this.setState({article: articleContent}, () => {
             window.setTimeout(() => {
                 this.processes();
             }, 100);
@@ -462,7 +457,7 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
 
     componentDidMount() {
         MediaQuerySerice.listen(this.handleMediaQuery);
-        UserAction.onChange([LOGIN, LOGOUT, UPDATE_USER, SAVE_USER, USER_REJECT], this.handleUser);
+        UserAction.onChange([LOGIN, LOGOUT, GET_ME, UPDATE_USER, SAVE_USER, USER_REJECT], this.handleUser);
         if (this.props.isPreview) {
             this.retrieveArticlePreview();
         } else {
@@ -489,7 +484,7 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
 
     componentWillUnmount() {
         MediaQuerySerice.unbind(this.handleMediaQuery);
-        UserAction.unbind([LOGIN, LOGOUT, UPDATE_USER, SAVE_USER], this.handleUser);
+        UserAction.unbind([LOGIN, LOGOUT, GET_ME, UPDATE_USER, SAVE_USER, USER_REJECT], this.handleUser);
 
         this.loadingImages.forEach((img) => {
             img.onload = () => {};
@@ -515,9 +510,20 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
             if (offset) shiftContentStyle = {marginLeft: `${offset}px`};
         }
 
-        // if (!this.state.article && this.props.renderedArticle) {
-        //     this.state.article = this.props.renderedArticle;
-        // }
+        let currencyIcon;
+        if (this.state.article) {
+            switch (this.state.article.paywall_currency) {
+                case 'EUR':
+                    currencyIcon = '€';
+                    break;
+                case 'USD':
+                    currencyIcon = '$';
+                    break;
+                default:
+                    currencyIcon = '₽';
+            }
+        }
+
         return (
             !this.state.error ?
                 this.state.article ?
@@ -550,17 +556,25 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
                         <div className="article__content_wrapper">
                             {this.state.article.paywall_enabled && !this.state.article.html ?
                                 <div className="article__content article__restricted_access">
-                                    <div className="article__restricted_access_header">
+                                    <div className="restricted_access__header">
                                         <LockButton/> Доступ к статье ограничен автором
                                     </div>
-                                    {!this.state.user ? 
-                                        <div className="article__restricted_access_auths">
-
-                                            <div>Вам необходимо авторизоваться:</div>
-                                            <LoginBlock/>
-                                        </div> : 
-                                        <div>__FORM__</div>
-                                    }
+                                    <div className="restricted_access__content">
+                                        <div className="restricted_access__price_text">Стоимость доступа:</div>
+                                        <div className="restricted_access__price">
+                                            <div className="restricted_access__value">{this.state.article.paywall_price}</div>
+                                            <div className="restricted_access__currency">{currencyIcon}</div>
+                                        </div>
+                                        {!this.state.user ? 
+                                            <div className="restricted_access__auth">
+                                                <div>Для оплаты вам необходимо авторизоваться:</div>
+                                                <LoginBlock/>
+                                            </div> : 
+                                            <div className="restricted_access__form">
+                                                <div className="restricted_access__submit">Купить</div>
+                                            </div>
+                                        }
+                                    </div>
                                 </div> :
                                 <div className="article__content"
                                      style={shiftContentStyle}
@@ -609,7 +623,7 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
                                     <EditBlackButton/>
                                 </LeftSideButton>
                             </div> : null}
-                        {this.state.isDesktop && !this.props.isPreview && this.state.isSelf ?
+                        {this.state.isDesktop && !this.props.isPreview && this.state.user && this.state.article.owner.id == this.state.user.id ?
                             <div className="left_tool_panel">
                                 <LeftSideButton key="toolEdit"
                                                 tooltip="Редактировать"
