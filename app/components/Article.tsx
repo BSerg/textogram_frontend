@@ -274,9 +274,13 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
                             }
                         };
                         img.className = photo.getAttribute('class');
-                        img.src = photo.getAttribute('data-preview');
                         img.alt = photo.getAttribute('data-caption');
-                        img.addEventListener('click', this.openGalleryModal.bind(this, i, photoData, gallery.getAttribute('id')));
+                        if (photos.length == 1 && photo.classList.contains('photo_animated')) {
+                            img.src = photo.getAttribute('data-src');
+                        } else {
+                            img.src = photo.getAttribute('data-preview');
+                            img.addEventListener('click', this.openGalleryModal.bind(this, i, photoData, gallery.getAttribute('id')));
+                        }
                         this.loadingImages.push(img);
                     }
                 }

@@ -3,7 +3,6 @@ import {StaticRouter, Switch, Route} from 'react-router-dom';
 import * as React from 'react';
 import * as ReactDOMServer from 'react-dom/server';
 import Base from '../../components/Base';
-// import BaseNew from '../../components/BaseNew';
 import Index from '../../components/Index';
 import Profile from '../../components/profile/Profile';
 import db from '../db';

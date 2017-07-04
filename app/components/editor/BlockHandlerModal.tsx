@@ -3,6 +3,7 @@ import BlockHandlerButton from './BlockHandlerButton';
 import {BlockContentTypes, Captions} from '../../constants';
 import {ModalAction, CLOSE_MODAL} from '../../actions/shared/ModalAction';
 import '../../styles/editor/block_handler_modal.scss';
+import { MediaQuerySerice } from "../../services/MediaQueryService";
 
 const CloseIcon = require('-!babel-loader!svg-react-loader!../../assets/images/close.svg?name=CloseIcon');
 
@@ -11,7 +12,6 @@ interface IBlockHandlerModal {
     articleId: number
     blockPosition: number
 }
-
 
 export class BlockHandlerModal extends React.Component<IBlockHandlerModal, any> {
     constructor(props: any) {
@@ -47,6 +47,7 @@ export class BlockHandlerModal extends React.Component<IBlockHandlerModal, any> 
                         return (
                             <div className="block_handler_modal__item">
                                 <BlockHandlerButton type={item.type}
+                                                    size={MediaQuerySerice.getScreenHeight() < 500 ? 'small' : 'normal'}
                                                     articleId={this.props.articleId}
                                                     blockPosition={this.props.blockPosition}
                                                     onClick={this.closeModal.bind(this)}/>

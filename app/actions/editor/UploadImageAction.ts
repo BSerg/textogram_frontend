@@ -51,6 +51,9 @@ UploadImageAction.registerAsync(UPLOAD_IMAGE, (store, data: {articleId: number, 
         xhr.onload = () => {
             if (xhr.status == 201) {
                 let response = JSON.parse(xhr.response);
+                if (data.image.type == 'image/gif') {
+                    response = Object.assign({}, response, {is_animated: true});
+                }
                 store.image = response;
                 store.images[data.image.name] = response;
                 resolve(response)
