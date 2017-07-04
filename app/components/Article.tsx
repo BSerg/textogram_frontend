@@ -453,8 +453,16 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
 
     loadPaymentForm(el: HTMLFormElement) {
         console.log('GET FORM', el)
-        api.get('payments/form/?article_id=' + this.state.article.id).then((response: any) => {
+        api.post('payments/form/', {
+            article_id: this.state.article.id,
+            success_url: window.location.href,
+            fail_url: window.location.href
+        }).then((response: any) => {
             el.setAttribute('action', response.data.action);
+            let inputs = el.findElementsByTagName('input');
+            for (let i = 0; i < inputs.length; i++) {
+                el.removeChild(inputs[i]);
+            }
             Object.keys(response.data.form).forEach(field => {
                 let input = document.createElement('input');
                 input.setAttribute('type', 'hidden');
