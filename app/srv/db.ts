@@ -77,7 +77,7 @@ class DataClient {
         let keys: string[] = [];
         query.q.split(' ').forEach( (k: string) => {
             if (k.length >= this.MIN_SEARCH_QUERY_LENGTH) {
-                keys.push(`${process.env.CACHE_KEY_PREFIX}:q:${k}`);
+                keys.push(`${process.env.CACHE_KEY_PREFIX}:q:${k.toLowerCase()}`);
             }
         });
         return keys.length ? keys : null;
