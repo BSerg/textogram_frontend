@@ -345,9 +345,12 @@ $block_margin_desktop: 25px;
       .photo {
         object-fit: cover;
         float: left;
-        cursor: pointer;
         display: none;
         background-color: $color9;
+
+        &:not(.photo_animated) {
+          cursor: pointer;
+        }
 
         &.photo_0 {
           width: calc(80% - #{$space}/2);

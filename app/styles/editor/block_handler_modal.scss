@@ -40,7 +40,12 @@
       align-items: center;
       justify-content: space-around;
       width: $size;
-      margin-bottom: $margin * 2;
+      margin-bottom: 10px;
+    }
+
+    .block_handler_button {
+      border: 1px solid white!important;
+      margin: 0!important;
     }
   }
 }
