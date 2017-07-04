@@ -179,6 +179,7 @@
       height: 35px;
       background-color: $color;
       color: white;
+      z-index: 10;
 
       form {
         flex: auto;
