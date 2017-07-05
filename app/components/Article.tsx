@@ -459,7 +459,7 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
             fail_url: window.location.href
         }).then((response: any) => {
             el.setAttribute('action', response.data.action);
-            let inputs = el.findElementsByTagName('input');
+            let inputs = el.getElementsByTagName('input');
             for (let i = 0; i < inputs.length; i++) {
                 el.removeChild(inputs[i]);
             }
@@ -474,6 +474,11 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
         }).catch(err => {
             console.log(err);
         });
+    }
+
+    submitPaymentForm() {
+        let form = document.getElementById('payment_form');
+        form.submit();
     }
 
     route(url: string) {
@@ -596,9 +601,18 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
                                                 <LoginBlock/>
                                             </div> : 
                                             <div className="restricted_access__form">
-                                                <form method="post" ref={this.loadPaymentForm.bind(this)}>
-                                                    <button className="restricted_access__submit">Купить</button>
+                                                <form 
+                                                    id="payment_form" 
+                                                    method="post" 
+                                                    ref={this.loadPaymentForm.bind(this)} 
+                                                    target="_self"
+                                                    acceptCharset="UTF-8">
                                                 </form>
+                                                <div 
+                                                    onClick={this.submitPaymentForm.bind(this)} 
+                                                    className="restricted_access__submit">
+                                                    Купить
+                                                </div>
                                             </div>
                                         }
                                     </div>
