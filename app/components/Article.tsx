@@ -605,8 +605,7 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
                                                     id="payment_form" 
                                                     method="post" 
                                                     ref={this.loadPaymentForm.bind(this)} 
-                                                    target="_self"
-                                                    acceptCharset="UTF-8">
+                                                    target="_self">
                                                 </form>
                                                 <div 
                                                     onClick={this.submitPaymentForm.bind(this)} 
