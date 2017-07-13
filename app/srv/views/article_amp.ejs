@@ -1,0 +1,55 @@
+<!doctype html>
+<html ⚡>
+<head>
+  <meta charset="utf-8">
+  <title><%- article.title  %></title>
+  <link rel="canonical" href="/articles/<%- article.slug %>"> 
+  <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
+  <style amp-custom>
+    body {
+      color: #333333;
+    }
+    #header {
+      min-width: 100%;
+      width: 100%;
+      height: 50px;
+      background-color: #252525;
+      color: #FFFFFF;
+      font-size: 18px;
+      text-transform: uppercase;
+      text-align: center;
+      line-height: 50px;
+      letter-spacing: 1px;
+    }
+    #content {
+      padding: 0 10px;
+      max-width: 600px;
+      margin: auto;
+    }
+    h1 {
+      text-align: center;
+    }
+    #article_meta {
+      text-align: center;
+    }
+    #article_meta span {
+      margin: 0 10px;
+    }
+  </style>
+  <style amp-boilerplate>body{-webkit-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-moz-animation:-amp-start 8s steps(1,end) 0s 1 normal both;-ms-animation:-amp-start 8s steps(1,end) 0s 1 normal both;animation:-amp-start 8s steps(1,end) 0s 1 normal both}@-webkit-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-moz-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-ms-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@-o-keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}@keyframes -amp-start{from{visibility:hidden}to{visibility:visible}}</style><noscript><style amp-boilerplate>body{-webkit-animation:none;-moz-animation:none;-ms-animation:none;animation:none}</style></noscript>
+  <script async src="https://cdn.ampproject.org/v0.js"></script>
+ </head>
+ <body>
+ <div id="header"><%- siteName %></div>
+ <div id="content">
+  <%if (article.cover) {%>
+    <amp-img src="<%- article.cover %>" alt="Welcome" height="250" width="500" layout="responsive">
+    </amp-img>
+  <% } %>
+  <h1><%- article.title %></h1>
+  <div id="article_meta"><span><%- article.owner.first_name %> <%- article.owner.last_name %></span><span><%- date %></span></div>
+
+  </div>
+ </body>
+
+</html>

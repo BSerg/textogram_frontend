@@ -478,7 +478,7 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
 
     submitPaymentForm() {
         let form = document.getElementById('payment_form');
-        form.submit();
+        (form as HTMLFormElement).submit();
     }
 
     route(url: string) {
