@@ -16,9 +16,14 @@ import Loading from "./shared/Loading";
 import LoginBlock from "./shared/LoginBlock";
 import "../styles/article.scss";
 import "../styles/banners.scss";
-import {BannerID, Captions} from "../constants";
+import {BannerID, Captions, BlockContentTypes} from "../constants";
 import LeftSideButton from "./shared/LeftSideButton";
 import AwesomeGallery from "./shared/AwesomeGallery";
+import * as marked from 'marked';
+
+marked.setOptions({
+    sanitize: true,
+});
 
 const EditButton = require('-!babel-loader!svg-react-loader!../assets/images/edit.svg?name=EditButton');
 const DeleteButton = require('-!babel-loader!svg-react-loader!../assets/images/redactor_icon_delete.svg?name=DeleteButton');
@@ -53,7 +58,8 @@ interface IArticle {
         last_name: string,
         avatar: string
     },
-    images: IPhoto[]
+    images: IPhoto[];
+    imageMap?: any;
     url: string;
     short_url?: string;
     ads_enabled?: boolean,
@@ -125,6 +131,12 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
         if (typeof article.paywall_price != 'undefined') {
             article.paywall_price = article.paywall_price == Math.floor(article.paywall_price) ? Math.floor(article.paywall_price) : article.paywall_price;
         }
+
+        article.imageMap = article.imageMap || {};
+        article.images.forEach((image: IPhoto) => {
+            article.imageMap[image.id] = image;
+        });
+        
         return article;
     }
 
@@ -477,7 +489,7 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
     }
 
     submitPaymentForm() {
-        let form = document.getElementById('payment_form');
+        let form = document.getElementById('payment_form') as HTMLFormElement;
         form.submit();
     }
 
@@ -616,9 +628,128 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
                                         }
                                     </div>
                                 </div> :
-                                <div className="article__content"
-                                     style={shiftContentStyle}
-                                     dangerouslySetInnerHTML={{__html: this.state.article.html}}/>
+                                <div className="article__content" style={shiftContentStyle}>
+                                    
+                                    {this.state.article.content.blocks.map((block: any, index: number) => {
+                                        switch (block.type) {
+                                            case BlockContentTypes.TEXT:
+                                                let regx = /<p>(.+)<\/p>/g;
+                                                let t: any[] = [];
+                                                let match;
+                                                while (true) {
+                                                    match = regx.exec(marked(block.value))
+                                                    if (match == null) break;
+                                                    t.push(<p dangerouslySetInnerHTML={{__html: match[1]}}/>);
+                                                }
+                                                return t;
+                                            case BlockContentTypes.HEADER:
+                                                return marked(`## ${block.value}`);
+                                            case BlockContentTypes.LEAD:
+                                                return <div className='lead' 
+                                                            dangerouslySetInnerHTML={{__html: marked(block.value)}}/>;
+                                            case BlockContentTypes.PHRASE:
+                                                return <div className='phrase' 
+                                                            dangerouslySetInnerHTML={{__html: marked(block.value)}}/>;
+                                            case BlockContentTypes.PHOTO:
+                                                console.log('PHOTO BLOCK');
+                                                return (
+                                                    <div id={block.id} className={"photos photos_" + block.photos.length}>
+                                                        {block.photos.map((photo: any, index: number) => {
+                                                            let photoData = this.state.article.imageMap[photo.id];
+                                                            let className = 'photo photo_' + index;
+                                                            if (photo.is_animated) className += ' photo_animated';
+                                                            return (
+                                                                <div 
+                                                                    className={"photo photo_" + index} 
+                                                                    data-caption={photo.caption || ''}
+                                                                    data-preview={index <= 2 ? photoData.medium : photoData.small} 
+                                                                    data-src={photo.is_animated && block.photos.length == 1 ? photoData.original : photoData.regular}></div>
+                                                            );
+                                                        })}
+                                                        <div style={{clear: 'both'}}/>
+                                                        {block.photos.length == 1 && block.photos[0].caption ? 
+                                                            <div className="caption">{block.photos[0].caption}</div> : null
+                                                        }
+                                                        {block.photos.length > 6 ? 
+                                                            <div className="caption">Галерея из {block.photos.length} фото</div> : null
+                                                        }
+                                                    </div>
+                                                );
+                                            case BlockContentTypes.LIST:
+                                                return <div dangerouslySetInnerHTML={{__html: marked(block.value)}}/>;
+                                            case BlockContentTypes.QUOTE:
+                                                let className = block.image && block.image.image ? 'personal': ''
+                                                return (
+                                                    <blockquote className={className}>
+                                                        {block.image && block.image.image ? 
+                                                            <img src={block.image.image}/> : null
+                                                        }
+                                                        <div dangerouslySetInnerHTML={{__html: marked(block.value)}}/>
+                                                    </blockquote>
+                                                );
+                                            case BlockContentTypes.COLUMNS:
+                                                return (
+                                                    <div className="columns">
+                                                        <div className="column">
+                                                            {block.image ? 
+                                                                <img src={block.image.image}/> : 
+                                                                <div className="column__empty_image">
+                                                                    {block.value.match(/\w/) ? block.value.match(/\w/)[0] : ''}
+                                                                </div>
+                                                            }
+                                                        </div>
+                                                        <div className="column" 
+                                                             dangerouslySetInnerHTML={{__html: marked(block.value)}}/>
+                                                    </div>
+                                                );
+                                            case BlockContentTypes.VIDEO:
+                                                return (
+                                                    block.__meta && block.__meta.embed ?
+                                                        <div className="embed video" dangerouslySetInnerHTML={{__html: block.__meta.embed}}/> : null
+                                                );
+                                            
+                                            case BlockContentTypes.AUDIO:
+                                                return (
+                                                    block.__meta && block.__meta.embed ?
+                                                        <div className="embed audio" dangerouslySetInnerHTML={{__html: block.__meta.embed}}/> : null
+                                                );
+                                            
+                                            case BlockContentTypes.POST:
+                                                return (
+                                                    block.__meta && block.__meta.embed ?
+                                                        <div className="embed post" dangerouslySetInnerHTML={{__html: block.__meta.embed}}/> : null
+                                                );
+                                             case BlockContentTypes.DIALOG:
+                                                let participants: any = {};
+                                                block.participants.forEach((participant: any) => {
+                                                    participants[participant.id] = participant;
+                                                });
+                                                return (
+                                                    <div className="dialogue">
+                                                        {block.remarks.map((remark: any): any => {
+                                                            if (!remark.value.length) return null;
+                                                            let participant = participants[remark.participant_id];
+                                                            if (!participant) return null;
+
+                                                            let className = 'remark';
+                                                            if (participant.is_interviewer) className += ' question';
+                                                            return (
+                                                                <div className={className}>
+                                                                    {participant.avatar && participant.avatar.image ?
+                                                                        <img src={participant.avatar.image}/> : 
+                                                                        <span data-name={participant.name[0]}></span>
+                                                                    }   
+                                                                    {remark.value}
+                                                                </div>
+                                                            )
+                                                        })}
+                                                    </div>
+                                                )
+                                        }
+                                    })}
+                                    
+
+                                </div>
                             }
 
                         </div>
