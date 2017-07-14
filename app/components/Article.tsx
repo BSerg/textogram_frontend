@@ -636,24 +636,25 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
                                                 let regx = /<p>(.+)<\/p>/g;
                                                 let t: any[] = [];
                                                 let match;
+                                                let count = 0;
                                                 while (true) {
                                                     match = regx.exec(marked(block.value))
                                                     if (match == null) break;
-                                                    t.push(<p dangerouslySetInnerHTML={{__html: match[1]}}/>);
+                                                    t.push(<p key={'paragraph_' + count++} dangerouslySetInnerHTML={{__html: match[1]}}/>);
                                                 }
                                                 return t;
                                             case BlockContentTypes.HEADER:
-                                                return marked(`## ${block.value}`);
+                                                return <h2 key={block.id}>{block.value}</h2>;
                                             case BlockContentTypes.LEAD:
-                                                return <div className='lead' 
+                                                return <div key={block.id} className='lead' 
                                                             dangerouslySetInnerHTML={{__html: marked(block.value)}}/>;
                                             case BlockContentTypes.PHRASE:
-                                                return <div className='phrase' 
+                                                return <div key={block.id} className='phrase' 
                                                             dangerouslySetInnerHTML={{__html: marked(block.value)}}/>;
                                             case BlockContentTypes.PHOTO:
                                                 console.log('PHOTO BLOCK');
                                                 return (
-                                                    <div id={block.id} className={"photos photos_" + block.photos.length}>
+                                                    <div key={block.id} id={block.id} className={"photos photos_" + block.photos.length}>
                                                         {block.photos.map((photo: any, index: number) => {
                                                             let photoData = this.state.article.imageMap[photo.id];
                                                             let className = 'photo photo_' + index;
@@ -676,11 +677,11 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
                                                     </div>
                                                 );
                                             case BlockContentTypes.LIST:
-                                                return <div dangerouslySetInnerHTML={{__html: marked(block.value)}}/>;
+                                                return <div key={block.id} dangerouslySetInnerHTML={{__html: marked(block.value)}}/>;
                                             case BlockContentTypes.QUOTE:
                                                 let className = block.image && block.image.image ? 'personal': ''
                                                 return (
-                                                    <blockquote className={className}>
+                                                    <blockquote key={block.id} className={className}>
                                                         {block.image && block.image.image ? 
                                                             <img src={block.image.image}/> : null
                                                         }
@@ -689,7 +690,7 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
                                                 );
                                             case BlockContentTypes.COLUMNS:
                                                 return (
-                                                    <div className="columns">
+                                                    <div key={block.id} className="columns">
                                                         <div className="column">
                                                             {block.image ? 
                                                                 <img src={block.image.image}/> : 
@@ -705,19 +706,19 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
                                             case BlockContentTypes.VIDEO:
                                                 return (
                                                     block.__meta && block.__meta.embed ?
-                                                        <div className="embed video" dangerouslySetInnerHTML={{__html: block.__meta.embed}}/> : null
+                                                        <div key={block.id} className="embed video" dangerouslySetInnerHTML={{__html: block.__meta.embed}}/> : null
                                                 );
                                             
                                             case BlockContentTypes.AUDIO:
                                                 return (
                                                     block.__meta && block.__meta.embed ?
-                                                        <div className="embed audio" dangerouslySetInnerHTML={{__html: block.__meta.embed}}/> : null
+                                                        <div key={block.id} className="embed audio" dangerouslySetInnerHTML={{__html: block.__meta.embed}}/> : null
                                                 );
                                             
                                             case BlockContentTypes.POST:
                                                 return (
                                                     block.__meta && block.__meta.embed ?
-                                                        <div className="embed post" dangerouslySetInnerHTML={{__html: block.__meta.embed}}/> : null
+                                                        <div key={block.id} className="embed post" dangerouslySetInnerHTML={{__html: block.__meta.embed}}/> : null
                                                 );
                                              case BlockContentTypes.DIALOG:
                                                 let participants: any = {};
@@ -725,7 +726,7 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
                                                     participants[participant.id] = participant;
                                                 });
                                                 return (
-                                                    <div className="dialogue">
+                                                    <div key={block.id} className="dialogue">
                                                         {block.remarks.map((remark: any): any => {
                                                             if (!remark.value.length) return null;
                                                             let participant = participants[remark.participant_id];
