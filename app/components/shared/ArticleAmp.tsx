@@ -11,20 +11,56 @@ class AmpPhoto extends React.Component<any, any> {
         }
         let caption: string = item.photos.length > 1 ? 'Галерея' : (item.photos[0].caption || '');
         let photoArr: string[] = [];
-        // let length = item.photos.length;
         item.photos.forEach((photo: any, index: number) => {
             let src = ((item.photos.length <= 2 || index == 0) ? photo.regular || photo.image : photo.preview || photo.small) || '';
             if (src) {
                 photoArr.push(`<amp-img src="${src}" width="${600}" height="${200}" layout="responsive"></amp-img>`) ;
             }
         });
-        console.log(item);
         let galleryHref = caption ? `${process.env.SITE_URL}/articles/${slug}/gallery/${item.id}` : '';
         return (<div>
             <div dangerouslySetInnerHTML={{__html: photoArr[0]}}></div>
             {caption ? (item.photos.length > 1 ? <a className="caption" href={galleryHref} >{caption}</a> : 
             <div className="caption">{caption}</div>) : null}
         </div>)
+    }
+}
+
+class AmpQuote extends React.Component<any, any> {
+    
+    render() {
+        let {item} = this.props;
+        let className = item.image && item.image.image ? 'personal': '';
+        let ampImg = item.image && item.image.image ? `<amp-img width="60" height="60" src=${item.image.image} layout="fixed"/>` : null
+        return (
+             <blockquote className={className}>
+                {item.image && item.image.image ? 
+                    <div className="image" dangerouslySetInnerHTML={{__html: ampImg}} /> : null
+                }
+                <svg version="1.1" id="Слой_1" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	                viewBox="0 0 44 44" xmlSpace="preserve">
+                    <rect className="st1" width="44" height="44"/>
+                    <g><g>
+                        <path className="st2" d="M19.3,18.2c0,3.3-0.3,6.1-1,8.4c-0.7,2.3-1.8,4.6-3.3,6.7H7.8C11.3,29,13,24.8,13,20.9H8V10.6h11.3V18.2z M36.2,18.2c0,3.2-0.3,6-1,8.4c-0.7,2.4-1.8,4.7-3.3,6.8h-7.2c3.5-4.4,5.2-8.6,5.2-12.5h-5V10.6h11.3 C36.2,10.6,36.2,18.2,36.2,18.2z"/>
+                    </g></g>
+                </svg>
+
+                <div dangerouslySetInnerHTML={{__html: marked(item.value)}}/>
+            </blockquote>);
+    }
+}
+
+class ArticleEmbed extends React.Component<any, any> {
+    render() {
+        let {item} = this.props;
+        if (!item) {
+            return null
+        }
+        // console.log(item);
+        return (
+            <div>
+                EMBED
+            </div>)
     }
 }
 
@@ -63,6 +99,12 @@ export default class ArticleAmp extends React.Component<any, any> {
 
                             case BlockContentTypes.PHOTO:
                                 return <AmpPhoto key={index} item={block} slug={article.slug}/>
+                            case BlockContentTypes.QUOTE:
+                                return (<AmpQuote key={index} item={block} />);
+                            case BlockContentTypes.LIST:
+                                return <div key={index} dangerouslySetInnerHTML={{__html: marked(block.value)}}/>;
+                            case BlockContentTypes.POST:
+                                return <ArticleEmbed item={block} key={index}></ArticleEmbed>;
                             /*case BlockContentTypes.VIDEO:
                                 return (
                                     block.__meta && block.__meta.embed ?
@@ -75,8 +117,7 @@ export default class ArticleAmp extends React.Component<any, any> {
                                         <div className="embed audio" dangerouslySetInnerHTML={{__html: block.__meta.embed}}/> : null
                                 );*/
                             
-                            case BlockContentTypes.POST:
-                                return <p key={index}>EMBED</p>;
+                            
                                 /*return (
                                     block.__meta && block.__meta.embed ?
                                         <div className="embed post" key={index} dangerouslySetInnerHTML={{__html: block.__meta.embed}}/> : null
