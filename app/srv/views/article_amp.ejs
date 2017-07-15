@@ -22,7 +22,7 @@
       letter-spacing: 1px;
     }
     #content {
-      padding: 0 10px;
+      padding: 10px 10px 0 10px;
       max-width: 600px;
       margin: auto;
     }
@@ -43,8 +43,7 @@
  <div id="header"><%- siteName %></div>
  <div id="content">
   <%if (article.cover) {%>
-    <amp-img src="<%- article.cover %>" alt="Welcome" height="250" width="500" layout="responsive">
-    </amp-img>
+    <amp-img src="<%- article.cover %>" alt="Welcome" height="200" layout="fixed-height"></amp-img>
   <% } %>
   <h1><%- article.title %></h1>
   <div id="article_meta"><span><%- article.owner.first_name %> <%- article.owner.last_name %></span><span><%- date %></span></div>
