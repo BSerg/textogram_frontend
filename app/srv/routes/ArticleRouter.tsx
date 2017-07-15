@@ -5,6 +5,7 @@ import * as ReactDOMServer from 'react-dom/server';
 import db from '../db';
 import Base from '../../components/Base';
 import Article from '../../components/Article';
+import ArticleAmp from '../../components/shared/ArticleAmp';
 import {Error404} from '../../components/Error';
 import {Helmet} from 'react-helmet';
 import * as moment from 'moment';
@@ -22,10 +23,17 @@ class ArticleRouter {
         db.getArticle(req).then((data: any) => {
             try {
                 let article = JSON.parse(data);
+                let RenderedArticle: React.StatelessComponent<any> = (props: any) => {
+                    return (<ArticleAmp article={article} {...props}/>);
+                };
+                let html = ReactDOMServer.renderToString(<RenderedArticle />);
+                // console.log(html);
                 res.render('article_amp.ejs', {
                     article: article, 
                     date: moment(article.published_at).format('DD.MM.YYYY'),
                     siteName: process.env.SITE_NAME,
+                    baseUrl: process.env.SITE_URL,
+                    html: html,
                 });
             }
             catch (error) {

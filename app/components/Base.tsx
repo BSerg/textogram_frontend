@@ -90,7 +90,6 @@ export default class Base extends React.Component<any, any> {
             if (appServer) {
                 appServer.parentNode.removeChild(appServer);
             }
-
         }
     }
 
