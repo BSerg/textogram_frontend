@@ -15,6 +15,8 @@ import {Constants} from '../constants';
 import '../styles/base.scss';
 import {MediaQuerySerice} from "../services/MediaQueryService";
 
+import {Helmet} from 'react-helmet';
+
 export default class Base extends React.Component<any, any> {
     private intervalId: number;
 
@@ -95,6 +97,14 @@ export default class Base extends React.Component<any, any> {
     render() {
         return (
             <div className="container">
+                <Helmet>
+                    <title>{process.env.SITE_NAME}</title>
+                    <meta charSet="UTF-8" />
+                    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+                    <meta property="title" content={process.env.SITE_NAME} />
+                    <meta property="og:title" content={process.env.SITE_NAME} />
+                    <meta property="og:url" content={process.env.SITE_URL} />
+                </Helmet>
                 <Menu />
                 <div className={"content" + (this.state.menuOpen ? " content_menu_open" : "")}>
                     {this.props.children}
