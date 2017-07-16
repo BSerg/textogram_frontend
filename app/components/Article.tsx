@@ -572,7 +572,6 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
     }
 
     loadPaymentForm(el: HTMLFormElement) {
-        console.log('GET FORM', el)
         api.post('payments/form/', {
             article_id: this.state.article.id,
             success_url: window.location.href,
