@@ -6,6 +6,7 @@ import Base from '../../components/Base';
 import Index from '../../components/Index';
 import Profile from '../../components/profile/Profile';
 import db from '../db';
+import {Helmet} from 'react-helmet';
 
 import {getUserFromRequest} from '../utils';
 
@@ -32,7 +33,8 @@ class BaseRouter {
                 </Base>
             </StaticRouter>
         );
-        res.render('index.ejs', {reactData: html});
+        let helmet = Helmet.renderStatic();
+        res.render('index.ejs', {reactData: html, helmet: helmet});
     }
 
     getProfile(req: Request, res: Response, next: NextFunction) {
@@ -45,13 +47,14 @@ class BaseRouter {
                 let html = ReactDOMServer.renderToString(
                     <StaticRouter context={{}}><Base><RenderedProfile /></Base></StaticRouter>
                 );
-                res.render('index.ejs', {reactData: html});
+                let helmet = Helmet.renderStatic();
+                res.render('index.ejs', {reactData: html, helmet: helmet});
             }
             catch(error) {
-                res.render('index.ejs', {reactData: ''});
+                next();
             }
         }).catch(() => {
-            res.render('index.ejs', {reactData: ''});
+            next();
         });
     }
 
@@ -62,7 +65,13 @@ class BaseRouter {
     }
 
     getDefault(req: Request, res: Response, next: NextFunction) {
-        res.render('index.ejs', {reactData: ''});
+        let html = ReactDOMServer.renderToString(
+            <StaticRouter context={{}}>
+                <Base></Base>
+            </StaticRouter>
+        );
+        let helmet = Helmet.renderStatic();
+        res.render('index.ejs', {reactData: html, helmet: helmet});
     }
 
     init() {

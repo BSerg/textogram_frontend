@@ -42,6 +42,4 @@ class AppClass {
     }
 }
 
-// let app = new App().express;
-
 export default new AppClass().express;

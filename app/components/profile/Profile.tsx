@@ -17,6 +17,8 @@ import Loading from '../shared/Loading';
 import {api} from '../../api';
 import axios from 'axios';
 
+import {Helmet} from 'react-helmet';
+
 import {Error404} from '../Error';
 import {UserAction, GET_ME, LOGIN, LOGOUT, USER_REJECT, UPDATE_USER_DRAFTS} from "../../actions/user/UserAction";
 
@@ -121,9 +123,7 @@ export default class Profile extends React.Component<IProfileProps|any, IProfile
             }
             if (UserAction.getStore().user) {
                 this.setState({user: UserAction.getStore().user, currentSection: currentSection,
-                    isSelf: true, canSubscribe: false, selfDrafts: UserAction.getStore().user.drafts || 0}, () => {
-                        document.title = `${this.state.user.first_name} ${this.state.user.last_name}`;
-                    });
+                    isSelf: true, canSubscribe: false, selfDrafts: UserAction.getStore().user.drafts || 0});
             }
         }
         else  {
@@ -313,11 +313,14 @@ export default class Profile extends React.Component<IProfileProps|any, IProfile
             DisplayComponent = <ProfileAuthorList userId={this.state.user.id} isDesktop={this.state.isDesktop}
                                                            subscribedTo={this.state.currentSection == this.SECTION_FOLLOWERS} />;
         }
-
         return (
 
             <div id="profile">
-
+                <Helmet>
+                    <title>{`${this.state.user.first_name} ${this.state.user.last_name} | ${process.env.SITE_NAME}`}</title>
+                    <meta name="title" content={`${this.state.user.first_name} ${this.state.user.last_name} | ${process.env.SITE_NAME}`} />
+                </Helmet>
+                
                 <div className="profile_new_article" style={{display: 'none'}}><Link to="/articles/new/"><EditIcon /></Link></div>
 
                  <div id="profile_content">
