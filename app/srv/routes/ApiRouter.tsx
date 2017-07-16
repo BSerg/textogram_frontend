@@ -43,6 +43,14 @@ class ApiRouter {
         // res.end(JSON.stringify({'results': []}));
     }
 
+    getBanners(req: Request, res: Response, next: NextFunction) {
+        db.getBanners().then((data) => {
+            res.end(data);
+        }).catch(() => {
+            res.status(404).send({msg: 'not found'});
+        });
+    }
+
     getNotFound(req: Request, res: Response, next: NextFunction) {
         res.status(404).send({'msg': 'not found'});
     }
@@ -51,6 +59,7 @@ class ApiRouter {
         this.router.get('/articles/search/', this.getArticles);
         this.router.get('/articles/', this.getArticles);
         this.router.get('/articles/:articleSlug', this.getArticle);
+        this.router.get('/advertisements/banners', this.getBanners);
         this.router.get('/*', this.getNotFound);
     }
 }
