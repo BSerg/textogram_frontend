@@ -266,9 +266,13 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
                 let ads = response.data[this.state.isDesktop ? 'desktop' : 'mobile'];
 
                 // Banner containers placement
+                const bannerDens = process.env.BANNER_DENSITY || 0.5;
+                const bannerDensMob = process.env.BANNER_DENSITY_MOBILE || 0.2;
+                const bannerOffs = process.env.BANNER_OFFSET || 0.5;
+
                 let screenHeight = MediaQuerySerice.getScreenHeight();
-                let bannerInterval = screenHeight / (this.state.isDesktop ? process.env.BANNER_DENSITY : process.env.BANNER_DENSITY_MOBILE);
-                let bannerOffset = process.env.BANNER_OFFSET * screenHeight; 
+                let bannerInterval = screenHeight / (this.state.isDesktop ? bannerDens : bannerDensMob);
+                let bannerOffset = bannerOffs * screenHeight; 
                 let content = this.refs.article.getElementsByClassName('article__content')[0];
                 let contentHeight = content.getBoundingClientRect().height;
                 let rootElements = this.refs.article.querySelectorAll('.article__content > p, .article__content > div, .article__content > blockquote');
