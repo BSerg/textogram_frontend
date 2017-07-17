@@ -50,7 +50,58 @@ class AmpQuote extends React.Component<any, any> {
     }
 }
 
-class ArticleEmbed extends React.Component<any, any> {
+class AmpDialog extends React.Component<any, any> {
+    render() {
+        let {item} = this.props;
+        if (!item || !item.remarks || !item.participants) {
+            return null;
+        }
+        let participants: any = {};
+        item.participants.forEach((participant: any) => {
+            participants[participant.id] = participant;
+        });
+        return (
+            <div className="dialogue">
+                {item.remarks.map((remark: any, index: number): any => {
+                    if (!remark.value.length) return null;
+                    let participant = participants[remark.participant_id];
+                    if (!participant) return null;
+                    let className = 'remark';
+                    if (participant.is_interviewer) className += ' question';
+                    let ampImgHtml: string = participant.avatar && participant.avatar.image ? 
+                        `<amp-img src=${participant.avatar.image} width="32" height="32" layout="fixed" />` : null;
+                    return <div className={className} key={index}>
+                        {ampImgHtml ?
+                            <div dangerouslySetInnerHTML={{__html: ampImgHtml}}/> : 
+                            <span >{participant.name[0]}</span>
+                        }   
+                        {remark.value}
+                    </div>
+                })}
+
+            </div>)
+    }
+}
+
+class AmpColumns extends React.Component<any, any> {
+    
+    render() {
+        let {item} = this.props;
+
+        return (
+            <div className="columns">
+                {item.image ? 
+                    <div className="image" dangerouslySetInnerHTML={{__html: `<amp-img src=${item.image.image} width="70" height="70" layout="fixed" />`}} /> : 
+                    <div className="image">
+                        {item.value.match(/\w/) ? item.value.match(/\w/)[0] : ''}
+                    </div>
+                                                            }
+                <div className="column" dangerouslySetInnerHTML={{__html: marked(item.value)}}/>
+            </div>);
+    }
+}
+
+class AmpEmbed extends React.Component<any, any> {
     render() {
         let {item} = this.props;
         if (!item) {
@@ -70,7 +121,6 @@ export default class ArticleAmp extends React.Component<any, any> {
         if (!article || !article.content || !article.content.blocks || !article.content.blocks.length) {
             return null;
         }
-        
         return (
             <div>
                 {
@@ -98,13 +148,21 @@ export default class ArticleAmp extends React.Component<any, any> {
                                             dangerouslySetInnerHTML={{__html: marked(block.value)}}/>;
 
                             case BlockContentTypes.PHOTO:
-                                return <AmpPhoto key={index} item={block} slug={article.slug}/>
+                                return <AmpPhoto key={index} item={block} slug={article.slug}/>;
                             case BlockContentTypes.QUOTE:
                                 return (<AmpQuote key={index} item={block} />);
                             case BlockContentTypes.LIST:
                                 return <div key={index} dangerouslySetInnerHTML={{__html: marked(block.value)}}/>;
+                            case BlockContentTypes.DIALOG:
+                                return <AmpDialog item={block} key={index} />;
+                            case BlockContentTypes.COLUMNS:
+                                return <AmpColumns item={block} key={index} />;
                             case BlockContentTypes.POST:
-                                return <ArticleEmbed item={block} key={index}></ArticleEmbed>;
+                                return <AmpEmbed item={block} key={index} />;
+                            case BlockContentTypes.AUDIO:
+                                return <AmpEmbed item={block} key={index} />;
+                            case BlockContentTypes.VIDEO:
+                                return <AmpEmbed item={block} key={index} />;
                             /*case BlockContentTypes.VIDEO:
                                 return (
                                     block.__meta && block.__meta.embed ?
