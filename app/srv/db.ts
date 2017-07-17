@@ -70,6 +70,19 @@ class DataClient {
         })
     }
 
+    getBanners(): Promise<any> {
+        return new Promise((resolve, reject) => {
+            return this.client.get(`${process.env.CACHE_KEY_PREFIX}:advertisements:banners`, (err: any, data: any) => {
+                console.log(err, data)
+                if (err) {
+                    reject();
+                } else {
+                    resolve(data);
+                }
+            });
+        });
+    }
+
     private getSearchKeys(query: any): string[]|null {
         if (!query || !query.q || query.q.length < this.MIN_SEARCH_QUERY_LENGTH) {
             return null;

@@ -100,7 +100,8 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
     }
 
     refs: {
-        shortUrlInput: HTMLInputElement
+        shortUrlInput: HTMLInputElement,
+        article: HTMLDivElement,
     };
 
     // static defaultProps:any = {
@@ -132,10 +133,12 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
             article.paywall_price = article.paywall_price == Math.floor(article.paywall_price) ? Math.floor(article.paywall_price) : article.paywall_price;
         }
 
-        article.imageMap = article.imageMap || {};
-        article.images.forEach((image: IPhoto) => {
-            article.imageMap[image.id] = image;
-        });
+        if (article.images) {
+            article.imageMap = article.imageMap || {};
+            article.images.forEach((image: IPhoto) => {
+                article.imageMap[image.id] = image;
+            });
+        }
         
         return article;
     }
@@ -226,35 +229,144 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
         }
     }
 
+    createBanner(width: number, height: number, bannerID: string, content: string, isActive: boolean = false) {
+        let banner = document.createElement('div');
+        banner.className = 'banner ' + bannerID;
+        if (isActive) {
+            banner.classList.add('active');
+        }
+        banner.style.display = 'block';
+        banner.style.width = width + 'px';
+        banner.style.height = height + 'px';
+        banner.style.backgroundColor = '#CCCCCC';
+        banner.innerHTML = content;
+        return banner;
+    }
+
+    execBannerScript(bannerElement: any) {
+        try {
+            let script = bannerElement.getElementsByTagName('script')[0];
+            if (script) {
+                bannerElement.classList.add('active');
+                window.setTimeout(() => {
+                    let f = new Function(script.innerText);
+                    f();
+                });
+            } else {
+                bannerElement.classList.add('active');
+            }
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
     processAds() {
-        if (!this.state.article || !this.state.article.advertisement) return;
-        let ads = this.state.article.advertisement[this.state.isDesktop ? 'desktop' : 'mobile'];
-        let articleElement = document.getElementById("article" + this.state.article.id);
-        for (let k in ads) {
-            let banners = ads[k];
-            let bannersElements = articleElement.getElementsByClassName(k);
-            if (bannersElements.length && banners.length) {
-                banners.forEach((banner: any, index: number) => {
-                    if (index < bannersElements.length) {
-                        let bannerElement = bannersElements[index];
-                        bannerElement.innerHTML = banner.code;
-                        try {
-                            let script = bannerElement.getElementsByTagName('script')[0];
-                            if (script) {
-                                bannerElement.classList.add('active');
-                                window.setTimeout(() => {
-                                    let f = new Function(script.innerText);
-                                    f();
-                                });
+        if (this.state.article.ads_enabled) {
+            api.get(`${process.env.USE_CACHE_API ? '/_' : ''}/advertisements/banners`).then((response: any) => {
+                let ads = response.data[this.state.isDesktop ? 'desktop' : 'mobile'];
+
+                // Banner containers placement
+                const bannerDens = process.env.BANNER_DENSITY || 0.5;
+                const bannerDensMob = process.env.BANNER_DENSITY_MOBILE || 0.2;
+                const bannerOffs = process.env.BANNER_OFFSET || 0.5;
+
+                let screenHeight = MediaQuerySerice.getScreenHeight();
+                let bannerInterval = screenHeight / (this.state.isDesktop ? bannerDens : bannerDensMob);
+                let bannerOffset = bannerOffs * screenHeight; 
+                let content = this.refs.article.getElementsByClassName('article__content')[0];
+                let contentHeight = content.getBoundingClientRect().height;
+                let rootElements = this.refs.article.querySelectorAll('.article__content > p, .article__content > div, .article__content > blockquote');
+                let heightAccumTemp = 0;
+                let heightAccum = 0;
+                let bannerCount = 0;
+
+                for (let i = 0; i < rootElements.length; i++) {
+                    let element = rootElements[i];
+                    let rect = element.getBoundingClientRect();
+                    heightAccumTemp += rect.height;
+                    heightAccum += rect.height;
+
+                    if (this.state.isDesktop) {
+                        if (
+                            (heightAccumTemp >= bannerOffset && bannerCount == 0 || heightAccumTemp >= bannerInterval) && 
+                            (contentHeight - heightAccum >= bannerInterval ) &&
+                            (!element.classList.contains('photos') && !(element.nextSibling && (element.nextSibling as Element).classList.contains('photos')))
+                        ) {
+                            heightAccumTemp = 0;
+                            bannerCount++;
+                            let banner = null;
+
+                            if (element.tagName == 'P' && element.nextSibling && element.nextSibling.nodeName == 'P') {
+                                let inlineBannerData = ads[BannerID.BANNER_CONTENT_INLINE] ? ads[BannerID.BANNER_CONTENT_INLINE].shift() : null;
+                                if (inlineBannerData) banner = this.createBanner(inlineBannerData.width, inlineBannerData.height, BannerID.BANNER_CONTENT_INLINE, inlineBannerData.code);
                             } else {
-                                bannerElement.classList.add('active');
+                                let bannerData = ads[BannerID.BANNER_CONTENT] ? ads[BannerID.BANNER_CONTENT].shift() : null;
+                                if (bannerData) banner = this.createBanner(bannerData.width, bannerData.height, BannerID.BANNER_CONTENT, bannerData.code);
                             }
-                        } catch (err) {
-                            console.log(err)
+
+                            if (banner) {
+                                element.parentNode.insertBefore(banner, element.nextSibling);
+                                this.execBannerScript(banner);
+                            }
+                        }
+                    } else {
+                        if (
+                            (heightAccumTemp >= bannerOffset && bannerCount == 0 || heightAccumTemp >= bannerInterval) &&
+                            (contentHeight - heightAccum >= bannerOffset) &&
+                            (!element.classList.contains('photos') && !(element.nextSibling && (element.nextSibling as Element).classList.contains('photos')))
+                        ) {
+                            heightAccumTemp = 0;
+                            bannerCount++;
+                            let banner = null;
+
+                            let bannerData = ads[BannerID.BANNER_CONTENT] ? ads[BannerID.BANNER_CONTENT].shift() : null;
+                            if (bannerData) banner = this.createBanner(bannerData.width, bannerData.height, BannerID.BANNER_CONTENT, bannerData.code);
+                            
+                            if (banner) {
+                                element.parentNode.insertBefore(banner, element.nextSibling);
+                                this.execBannerScript(banner);
+                            }
                         }
                     }
-                });
-            }
+                }
+
+                // Bottom banner placement
+                if (ads[BannerID.BANNER_BOTTOM] && ads[BannerID.BANNER_BOTTOM].length) {
+                    if (this.state.isDesktop || bannerCount == 0) {
+                        let bottomBannerData = ads[BannerID.BANNER_BOTTOM].shift();
+                        let bottomBannerContainer = document.getElementById(BannerID.BANNER_BOTTOM);
+                        let bottomBanner = this.createBanner(bottomBannerData.width, bottomBannerData.height, BannerID.BANNER_BOTTOM, bottomBannerData.code);
+                        if (bottomBanner) {
+                            bottomBannerContainer.appendChild(bottomBanner);
+                            this.execBannerScript(bottomBanner);
+                        }
+                    }
+                }
+
+                // Side banner placement
+                if (ads[BannerID.BANNER_RIGHT_SIDE] && ads[BannerID.BANNER_RIGHT_SIDE].length) {
+                    let sideBannerData = ads[BannerID.BANNER_RIGHT_SIDE].shift();
+                    let sideBanner = this.createBanner(sideBannerData.width, sideBannerData.height, BannerID.BANNER_RIGHT_SIDE, sideBannerData.code, true);
+                    if (sideBanner) {
+                        this.refs.article.appendChild(sideBanner);
+                        this.execBannerScript(sideBanner);
+                        if (MediaQuerySerice.getScreenWidth() >= 1280) {
+                            let offset = Math.min(0, 2 * ((MediaQuerySerice.getScreenWidth() - 650 ) / 2 - 400));
+                            if (offset) {
+                                (content as HTMLElement).style.marginLeft = offset + 'px';
+                                let titleElement = this.refs.article.getElementsByClassName('article__title_container')[0] as HTMLDivElement;
+                                titleElement.style.marginLeft = offset + 'px';
+                                let footerElement = this.refs.article.getElementsByClassName('article__footer_content')[0] as HTMLElement;
+                                footerElement.style.marginLeft = offset + 'px';
+                                let bottomBanners = this.refs.article.getElementsByClassName(BannerID.BANNER_BOTTOM);
+                                if (bottomBanners.length) {
+                                    (bottomBanners[0] as HTMLElement).style.marginLeft = offset + 'px';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
         }
     }
 
@@ -464,7 +576,6 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
     }
 
     loadPaymentForm(el: HTMLFormElement) {
-        console.log('GET FORM', el)
         api.post('payments/form/', {
             article_id: this.state.article.id,
             success_url: window.location.href,
@@ -546,12 +657,6 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
             authorLink = process.env.IS_LENTACH ? '/' : `/${this.state.article.owner.nickname}`;
         }
 
-        let shiftContentStyle = {};
-        if (MediaQuerySerice.getScreenWidth() >= 1280 && this.getRightBanner()) {
-            let offset = Math.min(0, 2 * ((MediaQuerySerice.getScreenWidth() - 650 ) / 2 - 400));
-            if (offset) shiftContentStyle = {marginLeft: `${offset}px`};
-        }
-
         let currencyIcon;
         if (this.state.article) {
             switch (this.state.article.paywall_currency) {
@@ -569,16 +674,16 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
         return (
             !this.state.error ?
                 this.state.article ?
-                    <div id={"article" + this.state.article.id} className="article">
+                    <div ref="article" id={"article" + this.state.article.id} className="article">
                         {/* SIDE BANNER */}
-                        {this.state.isDesktop && this.state.article.ads_enabled
+                        {/* {this.state.isDesktop && this.state.article.ads_enabled
                             && this.getRightBanner() ?
                             <div className={"banner " + BannerID.BANNER_RIGHT_SIDE}></div> : null
-                        }
+                        } */}
 
                         {/* TITLE BLOCK */}
                         <div ref={this.coverLazyLoad.bind(this)} className={titleClassName}>
-                            <div className="article__title_container" style={shiftContentStyle}>
+                            <div className="article__title_container">
                                 <h1>{this.state.article.title}</h1>
                                 <div className="article__stats">
                                     <div className="article__author1">
@@ -628,7 +733,7 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
                                         }
                                     </div>
                                 </div> :
-                                <div className="article__content" style={shiftContentStyle}>
+                                <div className="article__content">
                                     
                                     {this.state.article.content.blocks.map((block: any, index: number) => {
                                         switch (block.type) {
@@ -636,31 +741,31 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
                                                 let regx = /<p>(.+)<\/p>/g;
                                                 let t: any[] = [];
                                                 let match;
+                                                let count = 0;
                                                 while (true) {
                                                     match = regx.exec(marked(block.value))
                                                     if (match == null) break;
-                                                    t.push(<p dangerouslySetInnerHTML={{__html: match[1]}}/>);
+                                                    t.push(<p key={'paragraph_' + count++} dangerouslySetInnerHTML={{__html: match[1]}}/>);
                                                 }
                                                 return t;
                                             case BlockContentTypes.HEADER:
-                                                return marked(`## ${block.value}`);
+                                                return <h2 key={block.id}>{block.value}</h2>;
                                             case BlockContentTypes.LEAD:
-                                                return <div className='lead' 
+                                                return <div key={block.id} className='lead' 
                                                             dangerouslySetInnerHTML={{__html: marked(block.value)}}/>;
                                             case BlockContentTypes.PHRASE:
-                                                return <div className='phrase' 
+                                                return <div key={block.id} className='phrase' 
                                                             dangerouslySetInnerHTML={{__html: marked(block.value)}}/>;
                                             case BlockContentTypes.PHOTO:
-                                                console.log('PHOTO BLOCK');
                                                 return (
-                                                    <div id={block.id} className={"photos photos_" + block.photos.length}>
+                                                    <div key={block.id} id={block.id} className={"photos photos_" + block.photos.length}>
                                                         {block.photos.map((photo: any, index: number) => {
                                                             let photoData = this.state.article.imageMap[photo.id];
                                                             let className = 'photo photo_' + index;
                                                             if (photo.is_animated) className += ' photo_animated';
                                                             return (
                                                                 <div 
-                                                                    className={"photo photo_" + index} 
+                                                                    className={"photo photo_" + index + (photo.is_animated ? ' photo_animated' : '')} 
                                                                     data-caption={photo.caption || ''}
                                                                     data-preview={index <= 2 ? photoData.medium : photoData.small} 
                                                                     data-src={photo.is_animated && block.photos.length == 1 ? photoData.original : photoData.regular}></div>
@@ -676,11 +781,11 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
                                                     </div>
                                                 );
                                             case BlockContentTypes.LIST:
-                                                return <div dangerouslySetInnerHTML={{__html: marked(block.value)}}/>;
+                                                return <div key={block.id} dangerouslySetInnerHTML={{__html: marked(block.value)}}/>;
                                             case BlockContentTypes.QUOTE:
                                                 let className = block.image && block.image.image ? 'personal': ''
                                                 return (
-                                                    <blockquote className={className}>
+                                                    <blockquote key={block.id} className={className}>
                                                         {block.image && block.image.image ? 
                                                             <img src={block.image.image}/> : null
                                                         }
@@ -689,7 +794,7 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
                                                 );
                                             case BlockContentTypes.COLUMNS:
                                                 return (
-                                                    <div className="columns">
+                                                    <div key={block.id} className="columns">
                                                         <div className="column">
                                                             {block.image ? 
                                                                 <img src={block.image.image}/> : 
@@ -705,19 +810,19 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
                                             case BlockContentTypes.VIDEO:
                                                 return (
                                                     block.__meta && block.__meta.embed ?
-                                                        <div className="embed video" dangerouslySetInnerHTML={{__html: block.__meta.embed}}/> : null
+                                                        <div key={block.id} className="embed video" dangerouslySetInnerHTML={{__html: block.__meta.embed}}/> : null
                                                 );
                                             
                                             case BlockContentTypes.AUDIO:
                                                 return (
                                                     block.__meta && block.__meta.embed ?
-                                                        <div className="embed audio" dangerouslySetInnerHTML={{__html: block.__meta.embed}}/> : null
+                                                        <div key={block.id} className="embed audio" dangerouslySetInnerHTML={{__html: block.__meta.embed}}/> : null
                                                 );
                                             
                                             case BlockContentTypes.POST:
                                                 return (
                                                     block.__meta && block.__meta.embed ?
-                                                        <div className="embed post" dangerouslySetInnerHTML={{__html: block.__meta.embed}}/> : null
+                                                        <div key={block.id} className="embed post" dangerouslySetInnerHTML={{__html: block.__meta.embed}}/> : null
                                                 );
                                              case BlockContentTypes.DIALOG:
                                                 let participants: any = {};
@@ -725,7 +830,7 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
                                                     participants[participant.id] = participant;
                                                 });
                                                 return (
-                                                    <div className="dialogue">
+                                                    <div key={block.id} className="dialogue">
                                                         {block.remarks.map((remark: any): any => {
                                                             if (!remark.value.length) return null;
                                                             let participant = participants[remark.participant_id];
@@ -755,7 +860,7 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
                         </div>
 
                         {/* FOOTER */}
-                        <div className="article__footer">
+                        <div id="article__footer" className="article__footer">
                             <div className="article__footer_content">
                                 <Link to={authorLink} className="article__author">
                                     {this.state.article.owner.avatar ?
@@ -766,10 +871,10 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
                             </div>
                         </div>
 
-                        {this.state.article.ads_enabled && this.getBanner(BannerID.BANNER_BOTTOM) ?
-                            <div className="banner_container">
-                                <div className={"banner " + BannerID.BANNER_BOTTOM} style={shiftContentStyle}></div>
-                            </div> : null
+
+                        {/* FOOTER BANNER */}
+                        {this.state.article.ads_enabled ?
+                            <div id={BannerID.BANNER_BOTTOM} className="banner_container"></div> : null
                         }
 
                         {!this.state.isDesktop ?
