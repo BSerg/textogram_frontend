@@ -104,14 +104,34 @@ class AmpColumns extends React.Component<any, any> {
 class AmpEmbed extends React.Component<any, any> {
     render() {
         let {item} = this.props;
-        if (!item) {
-            return null
+        if (!item || !item.__meta || !item.__meta.type) {
+            return null;
         }
-        // console.log(item);
-        return (
-            <div>
-                EMBED
-            </div>)
+        let __html: string = '';
+        switch(item.__meta.type) {
+            case 'soundcloud':
+                __html = `<amp-soundcloud height="337" layout="fixed-height" data-trackid="${item.__meta.id}" data-visual="true"></amp-soundcloud>`;
+                break;
+            case 'twitter':
+                __html = `<amp-twitter height=500 layout="fixed-height" data-tweetid="${item.__meta.id}"></amp-twitter>`;
+                break;
+            case 'instagram':
+                __html = `<amp-instagram data-shortcode="${item.__meta.id}" data-captioned width="500" height="700" layout="responsive"></amp-instagram>`;
+                break;
+            case 'facebook':
+                __html = `<amp-facebook height="500" layout="fixed-height" data-href="${item.__meta.url}"></amp-facebook>`;
+                break;
+            case 'youtube':
+                __html = `<amp-youtube data-videoid="${item.__meta.id}" layout="fixed-height" height="330"></amp-youtube>`;
+                break;
+            case 'vimeo':
+                __html = `<amp-vimeo data-videoid="${item.__meta.id}" layout="fixed-height" height="350"></amp-vimeo>`;
+                break;
+            
+            default:
+                __html = '';
+        }
+        return(<div className="embed" dangerouslySetInnerHTML={{__html}} />);
     }
 }
 
@@ -146,7 +166,6 @@ export default class ArticleAmp extends React.Component<any, any> {
                             case BlockContentTypes.PHRASE:
                                 return <div className='phrase' key={index}
                                             dangerouslySetInnerHTML={{__html: marked(block.value)}}/>;
-
                             case BlockContentTypes.PHOTO:
                                 return <AmpPhoto key={index} item={block} slug={article.slug}/>;
                             case BlockContentTypes.QUOTE:
@@ -163,29 +182,11 @@ export default class ArticleAmp extends React.Component<any, any> {
                                 return <AmpEmbed item={block} key={index} />;
                             case BlockContentTypes.VIDEO:
                                 return <AmpEmbed item={block} key={index} />;
-                            /*case BlockContentTypes.VIDEO:
-                                return (
-                                    block.__meta && block.__meta.embed ?
-                                        <div className="embed video" dangerouslySetInnerHTML={{__html: block.__meta.embed}}/> : null
-                                );
-                            
-                            case BlockContentTypes.AUDIO:
-                                return (
-                                    block.__meta && block.__meta.embed ?
-                                        <div className="embed audio" dangerouslySetInnerHTML={{__html: block.__meta.embed}}/> : null
-                                );*/
-                            
-                            
-                                /*return (
-                                    block.__meta && block.__meta.embed ?
-                                        <div className="embed post" key={index} dangerouslySetInnerHTML={{__html: block.__meta.embed}}/> : null
-                                );*/
                         }
 
                         return (<p key={index}>block</p>)
                     })
                 }
-
             </div>)
     }
 }

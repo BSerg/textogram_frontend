@@ -398,3 +398,8 @@ export const BannerID = {
     BANNER_RIGHT_SIDE: 'banner__right_side',
     BANNER_CONTENT_INLINE: 'banner__content_inline'
 };
+
+export namespace Amp {
+    export const blockTypes: number[] = [BlockContentTypes.POST, BlockContentTypes.AUDIO, BlockContentTypes.VIDEO];
+    export const embedTypes: string[] = ['soundcloud', 'instagram', 'twitter', 'facebook', 'youtube', 'vimeo'];
+}

@@ -9,25 +9,24 @@ import ArticleAmp from '../../components/shared/ArticleAmp';
 import {Error404} from '../../components/Error';
 import {Helmet} from 'react-helmet';
 import * as moment from 'moment';
-import {BlockContentTypes} from "../../constants";
+import {Amp} from "../../constants";
 
-function articleAmpPossible(article: any): boolean {
+function getArticleEmbeds(article: any): any {
     try {
-        let embedTypes: number[] = [BlockContentTypes.POST, BlockContentTypes.AUDIO, BlockContentTypes.VIDEO];
-        let isPossible: boolean = true;
+        let embeds: any = {};
         article.content.blocks.forEach((block: any) => {
-            if (embedTypes.indexOf(block.type) == -1) {
+            if (Amp.blockTypes.indexOf(block.type) == -1) {
                 return;
             }
-            console.log(block.__meta);
-            
+            if ( !block.__meta || !block.__meta.type || Amp.embedTypes.indexOf(block.__meta.type) == -1) {
+                throw new Error("embed error");
+            }
+            embeds[block.__meta.type] = true;
         });
-
-        return isPossible;
-        
+        return embeds;
     }
     catch (err) {
-        return false;
+        throw new Error("embed error");
     }
 }
 
@@ -45,27 +44,23 @@ class ArticleRouter {
             try {
 
                 let article = JSON.parse(data);
-                if (articleAmpPossible(article)) {
-                    let RenderedArticle: React.StatelessComponent<any> = (props: any) => {
-                        return (<ArticleAmp article={article} {...props}/>);
-                    };
-                    let html = ReactDOMServer.renderToString(<RenderedArticle />);
-                    // console.log(html);
-                    
-                    res.render('article_amp.ejs', {
-                        article: article, 
-                        date: moment(article.published_at).format('DD.MM.YYYY'),
-                        siteName: process.env.SITE_NAME,
-                        baseUrl: process.env.SITE_URL,
-                        html: html,
-                    });
-                }
-                else {
-                    res.redirect(`/articles/${article.slug}`)
-                }
+                let embeds = getArticleEmbeds(article);
+                let RenderedArticle: React.StatelessComponent<any> = (props: any) => {
+                    return (<ArticleAmp article={article} {...props}/>);
+                };
+                let html = ReactDOMServer.renderToString(<RenderedArticle />);
+
+                res.render('article_amp.ejs', {
+                    article: article, 
+                    date: moment(article.published_at).format('DD.MM.YYYY'),
+                    siteName: process.env.SITE_NAME,
+                    baseUrl: process.env.SITE_URL,
+                    html: html,
+                    embeds: embeds
+                });
             }
             catch (error) {
-                res.status(404).render('404.ejs');
+                res.redirect(`/articles/${req.params.articleSlug}`);
             }
         }).catch((error: any) => {
             res.status(404).render('404.ejs');
