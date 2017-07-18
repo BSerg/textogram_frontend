@@ -2,12 +2,94 @@ import * as React from 'react';
 import {BannerID, BlockContentTypes} from "../../constants";
 import * as marked from 'marked';
 
+class AmpGallery extends React.Component<any, any> {
+
+    isValid(): boolean {
+        let {item, slug} = this.props;
+        if (!item || !item.photos || !item.photos.length) {
+            return false;
+        }
+        return true;
+    }
+
+    getLighBox(photo: any, index: number): string {
+        return `<amp-lightbox id="lightbox-${this.props.item.id}-${index}" layout="nodisplay">
+                <div>
+                <div>${index + 1}/${this.props.item.photos.length}</div>
+            
+                <amp-img on="tap:lightbox-${this.props.item.id}-${index}.close,lightbox-${this.props.item.id}-${index+1}" role="button" tabindex="${index}" layout="fill" src="${photo.regular || photo.image}"></amp-img>
+                </div>
+        </amp-lightbox>`
+    }
+    
+    getSizes(photo: any): {width: number, height: number} {
+        let width = photo.original_width;
+        let height = photo.original_height;
+        let {images} = this.props;
+        if (!width || !height) {
+            try {
+                let image: any = images.find((el: any, index: number, arr: any[]) => {
+                    if (el.id == photo.id) {
+                        return photo;
+                    }
+                });
+                width = width || image.original_width;
+                height = height || image.original_height;
+            }
+            catch (err) {}
+        }
+        return {width: width || 100, height: height || 100};
+    }
+
+    getCarousel(id: string): string {
+        let images: string[] = [];
+        let lightboxes: string[] = [];
+        let startingSizes: any;
+        this.props.item.photos.forEach((photo: any, index: number) => {
+            let src = photo.regular || photo.image;
+            let nextIndex = (index + 1) >= this.props.item.photos.length ? 0 : index + 1;
+            let previousIndex = (index - 1) < 0 ? this.props.item.photos.length -1 : index - 1;
+            let sizes = this.getSizes(photo);
+            if (index == 0) {
+                startingSizes = Object.assign({}, sizes);
+            }
+            images.push(`<amp-img tabindex="0" role="button" height="${sizes.height}" width="${sizes.width}" layout="responsive" src="${src}"></amp-img>`)
+            lightboxes.push(`
+                <amp-image-lightbox id="lightbox-${this.props.item.id}-${index}" layout="nodisplay"></amp-image-lightbox>
+            `)
+        });
+
+        return `
+           <amp-carousel layout="responsive" 
+                height="${startingSizes.height}" width="${startingSizes.width}" type="slides" controls="0">
+                ${images.join('')}
+            </amp-carousel>
+            ${lightboxes.join('')}
+        `;
+    }
+
+    render() {
+        if (!this.isValid()) {
+            return null;
+        }
+        let {item} = this.props;
+        let carousel: string = this.getCarousel(item.id);
+        return (
+            <div className="gallery">
+                <div className="carousel" dangerouslySetInnerHTML={{__html: carousel}} />                
+                <div className="caption">
+                    {item.photos.length == 1 ? item.photos[0].caption || '' : `Галерея из ${item.photos.length} фото` }
+                </div>
+            </div>)
+    }
+}
+
 class AmpPhoto extends React.Component<any, any> {
  
     render() {
         let {item, slug} = this.props;
         if (!item || !item.photos || !item.photos.length) {
-            return;
+            return null;
         }
         let caption: string = item.photos.length > 1 ? 'Галерея' : (item.photos[0].caption || '');
         let photoArr: string[] = [];
@@ -136,15 +218,27 @@ class AmpEmbed extends React.Component<any, any> {
 }
 
 export default class ArticleAmp extends React.Component<any, any> {
+
+    processBlocks(): any[] {
+        if (!this.props.bannerData) {
+            return this.props.article.content.blocks;
+        };
+        let blocks: any[] = this.props.article.content.blocks;
+        
+
+        return blocks;
+    }
+
     render() {
         let {article} = this.props;
         if (!article || !article.content || !article.content.blocks || !article.content.blocks.length) {
             return null;
         }
+        let blocks: any = this.processBlocks();
         return (
             <div>
                 {
-                    article.content.blocks.map((block: any, index: number) => {
+                    blocks.map((block: any, index: number) => {
                         switch (block.type) {
                             case BlockContentTypes.TEXT:
                                 let regx = /<p>(.+)<\/p>/g;
@@ -167,7 +261,7 @@ export default class ArticleAmp extends React.Component<any, any> {
                                 return <div className='phrase' key={index}
                                             dangerouslySetInnerHTML={{__html: marked(block.value)}}/>;
                             case BlockContentTypes.PHOTO:
-                                return <AmpPhoto key={index} item={block} slug={article.slug}/>;
+                                return <AmpGallery key={index} item={block} images={article.images} slug={article.slug}/>;
                             case BlockContentTypes.QUOTE:
                                 return (<AmpQuote key={index} item={block} />);
                             case BlockContentTypes.LIST:

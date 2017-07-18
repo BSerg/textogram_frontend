@@ -20,6 +20,7 @@ import {BannerID, Captions, BlockContentTypes} from "../constants";
 import LeftSideButton from "./shared/LeftSideButton";
 import AwesomeGallery from "./shared/AwesomeGallery";
 import * as marked from 'marked';
+import {Helmet} from 'react-helmet';
 
 marked.setOptions({
     sanitize: true,
@@ -495,7 +496,6 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
             window.setTimeout(() => {
                 this.processes();
             }, 100);
-            document.title = this.state.article.title;
         });
     }
 
@@ -670,11 +670,45 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
                     currencyIcon = '₽';
             }
         }
+        let lead: string;
 
+        try {
+            lead = this.state.article.content.blocks[0].type == BlockContentTypes.LEAD ? 
+               marked(this.state.article.content.blocks[0].value) : null;
+            lead = lead.replace(/(<[^>]*>)/ig, '');
+        }
+        catch (err) {
+            lead = null;
+        }
         return (
             !this.state.error ?
                 this.state.article ?
                     <div ref="article" id={"article" + this.state.article.id} className="article">
+                        <Helmet>
+                            <title>{`${this.state.article.title} | ${process.env.SITE_NAME}`}</title>
+                            <link rel="amphtml" href={`${process.env.SITE_URL}/articles/${this.state.article.slug}/amp`} />
+                            <meta property="title" content={`${this.state.article.title} | ${process.env.SITE_NAME}`} />
+                            { lead ? <meta name="description" content={lead} /> : null}
+                            <meta name="twitter:card" content="summary_large_image" />
+                            <meta name="twitter:title" content={this.state.article.title} />
+                            { lead ? <meta name="twitter:description" content={lead} /> : null}
+                            {
+                                this.state.article.cover ? 
+                                    <meta name="twitter:image" content={this.state.article.cover}/> : null
+                            }
+                            <meta property="og:type" content="article" />
+                            <meta property="og:title" content={this.state.article.title} />
+                            {
+                                this.state.article.cover ? 
+                                    <meta name="twitter:image" content={this.state.article.cover}/> : null
+                            }
+                            <meta property="og:url" content={`${process.env.SITE_URL || ''}/articles/${this.state.article.slug}`} />
+                            {
+                                this.state.article.cover ? 
+                                    [<meta key="ogImage" property="og:image" content={this.state.article.cover} />, <meta key="ogImageUrl" property="og:image:url" content={this.state.article.cover} /> ] : null
+                            }
+                            { lead ? <meta name="og:description" content={lead} /> : null }
+                        </Helmet>
                         {/* SIDE BANNER */}
                         {/* {this.state.isDesktop && this.state.article.ads_enabled
                             && this.getRightBanner() ?

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <title><%- article.title  %> | <%- siteName %></title>
-  <link rel="canonical" href="/articles/<%- article.slug %>"> 
+  <link rel="canonical" href="<%- baseUrl %>/articles/<%- article.slug %>"> 
   <meta name="viewport" content="width=device-width,minimum-scale=1,initial-scale=1">
   <link href="https://fonts.googleapis.com/css?family=Arimo:400,700|Noto+Serif:400,700|Open+Sans:400,700&subset=cyrillic" rel="stylesheet">
   <style amp-custom>
@@ -51,9 +51,7 @@
       margin: 0 10px;
       font-size: 9px;
     }
-    amp-img {
-      max-height: 200px;
-    }
+    
     amp-img img {
       object-fit: cover;
     }
@@ -72,6 +70,27 @@
       font-family: "Arimo";
       line-height: 150%;
     }
+    .gallery {
+      padding: 18px 0;
+    }
+    
+    .gallery .preview {
+      cursor: pointer;
+    }
+
+    .gallery amp-carousel {
+      
+    }
+    
+    .gallery amp-carousel amp-img {
+
+
+    }
+    
+    .gallery amp-image-lightbox {
+      background: rgba(0, 0, 0, 0.8);
+    }
+    
     .caption {
       display: block;
       text-align: center;
@@ -230,6 +249,11 @@
   <% } %>
   <%if (embeds.vimeo) {%>
     <script async custom-element="amp-vimeo" src="https://cdn.ampproject.org/v0/amp-vimeo-0.1.js"></script>
+  <% } %>
+
+  <%if (embeds.gallery) {%>
+    <script async custom-element="amp-carousel" src="https://cdn.ampproject.org/v0/amp-carousel-0.1.js"></script>
+    <script async custom-element="amp-image-lightbox" src="https://cdn.ampproject.org/v0/amp-image-lightbox-0.1.js"></script>
   <% } %>
  </head>
  <body>

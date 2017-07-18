@@ -73,7 +73,7 @@ class DataClient {
     getBanners(): Promise<any> {
         return new Promise((resolve, reject) => {
             return this.client.get(`${process.env.CACHE_KEY_PREFIX}:advertisements:banners`, (err: any, data: any) => {
-                console.log(err, data)
+                // console.log(err, data)
                 if (err) {
                     reject();
                 } else {

@@ -9,7 +9,8 @@ import App from './srv/App';
 
 const port = normalizePort(process.env.PORT || 3000);
 App.set('port', port);
-
+App.set('YANDEX_METRIKA_ID', process.env.YANDEX_METRIKA_ID || '');
+App.set('GOOGLE_ANALYTICS_ID', process.env.GOOGLE_ANALYTICS_ID || '');
 const server = http.createServer(App);
 server.listen(port);
 server.on('error', onError);

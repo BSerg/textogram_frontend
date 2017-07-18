@@ -9,17 +9,21 @@ import ArticleAmp from '../../components/shared/ArticleAmp';
 import {Error404} from '../../components/Error';
 import {Helmet} from 'react-helmet';
 import * as moment from 'moment';
-import {Amp} from "../../constants";
+import {Amp, BlockContentTypes} from "../../constants";
 
 function getArticleEmbeds(article: any): any {
     try {
         let embeds: any = {};
         article.content.blocks.forEach((block: any) => {
+            if (block.type == BlockContentTypes.PHOTO) {
+                embeds['gallery'] = true;
+                return;
+            }
             if (Amp.blockTypes.indexOf(block.type) == -1) {
                 return;
             }
             if ( !block.__meta || !block.__meta.type || Amp.embedTypes.indexOf(block.__meta.type) == -1) {
-                throw new Error("embed error");
+                throw new Error("");
             }
             embeds[block.__meta.type] = true;
         });
@@ -45,19 +49,24 @@ class ArticleRouter {
 
                 let article = JSON.parse(data);
                 let embeds = getArticleEmbeds(article);
-                let RenderedArticle: React.StatelessComponent<any> = (props: any) => {
-                    return (<ArticleAmp article={article} {...props}/>);
-                };
-                let html = ReactDOMServer.renderToString(<RenderedArticle />);
 
-                res.render('article_amp.ejs', {
-                    article: article, 
-                    date: moment(article.published_at).format('DD.MM.YYYY'),
-                    siteName: process.env.SITE_NAME,
-                    baseUrl: process.env.SITE_URL,
-                    html: html,
-                    embeds: embeds
-                });
+                db.getBanners().then((bannerData) => {
+                    let RenderedArticle: React.StatelessComponent<any> = (props: any) => {
+                        return (<ArticleAmp article={article} bannerData={bannerData} {...props}/>);
+                    };
+                    let html = ReactDOMServer.renderToString(<RenderedArticle />);
+                    let articleData: any = {
+                        article: article, 
+                        date: moment(article.published_at).format('DD.MM.YYYY'),
+                        siteName: process.env.SITE_NAME,
+                        baseUrl: process.env.SITE_URL,
+                        html: html,
+                        embeds: embeds,
+                    };
+                    res.render('article_amp.ejs', articleData);
+                }).catch(() => {
+                    res.redirect(`/articles/${req.params.articleSlug}`);
+                });                
             }
             catch (error) {
                 res.redirect(`/articles/${req.params.articleSlug}`);
