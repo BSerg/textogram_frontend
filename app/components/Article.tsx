@@ -701,7 +701,7 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
 
                         {/* CONTENT */}
                         <div className="article__content_wrapper">
-                            {this.state.article.paywall_enabled && !this.state.article.html ?
+                            {this.state.article.paywall_enabled && !this.state.article.content ?
                                 <div className="article__content article__restricted_access">
                                     <div className="restricted_access__header">
                                         <LockButton/> Доступ к статье ограничен автором
@@ -735,7 +735,7 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
                                 </div> :
                                 <div className="article__content">
                                     
-                                    {this.state.article.content.blocks.map((block: any, index: number) => {
+                                    {this.state.article.content.blocks.map((block: any, i: number) => {
                                         switch (block.type) {
                                             case BlockContentTypes.TEXT:
                                                 let regx = /<p>(.+)<\/p>/g;
@@ -749,43 +749,50 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
                                                 }
                                                 return t;
                                             case BlockContentTypes.HEADER:
-                                                return <h2 key={block.id}>{block.value}</h2>;
+                                                return <h2 key={"block" + block.id}>{block.value}</h2>;
                                             case BlockContentTypes.LEAD:
-                                                return <div key={block.id} className='lead' 
+                                                return <div key={"block" + block.id} className='lead' 
                                                             dangerouslySetInnerHTML={{__html: marked(block.value)}}/>;
                                             case BlockContentTypes.PHRASE:
-                                                return <div key={block.id} className='phrase' 
+                                                return <div key={"block" + block.id} className='phrase' 
                                                             dangerouslySetInnerHTML={{__html: marked(block.value)}}/>;
                                             case BlockContentTypes.PHOTO:
                                                 return (
-                                                    <div key={block.id} id={block.id} className={"photos photos_" + block.photos.length}>
+                                                    <div
+                                                        key={"block" + block.id} id={block.id} 
+                                                        className={"photos photos_" + block.photos.length}>
                                                         {block.photos.map((photo: any, index: number) => {
                                                             let photoData = this.state.article.imageMap[photo.id];
                                                             let className = 'photo photo_' + index;
                                                             if (photo.is_animated) className += ' photo_animated';
                                                             return (
                                                                 <div 
+                                                                    key={"photo" + index}
                                                                     className={"photo photo_" + index + (photo.is_animated ? ' photo_animated' : '')} 
                                                                     data-caption={photo.caption || ''}
                                                                     data-preview={index <= 2 ? photoData.medium : photoData.small} 
                                                                     data-src={photo.is_animated && block.photos.length == 1 ? photoData.original : photoData.regular}></div>
                                                             );
                                                         })}
-                                                        <div style={{clear: 'both'}}/>
+                                                        <div key={"clear" + i} style={{clear: 'both'}}/>
                                                         {block.photos.length == 1 && block.photos[0].caption ? 
-                                                            <div className="caption">{block.photos[0].caption}</div> : null
+                                                            <div 
+                                                                key={"caption" + block.id} 
+                                                                className="caption">{block.photos[0].caption}</div> : null
                                                         }
                                                         {block.photos.length > 6 ? 
-                                                            <div className="caption">Галерея из {block.photos.length} фото</div> : null
+                                                            <div 
+                                                                key={"caption" + block.id} 
+                                                                className="caption">Галерея из {block.photos.length} фото</div> : null
                                                         }
                                                     </div>
                                                 );
                                             case BlockContentTypes.LIST:
-                                                return <div key={block.id} dangerouslySetInnerHTML={{__html: marked(block.value)}}/>;
+                                                return <div key={"block" + block.id} dangerouslySetInnerHTML={{__html: marked(block.value)}}/>;
                                             case BlockContentTypes.QUOTE:
                                                 let className = block.image && block.image.image ? 'personal': ''
                                                 return (
-                                                    <blockquote key={block.id} className={className}>
+                                                    <blockquote key={"block" + block.id} className={className}>
                                                         {block.image && block.image.image ? 
                                                             <img src={block.image.image}/> : null
                                                         }
@@ -794,7 +801,7 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
                                                 );
                                             case BlockContentTypes.COLUMNS:
                                                 return (
-                                                    <div key={block.id} className="columns">
+                                                    <div key={"block" + block.id} className="columns">
                                                         <div className="column">
                                                             {block.image ? 
                                                                 <img src={block.image.image}/> : 
@@ -810,28 +817,28 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
                                             case BlockContentTypes.VIDEO:
                                                 return (
                                                     block.__meta && block.__meta.embed ?
-                                                        <div key={block.id} className="embed video" dangerouslySetInnerHTML={{__html: block.__meta.embed}}/> : null
+                                                        <div key={"block" + block.id} className="embed video" dangerouslySetInnerHTML={{__html: block.__meta.embed}}/> : null
                                                 );
                                             
                                             case BlockContentTypes.AUDIO:
                                                 return (
                                                     block.__meta && block.__meta.embed ?
-                                                        <div key={block.id} className="embed audio" dangerouslySetInnerHTML={{__html: block.__meta.embed}}/> : null
+                                                        <div key={"block" + block.id} className="embed audio" dangerouslySetInnerHTML={{__html: block.__meta.embed}}/> : null
                                                 );
                                             
                                             case BlockContentTypes.POST:
                                                 return (
                                                     block.__meta && block.__meta.embed ?
-                                                        <div key={block.id} className="embed post" dangerouslySetInnerHTML={{__html: block.__meta.embed}}/> : null
+                                                        <div key={"block" + block.id} className="embed post" dangerouslySetInnerHTML={{__html: block.__meta.embed}}/> : null
                                                 );
-                                             case BlockContentTypes.DIALOG:
+                                            case BlockContentTypes.DIALOG:
                                                 let participants: any = {};
                                                 block.participants.forEach((participant: any) => {
                                                     participants[participant.id] = participant;
                                                 });
                                                 return (
-                                                    <div key={block.id} className="dialogue">
-                                                        {block.remarks.map((remark: any): any => {
+                                                    <div key={"block" + block.id} className="dialogue">
+                                                        {block.remarks.map((remark: any, index: number): any => {
                                                             if (!remark.value.length) return null;
                                                             let participant = participants[remark.participant_id];
                                                             if (!participant) return null;
@@ -839,7 +846,7 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
                                                             let className = 'remark';
                                                             if (participant.is_interviewer) className += ' question';
                                                             return (
-                                                                <div className={className}>
+                                                                <div key={"remark" + index} className={className}>
                                                                     {participant.avatar && participant.avatar.image ?
                                                                         <img src={participant.avatar.image}/> : 
                                                                         <span data-name={participant.name[0]}></span>
@@ -926,10 +933,6 @@ class ShareLinkButton extends React.Component<{shortUrl: string, className?: str
             copied: false
         };
     }
-
-    // static defaultProps = {
-    //     className: ''
-    // };
 
     process() {
         this.setState({process: true}, () => {
