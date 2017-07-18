@@ -255,6 +255,7 @@
     <script async custom-element="amp-carousel" src="https://cdn.ampproject.org/v0/amp-carousel-0.1.js"></script>
     <script async custom-element="amp-image-lightbox" src="https://cdn.ampproject.org/v0/amp-image-lightbox-0.1.js"></script>
   <% } %>
+  <script async custom-element="amp-analytics" src="https://cdn.ampproject.org/v0/amp-analytics-0.1.js"></script>
  </head>
  <body>
  <div id="header"><%- siteName %></div>
@@ -266,6 +267,35 @@
   <div id="article_meta"><span><a href="<%- baseUrl %>/<%- article.owner.nickname %>"><%- article.owner.first_name %> <%- article.owner.last_name %></a></span><span><%- date %></span></div>
 
   <%- html %>
+  <% if (settings.YANDEX_METRIKA_ID) {%>
+    <amp-analytics type="metrika">
+        <script type="application/json">
+            {
+                "vars": {
+                    "counterId": "<%- settings.YANDEX_METRIKA_ID %>",
+                    "yaParams": "{\"key\":\"value\"}"
+                }
+            }
+        </script>
+    </amp-analytics>
+  <%} %>
+  <% if (settings.GOOGLE_ANALYTICS_ID) {%>
+    <amp-analytics type="googleanalytics" id="analytics1">
+      <script type="application/json">
+      {
+        "vars": {
+          "account": "<%- settings.GOOGLE_ANALYTICS_ID %>"
+        },
+        "triggers": {
+          "trackPageview": {
+            "on": "visible",
+            "request": "pageview"
+          }
+        }
+      }
+      </script>
+    </amp-analytics>
+  <%} %>
   </div>
  </body>
 
