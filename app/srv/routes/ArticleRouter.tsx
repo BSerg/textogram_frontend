@@ -8,8 +8,9 @@ import Article from '../../components/Article';
 import ArticleAmp from '../../components/shared/ArticleAmp';
 import {Error404} from '../../components/Error';
 import {Helmet} from 'react-helmet';
-import * as moment from 'moment';
+// import * as moment from 'moment';
 import {Amp, BlockContentTypes} from "../../constants";
+import * as fs from 'fs';
 
 function getArticleEmbeds(article: any): any {
     try {
@@ -55,9 +56,16 @@ class ArticleRouter {
                         return (<ArticleAmp article={article} bannerData={bannerData} {...props}/>);
                     };
                     let html = ReactDOMServer.renderToString(<RenderedArticle />);
+                    let css: string = '';
+                    try {
+                        css = fs.readFileSync(`${process.env.VIEWS_DIR}/article_amp.css`).toString().replace(/(\r\n|\n|\r)/gm, '');
+                    }
+                    catch (cssErr) {
+                        css = ''
+                    }
                     let articleData: any = {
-                        article: article, 
-                        date: moment(article.published_at).format('DD.MM.YYYY'),
+                        article: article,
+                        css: css,
                         siteName: process.env.SITE_NAME,
                         baseUrl: process.env.SITE_URL,
                         html: html,

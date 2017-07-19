@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {BannerID, BlockContentTypes} from "../../constants";
 import * as marked from 'marked';
+import * as moment from 'moment';
 
 class AmpGallery extends React.Component<any, any> {
 
@@ -58,7 +59,6 @@ class AmpGallery extends React.Component<any, any> {
                 <amp-image-lightbox id="lightbox-${this.props.item.id}-${index}" layout="nodisplay"></amp-image-lightbox>
             `)
         });
-
         return `
            <amp-carousel layout="responsive" 
                 height="${startingSizes.height}" width="${startingSizes.width}" type="slides" controls="0">
@@ -217,14 +217,70 @@ class AmpEmbed extends React.Component<any, any> {
     }
 }
 
+class AmpBanner extends React.Component<any, any> {
+    render() {
+        let {item} = this.props;
+        let attrs = Object.keys(item.amp_props || {}).map((k) => {
+            return `${k}="${(item.amp_props || {})[k] || ''}"`;
+        }).join(' ');
+        let ampEl: string = `<amp-ad width="${item.width}" height="${item.height}" ${attrs} ></amp-ad>`;
+        return (
+            <div className="banner" dangerouslySetInnerHTML={{__html: ampEl}}></div>)
+    }
+}
+
+class AmpArticleMeta extends React.Component<any, any> {
+    render() {
+        let {article} = this.props;
+        let date = moment(article.published_at).format('DD.MM.YYYY');
+        return (
+            <div className="article_meta">
+                <span>
+                    <a href="<%- baseUrl %>/<%- article.owner.nickname %>">
+                        {`${article.owner.first_name} ${article.owner.last_name}`}
+                    </a></span>
+                <span>{date}</span>
+            </div>)
+    }
+}
+
 export default class ArticleAmp extends React.Component<any, any> {
 
     processBlocks(): any[] {
-        if (!this.props.bannerData) {
-            return this.props.article.content.blocks;
-        };
+
         let blocks: any[] = this.props.article.content.blocks;
-        
+        try {
+            let bannerData = JSON.parse(this.props.bannerData).mobile || {};
+            let bannersInserted = false;
+            if (blocks.length >= 5 && bannerData.banner__content) {
+
+                let indexToInsert:number;
+                let canInsert: boolean = false;
+                for (let i: number = 1; i < blocks.length - 1; i++) {
+                    let canInsert = [BlockContentTypes.PHOTO].indexOf(blocks[i-1].type) == -1 && [BlockContentTypes.PHOTO].indexOf(blocks[i].type) == -1;
+                    if (canInsert) {
+                        indexToInsert = i;
+                        break;
+                    }
+                }
+                if (indexToInsert) {
+                    blocks.splice(indexToInsert, 0, {type: 'ad', data: bannerData.banner__content[0]});
+                    bannersInserted = true;
+                }
+                
+            }
+            if (((blocks.length < 2 || blocks.length >= 5) || !bannersInserted) && bannerData.banner__bottom) {
+                blocks.push({type: 'ad', data: bannerData.banner__bottom[0]});
+                bannersInserted = true;
+            }
+            blocks.splice(0, 0, {type: 'meta'});
+            if (blocks[blocks.length - 1].type == 'ad') {
+                blocks.splice(blocks.length - 1, 0, {type: 'meta'});
+            }
+            else {
+                blocks.splice(blocks.length, 0, {type: 'meta'});
+            }            
+        } catch (err) {}
 
         return blocks;
     }
@@ -238,6 +294,10 @@ export default class ArticleAmp extends React.Component<any, any> {
         return (
             <div>
                 {
+                    article.cover ? <div dangerouslySetInnerHTML={{__html: `<amp-img src="${article.cover}" alt="" height="200" layout="fixed-height"></amp-img>`}}/> : null
+                }
+                <h1>{article.title}</h1>
+                {
                     blocks.map((block: any, index: number) => {
                         switch (block.type) {
                             case BlockContentTypes.TEXT:
@@ -245,11 +305,13 @@ export default class ArticleAmp extends React.Component<any, any> {
                                 let t: any[] = [];
                                 let match;
                                 let innerIndex: number = 0;
+                                let count = 0;
                                 while (true) {
                                     match = regx.exec(marked(block.value))
                                     if (match == null) break;
-                                    t.push(<p key='`${index}_${innerIndex}`' className="text" dangerouslySetInnerHTML={{__html: match[1]}}/>);
-                                    innerIndex++;
+                                    
+                                    t.push(<p key={`${index}_${count++}`} className="text" dangerouslySetInnerHTML={{__html: match[1]}}/>);
+                                    
                                 }
                                 return t;
                             case BlockContentTypes.HEADER:
@@ -276,6 +338,10 @@ export default class ArticleAmp extends React.Component<any, any> {
                                 return <AmpEmbed item={block} key={index} />;
                             case BlockContentTypes.VIDEO:
                                 return <AmpEmbed item={block} key={index} />;
+                            case 'ad':
+                                return <AmpBanner item={block.data} key={index}/>;
+                            case 'meta':
+                                return <AmpArticleMeta key={index} article={article}/>
                         }
 
                         return (<p key={index}>block</p>)
