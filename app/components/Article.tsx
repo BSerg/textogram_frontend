@@ -239,7 +239,6 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
         banner.style.display = 'block';
         banner.style.width = width + 'px';
         banner.style.height = height + 'px';
-        banner.style.backgroundColor = '#CCCCCC';
         banner.innerHTML = content;
         return banner;
     }
