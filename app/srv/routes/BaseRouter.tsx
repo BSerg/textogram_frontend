@@ -24,7 +24,7 @@ class BaseRouter {
     getIndex(req: Request, res: Response, next: NextFunction) {
         let user: string = getUserFromRequest(req);
         if (user) {
-            return res.redirect('/feed');
+            return res.redirect((process.env.IS_LENTACH && process.env.LENTACH_NICKNAME) ? `/${process.env.LENTACH_NICKNAME}` : '/feed');
         }
         let html = ReactDOMServer.renderToString(
             <StaticRouter context={{}}>
