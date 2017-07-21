@@ -236,7 +236,7 @@ class AmpArticleMeta extends React.Component<any, any> {
         return (
             <div className="article_meta">
                 <span>
-                    <a href="<%- baseUrl %>/<%- article.owner.nickname %>">
+                    <a href={process.env.IS_LENTACH ? '/' : `/${article.owner.nickname}`}>
                         {`${article.owner.first_name} ${article.owner.last_name}`}
                     </a></span>
                 <span>{date}</span>
