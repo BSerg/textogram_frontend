@@ -299,6 +299,9 @@ export default class ArticleAmp extends React.Component<any, any> {
                 <h1>{article.title}</h1>
                 {
                     blocks.map((block: any, index: number) => {
+                        if (block.value) {
+                            block.value = block.value.replace(/<[^>]*>/g, '');
+                        } 
                         switch (block.type) {
                             case BlockContentTypes.TEXT:
                                 let regx = /<p>(.+)<\/p>/g;
