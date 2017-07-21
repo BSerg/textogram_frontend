@@ -412,11 +412,13 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
     }
 
     processes() {
-        this.processPhoto();
-        this.processEmbed();
-        this.processQuote();
-        this.processPhrase();
-        this.processAds();
+        if (process.env.IS_BROWSER) {
+            this.processPhoto();
+            this.processEmbed();
+            this.processQuote();
+            this.processPhrase();
+            this.processAds();
+        }
     }
 
     getBanner(id: string) {
@@ -798,17 +800,29 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
                                                         key={"block" + block.id} id={block.id} 
                                                         className={"photos photos_" + block.photos.length}>
                                                         {block.photos.map((photo: any, index: number) => {
-                                                            let photoData = this.state.article.imageMap[photo.id];
-                                                            let className = 'photo photo_' + index;
-                                                            if (photo.is_animated) className += ' photo_animated';
-                                                            return (
-                                                                <div 
-                                                                    key={"photo" + index}
-                                                                    className={"photo photo_" + index + (photo.is_animated ? ' photo_animated' : '')} 
-                                                                    data-caption={photo.caption || ''}
-                                                                    data-preview={index <= 2 ? photoData.medium : photoData.small} 
-                                                                    data-src={photo.is_animated && block.photos.length == 1 ? photoData.original : photoData.regular}></div>
-                                                            );
+                                                            if (process.env.IS_BROWSER) {
+                                                                let photoData = this.state.article.imageMap[photo.id];
+                                                                let className = 'photo photo_' + index;
+                                                                if (photo.is_animated) className += ' photo_animated';
+                                                                return (
+                                                                    <div 
+                                                                        key={"photo" + index}
+                                                                        className={"photo photo_" + index + (photo.is_animated ? ' photo_animated' : '')} 
+                                                                        data-caption={photo.caption || ''}
+                                                                        data-preview={index <= 2 ? photoData.medium : photoData.small} 
+                                                                        data-src={photo.is_animated && block.photos.length == 1 ? photoData.original : photoData.regular}></div>
+                                                                );
+                                                            } else {
+                                                                if (photo.is_animated) className += ' photo_animated';
+                                                                return (
+                                                                    <img 
+                                                                        key={"photo" + index}  
+                                                                        className={"photo photo_" + index + (photo.is_animated ? ' photo_animated' : '')}
+                                                                        alt={photo.caption || ''}
+                                                                        src={photo.preview}/>
+                                                                );
+                                                            }
+                                                            
                                                         })}
                                                         <div key={"clear" + i} style={{clear: 'both'}}/>
                                                         {block.photos.length == 1 && block.photos[0].caption ? 
