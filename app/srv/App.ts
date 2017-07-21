@@ -27,6 +27,7 @@ class AppClass {
         this.express.use(cors(this.corsOptions));
         this.express.use(bodyParser.urlencoded({ extended: false }));
         this.express.use(cookieParser());
+        this.express.disable('x-powered-by');
     }
 
     routes() {

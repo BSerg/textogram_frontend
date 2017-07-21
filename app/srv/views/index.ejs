@@ -7,6 +7,7 @@
         <%- helmet.meta.toString() %>
         <% if (helmet.link) {%> <%- helmet.link.toString() %> <%} %>
     <%}%>
+    <link href="https://fonts.googleapis.com/css?family=Arimo:400,700|Noto+Serif:400,700|Open+Sans:400,700&subset=cyrillic" rel="stylesheet">
     <link href="/static/bundle.css<% if (typeof revision != 'undefined') { %>?v=<%- revision %><% } %>" rel="stylesheet">
 </head>
 <body>
