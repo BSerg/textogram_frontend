@@ -94,14 +94,14 @@ class ArticleRouter {
                 };
                 let html = ReactDOMServer.renderToString(<StaticRouter context={{}}><Base><RenderedArticle /></Base></StaticRouter>);
                 const helmet = Helmet.renderStatic();
-                res.render('index.ejs', {reactData: html, helmet: helmet});
+                res.render('index.ejs', {reactData: html, helmet: helmet, revision: process.env.REVISION});
             }
             catch (error) {
                 next();
             }
         }).catch(() => {
             let html = ReactDOMServer.renderToString(<StaticRouter context={{}}><Base><Error404/></Base></StaticRouter>);
-            res.status(404).render('index.ejs', {reactData: html, helmet: null});
+            res.status(404).render('index.ejs', {reactData: html, helmet: null, revision: process.env.REVISION});
         });
     }
     init() {
