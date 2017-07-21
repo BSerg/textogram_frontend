@@ -7,7 +7,7 @@
         <%- helmet.meta.toString() %>
         <% if (helmet.link) {%> <%- helmet.link.toString() %> <%} %>
     <%}%>
-    <link href="/static/bundle.css" rel="stylesheet">
+    <link href="/static/bundle.css<% if (typeof revision != 'undefined') { %>?v=<%- revision %><% } %>" rel="stylesheet">
 </head>
 <body>
     <div id="app"></div>
@@ -35,7 +35,7 @@
     <script src="//platform.instagram.com/en_US/embeds.js"></script>
     
     <script type="text/javascript" src="/static/vendor.js"></script>
-    <script type="text/javascript" src="/static/bundle.js"></script>
+    <script type="text/javascript" src="/static/bundle.js<% if (typeof revision != 'undefined') { %>?v=<%- revision %><% } %>"></script>
 
     <% if (settings.YANDEX_METRIKA_ID) {%>
         <!-- Yandex.Metrika counter -->
