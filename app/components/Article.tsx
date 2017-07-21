@@ -239,7 +239,6 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
         banner.style.display = 'block';
         banner.style.width = width + 'px';
         banner.style.height = height + 'px';
-        banner.style.backgroundColor = '#CCCCCC';
         banner.innerHTML = content;
         return banner;
     }
@@ -770,6 +769,9 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
                                 <div className="article__content">
                                     
                                     {this.state.article.content.blocks.map((block: any, i: number) => {
+                                        if (block.value) {
+                                            block.value = block.value.replace(/<[^>]*>/g, '');
+                                        } 
                                         switch (block.type) {
                                             case BlockContentTypes.TEXT:
                                                 let regx = /<p>(.+)<\/p>/g;
