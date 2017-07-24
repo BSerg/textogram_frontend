@@ -166,6 +166,7 @@ export default class EmbedContentBlock extends React.Component<IEmbedContentBloc
         window.setTimeout(() => {
 
             this.setState({loaded: true}, () => {
+                console.log('EMBED')
                 // TWITTER LOAD EMBED
                 twttr.widgets && twttr.widgets.load(document.getElementById(this.props.content.id));
                 // INSTAGRAM LOAD EMBED
@@ -173,12 +174,13 @@ export default class EmbedContentBlock extends React.Component<IEmbedContentBloc
                 // FACEBOOK LOAD EMBED
                 let fbCount = 0;
                 let fbEmbedProcess = window.setInterval(() => {
-                    if (fbCount >= 4) window.clearInterval(fbEmbedProcess);
+                    if (fbCount++ >= 4) window.clearInterval(fbEmbedProcess);
+                    console.log('FB: ', FB)
                     if (typeof (FB) != 'undefined' && (window as any).fbAsyncInit.hasRun) {
-                        FB.XFBML.parse();
+                        FB.XFBML.parse(embed);
+                        console.log('HELLO FB')
                         window.clearInterval(fbEmbedProcess);
                     }
-                    fbCount++;
                 }, 50);
                 // EXEC EMBED SCRIPTS
                 this.processEmbedCode(embed);
@@ -282,8 +284,11 @@ export default class EmbedContentBlock extends React.Component<IEmbedContentBloc
                               className={className}
                               disableDefaultPopup={true}>
                 {this.state.content.__meta && this.state.content.__meta.embed ?
-                    <div ref={this.processEmbedElement.bind(this)} className="content_block_embed__html"
-                         dangerouslySetInnerHTML={{__html: this.state.content.__meta.embed}}/>
+                    <div 
+                        key={'embed' + this.state.content.__meta.id} 
+                        ref={this.processEmbedElement.bind(this)} 
+                        className="content_block_embed__html"
+                        dangerouslySetInnerHTML={{__html: this.state.content.__meta.embed}}/>
                     : Captions.editor.help_embed_empty
                 }
                 {!this.state.isActive ?

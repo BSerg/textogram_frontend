@@ -154,31 +154,31 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
         }
     }
 
-    processQuote() {
-        let quotes = document.getElementsByTagName('blockquote');
-        for (let i in quotes) {
-            let quote = quotes[i] as HTMLElement;
-            if (quote.innerText && quote.innerText.length > 500) {
-                quote.classList.add('long');
-            }
+    processQuote(el: HTMLElement) {
+        if (!process.env.IS_BROWSER) return;
+        
+        if (!el) return;
+        if (el.innerText && el.innerText.length > 500) {
+            el.classList.add('long');
         }
     }
 
-    processPhrase() {
-        let phrases = document.getElementsByClassName('phrase');
-        for (let i in phrases) {
-            let phrase = phrases[i] as HTMLElement;
-            if (phrase && phrase.innerText) {
-                if (phrase.innerText.length <= 70) {
-                    phrase.classList.add('short');
-                } else if (phrase.innerText.length > 200) {
-                    phrase.classList.add('long');
-                }
+    processPhrase(el: HTMLElement) {
+        if (!process.env.IS_BROWSER) return;
+        
+        if (!el) return;
+        if (el && el.innerText) {
+            if (el.innerText.length <= 70) {
+                el.classList.add('short');
+            } else if (el.innerText.length > 200) {
+                el.classList.add('long');
             }
         }
     }
 
     processColumn() {
+        if (!process.env.IS_BROWSER) return;
+        
         let columns = document.getElementsByClassName('column');
         for (let i in columns) {
             let column = columns[i] as HTMLElement;
@@ -190,43 +190,48 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
         }
     }
 
-    processEmbed() {
-        let videoEmbeds = document.getElementsByClassName('embed video');
-        for (let i in videoEmbeds) {
-            let video = videoEmbeds[i] as HTMLDivElement;
-            if (video) {
-                try {
-                    video.style.height = video.offsetWidth * 450 / 800 + 'px';
-                    let iframe = video.getElementsByTagName('iframe')[0];
-                    if (iframe) {
-                        iframe.addEventListener('load', () => {
-                            iframe.style.height = iframe.offsetWidth * 450 / 800 + 'px';
-                            video.style.visibility = "visible";
-                        });
-                    }
-                } catch (err) {
+    processEmbed(embedData: any, el: HTMLElement) {
+        if (!process.env.IS_BROWSER) return;
+        
+        if (embedData.type == BlockContentTypes.VIDEO) {
+            try {
+                el.style.height = el.offsetWidth * 450 / 800 + 'px';
+                let iframe = el.getElementsByTagName('iframe')[0];
+                if (iframe) {
+                    iframe.addEventListener('load', () => {
+                        iframe.style.height = iframe.offsetWidth * 450 / 800 + 'px';
+                        el.style.visibility = "visible";
+                    });
+                }
+            } catch (err) {
 
-                }
             }
-        }
-        let posts = document.getElementsByClassName('embed post');
-        for (let i in posts) {
-            try {
-                twttr.widgets && twttr.widgets.load(posts[i]);
-            } catch (err) {}
-            try {
-                let script = posts[i].getElementsByTagName('script')[0];
-                if (script) {
-                    let f = new Function(script.innerText);
-                    f();
-                }
-            } catch (err) {}
-        }
-        try {
-            // INSTAGRAM LOAD EMBED
-            instgrm.Embeds.process();
-        } catch (err) {
-            // console.log('INSTAGRAM EMBED LOADING ERROR', err);
+        } else {
+            switch (embedData.__meta.type) {
+                case 'twitter':
+                    try {
+                        twttr.widgets && twttr.widgets.load(el);
+                    } catch (err) {}
+                    break;
+                case 'instagram':
+                    try {
+                        instgrm.Embeds.process();
+                    } catch (err) {}
+                    break;
+                case 'facebook':
+                    try {
+                        FB.XFBML.parse(el);
+                    } catch(err) {}
+                    break;
+                default:
+                    try {
+                        let script = el.getElementsByTagName('script')[0];
+                        if (script) {
+                            let f = new Function(script.innerText);
+                            f();
+                        }
+                    } catch (err) {}
+            }
         }
     }
 
@@ -375,6 +380,7 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
         onClick: () => any, 
         el: HTMLElement
     ) {
+        if (!process.env.IS_BROWSER) return;
         window.setTimeout(() => {
             if (!el) return;
             let img = document.createElement('img');
@@ -397,9 +403,6 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
 
     processes() {
         if (process.env.IS_BROWSER) {
-            this.processEmbed();
-            this.processQuote();
-            this.processPhrase();
             this.processAds();
         }
     }
@@ -772,7 +775,8 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
                                                 return <div key={"block" + block.id} className='lead' 
                                                             dangerouslySetInnerHTML={{__html: marked(block.value)}}/>;
                                             case BlockContentTypes.PHRASE:
-                                                return <div key={"block" + block.id} className='phrase' 
+                                                return <div ref={this.processPhrase.bind(this)} 
+                                                            key={"block" + block.id} className='phrase' 
                                                             dangerouslySetInnerHTML={{__html: marked(block.value)}}/>;
                                             case BlockContentTypes.PHOTO:
                                                 let photos = block.photos.map((photo: any, index: number) => {
@@ -832,7 +836,9 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
                                             case BlockContentTypes.QUOTE:
                                                 let className = block.image && block.image.image ? 'personal': ''
                                                 return (
-                                                    <blockquote key={"block" + block.id} className={className}>
+                                                    <blockquote 
+                                                        ref={this.processQuote.bind(this)} 
+                                                        key={"block" + block.id} className={className}>
                                                         {block.image && block.image.image ? 
                                                             <img src={block.image.image}/> : null
                                                         }
@@ -857,19 +863,31 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
                                             case BlockContentTypes.VIDEO:
                                                 return (
                                                     block.__meta && block.__meta.embed ?
-                                                        <div key={"block" + block.id} className="embed video" dangerouslySetInnerHTML={{__html: block.__meta.embed}}/> : null
+                                                        <div 
+                                                            ref={this.processEmbed.bind(this, block)} 
+                                                            key={"block" + block.id} 
+                                                            className="embed video" 
+                                                            dangerouslySetInnerHTML={{__html: block.__meta.embed}}/> : null
                                                 );
                                             
                                             case BlockContentTypes.AUDIO:
                                                 return (
                                                     block.__meta && block.__meta.embed ?
-                                                        <div key={"block" + block.id} className="embed audio" dangerouslySetInnerHTML={{__html: block.__meta.embed}}/> : null
+                                                        <div 
+                                                            ref={this.processEmbed.bind(this, block)} 
+                                                            key={"block" + block.id} 
+                                                            className="embed audio" 
+                                                            dangerouslySetInnerHTML={{__html: block.__meta.embed}}/> : null
                                                 );
                                             
                                             case BlockContentTypes.POST:
                                                 return (
                                                     block.__meta && block.__meta.embed ?
-                                                        <div key={"block" + block.id} className="embed post" dangerouslySetInnerHTML={{__html: block.__meta.embed}}/> : null
+                                                        <div 
+                                                            ref={this.processEmbed.bind(this, block)} 
+                                                            key={"block" + block.id}
+                                                            className="embed post"
+                                                            dangerouslySetInnerHTML={{__html: block.__meta.embed}}/> : null
                                                 );
                                             case BlockContentTypes.DIALOG:
                                                 let participants: any = {};
