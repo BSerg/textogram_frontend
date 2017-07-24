@@ -370,50 +370,33 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
         }
     }
 
-    processPhoto() {
-        let galleries = document.getElementsByClassName('photos');
-        for (let i = 0; i < galleries.length; i++) {
-            try {
-                let gallery = galleries[i] as HTMLElement;
-                let photos = gallery.getElementsByClassName('photo');
-                let photoData: IPhoto[] = [];
-                for (let i = 0; i < photos.length; i++) {
-                    let photo = photos[i];
-                    photoData.push({
-                        id: parseInt(photo.getAttribute('data-id')),
-                        preview: photo.getAttribute('data-preview'),
-                        image: photo.getAttribute('data-src'),
-                        caption: photo.getAttribute('data-caption'),
-                    });
-                    if (i < 6) {
-                        let img = document.createElement('img');
-                        img.onload = () => {
-                            gallery.replaceChild(img, photo);
-                            if (this.loadingImages.indexOf(img) != -1) {
-                                this.loadingImages.splice(this.loadingImages.indexOf(img), 1);
-                            }
-                        };
-                        img.className = photo.getAttribute('class');
-                        img.alt = photo.getAttribute('data-caption');
-                        if (photos.length == 1 && photo.classList.contains('photo_animated')) {
-                            img.src = photo.getAttribute('data-src');
-                        } else {
-                            img.src = photo.getAttribute('data-preview');
-                            img.addEventListener('click', this.openGalleryModal.bind(this, i, photoData, gallery.getAttribute('id')));
-                        }
-                        this.loadingImages.push(img);
-                    }
+    processPhoto(
+        photo: {id: string, preview: string, image: string, caption: string, isAnimated: boolean}, 
+        onClick: () => any, 
+        el: HTMLElement
+    ) {
+        window.setTimeout(() => {
+            if (!el) return;
+            let img = document.createElement('img');
+            img.onload = function() {
+                let parent = el.parentNode;
+                if (parent) {
+                    parent.replaceChild(img, el);
                 }
-                if (this.props.match.params.galleryBlockId && this.props.match.params.galleryBlockId == gallery.getAttribute('id')) {
-                    this.openGalleryModal(0, photoData);
-                }
-            } catch (err) {}
-        }
+            };
+            img.className = el.getAttribute('class');
+            img.alt = photo.caption;
+            if (photo.isAnimated) {
+                img.src = photo.image;
+            } else {
+                img.src = photo.preview;
+                img.addEventListener('click', onClick);
+            }
+        })
     }
 
     processes() {
         if (process.env.IS_BROWSER) {
-            this.processPhoto();
             this.processEmbed();
             this.processQuote();
             this.processPhrase();
@@ -428,7 +411,6 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
             return null;
         }
     }
-
 
     getRightBanner() {
         return this.getBanner(BannerID.BANNER_RIGHT_SIDE);
@@ -627,9 +609,7 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
         } else {
             if (!nextProps.match.params.galleryBlockId) {
                 ModalAction.do(CLOSE_MODAL, null);
-            } else if (nextProps.match.params.galleryBlockId != this.props.match.params.galleryBlockId) {
-                this.processPhoto();
-            }
+            } 
             if (nextProps.match.params.articleSlug != this.props.match.params.articleSlug) {
                 this.retrieveArticle();
             }
@@ -795,22 +775,32 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
                                                 return <div key={"block" + block.id} className='phrase' 
                                                             dangerouslySetInnerHTML={{__html: marked(block.value)}}/>;
                                             case BlockContentTypes.PHOTO:
+                                                let photos = block.photos.map((photo: any, index: number) => {
+                                                    let photoData = this.state.article.imageMap[photo.id];
+                                                    return {
+                                                        id: photo.id,
+                                                        preview: index <= 2 ? photoData.medium : photoData.small,
+                                                        image: photo.is_animated && block.photos.length == 1 ? photoData.original : photoData.regular,
+                                                        caption: photo.caption || '',
+                                                        isAnimated: photo.is_animated
+                                                    }
+                                                });
+                                                if (this.props.match.params.galleryBlockId && this.props.match.params.galleryBlockId == block.id) {
+                                                    this.openGalleryModal(0, photos);
+                                                }
                                                 return (
                                                     <div
                                                         key={"block" + block.id} id={block.id} 
                                                         className={"photos photos_" + block.photos.length}>
-                                                        {block.photos.map((photo: any, index: number) => {
+                                                        {photos.map((photo: any, index: number) => {
                                                             if (process.env.IS_BROWSER) {
-                                                                let photoData = this.state.article.imageMap[photo.id];
                                                                 let className = 'photo photo_' + index;
-                                                                if (photo.is_animated) className += ' photo_animated';
+                                                                if (photo.isAnimated) className += ' photo_animated';
                                                                 return (
                                                                     <div 
+                                                                        ref={this.processPhoto.bind(this, photo, this.openGalleryModal.bind(this, index, photos, block.id))}
                                                                         key={"photo" + index}
-                                                                        className={"photo photo_" + index + (photo.is_animated ? ' photo_animated' : '')} 
-                                                                        data-caption={photo.caption || ''}
-                                                                        data-preview={index <= 2 ? photoData.medium : photoData.small} 
-                                                                        data-src={photo.is_animated && block.photos.length == 1 ? photoData.original : photoData.regular}></div>
+                                                                        className={"photo photo_" + index + (photo.is_animated ? ' photo_animated' : '')}></div>
                                                                 );
                                                             } else {
                                                                 if (photo.is_animated) className += ' photo_animated';
