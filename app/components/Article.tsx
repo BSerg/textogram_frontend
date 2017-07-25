@@ -179,7 +179,7 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
     processColumn() {
         if (!process.env.IS_BROWSER) return;
         
-        let columns = document.getElementsByClassName('column');
+        let columns = this.refs.article.getElementsByClassName('column');
         for (let i in columns) {
             let column = columns[i] as HTMLElement;
             if (column && column.innerText) {
@@ -339,7 +339,7 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
                 if (ads[BannerID.BANNER_BOTTOM] && ads[BannerID.BANNER_BOTTOM].length) {
                     if (this.state.isDesktop || bannerCount == 0) {
                         let bottomBannerData = ads[BannerID.BANNER_BOTTOM].shift();
-                        let bottomBannerContainer = document.getElementById(BannerID.BANNER_BOTTOM);
+                        let bottomBannerContainer = this.refs.article.querySelector('#' + BannerID.BANNER_BOTTOM);
                         let bottomBanner = this.createBanner(bottomBannerData.width, bottomBannerData.height, BannerID.BANNER_BOTTOM, bottomBannerData.code);
                         if (bottomBanner) {
                             bottomBannerContainer.appendChild(bottomBanner);
@@ -586,7 +586,7 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
     }
 
     submitPaymentForm() {
-        let form = document.getElementById('payment_form');
+        let form = this.refs.article.querySelector('#payment_form');
         (form as HTMLFormElement).submit();
     }
 
