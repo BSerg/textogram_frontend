@@ -75,7 +75,9 @@ interface IArticleProps {
     isPreview?: boolean,
     params?: any,
     router?: any,
-    renderedArticle?: any
+    renderedArticle?: any,
+    preventFetching: boolean,
+    page?: number
 }
 
 interface IArticleState {
@@ -92,7 +94,7 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
         super(props);
         this.loadingImages = [];
         this.state = {
-            article: props.renderedArticle || null,
+            article: this.processArticle(props.renderedArticle) || null,
             user: UserAction.getStore().user,
             isDesktop: MediaQuerySerice.getIsDesktop(),
         };
@@ -105,9 +107,11 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
         article: HTMLDivElement,
     };
 
-    // static defaultProps:any = {
-    //     isPreview: false
-    // };
+    static defaultProps:any = {
+        isPreview: false,
+        preventFetching: false,
+        page: 0
+    };
 
     handleUser() {
         this.setState({user: UserAction.getStore().user});
@@ -518,8 +522,6 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
     }
 
     retrieveArticle() {
-
-        // let retrieveAPI = process.env.USE_CACHE_API ? cacheApi : api;
         api.get(`${process.env.USE_CACHE_API ? '/_' : ''}/articles/${this.props.match.params.articleSlug}/`).then((response: any) => {
             let data = response.data;
             this.loadArticle(data);
@@ -600,7 +602,9 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
         if (this.props.isPreview) {
             this.retrieveArticlePreview();
         } else {
-            this.retrieveArticle();
+            if (!this.props.preventFetching) {
+                this.retrieveArticle();
+            }
         }
     }
 
