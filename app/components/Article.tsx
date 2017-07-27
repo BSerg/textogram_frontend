@@ -846,6 +846,7 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
                                                         key={"block" + block.id} id={block.id} 
                                                         className={"photos photos_" + block.photos.length}>
                                                         {photos.map((photo: any, index: number) => {
+                                                            if (!photo) return null;
                                                             if (process.env.IS_BROWSER) {
                                                                 let className = 'photo photo_' + index;
                                                                 if (photo.isAnimated) className += ' photo_animated';
