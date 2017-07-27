@@ -824,13 +824,18 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
                                             case BlockContentTypes.PHOTO:
                                                 let photos = block.photos.map((photo: any, index: number) => {
                                                     let photoData = this.state.article.imageMap[photo.id];
-                                                    return {
-                                                        id: photo.id,
-                                                        preview: index <= 2 ? photoData.medium : photoData.small,
-                                                        image: photo.is_animated && block.photos.length == 1 ? photoData.original : photoData.regular,
-                                                        caption: photo.caption || '',
-                                                        isAnimated: photo.is_animated
+                                                    if (photoData) {
+                                                        return {
+                                                            id: photo.id,
+                                                            preview: index <= 2 ? photoData.medium : photoData.small,
+                                                            image: photo.is_animated && block.photos.length == 1 ? photoData.original : photoData.regular,
+                                                            caption: photo.caption || '',
+                                                            isAnimated: photo.is_animated
+                                                        }
+                                                    } else {
+                                                        return null;
                                                     }
+                                                    
                                                 });
                                                 if (this.props.match.params.galleryBlockId && this.props.match.params.galleryBlockId == block.id) {
                                                     this.openGalleryModal(0, photos);
