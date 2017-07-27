@@ -72,12 +72,14 @@ interface IArticle {
 }
 
 interface IArticleProps {
-    isPreview?: boolean,
-    params?: any,
-    router?: any,
-    renderedArticle?: any,
-    preventFetching: boolean,
-    page?: number
+    isPreview?: boolean;
+    params?: any;
+    router?: any;
+    renderedArticle?: any;
+    preventFetching: boolean;
+    page?: number;
+    isCurrentInFeed?: boolean;
+    advertisement?: any;
 }
 
 interface IArticleState {
@@ -110,7 +112,8 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
     static defaultProps:any = {
         isPreview: false,
         preventFetching: false,
-        page: 0
+        page: 0,
+        isCurrentInFeed: true
     };
 
     handleUser() {
@@ -122,6 +125,7 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
     }
 
     processArticle(article: IArticle) {
+        if (!article) return;
         let calendarParams = {
             sameDay: 'Сегодня, LT',
             lastDay: 'Вчера, LT',
@@ -130,7 +134,7 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
         };
         if (this.props.isPreview && !article.published_at) {
             article.date = moment().locale('ru').calendar(null, calendarParams);
-        } else {
+        } else if (article.published_at){
             article.date = moment(article.published_at).locale('ru').calendar(null, calendarParams);
         }
 
@@ -239,16 +243,51 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
         }
     }
 
-    createBanner(width: number, height: number, bannerID: string, content: string, isActive: boolean = false) {
+    createBanner(width: number, height: number, bannerID: string, data: any, isActive: boolean = false) {
+        if (!data || !(data.amp_props || data.code)) return null;
         let banner = document.createElement('div');
         banner.className = 'banner ' + bannerID;
+        banner.id = bannerID + '__' + new Date().getTime();
         if (isActive) {
             banner.classList.add('active');
         }
         banner.style.display = 'block';
         banner.style.width = width + 'px';
         banner.style.height = height + 'px';
-        banner.innerHTML = content;
+        try {
+            if (data.amp_props && data.amp_props.type == 'yandex') {
+                let content = `
+                    <!-- Yandex.RTB ${data.amp_props.id} -->
+                    <div id="yandex_rtb_${banner.id}"></div>
+                    <script type="text/javascript">
+                        (function(w, d, n, s, t) {
+                            w[n] = w[n] || [];
+                            w[n].push(function() {
+                                Ya.Context.AdvManager.render({
+                                    blockId: "${data.amp_props.id}",
+                                    renderTo: "yandex_rtb_${banner.id}",
+                                    horizontalAlign: false,
+                                    async: true,
+                                    page: ${this.props.page}
+                                });
+                            });
+                            t = d.getElementsByTagName("script")[0];
+                            s = d.createElement("script");
+                            s.type = "text/javascript";
+                            s.src = "//an.yandex.ru/system/context.js";
+                            s.async = true;
+                            t.parentNode.insertBefore(s, t);
+                        })(this, this.document, "yandexContextAsyncCallbacks");
+                    </script>
+                `
+                banner.innerHTML = content;
+            } else if (data.code) {
+                banner.innerHTML = data.code;
+            }
+        } catch (err) {
+            console.log('createBanner Error', err);
+        }
+        
         return banner;
     }
 
@@ -329,7 +368,7 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
                             let banner = null;
 
                             let bannerData = ads[BannerID.BANNER_CONTENT] ? ads[BannerID.BANNER_CONTENT].shift() : null;
-                            if (bannerData) banner = this.createBanner(bannerData.width, bannerData.height, BannerID.BANNER_CONTENT, bannerData.code);
+                            if (bannerData) banner = this.createBanner(bannerData.width, bannerData.height, BannerID.BANNER_CONTENT, bannerData);
                             
                             if (banner) {
                                 element.parentNode.insertBefore(banner, element.nextSibling);
@@ -342,9 +381,9 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
                 // Bottom banner placement
                 if (ads[BannerID.BANNER_BOTTOM] && ads[BannerID.BANNER_BOTTOM].length) {
                     if (this.state.isDesktop || bannerCount == 0) {
-                        let bottomBannerData = ads[BannerID.BANNER_BOTTOM].shift();
+                        let bottomBannerData = ads[BannerID.BANNER_BOTTOM][0];
                         let bottomBannerContainer = this.refs.article.querySelector('#' + BannerID.BANNER_BOTTOM);
-                        let bottomBanner = this.createBanner(bottomBannerData.width, bottomBannerData.height, BannerID.BANNER_BOTTOM, bottomBannerData.code);
+                        let bottomBanner = this.createBanner(bottomBannerData.width, bottomBannerData.height, BannerID.BANNER_BOTTOM, bottomBannerData);
                         if (bottomBanner) {
                             bottomBannerContainer.appendChild(bottomBanner);
                             this.execBannerScript(bottomBanner);
@@ -354,22 +393,25 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
 
                 // Side banner placement
                 if (ads[BannerID.BANNER_RIGHT_SIDE] && ads[BannerID.BANNER_RIGHT_SIDE].length) {
-                    let sideBannerData = ads[BannerID.BANNER_RIGHT_SIDE].shift();
-                    let sideBanner = this.createBanner(sideBannerData.width, sideBannerData.height, BannerID.BANNER_RIGHT_SIDE, sideBannerData.code, true);
+                    let sideBannerData = ads[BannerID.BANNER_RIGHT_SIDE][0];
+                    console.log(sideBannerData)
+                    let sideBanner = this.createBanner(sideBannerData.width, sideBannerData.height, BannerID.BANNER_RIGHT_SIDE, sideBannerData, true);
+                    console.log(sideBanner)
                     if (sideBanner) {
-                        this.refs.article.appendChild(sideBanner);
+                        let container = this.refs.article.getElementsByClassName('banner_container_side__sticky')[0];
+                        container.appendChild(sideBanner);
                         this.execBannerScript(sideBanner);
                         if (MediaQuerySerice.getScreenWidth() >= 1280) {
-                            let offset = Math.min(0, 2 * ((MediaQuerySerice.getScreenWidth() - 650 ) / 2 - 400));
+                            let offset = 170;
                             if (offset) {
                                 (content as HTMLElement).style.marginLeft = offset + 'px';
                                 let titleElement = this.refs.article.getElementsByClassName('article__title_container')[0] as HTMLDivElement;
-                                titleElement.style.marginLeft = offset + 'px';
+                                titleElement.style.marginLeft = -offset + 'px';
                                 let footerElement = this.refs.article.getElementsByClassName('article__footer_content')[0] as HTMLElement;
-                                footerElement.style.marginLeft = offset + 'px';
+                                footerElement.style.marginLeft = -offset + 'px';
                                 let bottomBanners = this.refs.article.getElementsByClassName(BannerID.BANNER_BOTTOM);
                                 if (bottomBanners.length) {
-                                    (bottomBanners[0] as HTMLElement).style.marginLeft = offset + 'px';
+                                    (bottomBanners[0] as HTMLElement).style.marginLeft = -offset + 'px';
                                 }
                             }
                         }
@@ -425,7 +467,7 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
 
     openGalleryModal(currentPhotoIndex: number, photos: any[], galleryId: string = null) {
         if (galleryId && !this.props.isPreview) {
-            this.props.history.push(`/articles/${this.state.article.slug}/gallery/${galleryId}`);
+            window.history.pushState(null, null, `${window.location.protocol}//${window.location.host}/articles/${this.state.article.slug}/gallery/${galleryId}`)
         }
         let oldGallery = <GalleryModal isPreview={this.props.isPreview}
                                     currentPhotoIndex={currentPhotoIndex}
@@ -435,11 +477,11 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
         let onClose = () => {
             ModalAction.do(CLOSE_MODAL, null);
             if (!this.props.isPreview) {
-                this.props.history.push(`/articles/${this.state.article.slug}`);
+                window.history.pushState(null, null, 
+                    `${window.location.protocol}//${window.location.host}/articles/${this.state.article.slug}`)
             }
         };
         let newGallery = <AwesomeGallery photos={photos} currentPhotoIndex={currentPhotoIndex} onClose={onClose}/>;
-        // ModalAction.do(OPEN_MODAL, {content: this.state.isDesktop ? newGallery : oldGallery});
         ModalAction.do(OPEN_MODAL, {content: newGallery});
 
     }
@@ -604,6 +646,8 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
         } else {
             if (!this.props.preventFetching) {
                 this.retrieveArticle();
+            } else {
+                this.processes();
             }
         }
     }
@@ -697,11 +741,6 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
                             }
                             { lead ? <meta name="og:description" content={lead} /> : null }
                         </Helmet>
-                        {/* SIDE BANNER */}
-                        {/* {this.state.isDesktop && this.state.article.ads_enabled
-                            && this.getRightBanner() ?
-                            <div className={"banner " + BannerID.BANNER_RIGHT_SIDE}></div> : null
-                        } */}
 
                         {/* TITLE BLOCK */}
                         <div ref={this.coverLazyLoad.bind(this)} className={titleClassName}>
@@ -795,6 +834,7 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
                                                 });
                                                 if (this.props.match.params.galleryBlockId && this.props.match.params.galleryBlockId == block.id) {
                                                     this.openGalleryModal(0, photos);
+                                                    console.log('HELLO');
                                                 }
                                                 return (
                                                     <div
@@ -925,7 +965,18 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
 
                                 </div>
                             }
+                            <div className="banner_container_side">
+                                <div className="banner_container_side__sticky"></div>
+                            </div>
 
+                            {this.state.isDesktop ?
+                                <div className="share_container">
+                                    <ShareFloatingPanel
+                                        key={"share" + this.state.article.id} 
+                                        articleElementId={"article" + this.state.article.id}
+                                        articleUrl={this.state.article.short_url}/>
+                                </div> : null
+                            }
                         </div>
 
                         {/* FOOTER */}
@@ -952,11 +1003,8 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
                             </div> : null
                         }
 
-                        {this.state.isDesktop ?
-                            <ShareFloatingPanel articleUrl={this.state.article.short_url}/> : null}
-
                         {this.state.isDesktop && this.props.isPreview ?
-                            <div className="left_tool_panel">
+                            <div key={"tools" + this.state.article.id} className="left_tool_panel">
                                 <LeftSideButton key="toolPublish"
                                                 tooltip="Опубликовать"
                                                 onClick={this.publishArticle.bind(this)}>
@@ -968,8 +1016,8 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
                                     <EditBlackButton/>
                                 </LeftSideButton>
                             </div> : null}
-                        {this.state.isDesktop && !this.props.isPreview && this.state.user && this.state.article.owner.id == this.state.user.id ?
-                            <div className="left_tool_panel">
+                        {this.state.isDeskto && !this.props.isPreview && this.state.user && this.state.article.owner.id == this.state.user.id ?
+                            <div key={"tools" + this.state.article.id} className="left_tool_panel">
                                 <LeftSideButton key="toolEdit"
                                                 tooltip="Редактировать"
                                                 onClick={this.route.bind(this, `/articles/${this.state.article.id}/edit`)}>
@@ -1088,7 +1136,7 @@ class GalleryModal extends React.Component<IGalleryModalProps|any, IGalleryModal
     back() {
         ModalAction.do(CLOSE_MODAL, null);
         if (!this.props.isPreview) {
-            this.props.history.push(`/articles/${this.props.article.slug}`);
+            window.history.pushState(null, null, (window.history as any).previous)
         }
     }
 
@@ -1252,34 +1300,40 @@ class ShareFloatingPanel extends React.Component<any, any> {
     constructor(props: any) {
         super(props);
         this.state = {
-            visible: false,
             scrollDelta: 0,
         };
-        this.handleScroll = this.handleScroll.bind(this);
+        // this.handleScroll = this.handleScroll.bind(this);
     }
 
-    handleScroll() {
-        let visible = window.pageYOffset >= 100;
-        if (this.state.visible != visible) {
-            this.setState({visible: visible});
-        }
-    }
+    refs: {
+        el: HTMLDivElement
+    };
 
-    componentDidMount() {
-        window.addEventListener('scroll', this.handleScroll);
-    }
+    // handleScroll() {
+    //     let rect = this.refs.el.getBoundingClientRect();
+    //     let articleRect = document.getElementById(this.props.articleElementId).getBoundingClientRect();
+    //     console.log(articleRect)
+    //     if (rect && articleRect) {
+    //         let visible = articleRect.top <= -100;
+    //         visible ? this.refs.el.classList.add('visible') : this.refs.el.classList.remove('visible');
+            // let snapToBottom = rect.bottom < 0 ||rect.bottom >= articleRect.bottom;
+            // console.log(this.props.articleElementId, rect.bottom, articleRect.bottom)
+            // snapToBottom ? this.refs.el.classList.add('snap') : this.refs.el.classList.remove('snap');
+        // }
+    // }
 
-    componentWillUnmount() {
-        window.removeEventListener('scroll', this.handleScroll);
-    }
+    // componentDidMount() {
+    //     window.addEventListener('scroll', this.handleScroll);
+    // }
+
+    // componentWillUnmount() {
+    //     window.removeEventListener('scroll', this.handleScroll);
+    // }
 
     render() {
-        let className = 'share_panel';
-        if (this.state.visible) {
-            className += ' visible';
-        }
+        let className = 'share_panel visible';
         return (
-            <div className={className}>
+            <div ref="el" className={className}>
                 <a href={"http://vk.com/share.php?url=" + this.props.articleUrl}
                    className="share_panel__share_btn"><SocialIcon social="vk"/></a>
                 <a href={"https://www.facebook.com/sharer/sharer.php?u=" + this.props.articleUrl}

@@ -6,6 +6,7 @@ import {Route, BrowserRouter, Switch} from 'react-router-dom';
 import Base from "./components/Base";
 import IndexPage from "./components/Index";
 import Article, {ArticlePreview} from "./components/Article";
+import ArticleFeed from "./components/ArticleFeed";
 import Profile from "./components/profile/Profile";
 import Editor, {NewArticleEditor} from "./components/Editor";
 import {Error404} from "./components/Error";
@@ -47,7 +48,7 @@ class App  extends React.Component<any, any> {
                         <Route path="/articles/:articleId/edit" component={Editor}/>
                         <Route path="/articles/:articleId/preview" component={ArticlePreview}/>
                         <Route path="/articles/:articleSlug/gallery/:galleryBlockId" component={Article}/>
-                        <Route path="/articles/:articleSlug" component={Article}/>
+                        <Route path="/articles/:articleSlug" component={ArticleFeed}/>
                         <Route path="/:slug/:subsection" component={Profile}/>
                         <Route path="/:slug" component={Profile}/>
                         <Route component={Error404}/>

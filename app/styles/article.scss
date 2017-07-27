@@ -5,6 +5,7 @@ $block_margin: 25px;
 $block_margin_desktop: 25px;
 
 .article {
+  position: relative;
   width: 100%;
 
   .article__title {
@@ -155,9 +156,9 @@ $block_margin_desktop: 25px;
     position: relative;
     width: 100%;
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: center;
   }
 
   .article__content {
@@ -743,6 +744,33 @@ $block_margin_desktop: 25px;
     }
   }
 
+  // @include regular_desktop {
+  //   .article__content {
+  //     margin-left: 170px!important;
+  //   }
+  // }
+
+  .banner_container_side {
+    display: none;
+
+    @include regular_desktop {
+      position: relative;
+      display: block;
+      max-width: 300px;
+      margin-left: 50px;  
+
+      .banner_container_side__sticky {
+        position: sticky;
+        max-width: 300px;
+        top: 50px;
+        min-height: 250px;
+        max-height: 600px;
+        margin-top: -230px;
+      }
+    }
+
+  }
+
   .article__restricted_access {
     padding: 20px;
     border: 1px solid $color7;
@@ -1099,11 +1127,18 @@ $block_margin_desktop: 25px;
   }
 }
 
+.share_container {
+  position: absolute;
+  top: 0;
+  left: 20px;
+  height: 100%;
+}
+
 .share_panel {
   @include transition(500ms);
-  position: fixed;
-  bottom: 50px;
-  left: 30px;
+  position: sticky;
+  top: calc(100vh - 250px);
+  left: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1111,7 +1146,7 @@ $block_margin_desktop: 25px;
 
   &:not(.visible) {
     opacity: 0;
-    bottom: 0;
+    top: 500px;
   }
 
   a, .share_panel__share_btn {
@@ -1152,6 +1187,7 @@ $block_margin_desktop: 25px;
     height: 35px;
     border: 1px solid $color;
     padding-left: 35px;
+    background-color: white;
 
     input {
       width: 180px;
@@ -1177,6 +1213,7 @@ $block_margin_desktop: 25px;
       font-size: 10px;
       letter-spacing: 1px;
       white-space: nowrap;
+      background-color: white;
 
       svg {
         fill: $color;

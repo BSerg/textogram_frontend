@@ -13,9 +13,6 @@ let interceptor = function(config: any) {
         config.headers['Authorization'] = 'Bearer ' + jwt;
     } else {
         let token = cookie.get('jwt') || window.localStorage.getItem('authToken');
-        console.log(cookie.get('jwt'));
-        console.log(window.localStorage.getItem('authToken'));
-        console.log(token);
         if (token) {
             config.headers['Authorization'] = 'Token ' + localStorage.getItem('authToken');
         }
