@@ -85,7 +85,7 @@ class DataClient {
 
     getRecommendations(req: Request): Promise<any> {
         return new Promise((resolve, reject) => {
-            this.client.lrange(`${process.env.CACHE_KEY_PREFIX}:article:${req.params.articleSlug}:recommendations`, 0, -1, (err, data) => {
+            this.client.lrange(`${process.env.CACHE_KEY_PREFIX}:article:${req.params.articleSlug}:recommendations`, 0, -1, (err: any, data: any) => {
                 if (err) {
                     reject();
                 } else {
