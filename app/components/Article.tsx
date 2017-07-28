@@ -256,15 +256,16 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
         banner.style.height = height + 'px';
         try {
             if (data.amp_props && data.amp_props.type == 'yandex') {
+                let id = data.amp_props['data-block-id'];
                 let content = `
-                    <!-- Yandex.RTB ${data.amp_props.id} -->
+                    <!-- Yandex.RTB ${id} -->
                     <div id="yandex_rtb_${banner.id}"></div>
                     <script type="text/javascript">
                         (function(w, d, n, s, t) {
                             w[n] = w[n] || [];
                             w[n].push(function() {
                                 Ya.Context.AdvManager.render({
-                                    blockId: "${data.amp_props.id}",
+                                    blockId: "${id}",
                                     renderTo: "yandex_rtb_${banner.id}",
                                     horizontalAlign: false,
                                     async: true,
