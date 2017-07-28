@@ -51,6 +51,14 @@ class ApiRouter {
         });
     }
 
+    getRecommendations(req: Request, res: Response, next: NextFunction) {
+        db.getRecommendations(req).then(data => {
+            res.json(data);
+        }).catch(() => {
+            res.status(404).send({msg: 'not found'});
+        });
+    }
+
     getNotFound(req: Request, res: Response, next: NextFunction) {
         res.status(404).send({'msg': 'not found'});
     }
@@ -59,6 +67,7 @@ class ApiRouter {
         this.router.get('/articles/search/', this.getArticles);
         this.router.get('/articles/', this.getArticles);
         this.router.get('/articles/:articleSlug', this.getArticle);
+        this.router.get('/articles/:articleSlug/recommendations', this.getRecommendations);
         this.router.get('/advertisements/banners', this.getBanners);
         this.router.get('/*', this.getNotFound);
     }

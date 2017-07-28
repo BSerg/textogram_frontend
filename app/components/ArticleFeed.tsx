@@ -65,8 +65,8 @@ export default class ArticleFeed extends React.Component<any, IArticleFeedState>
         });
     }
 
-    loadArticleReccomendations(slug: string) {
-        api.get(`/articles/${slug}/recommendations/`).then((response: any) => {
+    loadArticleRecommendations(slug: string) {
+        api.get(`${process.env.USE_CACHE_API ? '/_' : ''}/articles/${slug}/recommendations/`).then((response: any) => {
             this.setState({recommendations: response.data});
         });
     }
@@ -75,8 +75,8 @@ export default class ArticleFeed extends React.Component<any, IArticleFeedState>
         let trigger = document.getElementById('trigger');
         if ((window.innerHeight + 100) >= trigger.getBoundingClientRect().top) {
             if (!this.state.loadingProcess && this.state.recommendations && this.state.recommendations.length) {
-                let nextRecommendation = this.state.recommendations.shift();
-                this.loadArticle(nextRecommendation.slug);
+                let nextSlug = this.state.recommendations.shift();
+                this.loadArticle(nextSlug);
             }
         }
         let articleElements = document.getElementsByClassName('article');
@@ -108,7 +108,7 @@ export default class ArticleFeed extends React.Component<any, IArticleFeedState>
 
     componentDidMount() {
         this.loadArticle(this.props.match.params.articleSlug);
-        this.loadArticleReccomendations(this.props.match.params.articleSlug);
+        this.loadArticleRecommendations(this.props.match.params.articleSlug);
         window.addEventListener('scroll', this.handleScroll);
     }
 

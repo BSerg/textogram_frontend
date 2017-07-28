@@ -394,9 +394,7 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
                 // Side banner placement
                 if (ads[BannerID.BANNER_RIGHT_SIDE] && ads[BannerID.BANNER_RIGHT_SIDE].length) {
                     let sideBannerData = ads[BannerID.BANNER_RIGHT_SIDE][0];
-                    console.log(sideBannerData)
                     let sideBanner = this.createBanner(sideBannerData.width, sideBannerData.height, BannerID.BANNER_RIGHT_SIDE, sideBannerData, true);
-                    console.log(sideBanner)
                     if (sideBanner) {
                         let container = this.refs.article.getElementsByClassName('banner_container_side__sticky')[0];
                         container.appendChild(sideBanner);
@@ -839,7 +837,6 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
                                                 });
                                                 if (this.props.match.params.galleryBlockId && this.props.match.params.galleryBlockId == block.id) {
                                                     this.openGalleryModal(0, photos);
-                                                    console.log('HELLO');
                                                 }
                                                 return (
                                                     <div
