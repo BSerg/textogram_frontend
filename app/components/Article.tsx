@@ -382,7 +382,7 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
                 // Bottom banner placement
                 if (ads[BannerID.BANNER_BOTTOM] && ads[BannerID.BANNER_BOTTOM].length) {
                     if (this.state.isDesktop || bannerCount == 0) {
-                        let bottomBannerData = ads[BannerID.BANNER_BOTTOM][0];
+                        let bottomBannerData = ads[BannerID.BANNER_BOTTOM].shift();
                         let bottomBannerContainer = this.refs.article.querySelector('#' + BannerID.BANNER_BOTTOM);
                         let bottomBanner = this.createBanner(bottomBannerData.width, bottomBannerData.height, BannerID.BANNER_BOTTOM, bottomBannerData);
                         if (bottomBanner) {
