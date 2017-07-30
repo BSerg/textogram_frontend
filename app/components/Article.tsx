@@ -995,7 +995,6 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
                             </div>
                         </div>
 
-
                         {/* FOOTER BANNER */}
                         {this.state.article.ads_enabled ?
                             <div id={BannerID.BANNER_BOTTOM} className="banner_container"></div> : null

@@ -176,29 +176,22 @@ export default class Editor extends React.Component<any, any> {
     updateContent(forceUpdate: boolean = false): void {
         let store: any = ContentAction.getStore();
         let isValid = this.validateContent(store.content, Validation.ROOT);
+
         if (this.state.newArticle) {
             this.setState({newArticle: false}, () => {
                 this.createArticle(Object.assign(this.state.article, {content: store.content})).then((article: any) => {
-                    this.state.article = article;
-                    this.state.autoSave = true;
+                    this.setState({article: article, autoSave: true, isValid: isValid}, () => {
+                        this.resetContent(this.state.autoSave);
+                    });
                 })
             });
 
         } else {
-            this.state.article.content = store.content;
-            if (isValid != this.state.isValid) {
-                forceUpdate = true;
-            }
-        }
-
-        if (forceUpdate) {
-            this.setState({article: this.state.article, isValid: isValid}, () => {
-                window.setTimeout(() => {
-                    this.resetContent(this.state.autoSave);
-                });
-            });
-        } else {
-            window.setTimeout(() => {
+            this.setState({
+                article: Object.assign({}, this.state.article, {content: store.content}),
+                isValid: isValid,
+                forceUpdate: isValid != this.state.isValid
+            }, () => {
                 this.resetContent(this.state.autoSave);
             });
         }
