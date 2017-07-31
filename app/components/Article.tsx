@@ -317,12 +317,19 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
             banners[0].parentNode.removeChild(banners[0]);
         }
     }
+    
+    shuffle(a: any[]) {
+        for (let i = a.length; i; i--) {
+            let j = Math.floor(Math.random() * i);
+            [a[i - 1], a[j]] = [a[j], a[i - 1]];
+        }
+    }
 
     processAds() {
         if (this.state.article && this.state.article.ads_enabled && this.props.banners) {
             this.clearBanners();
             this.adsProcessed = true;
-            let ads = Object.assign({}, this.props.banners[this.state.isDesktop ? 'desktop' : 'mobile']);
+            let ads = JSON.parse(JSON.stringify(this.props.banners[this.state.isDesktop ? 'desktop' : 'mobile']));
 
             // Banner containers placement
             const bannerDens = process.env.BANNER_DENSITY || 0.5;
@@ -356,11 +363,19 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
                         let banner = null;
 
                         if (element.tagName == 'P' && element.nextSibling && element.nextSibling.nodeName == 'P') {
-                            let inlineBannerData = ads[BannerID.BANNER_CONTENT_INLINE] ? ads[BannerID.BANNER_CONTENT_INLINE].shift() : null;
-                            if (inlineBannerData) banner = this.createBanner(inlineBannerData.width, inlineBannerData.height, BannerID.BANNER_CONTENT_INLINE, inlineBannerData.code);
+                            let inlineBanners = ads[BannerID.BANNER_CONTENT_INLINE];
+                            if (inlineBanners && inlineBanners.length) {
+                                this.shuffle(inlineBanners);
+                                let inlineBannerData = inlineBanners.shift();
+                                if (inlineBannerData) banner = this.createBanner(inlineBannerData.width, inlineBannerData.height, BannerID.BANNER_CONTENT_INLINE, inlineBannerData.code);
+                            }
                         } else {
-                            let bannerData = ads[BannerID.BANNER_CONTENT] ? ads[BannerID.BANNER_CONTENT].shift() : null;
-                            if (bannerData) banner = this.createBanner(bannerData.width, bannerData.height, BannerID.BANNER_CONTENT, bannerData.code);
+                            let contentBanners = ads[BannerID.BANNER_CONTENT];
+                            if (contentBanners && contentBanners.length) {
+                                this.shuffle(contentBanners);
+                                let bannerData = contentBanners.shift();
+                                if (bannerData) banner = this.createBanner(bannerData.width, bannerData.height, BannerID.BANNER_CONTENT, bannerData.code);
+                            } 
                         }
 
                         if (banner) {
@@ -378,9 +393,13 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
                         bannerCount++;
                         let banner = null;
 
-                        let bannerData = ads[BannerID.BANNER_CONTENT] ? ads[BannerID.BANNER_CONTENT].shift() : null;
-                        if (bannerData) banner = this.createBanner(bannerData.width, bannerData.height, BannerID.BANNER_CONTENT, bannerData);
-                        
+                        let contentBanners = ads[BannerID.BANNER_CONTENT];
+                        if (contentBanners && contentBanners.length) {
+                            this.shuffle(contentBanners);
+                            let bannerData = contentBanners.shift();
+                            if (bannerData) banner = this.createBanner(bannerData.width, bannerData.height, BannerID.BANNER_CONTENT, bannerData.code);
+                        }
+
                         if (banner) {
                             element.parentNode.insertBefore(banner, element.nextSibling);
                             this.execBannerScript(banner);
@@ -392,7 +411,9 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
             // Bottom banner placement
             if (ads[BannerID.BANNER_BOTTOM] && ads[BannerID.BANNER_BOTTOM].length) {
                 if (this.state.isDesktop || bannerCount == 0) {
-                    let bottomBannerData = ads[BannerID.BANNER_BOTTOM].shift();
+                    let bottomBanners = ads[BannerID.BANNER_BOTTOM];
+                    this.shuffle(bottomBanners);
+                    let bottomBannerData = bottomBanners.shift();
                     let bottomBannerContainer = this.refs.article.querySelector('#' + BannerID.BANNER_BOTTOM);
                     let bottomBanner = this.createBanner(bottomBannerData.width, bottomBannerData.height, BannerID.BANNER_BOTTOM, bottomBannerData);
                     if (bottomBanner) {
@@ -404,7 +425,9 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
 
             // Side banner placement
             if (ads[BannerID.BANNER_RIGHT_SIDE] && ads[BannerID.BANNER_RIGHT_SIDE].length) {
-                let sideBannerData = ads[BannerID.BANNER_RIGHT_SIDE][0];
+                let sideBanners = ads[BannerID.BANNER_RIGHT_SIDE];
+                this.shuffle(sideBanners);
+                let sideBannerData = sideBanners.shift();
                 let sideBanner = this.createBanner(sideBannerData.width, sideBannerData.height, BannerID.BANNER_RIGHT_SIDE, sideBannerData, true);
                 if (sideBanner) {
                     let container = this.refs.article.getElementsByClassName('banner_container_side__sticky')[0];
@@ -507,6 +530,7 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
     handleMediaQuery(isDesktop: boolean) {
         if (this.state.isDesktop != isDesktop) {
             this.setState({isDesktop: isDesktop}, () => {
+                this.adsProcessed = false;
                 this.processAds();
             });
         }
@@ -644,16 +668,13 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
             if (!nextProps.match.params.galleryBlockId) {
                 ModalAction.do(CLOSE_MODAL, null);
             } 
-            if (nextProps.match.params.articleSlug != this.props.match.params.articleSlug) {
-                this.retrieveArticle();
-            }
+            // if (nextProps.match.params.articleSlug != this.props.match.params.articleSlug) {
+            //     this.retrieveArticle();
+            // }
         }
-        if (nextProps.isCurrentInFeed != this.props.isCurrentInFeed) {
-            if (!nextProps.isCurrentInFeed) {
-                this.adsProcessed = false;
-            } else if (!this.adsProcessed) {
-                this.processAds();
-            }
+        if (nextProps.isCurrentInFeed != this.props.isCurrentInFeed && nextProps.isCurrentInFeed) {
+            this.adsProcessed = false;
+            this.processAds();
         }
     }
 
@@ -665,6 +686,10 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
             img.onload = () => {};
         });
         this.loadingImages = [];
+    }
+
+    shouldComponentUpdate(nextProps: any, nextState: any) {
+        return false;
     }
 
     render() {

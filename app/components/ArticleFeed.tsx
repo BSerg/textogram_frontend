@@ -115,7 +115,7 @@ export default class ArticleFeed extends React.Component<any, IArticleFeedState>
                 `${window.location.protocol}//${window.location.host}/articles/${this.state.articles[currentArticleIndex].slug}/`);
             this.setState({currentArticleIndex: currentArticleIndex});
             try {
-                yaCounter.hit();
+                yaCounter.hit(`/articles/${this.state.articles[currentArticleIndex].slug}/`);
             } catch(err) {
                 console.log('Yandex hit error', err);
             }
