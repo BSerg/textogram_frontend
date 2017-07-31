@@ -27,6 +27,7 @@ import Article from './Article';
 interface IArticleFeedState {
     currentArticleIndex?: number;
     articles?: any[];
+    banners?: any;
     recommendations?: any[] | null;
     loadingProcess?: boolean;
 }
@@ -39,11 +40,28 @@ export default class ArticleFeed extends React.Component<any, IArticleFeedState>
         this.state = {
             currentArticleIndex: -1,
             articles: [],
+            banners: null,
             recommendations: null,
             loadingProcess: false
         };
         this.handleScroll = this.handleScroll.bind(this);
         this.previousArticleIndex = -1;
+    }
+
+    loadAds() {
+        return new Promise((resolve, reject) => {
+            if (this.state.banners) {
+                resolve(this.state.banners);
+            } else {
+                api.get(`${process.env.USE_CACHE_API ? '/_' : ''}/advertisements/banners`).then((response: any) => {
+                    this.setState({banners: response.data}, () => {
+                        resolve(this.state.banners);
+                    });
+                }).catch(err => {
+                    reject();
+                });
+            }
+        });
     }
 
     loadArticle(slug: string) {
@@ -99,19 +117,14 @@ export default class ArticleFeed extends React.Component<any, IArticleFeedState>
                 yaCounter.hit();
             } catch(err) {}
         }
-        
-        // if (currentArticleIndex != this.state.currentArticleIndex) {
-        //     console.log(currentArticleIndex)
-            
-        //     this.setState({currentArticleIndex: currentArticleIndex}, () => {
-        //         let currentArticle = this.state.articles[this.state.currentArticleIndex];
-        //         window.history.replaceState({}, '', `${window.location.protocol}//${window.location.host}/articles/${currentArticle.slug}/`);
-        //     });
-        // }
     }
 
     componentDidMount() {
-        this.loadArticle(this.props.match.params.articleSlug);
+        this.loadAds().then(() => {
+            this.loadArticle(this.props.match.params.articleSlug);
+        }).catch(err => {
+            this.loadArticle(this.props.match.params.articleSlug);
+        });
         this.loadArticleRecommendations(this.props.match.params.articleSlug);
         window.addEventListener('scroll', this.handleScroll);
     }
@@ -131,7 +144,8 @@ export default class ArticleFeed extends React.Component<any, IArticleFeedState>
                             renderedArticle={article} 
                             preventFetching={true} 
                             page={index} 
-                            isCurrentInFeed={index == this.state.currentArticleIndex}/>
+                            isCurrentInFeed={index == this.state.currentArticleIndex} 
+                            banners={this.state.banners}/>
                     )
                 })}
                 <div id="trigger" className="article_feed__trigger">

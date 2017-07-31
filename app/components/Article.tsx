@@ -79,7 +79,7 @@ interface IArticleProps {
     preventFetching: boolean;
     page?: number;
     isCurrentInFeed?: boolean;
-    advertisement?: any;
+    banners?: any;
 }
 
 interface IArticleState {
@@ -91,10 +91,12 @@ interface IArticleState {
 
 export default class Article extends React.Component<IArticleProps|any, IArticleState|any> {
     private loadingImages: HTMLImageElement[];
+    private adsProcessed: boolean;
 
     constructor(props: any) {
         super(props);
         this.loadingImages = [];
+        this.adsProcessed = false;
         this.state = {
             article: this.processArticle(props.renderedArticle) || null,
             user: UserAction.getStore().user,
@@ -310,113 +312,112 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
     }
 
     processAds() {
-        if (this.state.article.ads_enabled) {
-            api.get(`${process.env.USE_CACHE_API ? '/_' : ''}/advertisements/banners`).then((response: any) => {
-                let ads = response.data[this.state.isDesktop ? 'desktop' : 'mobile'];
+        if (this.state.article && this.state.article.ads_enabled && this.props.banners) {
+            this.adsProcessed = true;
+            let ads = this.props.banners[this.state.isDesktop ? 'desktop' : 'mobile'];
 
-                // Banner containers placement
-                const bannerDens = process.env.BANNER_DENSITY || 0.5;
-                const bannerDensMob = process.env.BANNER_DENSITY_MOBILE || 0.2;
-                const bannerOffs = process.env.BANNER_OFFSET || 0.5;
+            // Banner containers placement
+            const bannerDens = process.env.BANNER_DENSITY || 0.5;
+            const bannerDensMob = process.env.BANNER_DENSITY_MOBILE || 0.2;
+            const bannerOffs = process.env.BANNER_OFFSET || 0.5;
 
-                let screenHeight = MediaQuerySerice.getScreenHeight();
-                let bannerInterval = screenHeight / (this.state.isDesktop ? bannerDens : bannerDensMob);
-                let bannerOffset = bannerOffs * screenHeight; 
-                let content = this.refs.article.getElementsByClassName('article__content')[0];
-                let contentHeight = content.getBoundingClientRect().height;
-                let rootElements = this.refs.article.querySelectorAll('.article__content > p, .article__content > div, .article__content > blockquote');
-                let heightAccumTemp = 0;
-                let heightAccum = 0;
-                let bannerCount = 0;
+            let screenHeight = MediaQuerySerice.getScreenHeight();
+            let bannerInterval = screenHeight / (this.state.isDesktop ? bannerDens : bannerDensMob);
+            let bannerOffset = bannerOffs * screenHeight; 
+            let content = this.refs.article.getElementsByClassName('article__content')[0];
+            let contentHeight = content.getBoundingClientRect().height;
+            let rootElements = this.refs.article.querySelectorAll('.article__content > p, .article__content > div, .article__content > blockquote');
+            let heightAccumTemp = 0;
+            let heightAccum = 0;
+            let bannerCount = 0;
 
-                for (let i = 0; i < rootElements.length; i++) {
-                    let element = rootElements[i];
-                    let rect = element.getBoundingClientRect();
-                    heightAccumTemp += rect.height;
-                    heightAccum += rect.height;
+            for (let i = 0; i < rootElements.length; i++) {
+                let element = rootElements[i];
+                let rect = element.getBoundingClientRect();
+                heightAccumTemp += rect.height;
+                heightAccum += rect.height;
 
-                    if (this.state.isDesktop) {
-                        if (
-                            (heightAccumTemp >= bannerOffset && bannerCount == 0 || heightAccumTemp >= bannerInterval) && 
-                            (contentHeight - heightAccum >= bannerInterval ) &&
-                            (!element.classList.contains('photos') && !(element.nextSibling && (element.nextSibling as Element).classList.contains('photos')))
-                        ) {
-                            heightAccumTemp = 0;
-                            bannerCount++;
-                            let banner = null;
+                if (this.state.isDesktop) {
+                    if (
+                        (heightAccumTemp >= bannerOffset && bannerCount == 0 || heightAccumTemp >= bannerInterval) && 
+                        (contentHeight - heightAccum >= bannerInterval ) &&
+                        (!element.classList.contains('photos') && !(element.nextSibling && (element.nextSibling as Element).classList.contains('photos')))
+                    ) {
+                        heightAccumTemp = 0;
+                        bannerCount++;
+                        let banner = null;
 
-                            if (element.tagName == 'P' && element.nextSibling && element.nextSibling.nodeName == 'P') {
-                                let inlineBannerData = ads[BannerID.BANNER_CONTENT_INLINE] ? ads[BannerID.BANNER_CONTENT_INLINE].shift() : null;
-                                if (inlineBannerData) banner = this.createBanner(inlineBannerData.width, inlineBannerData.height, BannerID.BANNER_CONTENT_INLINE, inlineBannerData.code);
-                            } else {
-                                let bannerData = ads[BannerID.BANNER_CONTENT] ? ads[BannerID.BANNER_CONTENT].shift() : null;
-                                if (bannerData) banner = this.createBanner(bannerData.width, bannerData.height, BannerID.BANNER_CONTENT, bannerData.code);
-                            }
-
-                            if (banner) {
-                                element.parentNode.insertBefore(banner, element.nextSibling);
-                                this.execBannerScript(banner);
-                            }
-                        }
-                    } else {
-                        if (
-                            (heightAccumTemp >= bannerOffset && bannerCount == 0 || heightAccumTemp >= bannerInterval) &&
-                            (contentHeight - heightAccum >= bannerOffset) &&
-                            (!element.classList.contains('photos') && !(element.nextSibling && (element.nextSibling as Element).classList.contains('photos')))
-                        ) {
-                            heightAccumTemp = 0;
-                            bannerCount++;
-                            let banner = null;
-
+                        if (element.tagName == 'P' && element.nextSibling && element.nextSibling.nodeName == 'P') {
+                            let inlineBannerData = ads[BannerID.BANNER_CONTENT_INLINE] ? ads[BannerID.BANNER_CONTENT_INLINE].shift() : null;
+                            if (inlineBannerData) banner = this.createBanner(inlineBannerData.width, inlineBannerData.height, BannerID.BANNER_CONTENT_INLINE, inlineBannerData.code);
+                        } else {
                             let bannerData = ads[BannerID.BANNER_CONTENT] ? ads[BannerID.BANNER_CONTENT].shift() : null;
-                            if (bannerData) banner = this.createBanner(bannerData.width, bannerData.height, BannerID.BANNER_CONTENT, bannerData);
-                            
-                            if (banner) {
-                                element.parentNode.insertBefore(banner, element.nextSibling);
-                                this.execBannerScript(banner);
+                            if (bannerData) banner = this.createBanner(bannerData.width, bannerData.height, BannerID.BANNER_CONTENT, bannerData.code);
+                        }
+
+                        if (banner) {
+                            element.parentNode.insertBefore(banner, element.nextSibling);
+                            this.execBannerScript(banner);
+                        }
+                    }
+                } else {
+                    if (
+                        (heightAccumTemp >= bannerOffset && bannerCount == 0 || heightAccumTemp >= bannerInterval) &&
+                        (contentHeight - heightAccum >= bannerOffset) &&
+                        (!element.classList.contains('photos') && !(element.nextSibling && (element.nextSibling as Element).classList.contains('photos')))
+                    ) {
+                        heightAccumTemp = 0;
+                        bannerCount++;
+                        let banner = null;
+
+                        let bannerData = ads[BannerID.BANNER_CONTENT] ? ads[BannerID.BANNER_CONTENT].shift() : null;
+                        if (bannerData) banner = this.createBanner(bannerData.width, bannerData.height, BannerID.BANNER_CONTENT, bannerData);
+                        
+                        if (banner) {
+                            element.parentNode.insertBefore(banner, element.nextSibling);
+                            this.execBannerScript(banner);
+                        }
+                    }
+                }
+            }
+
+            // Bottom banner placement
+            if (ads[BannerID.BANNER_BOTTOM] && ads[BannerID.BANNER_BOTTOM].length) {
+                if (this.state.isDesktop || bannerCount == 0) {
+                    let bottomBannerData = ads[BannerID.BANNER_BOTTOM].shift();
+                    let bottomBannerContainer = this.refs.article.querySelector('#' + BannerID.BANNER_BOTTOM);
+                    let bottomBanner = this.createBanner(bottomBannerData.width, bottomBannerData.height, BannerID.BANNER_BOTTOM, bottomBannerData);
+                    if (bottomBanner) {
+                        bottomBannerContainer.appendChild(bottomBanner);
+                        this.execBannerScript(bottomBanner);
+                    }
+                }
+            }
+
+            // Side banner placement
+            if (ads[BannerID.BANNER_RIGHT_SIDE] && ads[BannerID.BANNER_RIGHT_SIDE].length) {
+                let sideBannerData = ads[BannerID.BANNER_RIGHT_SIDE][0];
+                let sideBanner = this.createBanner(sideBannerData.width, sideBannerData.height, BannerID.BANNER_RIGHT_SIDE, sideBannerData, true);
+                if (sideBanner) {
+                    let container = this.refs.article.getElementsByClassName('banner_container_side__sticky')[0];
+                    container.appendChild(sideBanner);
+                    this.execBannerScript(sideBanner);
+                    if (MediaQuerySerice.getScreenWidth() >= 1280) {
+                        let offset = 170;
+                        if (offset) {
+                            (content as HTMLElement).style.marginLeft = offset + 'px';
+                            let titleElement = this.refs.article.getElementsByClassName('article__title_container')[0] as HTMLDivElement;
+                            titleElement.style.marginLeft = -offset + 'px';
+                            let footerElement = this.refs.article.getElementsByClassName('article__footer_content')[0] as HTMLElement;
+                            footerElement.style.marginLeft = -offset + 'px';
+                            let bottomBanners = this.refs.article.getElementsByClassName(BannerID.BANNER_BOTTOM);
+                            if (bottomBanners.length) {
+                                (bottomBanners[0] as HTMLElement).style.marginLeft = -offset + 'px';
                             }
                         }
                     }
                 }
-
-                // Bottom banner placement
-                if (ads[BannerID.BANNER_BOTTOM] && ads[BannerID.BANNER_BOTTOM].length) {
-                    if (this.state.isDesktop || bannerCount == 0) {
-                        let bottomBannerData = ads[BannerID.BANNER_BOTTOM].shift();
-                        let bottomBannerContainer = this.refs.article.querySelector('#' + BannerID.BANNER_BOTTOM);
-                        let bottomBanner = this.createBanner(bottomBannerData.width, bottomBannerData.height, BannerID.BANNER_BOTTOM, bottomBannerData);
-                        if (bottomBanner) {
-                            bottomBannerContainer.appendChild(bottomBanner);
-                            this.execBannerScript(bottomBanner);
-                        }
-                    }
-                }
-
-                // Side banner placement
-                if (ads[BannerID.BANNER_RIGHT_SIDE] && ads[BannerID.BANNER_RIGHT_SIDE].length) {
-                    let sideBannerData = ads[BannerID.BANNER_RIGHT_SIDE][0];
-                    let sideBanner = this.createBanner(sideBannerData.width, sideBannerData.height, BannerID.BANNER_RIGHT_SIDE, sideBannerData, true);
-                    if (sideBanner) {
-                        let container = this.refs.article.getElementsByClassName('banner_container_side__sticky')[0];
-                        container.appendChild(sideBanner);
-                        this.execBannerScript(sideBanner);
-                        if (MediaQuerySerice.getScreenWidth() >= 1280) {
-                            let offset = 170;
-                            if (offset) {
-                                (content as HTMLElement).style.marginLeft = offset + 'px';
-                                let titleElement = this.refs.article.getElementsByClassName('article__title_container')[0] as HTMLDivElement;
-                                titleElement.style.marginLeft = -offset + 'px';
-                                let footerElement = this.refs.article.getElementsByClassName('article__footer_content')[0] as HTMLElement;
-                                footerElement.style.marginLeft = -offset + 'px';
-                                let bottomBanners = this.refs.article.getElementsByClassName(BannerID.BANNER_BOTTOM);
-                                if (bottomBanners.length) {
-                                    (bottomBanners[0] as HTMLElement).style.marginLeft = -offset + 'px';
-                                }
-                            }
-                        }
-                    }
-                }
-            });
+            }
         }
     }
 
@@ -444,12 +445,6 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
                 img.addEventListener('click', onClick);
             }
         })
-    }
-
-    processes() {
-        if (process.env.IS_BROWSER) {
-            this.processAds();
-        }
     }
 
     getBanner(id: string) {
@@ -521,15 +516,6 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
         }
     }
 
-    loadArticle(data: IArticle) {
-        let articleContent = this.processArticle(data);
-        this.setState({article: articleContent}, () => {
-            window.setTimeout(() => {
-                this.processes();
-            }, 100);
-        });
-    }
-
     coverLazyLoad(el: HTMLElement) {
         if (el && this.state.article && this.state.article.cover) {
             let img = new Image();
@@ -564,8 +550,7 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
 
     retrieveArticle() {
         api.get(`${process.env.USE_CACHE_API ? '/_' : ''}/articles/${this.props.match.params.articleSlug}/`).then((response: any) => {
-            let data = response.data;
-            this.loadArticle(data);
+            this.setState({article: this.processArticle(response.data)});
         }).catch((err: any) => {
             console.log(err);
             if (err.response) {
@@ -585,8 +570,9 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
 
     retrieveArticlePreview() {
         api.get(`/articles/${this.props.match.params.articleId}/preview/`).then((response: any) => {
-            let data = response.data;
-            this.loadArticle(data);
+            this.setState({article: this.processArticle(response.data)}, () => {
+                this.processAds();
+            });
         }).catch((err: any) => {
             console.log(err);
             if (err.response) {
@@ -605,6 +591,7 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
     }
 
     loadPaymentForm(el: HTMLFormElement) {
+        if (!el) return;
         api.post('payments/form/', {
             article_id: this.state.article.id,
             success_url: window.location.href,
@@ -645,9 +632,10 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
         } else {
             if (!this.props.preventFetching) {
                 this.retrieveArticle();
-            } else {
-                this.processes();
             }
+        }
+        if (this.props.page === 0 && !this.adsProcessed) {
+            this.processAds();
         }
     }
 
@@ -663,6 +651,9 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
             if (nextProps.match.params.articleSlug != this.props.match.params.articleSlug) {
                 this.retrieveArticle();
             }
+        }
+        if (nextProps.isCurrentInFeed != this.props.isCurrentInFeed && !this.adsProcessed) {
+            this.processAds();
         }
     }
 
