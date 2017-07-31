@@ -34,7 +34,7 @@ class BaseRouter {
             </StaticRouter>
         );
         let helmet = Helmet.renderStatic();
-        res.render('index.ejs', {reactData: html, helmet: helmet});
+        res.render('index.ejs', {reactData: html, helmet: helmet, rev: process.env.REVISION || false});
     }
 
     getProfile(req: Request, res: Response, next: NextFunction) {
@@ -48,7 +48,7 @@ class BaseRouter {
                     <StaticRouter context={{}}><Base><RenderedProfile /></Base></StaticRouter>
                 );
                 let helmet = Helmet.renderStatic();
-                res.render('index.ejs', {reactData: html, helmet: helmet});
+                res.render('index.ejs', {reactData: html, helmet: helmet, rev: process.env.REVISION || false});
             }
             catch(error) {
                 next();
@@ -71,7 +71,7 @@ class BaseRouter {
             </StaticRouter>
         );
         let helmet = Helmet.renderStatic();
-        res.render('index.ejs', {reactData: html, helmet: helmet});
+        res.render('index.ejs', {reactData: html, helmet: helmet, rev: process.env.REVISION || false});
     }
 
     init() {

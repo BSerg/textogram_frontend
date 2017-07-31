@@ -94,6 +94,10 @@ export default class ArticleFeed extends React.Component<any, IArticleFeedState>
             this.previousArticleIndex = currentArticleIndex;
             window.history.replaceState(null, null, 
                 `${window.location.protocol}//${window.location.host}/articles/${this.state.articles[currentArticleIndex].slug}/`);
+            this.setState({currentArticleIndex: currentArticleIndex});
+            try {
+                yaCounter.hit();
+            } catch(err) {}
         }
         
         // if (currentArticleIndex != this.state.currentArticleIndex) {
@@ -126,7 +130,8 @@ export default class ArticleFeed extends React.Component<any, IArticleFeedState>
                             key={'article' + article.id}  
                             renderedArticle={article} 
                             preventFetching={true} 
-                            page={index}/>
+                            page={index} 
+                            isCurrentInFeed={index == this.state.currentArticleIndex}/>
                     )
                 })}
                 <div id="trigger" className="article_feed__trigger">

@@ -85,6 +85,7 @@ class ArticleRouter {
     }
 
     getArticle(req: Request, res: Response, next: NextFunction) {
+        console.log('REVISION', process.env.REVISION, typeof process.env.REVISION)
         db.getArticle(req).then((data: any) => {
             try {
                 let article = JSON.parse(data);
@@ -94,14 +95,14 @@ class ArticleRouter {
                 };
                 let html = ReactDOMServer.renderToString(<StaticRouter context={{}}><Base><RenderedArticle /></Base></StaticRouter>);
                 const helmet = Helmet.renderStatic();
-                res.render('index.ejs', {reactData: html, helmet: helmet, revision: process.env.REVISION});
+                res.render('index.ejs', {reactData: html, helmet: helmet, rev: process.env.REVISION || false});
             }
             catch (error) {
                 next();
             }
         }).catch(() => {
             let html = ReactDOMServer.renderToString(<StaticRouter context={{}}><Base><Error404/></Base></StaticRouter>);
-            res.status(404).render('index.ejs', {reactData: html, helmet: null, revision: process.env.REVISION});
+            res.status(404).render('index.ejs', {reactData: html, helmet: null, rev: process.env.REVISION || false});
         });
     }
     init() {

@@ -16,6 +16,8 @@ declare var FB: any;
 
 declare const VK_APP_ID: string;
 
+declare var yaCounter: any;
+
 declare class ClientJS {
     getFingerprint(): string
 }
