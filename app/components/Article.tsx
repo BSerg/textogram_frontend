@@ -249,7 +249,7 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
         if (!data || !(data.amp_props || data.code)) return null;
         let banner = document.createElement('div');
         banner.className = 'banner ' + bannerID;
-        banner.id = bannerID + '__' + new Date().getTime();
+        banner.id = bannerID + '__' + Math.random().toString().substr(2, 7);
         if (isActive) {
             banner.classList.add('active');
         }
@@ -313,6 +313,18 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
 
     processAds() {
         if (this.state.article && this.state.article.ads_enabled && this.props.banners) {
+
+            let banners = this.refs.article.getElementsByClassName('banner');
+            while (banners.length > 0) {
+                banners[0].parentNode.removeChild(banners[0]);
+            }
+            // for (let i = 0; i < banners.length; i++) {
+            //     let b = banners[i];
+            //     if (b) {
+            //         b.outerHTML = '';
+            //     }
+            // }
+
             this.adsProcessed = true;
             let ads = this.props.banners[this.state.isDesktop ? 'desktop' : 'mobile'];
 
@@ -402,20 +414,6 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
                     let container = this.refs.article.getElementsByClassName('banner_container_side__sticky')[0];
                     container.appendChild(sideBanner);
                     this.execBannerScript(sideBanner);
-                    if (MediaQuerySerice.getScreenWidth() >= 1280) {
-                        let offset = 170;
-                        if (offset) {
-                            (content as HTMLElement).style.marginLeft = offset + 'px';
-                            let titleElement = this.refs.article.getElementsByClassName('article__title_container')[0] as HTMLDivElement;
-                            titleElement.style.marginLeft = -offset + 'px';
-                            let footerElement = this.refs.article.getElementsByClassName('article__footer_content')[0] as HTMLElement;
-                            footerElement.style.marginLeft = -offset + 'px';
-                            let bottomBanners = this.refs.article.getElementsByClassName(BannerID.BANNER_BOTTOM);
-                            if (bottomBanners.length) {
-                                (bottomBanners[0] as HTMLElement).style.marginLeft = -offset + 'px';
-                            }
-                        }
-                    }
                 }
             }
         }
@@ -512,7 +510,9 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
 
     handleMediaQuery(isDesktop: boolean) {
         if (this.state.isDesktop != isDesktop) {
-            this.setState({isDesktop: isDesktop});
+            this.setState({isDesktop: isDesktop}, () => {
+                this.processAds();
+            });
         }
     }
 
@@ -957,12 +957,24 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
                                         }
                                     })}
                                     
+                                    {/* FOOTER */}
+                                    <div id="article__footer" className="article__footer">
+                                        <div className="article__footer_content">
+                                            <Link to={authorLink} className="article__author">
+                                                {this.state.article.owner.avatar ?
+                                                    <img className="article__avatar" src={this.state.article.owner.avatar}/> : null
+                                                }
+                                                {this.state.article.owner.first_name}&nbsp;{this.state.article.owner.last_name}
+                                            </Link>
+                                        </div>
+                                    </div>
+
 
                                 </div>
                             }
-                            <div className="banner_container_side">
+                             <div className="banner_container_side">
                                 <div className="banner_container_side__sticky"></div>
-                            </div>
+                            </div> 
 
                             {this.state.isDesktop ?
                                 <div className="share_container">
@@ -974,7 +986,7 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
                             }
                         </div>
 
-                        {/* FOOTER */}
+                         {/* FOOTER 
                         <div id="article__footer" className="article__footer">
                             <div className="article__footer_content">
                                 <Link to={authorLink} className="article__author">
@@ -984,7 +996,7 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
                                     {this.state.article.owner.first_name}&nbsp;{this.state.article.owner.last_name}
                                 </Link>
                             </div>
-                        </div>
+                        </div> */}
 
                         {/* FOOTER BANNER */}
                         {this.state.article.ads_enabled ?

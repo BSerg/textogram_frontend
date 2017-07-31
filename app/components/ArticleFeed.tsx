@@ -153,6 +153,7 @@ export default class ArticleFeed extends React.Component<any, IArticleFeedState>
                         <Loading/> : null
                     }
                 </div>
+                <div className="banner_side__container"></div>
             </div>
         )
     }
