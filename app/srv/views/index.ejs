@@ -56,10 +56,11 @@
     <% if (settings.YANDEX_METRIKA_ID) {%>
         <!-- Yandex.Metrika counter -->
         <script type="text/javascript">
+            var yaCounter;
             (function (d, w, c) {
                 (w[c] = w[c] || []).push(function() {
                     try {
-                        var yaCounter = new Ya.Metrika({
+                        yaCounter = new Ya.Metrika({
                             id:<%- settings.YANDEX_METRIKA_ID%>,
                             clickmap:true,
                             trackLinks:true,

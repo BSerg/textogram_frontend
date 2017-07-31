@@ -102,7 +102,8 @@ export default class ArticleFeed extends React.Component<any, IArticleFeedState>
         for (let i = 0; i < articleElements.length; i++) {
             let articleElement = articleElements[i];
             let rect = articleElement.getBoundingClientRect();
-            if (rect.top < window.innerHeight / 2 && rect.bottom >= window.innerHeight/2) {
+            let edge = window.innerHeight * 0.25;
+            if (rect.top < edge && rect.bottom >= edge) {
                 currentArticleIndex = i;
                 break;
             }
@@ -115,7 +116,9 @@ export default class ArticleFeed extends React.Component<any, IArticleFeedState>
             this.setState({currentArticleIndex: currentArticleIndex});
             try {
                 yaCounter.hit();
-            } catch(err) {}
+            } catch(err) {
+                console.log('Yandex hit error', err);
+            }
         }
     }
 
@@ -135,7 +138,6 @@ export default class ArticleFeed extends React.Component<any, IArticleFeedState>
 
     render() {
         let currentArticle = this.state.articles[this.state.currentArticleIndex];
-        let banners = JSON.parse(JSON.stringify(this.state.banners));
         return (
             <div className="article_feed">
                 {this.state.articles.map((article: any, index: number) => {
@@ -146,7 +148,7 @@ export default class ArticleFeed extends React.Component<any, IArticleFeedState>
                             preventFetching={true} 
                             page={index} 
                             isCurrentInFeed={index == this.state.currentArticleIndex} 
-                            banners={banners}/>
+                            banners={this.state.banners}/>
                     )
                 })}
                 <div id="trigger" className="article_feed__trigger">

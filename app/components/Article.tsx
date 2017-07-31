@@ -322,7 +322,7 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
         if (this.state.article && this.state.article.ads_enabled && this.props.banners) {
             this.clearBanners();
             this.adsProcessed = true;
-            let ads = this.props.banners[this.state.isDesktop ? 'desktop' : 'mobile'];
+            let ads = Object.assign({}, this.props.banners[this.state.isDesktop ? 'desktop' : 'mobile']);
 
             // Banner containers placement
             const bannerDens = process.env.BANNER_DENSITY || 0.5;
