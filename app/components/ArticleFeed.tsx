@@ -135,6 +135,7 @@ export default class ArticleFeed extends React.Component<any, IArticleFeedState>
 
     render() {
         let currentArticle = this.state.articles[this.state.currentArticleIndex];
+        let banners = JSON.parse(JSON.stringify(this.state.banners));
         return (
             <div className="article_feed">
                 {this.state.articles.map((article: any, index: number) => {
@@ -145,7 +146,7 @@ export default class ArticleFeed extends React.Component<any, IArticleFeedState>
                             preventFetching={true} 
                             page={index} 
                             isCurrentInFeed={index == this.state.currentArticleIndex} 
-                            banners={this.state.banners}/>
+                            banners={banners}/>
                     )
                 })}
                 <div id="trigger" className="article_feed__trigger">

@@ -313,17 +313,10 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
 
     processAds() {
         if (this.state.article && this.state.article.ads_enabled && this.props.banners) {
-
             let banners = this.refs.article.getElementsByClassName('banner');
             while (banners.length > 0) {
                 banners[0].parentNode.removeChild(banners[0]);
             }
-            // for (let i = 0; i < banners.length; i++) {
-            //     let b = banners[i];
-            //     if (b) {
-            //         b.outerHTML = '';
-            //     }
-            // }
 
             this.adsProcessed = true;
             let ads = this.props.banners[this.state.isDesktop ? 'desktop' : 'mobile'];
