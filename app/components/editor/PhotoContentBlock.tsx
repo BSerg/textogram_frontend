@@ -509,6 +509,8 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
         if (this.props.className) {
             className += ' ' + this.props.className;
         }
+        // let acceptedExt = "image/jpeg,image/png,image/gif";
+        let acceptedExt = "image/jpeg,image/png";
         return (
             <BaseContentBlock id={this.props.content.id}
                               className={className}
@@ -574,7 +576,7 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
                        style={{display: "none"}}
                        ref="inputUpload"
                        type="file"
-                       accept="image/jpeg,image/png,image/gif"
+                       accept={acceptedExt}
                        multiple={true}
                        onChange={this.addPhoto.bind(this)}/>
             </BaseContentBlock>
