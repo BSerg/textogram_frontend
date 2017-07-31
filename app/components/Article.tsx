@@ -311,13 +311,16 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
         }
     }
 
+    private clearBanners() {
+        let banners = this.refs.article.getElementsByClassName('banner');
+        while (banners.length > 0) {
+            banners[0].parentNode.removeChild(banners[0]);
+        }
+    }
+
     processAds() {
         if (this.state.article && this.state.article.ads_enabled && this.props.banners) {
-            let banners = this.refs.article.getElementsByClassName('banner');
-            while (banners.length > 0) {
-                banners[0].parentNode.removeChild(banners[0]);
-            }
-
+            this.clearBanners();
             this.adsProcessed = true;
             let ads = this.props.banners[this.state.isDesktop ? 'desktop' : 'mobile'];
 
@@ -645,8 +648,12 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
                 this.retrieveArticle();
             }
         }
-        if (nextProps.isCurrentInFeed != this.props.isCurrentInFeed && !this.adsProcessed) {
-            this.processAds();
+        if (nextProps.isCurrentInFeed != this.props.isCurrentInFeed) {
+            if (!nextProps.isCurrentInFeed) {
+                this.adsProcessed = false;
+            } else if (!this.adsProcessed) {
+                this.processAds();
+            }
         }
     }
 
