@@ -91,7 +91,8 @@ class ArticleRouter {
                 let article = JSON.parse(data);
 
                 let RenderedArticle: React.StatelessComponent<any> = (props: any) => {
-                    return (<Article renderedArticle={article} {...props}/>);
+
+                    return (<Article renderedArticle={article} match={{params: {galleryBlockId: req.params.galleryUid || null}}} {...props}/>);
                 };
                 let html = ReactDOMServer.renderToString(<StaticRouter context={{}}><Base><RenderedArticle /></Base></StaticRouter>);
                 const helmet = Helmet.renderStatic();
