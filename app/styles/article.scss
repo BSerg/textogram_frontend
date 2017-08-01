@@ -765,7 +765,7 @@ $block_margin_desktop: 25px;
       max-width: 300px;
       height: 100%;
       top: 0;
-      left: calc(50vw + 270px);
+      left: calc(50vw + 285px);
 
       .banner_container_side__sticky {
         position: sticky;
@@ -774,6 +774,7 @@ $block_margin_desktop: 25px;
         min-height: 250px;
         max-height: 600px;
         margin-top: -230px;
+        margin-bottom: 50px;
       }
     }
 

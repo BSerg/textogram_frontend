@@ -255,7 +255,7 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
         }
         banner.style.display = 'block';
         banner.style.width = width + 'px';
-        banner.style.height = height + 'px';
+        banner.style.maxHeight = height + 'px';
         try {
             if (data.amp_props && data.amp_props.type == 'yandex') {
                 let id = data.amp_props['data-block-id'];
