@@ -74,9 +74,10 @@ export default class ArticleFeed extends React.Component<any, IArticleFeedState>
                     api.get(`${process.env.USE_CACHE_API ? '/_' : ''}/articles/${slug}/`).then((response: any) => {
                         let articles = this.state.articles.concat([response.data]);
                         this.setState({
-                            currentArticleIndex: 0,
                             articles: articles,
                             loadingProcess: false
+                        }, () => {
+                            resolve();
                         })
                     })
                 });
@@ -102,7 +103,7 @@ export default class ArticleFeed extends React.Component<any, IArticleFeedState>
             }
         }
 
-        if (this.previousArticleIndex != currentArticleIndex) {
+        if (currentArticleIndex != -1 && this.previousArticleIndex != currentArticleIndex) {
             this.previousArticleIndex = currentArticleIndex;
             window.history.replaceState(null, null, 
                 `${window.location.protocol}//${window.location.host}/articles/${this.state.articles[currentArticleIndex].slug}/`);
@@ -125,7 +126,9 @@ export default class ArticleFeed extends React.Component<any, IArticleFeedState>
         if ((window.innerHeight + 100) >= trigger.getBoundingClientRect().top) {
             if (!this.state.loadingProcess && this.state.recommendations && this.state.recommendations.length) {
                 let nextSlug = this.state.recommendations.shift();
-                this.loadArticle(nextSlug);
+                this.loadArticle(nextSlug).then(() => {
+                    this.detectCurrentIndex()
+                });
             }
         }
         this.detectCurrentIndex();
