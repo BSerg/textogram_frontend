@@ -201,7 +201,7 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
     }
 
     processEmbed(embedData: any, el: HTMLElement) {
-        if (!process.env.IS_BROWSER) return;
+        if (!process.env.IS_BROWSER || embedData.__meta.processed) return;
         
         if (embedData.type == BlockContentTypes.VIDEO) {
             try {
@@ -243,6 +243,8 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
                     } catch (err) {}
             }
         }
+
+        embedData.__meta.processed = true;
     }
 
     createBanner(width: number, height: number, bannerID: string, data: any, isActive: boolean = false) {
@@ -814,9 +816,6 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
                                 <div className="article__content">
                                     
                                     {this.state.article.content.blocks.map((block: any, i: number) => {
-                                        if (block.value) {
-                                            block.value = block.value.replace(/<[^>]*>/g, '');
-                                        } 
                                         switch (block.type) {
                                             case BlockContentTypes.TEXT:
                                                 let regx = /<p>(.+)<\/p>/g;
@@ -928,7 +927,7 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
                                                 );
                                             case BlockContentTypes.VIDEO:
                                                 return (
-                                                    block.__meta && block.__meta.embed ?
+                                                    process.env.IS_BROWSER && block.__meta && block.__meta.embed ?
                                                         <div 
                                                             ref={this.processEmbed.bind(this, block)} 
                                                             key={"block" + block.id} 
@@ -938,7 +937,7 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
                                             
                                             case BlockContentTypes.AUDIO:
                                                 return (
-                                                    block.__meta && block.__meta.embed ?
+                                                    process.env.IS_BROWSER && block.__meta && block.__meta.embed ?
                                                         <div 
                                                             ref={this.processEmbed.bind(this, block)} 
                                                             key={"block" + block.id} 
@@ -948,7 +947,7 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
                                             
                                             case BlockContentTypes.POST:
                                                 return (
-                                                    block.__meta && block.__meta.embed ?
+                                                    process.env.IS_BROWSER && block.__meta && block.__meta.embed ?
                                                         <div 
                                                             ref={this.processEmbed.bind(this, block)} 
                                                             key={"block" + block.id}
