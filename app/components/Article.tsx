@@ -689,9 +689,10 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
         this.loadingImages = [];
     }
 
-    shouldComponentUpdate(nextProps: any, nextState: any) {
-        return false;
-    }
+    // shouldComponentUpdate(nextProps: any, nextState: any) {
+
+    //     return false;
+    // }
 
     render() {
         let coverStyle = {};
@@ -1002,7 +1003,7 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
                                 <div className="banner_container_side__sticky"></div>
                             </div> 
 
-                            {this.state.isDesktop ?
+                            {this.state.isDesktop && !this.props.isPreview ?
                                 <div className="share_container">
                                     <ShareFloatingPanel
                                         key={"share" + this.state.article.id} 
