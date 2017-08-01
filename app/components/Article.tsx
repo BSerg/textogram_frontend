@@ -367,14 +367,14 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
                             if (inlineBanners && inlineBanners.length) {
                                 this.shuffle(inlineBanners);
                                 let inlineBannerData = inlineBanners.shift();
-                                if (inlineBannerData) banner = this.createBanner(inlineBannerData.width, inlineBannerData.height, BannerID.BANNER_CONTENT_INLINE, inlineBannerData.code);
+                                if (inlineBannerData) banner = this.createBanner(inlineBannerData.width, inlineBannerData.height, BannerID.BANNER_CONTENT_INLINE, inlineBannerData, true);
                             }
                         } else {
                             let contentBanners = ads[BannerID.BANNER_CONTENT];
                             if (contentBanners && contentBanners.length) {
                                 this.shuffle(contentBanners);
                                 let bannerData = contentBanners.shift();
-                                if (bannerData) banner = this.createBanner(bannerData.width, bannerData.height, BannerID.BANNER_CONTENT, bannerData.code);
+                                if (bannerData) banner = this.createBanner(bannerData.width, bannerData.height, BannerID.BANNER_CONTENT, bannerData, true);
                             } 
                         }
 
@@ -394,10 +394,11 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
                         let banner = null;
 
                         let contentBanners = ads[BannerID.BANNER_CONTENT];
+                        console.log(contentBanners)
                         if (contentBanners && contentBanners.length) {
                             this.shuffle(contentBanners);
                             let bannerData = contentBanners.shift();
-                            if (bannerData) banner = this.createBanner(bannerData.width, bannerData.height, BannerID.BANNER_CONTENT, bannerData.code);
+                            if (bannerData) banner = this.createBanner(bannerData.width, bannerData.height, BannerID.BANNER_CONTENT, bannerData, true);
                         }
 
                         if (banner) {
@@ -415,7 +416,7 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
                     this.shuffle(bottomBanners);
                     let bottomBannerData = bottomBanners.shift();
                     let bottomBannerContainer = this.refs.article.querySelector('#' + BannerID.BANNER_BOTTOM);
-                    let bottomBanner = this.createBanner(bottomBannerData.width, bottomBannerData.height, BannerID.BANNER_BOTTOM, bottomBannerData);
+                    let bottomBanner = this.createBanner(bottomBannerData.width, bottomBannerData.height, BannerID.BANNER_BOTTOM, bottomBannerData, true);
                     if (bottomBanner) {
                         bottomBannerContainer.appendChild(bottomBanner);
                         this.execBannerScript(bottomBanner);
