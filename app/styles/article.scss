@@ -1137,10 +1137,15 @@ $block_margin_desktop: 25px;
 }
 
 .share_container {
-  position: absolute;
-  top: 0;
-  left: 20px;
-  height: 100%;
+  display: none;
+
+  @include desktop {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 20px;
+    height: 100%;
+  }
 }
 
 .share_panel {
