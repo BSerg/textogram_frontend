@@ -34,6 +34,7 @@ interface IArticleFeedState {
 
 export default class ArticleFeed extends React.Component<any, IArticleFeedState> {
     private previousArticleIndex: number;
+    private scrollProcess: number;
 
     constructor(props: any) {
         super(props);
@@ -89,23 +90,15 @@ export default class ArticleFeed extends React.Component<any, IArticleFeedState>
         });
     }
 
-    handleScroll(e: Event) {
-        let trigger = document.getElementById('trigger');
-        if ((window.innerHeight + 100) >= trigger.getBoundingClientRect().top) {
-            if (!this.state.loadingProcess && this.state.recommendations && this.state.recommendations.length) {
-                let nextSlug = this.state.recommendations.shift();
-                this.loadArticle(nextSlug);
-            }
-        }
+    private detectCurrentIndex() {
         let articleElements = document.getElementsByClassName('article');
-        let currentArticleIndex = 0;
+        let currentArticleIndex = this.previousArticleIndex;
+        let edge = window.innerHeight * 0.25;
         for (let i = 0; i < articleElements.length; i++) {
             let articleElement = articleElements[i];
             let rect = articleElement.getBoundingClientRect();
-            let edge = window.innerHeight * 0.25;
-            if (rect.top < edge && rect.bottom >= edge) {
+            if (rect.top < edge && rect.top + rect.height >= edge) {
                 currentArticleIndex = i;
-                break;
             }
         }
 
@@ -120,6 +113,22 @@ export default class ArticleFeed extends React.Component<any, IArticleFeedState>
                 console.log('Yandex hit error', err);
             }
         }
+    }
+
+    handleScroll(e: Event) {
+        window.clearTimeout(this.scrollProcess);
+        this.scrollProcess = window.setTimeout(() => {
+            this.detectCurrentIndex();
+        }, 150);
+
+        let trigger = document.getElementById('trigger');
+        if ((window.innerHeight + 100) >= trigger.getBoundingClientRect().top) {
+            if (!this.state.loadingProcess && this.state.recommendations && this.state.recommendations.length) {
+                let nextSlug = this.state.recommendations.shift();
+                this.loadArticle(nextSlug);
+            }
+        }
+        this.detectCurrentIndex();
     }
 
     componentDidMount() {
