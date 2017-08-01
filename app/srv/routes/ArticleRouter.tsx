@@ -85,7 +85,6 @@ class ArticleRouter {
     }
 
     getArticle(req: Request, res: Response, next: NextFunction) {
-        console.log('REVISION', process.env.REVISION, typeof process.env.REVISION)
         db.getArticle(req).then((data: any) => {
             try {
                 let article = JSON.parse(data);
