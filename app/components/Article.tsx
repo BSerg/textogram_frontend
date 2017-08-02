@@ -844,13 +844,14 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
                                                 let photos = block.photos.map((photo: any, index: number) => {
                                                     let photoData = this.state.article.imageMap[photo.id];
                                                     if (photoData) {
-                                                        return {
+                                                        let data: any = {
                                                             id: photo.id,
                                                             preview: index <= 2 ? photoData.medium : photoData.small,
                                                             image: photo.is_animated && block.photos.length == 1 ? photoData.original : photoData.regular,
                                                             caption: photo.caption || '',
-                                                            isAnimated: photo.is_animated
+                                                            isAnimated: photo.is_animated,
                                                         }
+                                                        return data;
                                                     } else {
                                                         return null;
                                                     }
@@ -867,7 +868,20 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
                                                             if (!photo) return null;
                                                             if (process.env.IS_BROWSER) {
                                                                 let className = 'photo photo_' + index;
-                                                                if (photo.isAnimated) className += ' photo_animated';
+                                                                if (photo.isAnimated) {
+                                                                    className += ' photo_animated';
+                                                                    if (block.__meta.mp4) {
+                                                                        return (
+                                                                            <video className={className} autoPlay={true} loop={true}>
+                                                                                <source src={block.__meta.mp4} type="video/mp4" />
+                                                                                <div 
+                                                                                    ref={this.processPhoto.bind(this, photo, () => {})}
+                                                                                    key={"photo" + index}
+                                                                                    className={"photo photo_" + index + ' photo_animated'}></div>
+                                                                            </video>
+                                                                        )
+                                                                    }
+                                                                }
                                                                 return (
                                                                     <div 
                                                                         ref={this.processPhoto.bind(this, photo, this.openGalleryModal.bind(this, index, photos, block.id))}

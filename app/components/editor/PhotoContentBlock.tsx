@@ -509,8 +509,8 @@ export default class PhotoContentBlock extends React.Component<IPhotoContentBloc
         if (this.props.className) {
             className += ' ' + this.props.className;
         }
-        // let acceptedExt = "image/jpeg,image/png,image/gif";
-        let acceptedExt = "image/jpeg,image/png";
+        let acceptedExt = "image/jpeg,image/png,image/gif";
+        // let acceptedExt = "image/jpeg,image/png";
         return (
             <BaseContentBlock id={this.props.content.id}
                               className={className}
