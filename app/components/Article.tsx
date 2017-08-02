@@ -737,7 +737,6 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
                     <div ref="article" id={"article" + this.state.article.id} className="article">
                         <Helmet>
                             <title>{`${this.state.article.title} | ${process.env.SITE_NAME}`}</title>
-                            <link rel="amphtml" href={`${process.env.SITE_URL}/articles/${this.state.article.slug}/amp`} />
                             <meta property="title" content={`${this.state.article.title} | ${process.env.SITE_NAME}`} />
                             { lead ? <meta name="description" content={lead} /> : null}
                             <meta name="twitter:card" content="summary_large_image" />
