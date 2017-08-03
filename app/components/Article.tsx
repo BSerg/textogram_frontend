@@ -345,7 +345,7 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
                         }
                     }
                 }
-            }§
+            }
 
             // Bottom banner placement
             if (this.state.isDesktop || bannerCount == 0) {
