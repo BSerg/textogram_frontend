@@ -345,13 +345,15 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
                         }
                     }
                 }
-            }
+            }§
 
             // Bottom banner placement
-            let bottomBannerContainer = this.refs.article.querySelector('#' + BannerID.BANNER_BOTTOM);
-            let bottomBannerPlaceholder = this.createBannerPlaceholder(BannerID.BANNER_BOTTOM);
-            if (bottomBannerPlaceholder) {
-                bottomBannerContainer.appendChild(bottomBannerPlaceholder);
+            if (this.state.isDesktop || bannerCount == 0) {
+                let bottomBannerContainer = this.refs.article.querySelector('#' + BannerID.BANNER_BOTTOM);
+                let bottomBannerPlaceholder = this.createBannerPlaceholder(BannerID.BANNER_BOTTOM);
+                if (bottomBannerPlaceholder) {
+                    bottomBannerContainer.appendChild(bottomBannerPlaceholder);
+                }
             }
 
             // Side banner placement
