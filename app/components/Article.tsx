@@ -247,52 +247,12 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
         embedData.__meta.processed = true;
     }
 
-    createBanner(width: number, height: number, bannerID: string, data: any, isActive: boolean = false) {
-        if (!data || !(data.amp_props || data.code)) return null;
+    createBannerPlaceholder(bannerID: string) {
         let banner = document.createElement('div');
         banner.className = 'banner ' + bannerID;
         banner.id = bannerID + '__' + Math.random().toString().substr(2, 7);
-        if (isActive) {
-            banner.classList.add('active');
-        }
+        banner.classList.add('active');
         banner.style.display = 'block';
-        banner.style.width = width + 'px';
-        banner.style.maxHeight = height + 'px';
-        try {
-            if (data.amp_props && data.amp_props.type == 'yandex') {
-                let id = data.amp_props['data-block-id'];
-                let content = `
-                    <!-- Yandex.RTB ${id} -->
-                    <div id="yandex_rtb_${banner.id}"></div>
-                    <script type="text/javascript">
-                        (function(w, d, n, s, t) {
-                            w[n] = w[n] || [];
-                            w[n].push(function() {
-                                Ya.Context.AdvManager.render({
-                                    blockId: "${id}",
-                                    renderTo: "yandex_rtb_${banner.id}",
-                                    horizontalAlign: false,
-                                    async: true,
-                                    page: ${this.props.page}
-                                });
-                            });
-                            t = d.getElementsByTagName("script")[0];
-                            s = d.createElement("script");
-                            s.type = "text/javascript";
-                            s.src = "//an.yandex.ru/system/context.js";
-                            s.async = true;
-                            t.parentNode.insertBefore(s, t);
-                        })(this, this.document, "yandexContextAsyncCallbacks");
-                    </script>
-                `
-                banner.innerHTML = content;
-            } else if (data.code) {
-                banner.innerHTML = data.code;
-            }
-        } catch (err) {
-            console.log('createBanner Error', err);
-        }
-        
         return banner;
     }
 
@@ -327,11 +287,9 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
         }
     }
 
-    processAds() {
-        if (this.state.article && this.state.article.ads_enabled && this.props.banners) {
+    processAdsPlaceholders() {
+        if (this.state.article && this.state.article.ads_enabled) {
             this.clearBanners();
-            this.adsProcessed = true;
-            let ads = JSON.parse(JSON.stringify(this.props.banners[this.state.isDesktop ? 'desktop' : 'mobile']));
 
             // Banner containers placement
             const bannerDens = process.env.BANNER_DENSITY || 0.5;
@@ -362,27 +320,15 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
                     ) {
                         heightAccumTemp = 0;
                         bannerCount++;
-                        let banner = null;
+                        let bannerPLaceholder = null;
 
                         if (element.tagName == 'P' && element.nextSibling && element.nextSibling.nodeName == 'P') {
-                            let inlineBanners = ads[BannerID.BANNER_CONTENT_INLINE];
-                            if (inlineBanners && inlineBanners.length) {
-                                this.shuffle(inlineBanners);
-                                let inlineBannerData = inlineBanners.shift();
-                                if (inlineBannerData) banner = this.createBanner(inlineBannerData.width, inlineBannerData.height, BannerID.BANNER_CONTENT_INLINE, inlineBannerData, true);
-                            }
+                            bannerPLaceholder = this.createBannerPlaceholder(BannerID.BANNER_CONTENT_INLINE);
                         } else {
-                            let contentBanners = ads[BannerID.BANNER_CONTENT];
-                            if (contentBanners && contentBanners.length) {
-                                this.shuffle(contentBanners);
-                                let bannerData = contentBanners.shift();
-                                if (bannerData) banner = this.createBanner(bannerData.width, bannerData.height, BannerID.BANNER_CONTENT, bannerData, true);
-                            } 
-                        }
-
-                        if (banner) {
-                            element.parentNode.insertBefore(banner, element.nextSibling);
-                            this.execBannerScript(banner);
+                            bannerPLaceholder = this.createBannerPlaceholder(BannerID.BANNER_CONTENT);
+                            if (bannerPLaceholder) {
+                                element.parentNode.insertBefore(bannerPLaceholder, element.nextSibling);
+                            }
                         }
                     }
                 } else {
@@ -393,50 +339,114 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
                     ) {
                         heightAccumTemp = 0;
                         bannerCount++;
-                        let banner = null;
-
-                        let contentBanners = ads[BannerID.BANNER_CONTENT];
-                        console.log(contentBanners)
-                        if (contentBanners && contentBanners.length) {
-                            this.shuffle(contentBanners);
-                            let bannerData = contentBanners.shift();
-                            if (bannerData) banner = this.createBanner(bannerData.width, bannerData.height, BannerID.BANNER_CONTENT, bannerData, true);
-                        }
-
-                        if (banner) {
-                            element.parentNode.insertBefore(banner, element.nextSibling);
-                            this.execBannerScript(banner);
+                        let bannerPlaceholder = this.createBannerPlaceholder(BannerID.BANNER_CONTENT);
+                        if (bannerPlaceholder) {
+                            element.parentNode.insertBefore(bannerPlaceholder, element.nextSibling);
                         }
                     }
                 }
             }
 
             // Bottom banner placement
-            if (ads[BannerID.BANNER_BOTTOM] && ads[BannerID.BANNER_BOTTOM].length) {
-                if (this.state.isDesktop || bannerCount == 0) {
-                    let bottomBanners = ads[BannerID.BANNER_BOTTOM];
-                    this.shuffle(bottomBanners);
-                    let bottomBannerData = bottomBanners.shift();
-                    let bottomBannerContainer = this.refs.article.querySelector('#' + BannerID.BANNER_BOTTOM);
-                    let bottomBanner = this.createBanner(bottomBannerData.width, bottomBannerData.height, BannerID.BANNER_BOTTOM, bottomBannerData, true);
-                    if (bottomBanner) {
-                        bottomBannerContainer.appendChild(bottomBanner);
-                        this.execBannerScript(bottomBanner);
-                    }
-                }
+            let bottomBannerContainer = this.refs.article.querySelector('#' + BannerID.BANNER_BOTTOM);
+            let bottomBannerPlaceholder = this.createBannerPlaceholder(BannerID.BANNER_BOTTOM);
+            if (bottomBannerPlaceholder) {
+                bottomBannerContainer.appendChild(bottomBannerPlaceholder);
             }
 
             // Side banner placement
-            if (ads[BannerID.BANNER_RIGHT_SIDE] && ads[BannerID.BANNER_RIGHT_SIDE].length) {
-                let sideBanners = ads[BannerID.BANNER_RIGHT_SIDE];
-                this.shuffle(sideBanners);
-                let sideBannerData = sideBanners.shift();
-                let sideBanner = this.createBanner(sideBannerData.width, sideBannerData.height, BannerID.BANNER_RIGHT_SIDE, sideBannerData, true);
-                if (sideBanner) {
-                    let container = this.refs.article.getElementsByClassName('banner_container_side__sticky')[0];
-                    container.appendChild(sideBanner);
-                    this.execBannerScript(sideBanner);
+            let sideBannerPlaceholder = this.createBannerPlaceholder(BannerID.BANNER_RIGHT_SIDE);
+            if (sideBannerPlaceholder) {
+                let container = this.refs.article.getElementsByClassName('banner_container_side__sticky')[0];
+                container.appendChild(sideBannerPlaceholder);
+            }
+        }
+    }
+
+    createBannerContent(bannerID: string, containerID: string, data: any) {
+        if (!data || !(data.amp_props || data.code)) return null;
+        let content = null;
+        try {
+            if (data.amp_props && data.amp_props.type == 'yandex') {
+                let id = data.amp_props['data-block-id'];
+                content = `
+                    <!-- Yandex.RTB ${id} -->
+                    <div id="yandex_rtb_${containerID}"></div>
+                    <script type="text/javascript">
+                        (function(w, d, n, s, t) {
+                            w[n] = w[n] || [];
+                            w[n].push(function() {
+                                Ya.Context.AdvManager.render({
+                                    blockId: "${id}",
+                                    renderTo: "yandex_rtb_${containerID}",
+                                    horizontalAlign: false,
+                                    async: true,
+                                    page: ${this.props.page}
+                                });
+                            });
+                            t = d.getElementsByTagName("script")[0];
+                            s = d.createElement("script");
+                            s.type = "text/javascript";
+                            s.src = "//an.yandex.ru/system/context.js";
+                            s.async = true;
+                            t.parentNode.insertBefore(s, t);
+                        })(this, this.document, "yandexContextAsyncCallbacks");
+                    </script>
+                `
+            
+            } else if (data.code) {
+                content = data.code;
+            }
+
+        } catch (err) {
+            console.log('createBanner Error', err);
+        }
+        
+        return content;
+    }
+
+    processAds() {
+        if (this.state.article && this.state.article.ads_enabled && this.props.banners) {
+            this.adsProcessed = true;
+            let ads = JSON.parse(JSON.stringify(this.props.banners[this.state.isDesktop ? 'desktop' : 'mobile']));
+
+            let banners = this.refs.article.getElementsByClassName('banner');
+            for (let i = 0; i < banners.length; i++) {
+                let banner = banners[i];
+                let content;
+                if (banner.classList.contains(BannerID.BANNER_CONTENT_INLINE)) {
+                    try {
+                        let ad = ads[BannerID.BANNER_CONTENT_INLINE].shift();
+                        content = this.createBannerContent(BannerID.BANNER_CONTENT_INLINE, banner.id, ad);
+                    } catch(err) {}
                 }
+                
+                if (banner.classList.contains(BannerID.BANNER_CONTENT)) {
+                    try {
+                        let ad = ads[BannerID.BANNER_CONTENT].shift();
+                        content = this.createBannerContent(BannerID.BANNER_CONTENT, banner.id, ad);
+                    } catch(err) {}
+                }
+
+                if (banner.classList.contains(BannerID.BANNER_BOTTOM)) {
+                    try {
+                        let ad = ads[BannerID.BANNER_BOTTOM].shift();
+                        content = this.createBannerContent(BannerID.BANNER_BOTTOM, banner.id, ad);
+                    } catch(err) {}
+                }
+
+                if (banner.classList.contains(BannerID.BANNER_RIGHT_SIDE)) {
+                    try {
+                        let ad = ads[BannerID.BANNER_RIGHT_SIDE].shift();
+                        content = this.createBannerContent(BannerID.BANNER_RIGHT_SIDE, banner.id, ad);
+                    } catch(err) {}
+                }
+
+                if (banner && content) {
+                    banner.innerHTML = content;
+                    this.execBannerScript(banner);
+                }
+
             }
         }
     }
@@ -657,6 +667,7 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
                 this.retrieveArticle();
             }
         }
+        this.processAdsPlaceholders();
         if (this.props.page === 0 && !this.adsProcessed) {
             this.processAds();
         }
@@ -671,9 +682,6 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
             if (!nextProps.match.params.galleryBlockId) {
                 ModalAction.do(CLOSE_MODAL, null);
             } 
-            // if (nextProps.match.params.articleSlug != this.props.match.params.articleSlug) {
-            //     this.retrieveArticle();
-            // }
         }
         if (nextProps.isCurrentInFeed != this.props.isCurrentInFeed && nextProps.isCurrentInFeed) {
             this.adsProcessed = false;
@@ -690,11 +698,6 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
         });
         this.loadingImages = [];
     }
-
-    // shouldComponentUpdate(nextProps: any, nextState: any) {
-
-    //     return false;
-    // }
 
     render() {
         let coverStyle = {};

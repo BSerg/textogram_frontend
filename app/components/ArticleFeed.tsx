@@ -91,36 +91,36 @@ export default class ArticleFeed extends React.Component<any, IArticleFeedState>
         });
     }
 
-    private detectCurrentIndex() {
-        let articleElements = document.getElementsByClassName('article');
-        let currentArticleIndex = this.previousArticleIndex;
-        let edge = window.innerHeight * 0.25;
-        for (let i = 0; i < articleElements.length; i++) {
-            let articleElement = articleElements[i];
-            let rect = articleElement.getBoundingClientRect();
-            if (rect.top < edge && rect.top + rect.height >= edge) {
-                currentArticleIndex = i;
+    private detectCurrentIndex(delay: number = 0) {
+        return window.setTimeout(() => {
+            let articleElements = document.getElementsByClassName('article');
+            let currentArticleIndex = this.previousArticleIndex;
+            let edge = window.innerHeight * 0.25;
+            for (let i = 0; i < articleElements.length; i++) {
+                let articleElement = articleElements[i];
+                let rect = articleElement.getBoundingClientRect();
+                if (rect.top < edge && rect.top + rect.height >= edge) {
+                    currentArticleIndex = i;
+                }
             }
-        }
 
-        if (currentArticleIndex != -1 && this.previousArticleIndex != currentArticleIndex) {
-            this.previousArticleIndex = currentArticleIndex;
-            window.history.replaceState(null, null, 
-                `${window.location.protocol}//${window.location.host}/articles/${this.state.articles[currentArticleIndex].slug}/`);
-            this.setState({currentArticleIndex: currentArticleIndex});
-            try {
-                yaCounter.hit(`/articles/${this.state.articles[currentArticleIndex].slug}/`);
-            } catch(err) {
-                console.log('Yandex hit error', err);
+            if (currentArticleIndex != -1 && this.previousArticleIndex != currentArticleIndex) {
+                this.previousArticleIndex = currentArticleIndex;
+                window.history.replaceState(null, null, 
+                    `${window.location.protocol}//${window.location.host}/articles/${this.state.articles[currentArticleIndex].slug}/`);
+                this.setState({currentArticleIndex: currentArticleIndex});
+                try {
+                    yaCounter.hit(`/articles/${this.state.articles[currentArticleIndex].slug}/`);
+                } catch(err) {
+                    console.log('Yandex hit error', err);
+                }
             }
-        }
+        }, delay);
     }
 
     handleScroll(e: Event) {
         window.clearTimeout(this.scrollProcess);
-        this.scrollProcess = window.setTimeout(() => {
-            this.detectCurrentIndex();
-        }, 150);
+        this.scrollProcess = this.detectCurrentIndex(50);
 
         let trigger = document.getElementById('trigger');
         if ((window.innerHeight + 100) >= trigger.getBoundingClientRect().top) {
@@ -131,7 +131,6 @@ export default class ArticleFeed extends React.Component<any, IArticleFeedState>
                 });
             }
         }
-        this.detectCurrentIndex();
     }
 
     componentDidMount() {
