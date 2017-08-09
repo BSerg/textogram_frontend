@@ -357,11 +357,11 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
             }
 
             // Side banner placement
-            let sideBannerPlaceholder = this.createBannerPlaceholder(BannerID.BANNER_RIGHT_SIDE);
-            if (sideBannerPlaceholder) {
-                let container = this.refs.article.getElementsByClassName('banner_container_side__sticky')[0];
-                container.appendChild(sideBannerPlaceholder);
-            }
+            // let sideBannerPlaceholder = this.createBannerPlaceholder(BannerID.BANNER_RIGHT_SIDE);
+            // if (sideBannerPlaceholder) {
+            //     let container = this.refs.article.getElementsByClassName('banner_container_side__sticky')[0];
+            //     container.appendChild(sideBannerPlaceholder);
+            // }
         }
     }
 
@@ -434,13 +434,6 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
                     try {
                         let ad = ads[BannerID.BANNER_BOTTOM].shift();
                         content = this.createBannerContent(BannerID.BANNER_BOTTOM, banner.id, ad);
-                    } catch(err) {}
-                }
-
-                if (banner.classList.contains(BannerID.BANNER_RIGHT_SIDE)) {
-                    try {
-                        let ad = ads[BannerID.BANNER_RIGHT_SIDE].shift();
-                        content = this.createBannerContent(BannerID.BANNER_RIGHT_SIDE, banner.id, ad);
                     } catch(err) {}
                 }
 
@@ -1007,21 +1000,23 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
                                     {/* FOOTER */}
                                     <div id="article__footer" className="article__footer">
                                         <div className="article__footer_content">
-                                            <Link to={authorLink} className="article__author">
+                                            {/* BANNER BOTTOM */}
+                                            {this.state.article.ads_enabled ?
+                                                <div id={BannerID.BANNER_BOTTOM} className="banner_container"></div> : null
+                                            }
+                                            {/* AUTHOR */}
+                                            {/* <Link to={authorLink} className="article__author">
                                                 {this.state.article.owner.avatar ?
                                                     <img className="article__avatar" src={this.state.article.owner.avatar}/> : null
                                                 }
                                                 {this.state.article.owner.first_name}&nbsp;{this.state.article.owner.last_name}
-                                            </Link>
+                                            </Link> */}
                                         </div>
                                     </div>
 
 
                                 </div>
                             }
-                             <div className="banner_container_side">
-                                <div className="banner_container_side__sticky"></div>
-                            </div> 
 
                             {this.state.isDesktop && !this.props.isPreview ?
                                 <div className="share_container">
@@ -1032,23 +1027,6 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
                                 </div> : null
                             }
                         </div>
-
-                         {/* FOOTER 
-                        <div id="article__footer" className="article__footer">
-                            <div className="article__footer_content">
-                                <Link to={authorLink} className="article__author">
-                                    {this.state.article.owner.avatar ?
-                                        <img className="article__avatar" src={this.state.article.owner.avatar}/> : null
-                                    }
-                                    {this.state.article.owner.first_name}&nbsp;{this.state.article.owner.last_name}
-                                </Link>
-                            </div>
-                        </div> */}
-
-                        {/* FOOTER BANNER */}
-                        {this.state.article.ads_enabled ?
-                            <div id={BannerID.BANNER_BOTTOM} className="banner_container"></div> : null
-                        }
 
                         {!this.state.isDesktop ?
                             <div className="article__shares_btn" onClick={this.openSharePopup.bind(this)}>

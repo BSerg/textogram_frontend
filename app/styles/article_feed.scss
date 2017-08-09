@@ -1,0 +1,21 @@
+@import "contstants";
+@import "mixins";
+
+.article_feed {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+
+    .banner_side__container {
+        position: absolute;
+        top: 350px;
+        left: calc(50vw + 285px);
+        height: 100%;
+
+        .banner {
+            position: sticky;
+            top: 50px;
+        }
+    }
+}

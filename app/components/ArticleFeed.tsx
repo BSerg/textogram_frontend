@@ -14,8 +14,7 @@ import PopupPrompt from "./shared/PopupPrompt";
 import {NotificationAction, SHOW_NOTIFICATION} from "../actions/shared/NotificationAction";
 import Loading from "./shared/Loading";
 import LoginBlock from "./shared/LoginBlock";
-import "../styles/article.scss";
-import "../styles/banners.scss";
+import "../styles/article_feed.scss";
 import {BannerID, Captions, BlockContentTypes} from "../constants";
 import LeftSideButton from "./shared/LeftSideButton";
 import AwesomeGallery from "./shared/AwesomeGallery";
@@ -28,8 +27,10 @@ interface IArticleFeedState {
     currentArticleIndex?: number;
     articles?: any[];
     banners?: any;
+    currentSideBannerIndex?: number;
     recommendations?: any[] | null;
     loadingProcess?: boolean;
+    isDesktop?: boolean;
 }
 
 export default class ArticleFeed extends React.Component<any, IArticleFeedState> {
@@ -42,12 +43,18 @@ export default class ArticleFeed extends React.Component<any, IArticleFeedState>
             currentArticleIndex: -1,
             articles: [],
             banners: null,
+            currentSideBannerIndex: -1,
             recommendations: null,
-            loadingProcess: false
+            loadingProcess: false,
+            isDesktop: MediaQuerySerice.getIsDesktop()
         };
         this.handleScroll = this.handleScroll.bind(this);
         this.previousArticleIndex = -1;
     }
+
+    refs: {
+        bannerSide: HTMLDivElement
+    };
 
     loadAds() {
         return new Promise((resolve, reject) => {
@@ -108,7 +115,11 @@ export default class ArticleFeed extends React.Component<any, IArticleFeedState>
                 this.previousArticleIndex = currentArticleIndex;
                 window.history.replaceState(null, null, 
                     `${window.location.protocol}//${window.location.host}/articles/${this.state.articles[currentArticleIndex].slug}/`);
-                this.setState({currentArticleIndex: currentArticleIndex});
+                this.setState({currentArticleIndex: currentArticleIndex}, () => {
+                    if (this.state.currentArticleIndex != 0) {
+                        this.processSideBanner();
+                    }
+                });
                 try {
                     yaCounter.hit(`/articles/${this.state.articles[currentArticleIndex].slug}/`);
                 } catch(err) {
@@ -120,6 +131,7 @@ export default class ArticleFeed extends React.Component<any, IArticleFeedState>
 
     handleScroll(e: Event) {
         window.clearTimeout(this.scrollProcess);
+
         this.scrollProcess = this.detectCurrentIndex(50);
 
         let trigger = document.getElementById('trigger');
@@ -127,15 +139,97 @@ export default class ArticleFeed extends React.Component<any, IArticleFeedState>
             if (!this.state.loadingProcess && this.state.recommendations && this.state.recommendations.length) {
                 let nextSlug = this.state.recommendations.shift();
                 this.loadArticle(nextSlug).then(() => {
-                    this.detectCurrentIndex()
+                    // this.detectCurrentIndex()
                 });
+            }
+        }
+    }
+
+    createBannerContent(bannerID: string, containerID: string, data: any) {
+        if (!data || !(data.amp_props || data.code)) return null;
+        let content = null;
+        try {
+            if (data.amp_props && data.amp_props.type == 'yandex') {
+                let id = data.amp_props['data-block-id'];
+                content = `
+                    <!-- Yandex.RTB ${id} -->
+                    <div id="yandex_rtb_${containerID}"></div>
+                    <script type="text/javascript">
+                        (function(w, d, n, s, t) {
+                            w[n] = w[n] || [];
+                            w[n].push(function() {
+                                Ya.Context.AdvManager.render({
+                                    blockId: "${id}",
+                                    renderTo: "yandex_rtb_${containerID}",
+                                    horizontalAlign: false,
+                                    async: true,
+                                    page: ${this.props.page}
+                                });
+                            });
+                            t = d.getElementsByTagName("script")[0];
+                            s = d.createElement("script");
+                            s.type = "text/javascript";
+                            s.src = "//an.yandex.ru/system/context.js";
+                            s.async = true;
+                            t.parentNode.insertBefore(s, t);
+                        })(this, this.document, "yandexContextAsyncCallbacks");
+                    </script>
+                `
+            
+            } else if (data.code) {
+                content = data.code;
+            }
+
+        } catch (err) {
+            console.log('createBanner Error', err);
+        }
+        
+        return content;
+    }
+
+    execBannerScript(bannerElement: any) {
+        try {
+            let script = bannerElement.getElementsByTagName('script')[0];
+            if (script) {
+                bannerElement.classList.add('active');
+                window.setTimeout(() => {
+                    let f = new Function(script.innerText);
+                    f();
+                });
+            } else {
+                bannerElement.classList.add('active');
+            }
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
+    processSideBanner() {
+        if (this.state && this.state.banners) {
+            let ads = JSON.parse(JSON.stringify(this.state.banners[this.state.isDesktop ? 'desktop' : 'mobile']));
+            if (ads[BannerID.BANNER_RIGHT_SIDE].length) {
+                let index = this.state.currentSideBannerIndex + 1;
+                
+                if (index >= ads[BannerID.BANNER_RIGHT_SIDE].length) {
+                    index = 0; 
+                }
+
+                if (index != this.state.currentSideBannerIndex) {
+                    this.setState({currentSideBannerIndex: index}, () => {
+                        let banner = ads[BannerID.BANNER_RIGHT_SIDE][index];
+                        this.refs.bannerSide.innerHTML = this.createBannerContent(BannerID.BANNER_RIGHT_SIDE, BannerID.BANNER_RIGHT_SIDE, banner);
+                        this.execBannerScript(this.refs.bannerSide);
+                    });
+                }
             }
         }
     }
 
     componentDidMount() {
         this.loadAds().then(() => {
-            this.loadArticle(this.props.match.params.articleSlug);
+            this.loadArticle(this.props.match.params.articleSlug).then(() => {
+                this.processSideBanner();
+            });
         }).catch(err => {
             this.loadArticle(this.props.match.params.articleSlug);
         });
@@ -162,12 +256,16 @@ export default class ArticleFeed extends React.Component<any, IArticleFeedState>
                             banners={this.state.banners}/>
                     )
                 })}
+                
                 <div id="trigger" className="article_feed__trigger">
                     {this.state.articles.length && this.state.loadingProcess ? 
                         <Loading/> : null
                     }
                 </div>
-                <div className="banner_side__container"></div>
+
+                <div className="banner_side__container">
+                    <div ref="bannerSide" className={"banner " + BannerID.BANNER_RIGHT_SIDE}></div>
+                </div>
             </div>
         )
     }
