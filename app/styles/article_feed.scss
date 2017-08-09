@@ -9,9 +9,9 @@
 
     .banner_side__container {
         position: absolute;
-        top: 350px;
+        top: 450px;
         left: calc(50vw + 285px);
-        height: 100%;
+        height: calc(100% - 450px);
 
         .banner {
             position: sticky;
