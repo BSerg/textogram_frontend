@@ -8,6 +8,7 @@
     width: 100%;
 
     .banner_side__container {
+        display: none;
         position: absolute;
         top: 450px;
         left: calc(50vw + 285px);
@@ -16,6 +17,10 @@
         .banner {
             position: sticky;
             top: 50px;
+        }
+
+        @include regular_desktop {
+            display: block;
         }
     }
 }
