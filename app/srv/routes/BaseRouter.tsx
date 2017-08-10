@@ -11,7 +11,13 @@ import {Helmet} from 'react-helmet';
 import {getUserFromRequest} from '../utils';
 
 import * as path from 'path';
+import * as fs from 'fs';
 
+let manifest: any = null;
+
+try {
+    manifest = JSON.parse(fs.readFileSync(process.env.MANIFEST_PATH, 'utf8'));
+} catch(err) {}
 
 class BaseRouter {
     router: Router;
@@ -34,7 +40,7 @@ class BaseRouter {
             </StaticRouter>
         );
         let helmet = Helmet.renderStatic();
-        res.render('index.ejs', {reactData: html, helmet: helmet, rev: process.env.REVISION || false});
+        res.render('index.ejs', {reactData: html, helmet: helmet, rev: process.env.REVISION || false, manifest: manifest});
     }
 
     getProfile(req: Request, res: Response, next: NextFunction) {
@@ -48,7 +54,7 @@ class BaseRouter {
                     <StaticRouter context={{}}><Base><RenderedProfile /></Base></StaticRouter>
                 );
                 let helmet = Helmet.renderStatic();
-                res.render('index.ejs', {reactData: html, helmet: helmet, rev: process.env.REVISION || false});
+                res.render('index.ejs', {reactData: html, helmet: helmet, rev: process.env.REVISION || false, manifest: manifest});
             }
             catch(error) {
                 next();
@@ -71,7 +77,7 @@ class BaseRouter {
             </StaticRouter>
         );
         let helmet = Helmet.renderStatic();
-        res.render('index.ejs', {reactData: html, helmet: helmet, rev: process.env.REVISION || false});
+        res.render('index.ejs', {reactData: html, helmet: helmet, rev: process.env.REVISION || false, manifest: manifest});
     }
 
     init() {

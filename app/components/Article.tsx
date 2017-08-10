@@ -403,7 +403,6 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
         } catch (err) {
             console.log('createBanner Error', err);
         }
-        
         return content;
     }
 

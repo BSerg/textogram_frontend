@@ -12,6 +12,12 @@ import {Helmet} from 'react-helmet';
 import {Amp, BlockContentTypes} from "../../constants";
 import * as fs from 'fs';
 
+let manifest: any = null;
+
+try {
+    manifest = JSON.parse(fs.readFileSync(process.env.MANIFEST_PATH, 'utf8'));
+} catch(err) {}
+
 function getArticleEmbeds(article: any): any {
     try {
         let embeds: any = {};
@@ -95,14 +101,14 @@ class ArticleRouter {
                 };
                 let html = ReactDOMServer.renderToString(<StaticRouter context={{}}><Base><RenderedArticle /></Base></StaticRouter>);
                 const helmet = Helmet.renderStatic();
-                res.render('index.ejs', {reactData: html, helmet: helmet, rev: process.env.REVISION || false});
+                res.render('index.ejs', {reactData: html, helmet: helmet, rev: process.env.REVISION || false, manifest: manifest});
             }
             catch (error) {
                 next();
             }
         }).catch(() => {
             let html = ReactDOMServer.renderToString(<StaticRouter context={{}}><Base><Error404/></Base></StaticRouter>);
-            res.status(404).render('index.ejs', {reactData: html, helmet: null, rev: process.env.REVISION || false});
+            res.status(404).render('index.ejs', {reactData: html, helmet: null, rev: process.env.REVISION || false, manifest: manifest});
         });
     }
     init() {
