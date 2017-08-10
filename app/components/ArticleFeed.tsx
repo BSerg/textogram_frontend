@@ -205,8 +205,8 @@ export default class ArticleFeed extends React.Component<any, IArticleFeedState>
     }
 
     processSideBanner() {
-        if (this.state && this.state.banners) {
-            let ads = JSON.parse(JSON.stringify(this.state.banners[this.state.isDesktop ? 'desktop' : 'mobile']));
+        if (this.state && this.state.isDesktop && this.state.banners) {
+            let ads = JSON.parse(JSON.stringify(this.state.banners['desktop']));
             if (ads[BannerID.BANNER_RIGHT_SIDE].length) {
                 let index = this.state.currentSideBannerIndex + 1;
                 
