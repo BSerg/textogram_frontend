@@ -263,7 +263,7 @@ export default class ArticleFeed extends React.Component<any, IArticleFeedState>
                     }
                 </div>
 
-                <div className="banner_side__container">
+                <div className={"banner_side__container" + (this.state.articles.length && this.state.articles[0].content.cover ? ' more_offset' : '')}>
                     <div ref="bannerSide" className={"banner " + BannerID.BANNER_RIGHT_SIDE}></div>
                 </div>
             </div>
