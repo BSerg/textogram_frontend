@@ -119,6 +119,7 @@ export default class ArticleFeed extends React.Component<any, IArticleFeedState>
                     if (this.state.currentArticleIndex != 0) {
                         this.processSideBanner();
                     }
+                    document.title = `${this.state.articles[this.state.currentArticleIndex].title} | ${process.env.SITE_NAME}`
                 });
                 try {
                     yaCounter.hit(`/articles/${this.state.articles[currentArticleIndex].slug}/`);
