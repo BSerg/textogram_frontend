@@ -27,11 +27,6 @@ interface IControlProps {
 
 class ControlMenu extends React.Component<IControlProps, any> {
 
-
-    componentDidMount() {
-
-    }
-
     render() {
         return (
             <div className="article_preview_control">
@@ -136,8 +131,6 @@ class ArticlePreviewClass extends React.Component<IArticlePreviewPropsInterface|
 
             this.setState({deleted: true});
         }).catch((error) => {});
-
-        // this.setState({deleted: true});
     }
 
     restore() {
