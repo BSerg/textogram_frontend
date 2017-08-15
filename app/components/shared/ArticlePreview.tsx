@@ -45,6 +45,58 @@ class ControlMenu extends React.Component<IControlProps, any> {
     }
 }
 
+const Avatar = (props: {item: any}) => <div className="article_preview__avatar">
+        <Link to={"/" + props.item.owner.nickname} >
+            <img src={props.item.owner.avatar}/>
+        </Link>
+    </div>;
+
+
+const Cover = (props: {item: any}) => {
+    let style: any = props.item.cover ? { backgroundImage: `url('${props.item.cover}')`}
+            :  {height: '0'};
+    return <Link to={props.item.is_draft ? ("/articles/" + props.item.id + "/edit/") :
+        ("/articles/" + props.item.slug + "/")}>
+        <div className="article_preview__cover"  style={style}></div>
+    </Link>
+}
+
+const Lead = (props: {item: any}) => {
+    let dv: HTMLDivElement = document.createElement('div');
+    dv.innerHTML = marked(props.item.lead || '');
+    let lead = dv.innerText.trim();
+    
+    return lead ? <div className="article_preview__lead">
+                <Link to={props.item.is_draft ? ("/articles/" + props.item.id + "/edit/") :
+                    ("/articles/" + props.item.slug + "/")}>{ lead }
+                </Link>
+            </div> : null;
+}
+
+const Title = (props: {item: any, date: string}) => 
+    <div className="article_preview__title">
+        <Link to={props.item.is_draft ? ("/articles/" + props.item.id + "/edit/") :
+            ("/articles/" + props.item.slug + "/")}>{ props.item.title || props.date }
+        </Link>
+    </div>;
+
+
+const ADate = (props: {item: any, date: string}) =>
+    <div className="article_preview__text article_preview__text_date">
+        <Link to={props.item.is_draft ? ("/articles/" + props.item.id + "/edit/") :
+            ("/articles/" + props.item.slug + "/")}> {props.date}
+        </Link>
+    </div>;
+
+
+const AText  = (props: {item: any}) => <div className="article_preview__text">
+        <Link to={"/" + props.item.owner.nickname + '/'} >
+            {
+                props.item.owner.first_name + ' ' + props.item.owner.last_name
+            }
+        </Link>
+
+    </div>;
 
 interface IArticlePreviewPropsInterface {
     item: any;
@@ -172,160 +224,44 @@ class ArticlePreviewClass extends React.Component<IArticlePreviewPropsInterface|
                 Текст удален. <span onClick={this.restore.bind(this)}>Восстановить</span>
                 <div className="close" onClick={this.remove.bind(this)}><CloseIcon /></div></div>);
         }
+        
+        let dataArr: any[] = this.state.isDesktop ? [
+            !this.props.isOwner ? <Avatar item={this.props.item} key="avatar" /> : null,
 
-        if (this.state.isDesktop) {
-            return (
-                <div className={"article_preview" + (this.state.isNew ? " new" : "")} >
+            <div className={"article_preview__data" + (this.props.isOwner || this.props.item.is_draft ? " owned": "")} key="info">
+                <Title item={this.props.item} date={date} />
+                <Lead item={this.props.item}/>
+                <div className="article_preview__info">
                     {
-                        !this.props.isOwner && !this.props.item.is_draft ? (
-                            <div className="article_preview__avatar" key="avatar">
-                                <Link to={"/" + this.props.item.owner.nickname} >
-                                    <img src={this.props.item.owner.avatar}/>
-                                </Link>
-                             </div>
-                        ) : null
+                        [
+                            (!this.props.isOwner && !this.props.item.is_draft) ?<AText item={this.props.item} key="name"/> : null,
+                            <ADate item={this.props.item} date={date} key="date"/>
+                        ]
                     }
-
-                    <div className={"article_preview__data" + (this.props.isOwner || this.props.item.is_draft ? " owned": "")}>
-                        <div className="article_preview__title">
-                            <Link to={this.props.item.is_draft ? ("/articles/" + this.props.item.id + "/edit/") :
-                                ("/articles/" + this.props.item.slug + "/")}>{ this.props.item.title || date }
-                            </Link>
-                        </div>
-                        {
-                            this.props.item.lead ? (
-                                <div className="article_preview__lead">
-                                    <Link to={this.props.item.is_draft ? ("/articles/" + this.props.item.id + "/edit/") :
-                                        ("/articles/" + this.props.item.slug + "/")}>{ lead }
-                                    </Link>
-                                </div>
-                            ) : null
-                        }
-
-
-                        <div className="article_preview__info">
-                        {
-                            !this.props.item.is_draft ?
-
-                                 [
-                                     !this.props.isOwner ?
-                                         <div className="article_preview__text" key="name">
-                                             <Link to={"/" + this.props.item.owner.nickname + '/'} >
-                                                {
-                                                    this.props.item.owner.first_name + ' ' + this.props.item.owner.last_name
-                                                }
-                                            </Link>
-
-                                        </div> : null,
-                                     <div className="article_preview__text article_preview__text_date" key="date">
-
-                                         <Link to={this.props.item.is_draft ? ("/articles/" + this.props.item.id + "/edit/") :
-                                            ("/articles/" + this.props.item.slug + "/")}>
-                                             {date}
-                                        </Link>
-                                     </div>
-                                 ]
-
-                            : (<div className="article_preview__text article_preview__text_date" key="date">
-                                <Link to={this.props.item.is_draft ? ("/articles/" + this.props.item.id + "/edit/") :
-                                    ("/articles/" + this.props.item.slug + "/")}>
-                                        {date}
-                                    </Link>
-                                </div>)
-                        }
-                        </div>
-
-                    </div>
-                    <Link to={this.props.item.is_draft ? ("/articles/" + this.props.item.id + "/edit/") :
-                        ("/articles/" + this.props.item.slug + "/")}>
-                        <div className="article_preview__cover"  style={coverStyle}></div>
-                    </Link>
-
+                </div>
+            </div>,
+            <Cover item={this.props.item} key="cover"/>,
+            this.props.isOwner ? <ControlMenu item={this.props.item } deleteCallback={this.deleteArticle.bind(this)} key="control" /> : null
+        ] : [
+                <div className="article_preview__info" key="info">
                     {
-                        this.props.isOwner ? (<ControlMenu item={this.props.item } deleteCallback={this.deleteArticle.bind(this)} />) : null
+                        [
+                            !this.props.isOwner ? <Avatar item={this.props.item} key="avatar"/> : null,
+                            !this.props.item.is_draft ? <AText item={this.props.item} key="name"/> : null,
+                            <ADate item={this.props.item} date={date} key="date"/>,
+                            <div className="filler" key="filler"></div>,
+                            this.props.isOwner ? <ControlMenu item={this.props.item} deleteCallback={this.deleteArticle.bind(this)} key="control" /> : null,
+                        ]
                     }
-                </div>);
-        }
+                </div>,
+                <Title item={this.props.item} date={date} key="title" />,
+                <Lead item={this.props.item} key="lead"/>,
+                <Cover item={this.props.item} key="cover" />
+        ];
 
-        else {
-            return (
-                <div className={"article_preview" + (this.state.isNew ? " new" : "")}>
-
-                    <div className="article_preview__info">
-                        {
-                            !this.props.item.is_draft ?
-
-                                 [
-                                     <div className="article_preview__avatar" key="avatar">
-                                        <Link to={"/" + this.props.item.owner.nickname + '/'} >
-                                            <img src={this.props.item.owner.avatar}/>
-                                        </Link>
-                                     </div>,
-
-                                     <div className="article_preview__text" key="name">
-                                         <Link to={"/" + this.props.item.owner.nickname + '/'} >
-                                            {
-                                                this.props.item.owner.first_name + ' ' + this.props.item.owner.last_name
-                                            }
-                                        </Link>
-                                     </div>,
-
-                                     <div className="article_preview__text article_preview__text_date" key="date">
-
-                                         <Link to={this.props.item.is_draft ? ("/articles/" + this.props.item.id + "/edit/") :
-                                            ("/articles/" + this.props.item.slug + "/")}>
-                                             {date}
-                                        </Link>
-                                     </div>,
-
-                                     <div className="filler" key="filler"></div>,
-
-                                     this.props.isOwner ? <ControlMenu item={this.props.item}
-                                                                       deleteCallback={this.deleteArticle.bind(this)} key="control" /> : null
-
-                                 ]
-
-                            : [
-                                <div className="article_preview__text article_preview__text_date" key="date">
-
-                                    <Link to={this.props.item.is_draft ? ("/articles/" + this.props.item.id + "/edit/") :
-                                        ("/articles/" + this.props.item.slug + "/")}>
-                                         {date}
-                                    </Link>
-                                </div>,
-                                <div className="filler" key="filler"></div>,
-                                <ControlMenu item={this.props.item} deleteCallback={this.deleteArticle.bind(this)} key="control" />]
-                        }
-
-                    </div>
-
-                    <div className="article_preview__title">
-                        <Link to={this.props.item.is_draft ? ("/articles/" + this.props.item.id + "/edit/") :
-                            ("/articles/" + this.props.item.slug + "/")}>{ this.props.item.title || date }
-                        </Link>
-                    </div>
-                    {
-                        lead ? (
-                            <div className="article_preview__lead" style={{display: 'none'}}>
-                                <Link to={this.props.item.is_draft ? ("/articles/" + this.props.item.id + "/edit/") :
-                                    ("/articles/" + this.props.item.slug + "/")}><div>{ lead }</div>
-                                </Link>
-                            </div>
-                        ) : null
-                    }
-
-
-                    {
-                        this.props.item.cover ? (
-                            <Link to={this.props.item.is_draft ? ("/articles/" + this.props.item.id + "/edit/") :
-                                ("/articles/" + this.props.item.slug + "/")}>
-                                <div className="article_preview__cover"  style={coverStyle}></div>
-                            </Link>
-                        ) : null
-                    }
-
-                </div>);
-        }
+        return (<div className={"article_preview" + (this.state.isNew ? " new" : "")}>
+            {dataArr}
+        </div>);
     }
 }
 
