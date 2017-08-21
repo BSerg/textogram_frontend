@@ -83,6 +83,19 @@ class DataClient {
         });
     }
 
+    getBanners2(): Promise<any> {
+        return new Promise((resolve, reject) => {
+            this.client.get(`${process.env.CACHE_KEY_PREFIX}:advertisements:banners2`, (err: any, data: any) => {
+                // console.log(err, data)
+                if (err) {
+                    reject();
+                } else {
+                    resolve(data);
+                }
+            });
+        });
+    }
+
     getRecommendations(req: Request): Promise<any> {
         return new Promise((resolve, reject) => {
             this.client.lrange(`${process.env.CACHE_KEY_PREFIX}:article:${req.params.articleSlug}:recommendations`, 0, -1, (err: any, data: any) => {

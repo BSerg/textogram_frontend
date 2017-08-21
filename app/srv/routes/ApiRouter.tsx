@@ -50,6 +50,14 @@ class ApiRouter {
             res.status(404).send({msg: 'not found'});
         });
     }
+    
+    getBanners2(req: Request, res: Response, next: NextFunction) {
+        db.getBanners2().then((data) => {
+            res.end(data);
+        }).catch(() => {
+            res.status(404).send({msg: 'not found'});
+        });
+    }
 
     getRecommendations(req: Request, res: Response, next: NextFunction) {
         db.getRecommendations(req).then(data => {
@@ -69,6 +77,7 @@ class ApiRouter {
         this.router.get('/articles/:articleSlug', this.getArticle);
         this.router.get('/articles/:articleSlug/recommendations', this.getRecommendations);
         this.router.get('/advertisements/banners', this.getBanners);
+        this.router.get('/advertisements/banners2', this.getBanners2);
         this.router.get('/*', this.getNotFound);
     }
 }

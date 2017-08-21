@@ -87,6 +87,7 @@ interface IArticleState {
     error?: any;
     user?: any;
     isDesktop?: boolean;
+    isCurrentInFeed?: boolean;
 }
 
 export default class Article extends React.Component<IArticleProps|any, IArticleState|any> {
@@ -101,6 +102,7 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
             article: this.processArticle(props.renderedArticle) || null,
             user: UserAction.getStore().user,
             isDesktop: MediaQuerySerice.getIsDesktop(),
+            isCurrentInFeed: this.props.isCurrentInFeed
         };
         this.handleMediaQuery = this.handleMediaQuery.bind(this);
         this.handleUser = this.handleUser.bind(this);
@@ -678,8 +680,10 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
             } 
         }
         if (nextProps.isCurrentInFeed != this.props.isCurrentInFeed && nextProps.isCurrentInFeed) {
-            this.adsProcessed = false;
-            this.processAds();
+            this.setState({isCurrentInFeed: nextProps.isCurrentInFeed}, () => {
+                this.adsProcessed = false;
+                this.processAds();
+            });
         }
     }
 
@@ -747,7 +751,10 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
                             <meta property="og:title" content={this.state.article.title} />
                             {
                                 this.state.article.cover ? 
-                                    <meta name="twitter:image" content={this.state.article.cover}/> : null
+                                    [
+                                        <link rel="image_src" href={this.state.article.cover}/>,
+                                        <meta name="twitter:image" content={this.state.article.cover}/>
+                                    ] : null
                             }
                             <meta property="og:url" content={`${process.env.SITE_URL || ''}/articles/${this.state.article.slug}`} />
                             {
@@ -1046,7 +1053,7 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
                                     <EditBlackButton/>
                                 </LeftSideButton>
                             </div> : null}
-                        {this.state.isDeskto && !this.props.isPreview && this.state.user && this.state.article.owner.id == this.state.user.id ?
+                        {this.state.isDesktop && !this.props.isPreview && this.state.user && this.state.article.owner.id == this.state.user.id && this.state.isCurrentInFeed ?
                             <div key={"tools" + this.state.article.id} className="left_tool_panel">
                                 <LeftSideButton key="toolEdit"
                                                 tooltip="Редактировать"
