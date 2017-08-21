@@ -56,7 +56,6 @@ class ArticleRouter {
 
                 let article = JSON.parse(data);
                 let embeds = getArticleEmbeds(article);
-
                 db.getBanners().then((bannerData) => {
                     let RenderedArticle: React.StatelessComponent<any> = (props: any) => {
                         return (<ArticleAmp article={article} bannerData={bannerData} {...props}/>);
@@ -78,7 +77,7 @@ class ArticleRouter {
                         embeds: embeds,
                     };
                     res.render('article_amp.ejs', articleData);
-                }).catch(() => {
+                }).catch((err) => {
                     res.redirect(`/articles/${req.params.articleSlug}`);
                 });                
             }

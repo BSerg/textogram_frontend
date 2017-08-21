@@ -40,6 +40,7 @@ class AmpGallery extends React.Component<any, any> {
             catch (err) {}
         }
         return {width: width || 100, height: height || 100};
+        // return {width: width || 100, height: 200};
     }
 
     getCarousel(id: string): string {
@@ -238,9 +239,42 @@ class AmpArticleMeta extends React.Component<any, any> {
                 <span>
                     <a href={process.env.IS_LENTACH ? '/' : `/${article.owner.nickname}`}>
                         {`${article.owner.first_name} ${article.owner.last_name}`}
-                    </a></span>
+                    </a>
+                </span>
                 <span>{date}</span>
             </div>)
+    }
+}
+
+class AmpCover extends React.Component<{item: any}, any> {
+
+    getDate(): string {
+        let calendarParams = {
+            sameDay: 'Сегодня, LT',
+            lastDay: 'Вчера, LT',
+            sameElse: 'DD MMMM YYYY, LT',
+            lastWeek: 'DD MMMM YYYY, LT'
+        };
+        return moment(this.props.item.published_at).locale('ru').calendar(null, calendarParams);
+    }
+
+
+    render() {
+        let {item} = this.props;
+        let date = this.getDate();
+        let headerLenghtClass = item.title.length <= 15 ? 'short' : '';
+        return (
+            <div id="cover" className={`${item.cover ? "covered" : ""} ${item.cover || item.inverted_theme ? "inverted" : ""}`}>
+                <div className="title">
+                    <h1 className={headerLenghtClass}>{item.title}</h1>
+                    <div className="stats">
+                        <div className="stats_author"><a href={process.env.IS_LENTACH ? '/' : `/${item.owner.nickname}`}>{item.owner.first_name} {item.owner.last_name}</a></div>
+                        <div>{date}</div>
+                    </div>
+            </div>
+        
+        </div>
+        )
     }
 }
 
@@ -291,12 +325,10 @@ export default class ArticleAmp extends React.Component<any, any> {
             return null;
         }
         let blocks: any = this.processBlocks();
-        return (
-            <div>
-                {
-                    article.cover ? <div dangerouslySetInnerHTML={{__html: `<amp-img src="${article.cover}" alt="" height="200" layout="fixed-height"></amp-img>`}}/> : null
-                }
-                <h1>{article.title}</h1>
+        return (<div>
+            <AmpCover item={article}/>
+            
+            <div className="main">
                 {
                     blocks.map((block: any, index: number) => {
                         if (block.value) {
@@ -343,13 +375,14 @@ export default class ArticleAmp extends React.Component<any, any> {
                                 return <AmpEmbed item={block} key={index} />;
                             case 'ad':
                                 return <AmpBanner item={block.data} key={index}/>;
-                            case 'meta':
-                                return <AmpArticleMeta key={index} article={article}/>
+                            /*case 'meta':
+                                return <AmpArticleMeta key={index} article={article}/>;*/
+                            default:
+                                return null;
                         }
-
-                        return (<p key={index}>block</p>)
                     })
                 }
-            </div>)
+            </div>
+        </div>)
     }
 }
