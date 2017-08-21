@@ -2,7 +2,19 @@ import * as React from 'react';
 import {BannerID, BlockContentTypes} from "../../constants";
 import * as marked from 'marked';
 import * as moment from 'moment';
+const VKIcon = require('-!babel-loader!svg-react-loader!../../assets/images/amp_icons/profile_social_icon_vk.svg?name=VKIcon');
+const FBIcon = require('-!babel-loader!svg-react-loader!../../assets/images/amp_icons/profile_social_icon_fb.svg?name=FBIcon');
+const TwitterIcon = require('-!babel-loader!svg-react-loader!../../assets/images/amp_icons/profile_social_icon_twitter.svg?name=TwitterIcon');
+const GoogleIcon = require('-!babel-loader!svg-react-loader!../../assets/images/amp_icons/profile_social_icon_google.svg?name=GoogleIcon');
+const UrlIcon = require('-!babel-loader!svg-react-loader!../../assets/images/amp_icons/profile_web_link_icon.svg?name=UrlIcon');
+const SiteIcon = require('-!babel-loader!svg-react-loader!../../assets/images/amp_icons/site.svg?name=SiteIcon');
+const TelegramIcon = require('-!babel-loader!svg-react-loader!../../assets/images/amp_icons/telegram.svg?name=TelegramIcon');
+const InstagramIcon = require('-!babel-loader!svg-react-loader!../../assets/images/amp_icons/profile_social_icon_instagram.svg?name=InstagramIcon');
+const WhatsappIcon = require('-!babel-loader!svg-react-loader!../../assets/images/amp_icons/whatsapp.svg?name=WhatsappIcon');
+const ViberIcon = require('-!babel-loader!svg-react-loader!../../assets/images/amp_icons/viber.svg?name=ViberIcon');
+const LinkIcon = require('-!babel-loader!svg-react-loader!../../assets/images/amp_icons/share_link.svg?name=LinkIcon');
 
+// import SocialIcon from './SocialIcon';
 class AmpGallery extends React.Component<any, any> {
 
     isValid(): boolean {
@@ -278,6 +290,50 @@ class AmpCover extends React.Component<{item: any}, any> {
     }
 }
 
+class AmpIcon extends React.Component<{social: string}, any> {
+    ICONS: any = {
+        'vk': VKIcon,
+        'fb': FBIcon,
+        'facebook': FBIcon,
+        'twitter': TwitterIcon,
+        'google': GoogleIcon,
+        'telegram': TelegramIcon,
+        'instagram': InstagramIcon,
+        'whatsapp': WhatsappIcon,
+        'viber': ViberIcon,
+        'link': LinkIcon
+    };
+    getIcon(): any {
+        let Icon = this.ICONS[this.props.social];
+        return Icon ? Icon : null;
+    }
+    render() {
+        let Icon = this.getIcon();
+        return (<Icon />);
+    }
+}
+
+class AmpShare extends React.Component<{item: any}, any> {
+
+    render() {
+        let url = this.props.item.url;
+        return (
+            <div className="share">
+                <div className="share__row">
+                    <a href={"http://vk.com/share.php?url=" + url} className="share_vk"><AmpIcon social="vk"/></a>
+                    <a href={"https://www.facebook.com/sharer/sharer.php?u=" + url} className="share_fb"><AmpIcon social="facebook"/></a>
+                    <a href={"https://twitter.com/home?status=" + url} className="share_twitter"><AmpIcon social="twitter"/></a>
+                </div>
+                <div className="share__row">
+                    <a href={"https://telegram.me/share/url?url=" + url} className="share_telegram"><AmpIcon social="telegram"/></a>
+                    <a href={"whatsapp://send?text=" + url} className="share_whatsapp"><AmpIcon social="whatsapp"/></a>
+                    <a href={"viber://forward?text=" + url} className="share_viber"><AmpIcon social="viber"/></a>
+                </div>
+            </div>
+        )
+    }
+}
+
 export default class ArticleAmp extends React.Component<any, any> {
 
     processBlocks(): any[] {
@@ -383,6 +439,7 @@ export default class ArticleAmp extends React.Component<any, any> {
                     })
                 }
             </div>
+            <AmpShare item={article}/>
         </div>)
     }
 }

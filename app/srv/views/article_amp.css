@@ -57,6 +57,7 @@ p, div {
 
 
 #cover .title {
+    max-width: 650px;
     -webkit-box-flex: 1;
     -webkit-flex: auto;
     -ms-flex: auto;
@@ -119,6 +120,10 @@ p, div {
     line-height: 14px;
 }
 
+#cover .title .stats div {
+    font-family: "Open Sans";
+}
+
 .stats_author {
     margin-right: 20px;
 }
@@ -127,7 +132,74 @@ p, div {
     font-size: 9px;
 }
 
+.share, .share__row {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    -webkit-flex-direction: row;
+    -ms-flex-direction: row;
+    flex-direction: row;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
+}
 
+.share {
+    width: 100%;
+    min-height: 50px;
+    background-color: #333;
+    justify-content: center;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    -webkit-flex-direction: row;
+    -ms-flex-direction: row;
+    flex-direction: row;
+    -webkit-flex-flow: wrap;
+    -ms-flex-flow: wrap;
+    flex-flow: wrap;
+    padding: 10px 10px;
+    box-sizing: border-box;
+    margin-top: 30px;
+}
+
+.share a {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+    border-radius: 45px;
+    width: 45px;
+    height: 45px;
+    margin: 10px 15px;
+}
+.share svg {
+    width: 35px;
+    height: 35px;
+    fill: white;
+}
+
+.share__row {
+    justify-content: space-around;
+}
+
+.share_vk {background-color: #44678D;}
+.share_fb {background-color: #3A559F;}
+.share_twitter {background-color: #50ABF1;}
+.share_telegram {background-color: #61A8DE;}
+.share_whatsapp {background-color: #1BD741;}
+.share_viber {background-color: #7D3DAF;}
 
 #header {
     min-width: 100%;
