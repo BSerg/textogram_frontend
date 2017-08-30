@@ -929,11 +929,6 @@ $block_margin_desktop: 25px;
 
   @include desktop {
     justify-content: flex-start;
-
-    .article__footer_content {
-      width: 650px;
-      height: 90px;
-    }
   }
 }
 

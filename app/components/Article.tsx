@@ -254,7 +254,7 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
         banner.className = 'banner ' + bannerID;
         banner.id = bannerID + '__' + Math.random().toString().substr(2, 7);
         banner.classList.add('active');
-        banner.style.display = 'block';
+        // banner.style.display = 'block';
         return banner;
     }
 
