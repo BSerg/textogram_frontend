@@ -33,22 +33,25 @@
 
   &.banner__content {
     // width: 300px;
-    // height: 250px;
+    min-height: 250px;
     margin: 20px auto;
+    background-color: $color4;
 
     @include desktop {
       // width: 728px;
-      // height: 90px;
+      min-height: 0;
       margin-left: (650px - 728px) / 2;
     }
   }
 
   &.banner__content_inline {
     // width: 300px;
-    // height: 250px;
+    min-height: 250px;
     margin: 20px auto;
+    background-color: $color4;
 
     @include desktop {
+      min-height: 0;
       float: left;
       margin: 0 30px 30px 0;
     }
