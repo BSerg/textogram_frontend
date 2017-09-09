@@ -118,6 +118,7 @@ export default class ArticleFeed extends React.Component<any, IArticleFeedState>
                 this.setState({currentArticleIndex: currentArticleIndex}, () => {
                     if (this.state.currentArticleIndex != 0) {
                         this.processSideBanner();
+                        // this.showSideBanner();
                     }
                     document.title = `${this.state.articles[this.state.currentArticleIndex].title} | ${process.env.SITE_NAME}`
                 });
@@ -205,6 +206,23 @@ export default class ArticleFeed extends React.Component<any, IArticleFeedState>
         }
     }
 
+    execBannerScripts(bannerElement: any) {
+        try {
+            let scripts = bannerElement.getElementsByTagName('script');
+            for (let i = 0; i < scripts.length; i++) {
+                let script = scripts[i];
+                if (script) {
+                    window.setTimeout(() => {
+                        let f = new Function(script.innerText);
+                        f();
+                    });
+                }
+            }
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
     processSideBanner() {
         if (this.state && this.state.isDesktop && this.state.banners) {
             let ads = JSON.parse(JSON.stringify(this.state.banners['desktop']));
@@ -222,6 +240,50 @@ export default class ArticleFeed extends React.Component<any, IArticleFeedState>
                         this.execBannerScript(this.refs.bannerSide);
                     });
                 }
+            }
+        }
+    }
+
+    _processSideBanner() {
+        if (this.state && this.state.isDesktop && this.state.banners) {
+            let ads = JSON.parse(JSON.stringify(this.state.banners['desktop']));
+            if (ads[BannerID.BANNER_RIGHT_SIDE].length) {
+                this.refs.bannerSide.innerHTML = "";
+                for (let i = 0; i < ads[BannerID.BANNER_RIGHT_SIDE].length; i++) {
+                    let banner = ads[BannerID.BANNER_RIGHT_SIDE][i];
+                    let bannerContainer = document.createElement("div");
+                    bannerContainer.innerHTML = this.createBannerContent(BannerID.BANNER_RIGHT_SIDE, BannerID.BANNER_RIGHT_SIDE + '_' + i, banner);
+                    this.refs.bannerSide.appendChild(bannerContainer);
+                    this.refs.bannerSide.classList.add("active");
+                    // this.execBannerScript(this.refs.bannerSide.children[i]);
+                }
+
+                this.execBannerScripts(this.refs.bannerSide);
+                this.showSideBanner();
+            }
+        }
+    }
+
+    showSideBanner() {
+        if (this.state && this.state.isDesktop && this.state.banners) {
+            let ads = JSON.parse(JSON.stringify(this.state.banners['desktop']));
+            let index = this.state.currentSideBannerIndex + 1;
+                
+            if (index >= ads[BannerID.BANNER_RIGHT_SIDE].length) {
+                index = 0; 
+            }
+
+            if (index != this.state.currentSideBannerIndex) {
+                this.setState({currentSideBannerIndex: index}, () => {
+                    let bannerContainers = this.refs.bannerSide.children;
+                    for (let i = 0; i  < bannerContainers.length; i++) {
+                        if (i == index) {
+                            (bannerContainers[i] as HTMLDivElement).style.display = "block";
+                        } else {
+                            (bannerContainers[i] as HTMLDivElement).style.display = "none";
+                        }
+                    }
+                });
             }
         }
     }
