@@ -6,7 +6,6 @@ import {Link} from 'react-router-dom';
 import ProfileManagementNotifications from './ProfileManagementNotifications';
 import ProfileManagementAccount from './ProfileManagementAccount';
 import ProfileManagementStatistics from './ProfileManagementStatistics';
-import ProfileManagementPaywall from './ProfileManagementPaywall';
 
 import {MediaQuerySerice} from '../../services/MediaQueryService';
 
@@ -58,14 +57,11 @@ class ProfileManagementClass extends React.Component<any, any> {
     SECTION_ACCOUNT = 'account';
     SECTION_NOTIFICATIONS = 'notifications';
     SECTION_STATISTICS = 'statistics';
-    SECTION_PAYWALL = 'paywall';
 
     SECTIONS: {name: string, caption: string, to: string, section: any}[] = [
         {name: this.SECTION_ACCOUNT, caption: Captions.management.sectionAccount, to: '/manage/account', section: <ProfileManagementAccount />},
         {name: this.SECTION_NOTIFICATIONS, caption: Captions.management.sectionNotifications, to: '/manage/notifications', section: <ProfileManagementNotifications />},
         {name: this.SECTION_STATISTICS, caption: Captions.management.sectionStatistics, to: '/manage/statistics', section: <ProfileManagementStatistics/>},
-        // {name: this.SECTION_PAYWALL, caption: 'Paywall', to: '/manage/paywall', section: <ProfileManagementPaywall />},
-
     ];
 
 
