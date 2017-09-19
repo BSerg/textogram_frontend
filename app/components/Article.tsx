@@ -413,28 +413,43 @@ export default class Article extends React.Component<IArticleProps|any, IArticle
             this.adsProcessed = true;
             let ads = JSON.parse(JSON.stringify(this.props.banners[this.state.isDesktop ? 'desktop' : 'mobile']));
 
-            let banners = this.refs.article.getElementsByClassName('banner');
+            let banners = document.getElementsByClassName('banner');
+
+            let counter: any = {};
+            counter[BannerID.BANNER_CONTENT_INLINE] = 0;
+            counter[BannerID.BANNER_CONTENT] = 0;
+            counter[BannerID.BANNER_BOTTOM] = 0;
+
             for (let i = 0; i < banners.length; i++) {
                 let banner = banners[i];
                 let content;
                 if (banner.classList.contains(BannerID.BANNER_CONTENT_INLINE)) {
                     try {
-                        let ad = ads[BannerID.BANNER_CONTENT_INLINE].shift();
-                        content = this.createBannerContent(BannerID.BANNER_CONTENT_INLINE, banner.id, ad);
+                        let k = BannerID.BANNER_CONTENT_INLINE;
+                        let index = counter[k] % ads[k].length;
+                        counter[k]++;
+                        let ad = ads[k][index];
+                        content = this.createBannerContent(k, banner.id, ad);
                     } catch(err) {}
                 }
                 
                 if (banner.classList.contains(BannerID.BANNER_CONTENT)) {
                     try {
-                        let ad = ads[BannerID.BANNER_CONTENT].shift();
-                        content = this.createBannerContent(BannerID.BANNER_CONTENT, banner.id, ad);
+                        let k = BannerID.BANNER_CONTENT;
+                        let index = counter[k] % ads[k].length;
+                        counter[k]++;
+                        let ad = ads[k][index];
+                        content = this.createBannerContent(k, banner.id, ad);
                     } catch(err) {}
                 }
 
                 if (banner.classList.contains(BannerID.BANNER_BOTTOM)) {
                     try {
-                        let ad = ads[BannerID.BANNER_BOTTOM].shift();
-                        content = this.createBannerContent(BannerID.BANNER_BOTTOM, banner.id, ad);
+                        let k = BannerID.BANNER_BOTTOM;
+                        let index = counter[k] % ads[k].length;
+                        counter[k]++;
+                        let ad = ads[k][index];
+                        content = this.createBannerContent(k, banner.id, ad);
                     } catch(err) {}
                 }
 
