@@ -2,9 +2,9 @@ import * as React from 'react';
 import {withRouter} from 'react-router';
 import {Link} from 'react-router-dom';
 import {ModalAction, OPEN_MODAL} from '../../actions/shared/ModalAction';
-import Registration from '../Registration';
+// import Registration from '../Registration';
 import {Captions} from '../../constants';
-import Login from '../shared/Login';
+// import Login from '../shared/Login';
 import LoginBlock from '../shared/LoginBlock';
 
 import '../../styles/menu.scss';
@@ -19,21 +19,6 @@ import {connect} from 'react-redux';
 
 import {openMenu, closeMenu} from '../../store/menu';
 
-interface DefaultMenuPropsInterface {
-    isDesktop: boolean;
-    router?: any;
-}
-
-
-interface IDefaultMenuStateInterface {
-    phone?: string;
-    password?: string;
-    patternInputPhone?: any;
-    patternPhone?: any;
-    loginError?: string;
-    isAuthorization?: boolean;
-
-}
 
 const DefaultMenu = (props: {isDesktop: boolean, closeMenu: () => any}) => <div>
     <div className="menu__content main__menu_default">
@@ -54,18 +39,15 @@ const DefaultMenu = (props: {isDesktop: boolean, closeMenu: () => any}) => <div>
             )
         }
 
+        { !props.isDesktop ? <div style={{color: '#FFFFFF', justifyContent: 'center'}}><LoginBlock /></div> : null}
         {
-            !props.isDesktop ? (<div style={{color: '#FFFFFF', justifyContent: 'center'}}><LoginBlock /></div>) : null
-        }
-
-        {
-            props.isDesktop ? ([<div style={{flexGrow: 1}} key="filler"></div>,
+            props.isDesktop ? [
+                <div style={{flexGrow: 1}} key="filler"></div>,
                 <div className="menu__authorization" key="login">
                     <div className="menu__authorization_caption">Вход через соцсети:</div>
                     <LoginBlock />
                 </div>
-            
-            ]) : null
+            ] : null
         }
     </div>
 </div>;
@@ -113,8 +95,7 @@ class UserMenu extends React.Component<IUserMenuProps|any, any> {
 
     render() {
         let {isDesktop, closeMenu} = this.props;
-        return this.props.isDesktop ? (
-            <div className="menu__content">
+        return this.props.isDesktop ? <div className="menu__content">
 
                 <div className="menu__close" onClick={closeMenu}><CloseIcon /></div>
 
@@ -163,7 +144,7 @@ class UserMenu extends React.Component<IUserMenuProps|any, any> {
                     <div onClick={this.logout.bind(this)}><ExitIcon /></div>
                 </div>
 
-            </div>) : (
+            </div> : 
                 <div className="menu__content">
                     <div className="menu__user">
                         <div className="menu__user_avatar" >
@@ -195,7 +176,7 @@ class UserMenu extends React.Component<IUserMenuProps|any, any> {
                     <div onClick={closeMenu} className="menu__close_mobile" ><CloseIcon /></div>
                     <div onClick={this.handleUrlClick.bind(this, '/info/')} className="menu__info" ><InfoIcon /></div>
 
-                </div>)
+                </div>
 
     }
 
