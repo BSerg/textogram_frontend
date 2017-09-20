@@ -89,6 +89,7 @@ export default class DefaultIndex extends React.Component<any, {screenWidth?: nu
                 <RegistrationBlock className={"index_registration_bottom"} />
 
                 <div className="index_footer">
+                    
                     <span><Link to="mailto:we@textius.com">we@textius.com</Link></span>
                     <span><Link to="/terms">Rules and Terms</Link></span>
                     <span>© Textius, beta 2017</span>

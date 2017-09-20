@@ -72,7 +72,7 @@ export default class Profile extends React.Component<IProfileProps|any, IProfile
         super(props);
         this.state = {user: props.renderedUser || null, error: null, isLoading: false, isSelf: false, 
             selfDrafts: 0, showSubscribers: true, isDesktop: MediaQuerySerice.getIsDesktop(), 
-            canSubscribe: false, additionalPage: null};
+            canSubscribe: true, additionalPage: null};
         this.handleUserChange = this.handleUserChange.bind(this);
         this.checkDesktop = this.checkDesktop.bind(this);
         this.setDrafts = this.setDrafts.bind(this);

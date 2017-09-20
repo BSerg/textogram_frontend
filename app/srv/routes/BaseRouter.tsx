@@ -1,14 +1,13 @@
 import {Router, Request, Response, NextFunction} from 'express';
-import {StaticRouter, Switch, Route} from 'react-router-dom';
+import {Switch, Route} from 'react-router-dom';
 import * as React from 'react';
 import * as ReactDOMServer from 'react-dom/server';
-import Base from '../../components/Base';
 import Index from '../../components/Index';
 import Profile from '../../components/profile/Profile';
 import db from '../db';
 import {Helmet} from 'react-helmet';
-
 import {getUserFromRequest} from '../utils';
+import {RenderComponent} from './RenderComponent';
 
 import * as path from 'path';
 import * as fs from 'fs';
@@ -33,11 +32,10 @@ class BaseRouter {
             return res.redirect((process.env.IS_LENTACH && process.env.LENTACH_NICKNAME) ? `/${process.env.LENTACH_NICKNAME}` : '/feed');
         }
         let html = ReactDOMServer.renderToString(
-            <StaticRouter context={{}}>
-                <Base>
+            
+            <RenderComponent>
                     <Route path="/" component={Index} />
-                </Base>
-            </StaticRouter>
+            </RenderComponent>
         );
         let helmet = Helmet.renderStatic();
         res.render('index.ejs', {reactData: html, helmet: helmet, rev: process.env.REVISION || false, manifest: manifest});
@@ -51,7 +49,7 @@ class BaseRouter {
                     return (<Profile renderedUser={user} {...props}/>);
                 };
                 let html = ReactDOMServer.renderToString(
-                    <StaticRouter context={{}}><Base><RenderedProfile /></Base></StaticRouter>
+                    <RenderComponent><RenderedProfile /></RenderComponent>
                 );
                 let helmet = Helmet.renderStatic();
                 res.render('index.ejs', {reactData: html, helmet: helmet, rev: process.env.REVISION || false, manifest: manifest});
@@ -72,9 +70,7 @@ class BaseRouter {
 
     getDefault(req: Request, res: Response, next: NextFunction) {
         let html = ReactDOMServer.renderToString(
-            <StaticRouter context={{}}>
-                <Base></Base>
-            </StaticRouter>
+            <RenderComponent />
         );
         let helmet = Helmet.renderStatic();
         res.render('index.ejs', {reactData: html, helmet: helmet, rev: process.env.REVISION || false, manifest: manifest});

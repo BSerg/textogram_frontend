@@ -7,7 +7,7 @@ import ProfileManagementNotifications from './ProfileManagementNotifications';
 import ProfileManagementAccount from './ProfileManagementAccount';
 import ProfileManagementStatistics from './ProfileManagementStatistics';
 
-import {MediaQuerySerice} from '../../services/MediaQueryService';
+// import {MediaQuerySerice} from '../../services/MediaQueryService';
 
 import EditableImageModal from '../shared/EditableImageModal';
 
@@ -68,7 +68,7 @@ class ProfileManagementClass extends React.Component<any, any> {
     constructor() {
         super();
         let user = UserAction.getStore().user ? JSON.parse(JSON.stringify(UserAction.getStore().user)) : null;
-        this.state = {currentSection: 'account', additionalPage: null, isDesktop: MediaQuerySerice.getIsDesktop(),
+        this.state = {currentSection: 'account', additionalPage: null,
             user: user, newName: user ? (user.first_name + ' ' + user.last_name) : '', newDescription: user ? user.description : '',
             avatarUploading: false, nameEdit: false, descriptionEdit: false
         };
@@ -236,13 +236,13 @@ class ProfileManagementClass extends React.Component<any, any> {
     componentDidMount() {
 
         this.setSection(this.props.match.params.section);
-        MediaQuerySerice.listen(this.checkDesktop);
+        // MediaQuerySerice.listen(this.checkDesktop);
         UserAction.onChange([GET_ME, LOGIN, LOGOUT, SAVE_USER, UPDATE_USER, USER_REJECT], this.setUser);
         UserAction.onChange(LOGOUT, this.logoutHandle);
     }
 
     componentWillUnmount() {
-        MediaQuerySerice.unbind(this.checkDesktop);
+        // MediaQuerySerice.unbind(this.checkDesktop);
         UserAction.unbind([GET_ME, LOGIN, LOGOUT, SAVE_USER, UPDATE_USER, USER_REJECT], this.setUser);
         this.state.nameSaveTimeout && window.clearTimeout(this.state.nameSaveTimeout);
         this.state.descriptionSaveTimeout && window.clearTimeout(this.state.descriptionSaveTimeout);
