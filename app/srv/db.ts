@@ -34,9 +34,25 @@ class DataClient {
 
     getArticle(req: Request): Promise<any> {
         return new Promise((resolve, reject) => {
-            this.client.get(`${process.env.CACHE_KEY_PREFIX}:article:${req.params.articleSlug || ''}:default`, (err, data) => {
+            const username = getUserFromRequest(req);
+            this.client.get(`${process.env.CACHE_KEY_PREFIX}:article:${req.params.articleSlug || ''}:default`, (err, data: any) => {
                 if (data) {
-                    resolve(data);
+                    let jsonData = JSON.parse(data);
+                    if (jsonData.paywall_enabled) {
+                        this.client.sismember(`${process.env.CACHE_KEY_PREFIX}:article:${req.params.articleSlug}:access`, username, (err: any, isMember: boolean) => {
+                            if (err) reject();
+                            if (isMember) {
+                                this.client.get(`${process.env.CACHE_KEY_PREFIX}:article:${req.params.articleSlug}:full`, (err, fullData: any) => {
+                                    if (err) reject();
+                                    resolve(fullData);
+                                })
+                            } else {
+                                resolve(data);
+                            }
+                        })
+                    } else {
+                        resolve(data);
+                    }
                 }
                 else {
                     reject();
