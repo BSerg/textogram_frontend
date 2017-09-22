@@ -18,7 +18,7 @@
     "lentach_dev": "webpack --config webpack.lentach.dev.config.js",
     "prod": "webpack -p --config webpack.prod.config.js",
     "lentach_prod": "webpack -p --config webpack.lentach.prod.config.js",
-    "start-server-dev": "nodemon ./server_bundle/server.js"
+    "start-server-dev": "nodemon ./dist/server.js"
   },
   "author": "",
   "license": "ISC",
@@ -90,7 +90,7 @@
     "file-loader": "0.9.0",
     "generate-json-webpack-plugin": "^0.2.1",
     "html-webpack-plugin": "2.24.1",
-    "node-sass": "3.13.0",
+    "node-sass": "^4.5.3",
     "nodemon": "1.11.0",
     "postcss-discard-duplicates": "^2.1.0",
     "postcss-import": "9.1.0",
