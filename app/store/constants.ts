@@ -19,4 +19,10 @@ export namespace ACTIONS {
     export const AUTHOR_SET_LOADING: string = 'AUTHOR_SET_LOADING';
     export const AUTHOR_SET_CANCEL_SOURCE: string = 'AUTHOR_SET_CANCEL_TOKEN';
     export const AUTHOR_SET_NOT_FOUND: string = 'AUTHOR_SET_NOT_FOUND';
+
+    export const ITEM_LIST_SET_ITEMS: string = 'ITEM_LIST_SET_ITEMS';
+    export const ITEM_LIST_SET_SEARCH_STRING: string = 'ITEM_LIST_SET_SEARCH_STRING';
+    export const ITEM_LIST_SET_LOADING: string = 'ITEM_LIST_SET_LOADING';
+    export const ITEM_LIST_SET_SECTION: string = 'ITEM_LIST_SET_SECTION';
+    export const ITEM_LIST_SET_CANCEL_SOURCE: string = 'ITEM_LIST_SET_CANCEL_SOURCE';
 }

@@ -119,41 +119,27 @@ export const ProfileUserData = (props: {author: any, isDesktop: boolean}) => <di
 </div>;
 
 
-export class ProfileAuthor extends React.Component<any, any> {
+export const ProfileAuthor = (props: any) => {
 
-    componentWillReceiveProps(nextProps: any)  {
-        let slug = nextProps.match.params.slug;
-        if (slug !== this.props.match.params.slug || (nextProps.user && !this.props.user)) {
-            this.props.getAuthor(slug);
+    
+    let {author, loading, isDesktop} = props;
+
+    if (!author) {
+        return null
+    }
+    return <div className="profile_content_main">
+        <ProfileUserData author={author} isDesktop={isDesktop}/>
+        <ProfileSocialLinkList items={author.social_links}/>
+        <div className="divider"></div>
+        <ProfileAuthorSubscriptions author={author} isDesktop={isDesktop}/>
+        {
+            isDesktop ? [
+                <div className="divider" key="divider"></div>,
+                <ProfileSubscribe key="subscribe" />
+            ] : null
         }
-    }
-
-    componentDidMount() {
-        this.props.getAuthor(this.props.match.params.slug);
-    }
-
-    render() {
-        let {author, loading, isDesktop} = this.props;
-
-        if (!author) {
-            return null
-        }
-        return <div className="profile_content_main">
-            <ProfileUserData author={author} isDesktop={isDesktop}/>
-            <ProfileSocialLinkList items={author.social_links}/>
-            <div className="divider"></div>
-            <ProfileAuthorSubscriptions author={author} isDesktop={isDesktop}/>
-            {
-                isDesktop ? [
-                    <div className="divider" key="divider"></div>,
-                    <ProfileSubscribe key="subscribe" />
-                ] : null
-            }
-
-        </div>;
-        
-
-    }
+    </div>;
+    
 }
 
 
@@ -167,10 +153,5 @@ const mapStateToProps = (state: any, ownProps: any) => {
     }
 }
 
-const mapDispatchToProps = (dispatch: any) => {
-    return {
-        getAuthor: (slug: any) => { dispatch(getAuthor(slug)) }
-    }
-}
 
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(ProfileAuthor));
+export default withRouter(connect(mapStateToProps, null)(ProfileAuthor));

@@ -106,6 +106,10 @@ export namespace Captions {
         subscribersOwnProfile: "Вас читают",
         newArticle: "Новый текст",
 
+                
+        followers: "Читатели",
+        following: "Читаемые",
+
         articlePreviewEdit: "Редактировать",
         articlePreviewSettings: "Настройки",
         articlePreviewCopy: "Копировать",
@@ -171,6 +175,7 @@ export namespace Captions {
         draftDelete: "удалить",
 
         avatarSave: "Сохранить",
+
 
 
         audience: "Аудитория",
