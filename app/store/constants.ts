@@ -14,4 +14,9 @@ export namespace ACTIONS {
     export const MENU_OPEN: string = 'MENU_OPEN';
 
     export const SCREEN_SET_SIZE: string = 'SCREEN_SET_SIZE';
+
+    export const AUTHOR_SET: string = 'AUTHOR_SET';
+    export const AUTHOR_SET_LOADING: string = 'AUTHOR_SET_LOADING';
+    export const AUTHOR_SET_CANCEL_SOURCE: string = 'AUTHOR_SET_CANCEL_TOKEN';
+    export const AUTHOR_SET_NOT_FOUND: string = 'AUTHOR_SET_NOT_FOUND';
 }
