@@ -31,8 +31,6 @@ export class Base extends React.Component<any, any> {
 
     }
 
-    
-
     componentWillReceiveProps(nextProps: any) {
         if (!this.props.user && nextProps.user) {
             this.props.getNotifications();

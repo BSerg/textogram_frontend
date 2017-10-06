@@ -7,6 +7,7 @@ import {Captions} from '../../constants';
 const ConfirmIcon = require('-!babel-loader!svg-react-loader!../../assets/images/redactor_icon_confirm.svg?name=ConfirmIcon');
 const CloseIcon = require('-!babel-loader!svg-react-loader!../../assets/images/close.svg?name=CloseIcon');
 import SocialIcon from '../shared/SocialIcon';
+import ProfileUserDataEditable from './ProfileUserDataEditable';
 
 import '../../styles/common.scss';
 import '../../styles/profile/profile.scss';
@@ -37,8 +38,16 @@ export const ProfileSubscribeSimple: any = (props: {canSubscribe: boolean, chang
 };
 
 const mapStateToPropsSubscribe = (state: any) => {
+    let canSubscribe;
+    try {
+        canSubscribe = state.userData.user && (state.authorData.author.nickname !== state.userData.user.nickname)
+    } catch(err) {
+        console.log(err);
+        canSubscribe = false;
+    }
+
     return {
-        canSubscribe: state.userData.user && (state.authorData.author.nickname !== state.userData.user.nickname),
+        canSubscribe,
         isDesktop: state.screen.isDesktop,
         author: state.authorData.author,
     }
@@ -90,31 +99,24 @@ export const ProfileSocialLinkList = (props: {items: any[]}) => {
 
 export const ProfileUserData = (props: {author: any, isDesktop: boolean}) => <div className="profile_userdata">
         {
-            props.isDesktop ? (
-                <Link to={"/" + props.author.nickname} className="profile_avatar" key="avatar">
+            props.isDesktop && <Link to={"/" + props.author.nickname} className="profile_avatar" key="avatar">
                     { props.author.avatar ? (<img src={props.author.avatar}/>) : (
                         <div className="profile_avatar_dummy"></div>) }
                 </Link>
-            ) : null
         }
 
         <div className="profile_user_text">
-        <Link to={"/" + props.author.nickname} key="username" className="username">
+            <Link to={"/" + props.author.nickname} key="username" className="username">
                 {props.author.first_name} {props.author.last_name}
             </Link>
-
-
             <div className="description">{ props.author.description }</div>
         </div>
 
-
         {
-            !props.isDesktop ? (
-                <Link to={"/" + props.author.nickname} className="profile_avatar" key="avatar">
+            !props.isDesktop && <Link to={"/" + props.author.nickname} className="profile_avatar" key="avatar">
                     { props.author.avatar ? (<img src={props.author.avatar}/>) : (
                         <div className="profile_avatar_dummy"></div>) }
                 </Link>
-            ) : null
         }
 </div>;
 
@@ -122,13 +124,13 @@ export const ProfileUserData = (props: {author: any, isDesktop: boolean}) => <di
 export const ProfileAuthor = (props: any) => {
 
     
-    let {author, loading, isDesktop} = props;
+    let {author, loading, isDesktop, editable} = props;
 
     if (!author) {
         return null
     }
     return <div className="profile_content_main">
-        <ProfileUserData author={author} isDesktop={isDesktop}/>
+        { editable ? <ProfileUserDataEditable /> : <ProfileUserData author={author} isDesktop={isDesktop}/>}
         <ProfileSocialLinkList items={author.social_links}/>
         <div className="divider"></div>
         <ProfileAuthorSubscriptions author={author} isDesktop={isDesktop}/>
@@ -146,7 +148,7 @@ export const ProfileAuthor = (props: any) => {
 const mapStateToProps = (state: any, ownProps: any) => {
     return {
         user: state.userData.user,
-        author: state.authorData.author,
+        author: ownProps.editable ? state.userData.user : state.authorData.author,
         loading: state.authorData.loading,
         isDesktop: state.screen.isDesktop,
 

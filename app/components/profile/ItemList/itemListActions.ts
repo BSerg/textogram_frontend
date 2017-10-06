@@ -34,7 +34,6 @@ export function getNextItems() {
         if (!nextUrl || loading) {
             return;
         }
-        console.log(nextUrl, loading);
         dispatch(getItems(nextUrl, {}, items));
     }
 }
@@ -50,7 +49,6 @@ export function getItems(apiUrl: string, requestParams: any, items: any[] = []) 
 
         api.get(apiUrl, { cancelToken: newCancelSource.token, params: requestParams }).then((response: any) => {
             let nextUrl = response.data.next || null;
-            console.log(nextUrl);
             try {
                 let results: any = (response.data.results || []).map((r: any) => {
                     let res = typeof r == 'string' ? JSON.parse(r) : r;

@@ -1,5 +1,6 @@
 import {api} from '../../api';
 import {ACTIONS} from '../constants';
+import * as cookie from 'js-cookie';
 
 const initialUserState: any = {
     loading: false,
@@ -20,10 +21,17 @@ const initialState: any = { ...initialUserState, ...initialEditState};
 
 export const getUser = () => {
     return (dispatch: (f: any) => any) => {
-        dispatch({type: ACTIONS.USER_LOADING});
-        api.get(`/users/me/`).then((response: any) => {
-            dispatch({type: ACTIONS.USER_SET, user: response.data});
-        }).catch((err) => { dispatch({type: ACTIONS.USER_ERROR}); });
+        let jwt = cookie.get('jwt');
+        if (jwt) {
+            dispatch({type: ACTIONS.USER_LOADING});
+            api.get(`/users/me/`).then((response: any) => {
+                dispatch({type: ACTIONS.USER_SET, user: response.data});
+            }).catch((err) => { dispatch({type: ACTIONS.USER_ERROR}); });
+        }
+        else {
+            dispatch({type: ACTIONS.USER_ERROR});
+        }
+        
     }
 }
 
