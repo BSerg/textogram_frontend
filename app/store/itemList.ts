@@ -3,7 +3,8 @@ import {ACTIONS} from './constants';
 const initialState: any = {
     loading: false,
     items: [],
-    section: '',
+    apiUrl: '',
+    requestParams: {},
     cancelSource: null,
     searchString: '',
     nextUrl: '',
@@ -19,10 +20,9 @@ export default function articleList(state=initialState, action: any) {
         case (ACTIONS.ITEM_LIST_SET_SEARCH_STRING):
             return {...state, items: [], searchString: action.searchString, loading: true};
         case (ACTIONS.ITEM_LIST_SET_CANCEL_SOURCE):
-            return {...state, cancelSource: action.cancelSource};
-        case (ACTIONS.ITEM_LIST_SET_SECTION):
-            console.log(action.section);
-            return {...state, section: action.section};
+            return {...state, cancelSource: action.cancelSource, loading: true};
+        case (ACTIONS.ITEM_LIST_SET_API_SETTINGS):
+            return {...state, apiUrl: action.apiUrl, requestParams: action.requestParams};
     }
 
     return state;

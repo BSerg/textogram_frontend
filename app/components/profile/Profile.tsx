@@ -1,19 +1,13 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
 import {NavLink} from 'react-router-dom';
-import ItemList from '../shared/ItemList/ItemList';
+import ItemList from './ItemList/ItemList';
 import ProfileAuthor from './ProfileAuthor';
 import {Helmet} from 'react-helmet';
 import {Captions} from '../../constants';
 import {getAuthor} from './actions/authorActions';
-
-export const ProfileMenu = (props: {items: any[]}) => props.items.length ? <div className="profile_menu">
-    {
-        props.items.map((item: any) => {
-            return <NavLink to={item.to} key={item.to} className="menu_item" activeClassName="active" >{item.caption}</NavLink>
-        })
-    }
-</div> : null;
+import ArticlePreview from '../shared/ArticlePreview';
+import {ProfileMenu} from './ProfileShared';
 
 export class Profile extends React.Component<any, any> {
 
@@ -34,6 +28,7 @@ export class Profile extends React.Component<any, any> {
         }
         return [];
     }
+
 
     componentWillReceiveProps(nextProps: any)  {
         let slug = nextProps.match.params.slug;

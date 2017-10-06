@@ -1,22 +1,22 @@
 import * as React from 'react';
 import {withRouter} from 'react-router';
 import {Link} from 'react-router-dom';
-import {api} from '../../api';
+import {api} from '../../../api';
 import {connect} from 'react-redux';
 
 import * as moment from 'moment';
 import * as marked from 'marked';
 
-import {Captions} from '../../constants';
+import {Captions} from '../../../constants';
 
-import '../../styles/shared/article_preview.scss';
-import '../../styles/shared/article_preview_control.scss';
+import './styles/article_preview.scss';
+import './styles/article_preview_control.scss';
 
-const ViewsIcon = require('-!babel-loader!svg-react-loader!../../assets/images/views_icon.svg?name=ViewsIcon');
-const LockIcon = require('-!babel-loader!svg-react-loader!../../assets/images/lock.svg?name=LockIcon');
-const CloseIcon = require('-!babel-loader!svg-react-loader!../../assets/images/close.svg?name=CloseIcon');
-const EditIcon = require('-!babel-loader!svg-react-loader!../../assets/images/edit.svg?name=EditIcon');
-const MoreIcon = require('-!babel-loader!svg-react-loader!../../assets/images/more_vertical.svg?name=MoreIcon');
+const ViewsIcon = require('-!babel-loader!svg-react-loader!../../../assets/images/views_icon.svg?name=ViewsIcon');
+const LockIcon = require('-!babel-loader!svg-react-loader!../../../assets/images/lock.svg?name=LockIcon');
+const CloseIcon = require('-!babel-loader!svg-react-loader!../../../assets/images/close.svg?name=CloseIcon');
+const EditIcon = require('-!babel-loader!svg-react-loader!../../../assets/images/edit.svg?name=EditIcon');
+const MoreIcon = require('-!babel-loader!svg-react-loader!../../../assets/images/more_vertical.svg?name=MoreIcon');
 
 interface IControlProps {
     item: any,
@@ -175,12 +175,11 @@ class ArticlePreview extends React.Component<any, any> {
         if (this.state.removed) {
             return null;
         }
-
+        
         let {item, isOwner, isDesktop} = this.props;
-        if (!item) {
+        if (!item || !item.owner) {
             return null;
         }
-
         let dv: HTMLDivElement = document.createElement('div');
         dv.innerHTML = marked(item.lead || '');
         let lead = dv.innerText.trim();
