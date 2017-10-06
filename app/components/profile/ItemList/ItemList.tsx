@@ -3,18 +3,21 @@ import {connect} from 'react-redux';
 import {withRouter} from 'react-router';
 import ArticlePreview from './ArticlePreview';
 import {AuthorPreview} from './AuthorPreview';
+import Loading from '../../shared/Loading';
+import './styles/ItemList.scss';
 
 
-import {setLoading, setApiSettings} from './itemListActions';
+import {setLoading, setApiSettings, getNextItems} from './itemListActions';
 
 export class ItemList extends React.Component<any, any> {
     
     getTimeout: any;
+    div: HTMLDivElement;
 
     constructor() {
         super();
         this.state = {searchString: ''};
-        this.getTimeout = null;
+        this.handleScroll = this.handleScroll.bind(this);
     }
 
     setApiSettings(props: any) {
@@ -36,7 +39,7 @@ export class ItemList extends React.Component<any, any> {
                     break;
             }
             if (this.state.searchString) {
-                requestParams['search_string'] = this.state.searchString;
+                requestParams['q'] = this.state.searchString;
             }
 
         }
@@ -103,19 +106,31 @@ export class ItemList extends React.Component<any, any> {
         
     }
 
+    handleScroll() {
+        let rect: ClientRect = this.div.getBoundingClientRect();
+        if ((rect.bottom <= window.innerHeight) && this.props.canGetNext) {
+            this.props.getNextItems();
+        }
+    }
+
     componentDidMount() {
         this.setApiSettings(this.props);
+        window.addEventListener('scroll', this.handleScroll);
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener('scroll', this.handleScroll);
     }
 
     render() {
-        let {items} = this.props;
+        let {items, loading} = this.props;
 
         let ItemComponent = this.getItemComponent();
         if (!ItemComponent) {
             return null;
         }
         let {searchString} = this.state;
-        return <div className="item_list">
+        return <div className="item_list" ref={(div) => {this.div = div}}>
             <div className="item_list_search" >
                 <input type="text" placeholder="Поиск" value={searchString} onChange={this.inputHandler.bind(this)}  />
             </div>
@@ -126,6 +141,8 @@ export class ItemList extends React.Component<any, any> {
                 })
             }
 
+            { loading && <Loading /> }
+
         </div>;
     }
 }
@@ -135,7 +152,9 @@ const mapStateToProps = (state: any, ownProps: any) => {
     return {
         author: state.authorData.author,
         items: state.itemList.items,
+        loading: state.itemList.loading,
         searchString: state.itemList.searchString,
+        canGetNext: !state.itemList.loading && !!state.itemList.nextUrl,
     }
 }
 
@@ -143,6 +162,7 @@ const mapDispatchToProps = (dispatch: any) => {
     return {
         setLoading: () =>{ dispatch(setLoading()) },
         setApiSettings: (newUrl: string, newParams: any) => {dispatch(setApiSettings(newUrl, newParams))},
+        getNextItems: () => { dispatch(getNextItems()); }
     }
 }
 

@@ -14,7 +14,7 @@ export default function articleList(state=initialState, action: any) {
 
     switch(action.type) {
         case (ACTIONS.ITEM_LIST_SET_ITEMS):
-            return {...state, items: [...action.items], loading: false};
+            return {...state, items: [...action.items], loading: false, nextUrl: action.nextUrl || ''};
         case (ACTIONS.ITEM_LIST_SET_LOADING):
             return {...state, items: [], loading: true};
         case (ACTIONS.ITEM_LIST_SET_SEARCH_STRING):

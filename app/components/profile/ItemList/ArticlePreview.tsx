@@ -9,8 +9,8 @@ import * as marked from 'marked';
 
 import {Captions} from '../../../constants';
 
-import './styles/article_preview.scss';
-import './styles/article_preview_control.scss';
+import './styles/ArticlePreview.scss';
+import './styles/ArticlePreviewControl.scss';
 
 const ViewsIcon = require('-!babel-loader!svg-react-loader!../../../assets/images/views_icon.svg?name=ViewsIcon');
 const LockIcon = require('-!babel-loader!svg-react-loader!../../../assets/images/lock.svg?name=LockIcon');

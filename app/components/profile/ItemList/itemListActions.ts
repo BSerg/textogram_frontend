@@ -28,7 +28,16 @@ export function setApiSettings(newUrl: string, newParams: any) {
     }
 }
 
-
+export function getNextItems() {
+    return (dispatch: (action: any) => any, getState: () => any) => {
+        let {items, nextUrl, loading} = getState().itemList;
+        if (!nextUrl || loading) {
+            return;
+        }
+        console.log(nextUrl, loading);
+        dispatch(getItems(nextUrl, {}, items));
+    }
+}
 
 
 export function getItems(apiUrl: string, requestParams: any, items: any[] = []) {
@@ -40,6 +49,8 @@ export function getItems(apiUrl: string, requestParams: any, items: any[] = []) 
         dispatch({type: ACTIONS.ITEM_LIST_SET_CANCEL_SOURCE, cancelSource: newCancelSource});
 
         api.get(apiUrl, { cancelToken: newCancelSource.token, params: requestParams }).then((response: any) => {
+            let nextUrl = response.data.next || null;
+            console.log(nextUrl);
             try {
                 let results: any = (response.data.results || []).map((r: any) => {
                     let res = typeof r == 'string' ? JSON.parse(r) : r;
@@ -50,7 +61,7 @@ export function getItems(apiUrl: string, requestParams: any, items: any[] = []) 
                     catch (error) {}
                 });
                 items = items.concat(results);
-                dispatch({type: ACTIONS.ITEM_LIST_SET_ITEMS, items});
+                dispatch({type: ACTIONS.ITEM_LIST_SET_ITEMS, items, nextUrl});
             }
             catch (error) {
                 dispatch({type: ACTIONS.ITEM_LIST_SET_ITEMS, items});
