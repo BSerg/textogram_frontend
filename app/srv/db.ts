@@ -5,7 +5,7 @@ import * as uuid from 'uuid';
 
 class DataClient {
     client: redis.RedisClient;
-    ARTICLE_PAGE_SIZE: number = 5;
+    ARTICLE_PAGE_SIZE: number = 20;
     MIN_SEARCH_QUERY_LENGTH = 3;
     MAX_SEARCH_QUERY_LENGTH = 20;
 

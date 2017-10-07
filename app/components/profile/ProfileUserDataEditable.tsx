@@ -41,7 +41,7 @@ export class ModalAvatarEditor extends React.Component<any, any> {
                 </div>
                 <div key="confirm" className="editable_image_modal__button"
                     onClick={this.handleConfirm.bind(this)}>
-                    <ConfirmIcon/> Применить
+                    <ConfirmIcon/> Сохранить
                 </div>
             </div>
         </div>
@@ -61,7 +61,10 @@ export class AvatarEditSimple extends React.Component<any, any> {
     }
 
     inputClick() {
-        this.input.click();
+        if (!this.state.modalOpen) {
+            this.input.click();
+        }
+        
     }
 
     uploadAvatar() {
@@ -84,9 +87,8 @@ export class AvatarEditSimple extends React.Component<any, any> {
         let {avatar, avatarUploading} = this.props;
         let {modalOpen, image} = this.state;
         console.log(avatarUploading);
-        return <div className={"profile_avatar profile_avatar_editable" + (avatarUploading ? " uploading" : "") }
-                key="avatar" onClick={this.inputClick.bind(this)}>
-                { avatar ? <img src={avatar}/> : <div className="profile_avatar_dummy"></div> }
+        return <div onClick={this.inputClick.bind(this)} className={"profile_avatar profile_avatar_editable" + (avatarUploading ? " uploading" : "") }>
+                { avatar ? <img  src={avatar}/> : <div className="profile_avatar_dummy"></div> }
 
             { avatarUploading && <div className="avatar_upload"><Loading/></div>}
             <input accept="image/jpeg,image/png" style={{visibility: 'hidden'}} 

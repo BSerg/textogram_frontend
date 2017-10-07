@@ -8,7 +8,7 @@ import ProfileManagementAccount from './ProfileManagementAccount';
 import ProfileManagementStatistics from './ProfileManagementStatistics';
 import EditableImageModal from '../shared/EditableImageModal';
 import ContentEditable from '../shared/ContentEditable';
-import ProfileSocialLinkList from "./ProfileSocialLinkList";
+import {ProfileSocialLinkList} from "./ProfileAuthor";
 
 import Loading from '../shared/Loading';
 import {ModalAction, OPEN_MODAL} from '../../actions/shared/ModalAction';

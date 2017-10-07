@@ -1,5 +1,6 @@
 import * as React from 'react';
-import {NavLink} from 'react-router-dom';
+import {NavLink, Link} from 'react-router-dom';
+import SocialIcon from '../shared/SocialIcon';
 
 export const ProfileMenu = (props: {items: {to: string, caption: string}[]}) => props.items.length ? <div className="profile_menu">
 {

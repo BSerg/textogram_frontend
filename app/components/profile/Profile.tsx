@@ -48,6 +48,7 @@ export class Profile extends React.Component<any, any> {
         }
         let menuItems =  this.getMenuItems();
         return <div id="profile">
+    
             <Helmet>
                 <title>{`${author.first_name} ${author.last_name} | ${process.env.SITE_NAME}`}</title>
                 <meta name="title" content={`${author.first_name} ${author.last_name} | ${process.env.SITE_NAME}`} />

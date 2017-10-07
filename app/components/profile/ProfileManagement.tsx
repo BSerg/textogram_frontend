@@ -34,6 +34,8 @@ export class ProfileManagement extends React.Component<any, any> {
     }
 }
 
+
+
 const mapStateToProps = (state: any, ownProps: any) => {
     return {
         user: state.userData.user,

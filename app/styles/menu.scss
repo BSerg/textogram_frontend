@@ -10,16 +10,26 @@
   height: 100%;
   z-index: 40;
   background-color: rgba(0, 0, 0, 0.5);
+  transition: 200ms 0s ease;
 
   &.hidden {
-    display: none;
+    // display: none;
+    background-color: rgba(0, 0, 0, 0);
+    visibility: hidden;
+    opacity: 0;
   }
 
   .main_menu_container {
+    top: 0;
     width: 100%;
     max-width: 600px;
     margin: auto;
     background-color: $color;
+    transition: 200ms 0s ease;
+  }
+
+  &.hidden .main_menu_container {
+    top: -100%;
   }
 
   .menu__close {
@@ -79,9 +89,6 @@
   }
 
   .menu__controls {
-    //position: absolute;
-    //top: 0;
-    //right: 0;
     display: flex;
     flex-direction: row;
     padding: $padding - 10px $padding/2 0 $padding/2;
@@ -130,10 +137,6 @@
         padding: 0 5px;
         font-weight: $font-weight-bold;
       }
-
-      //span:first-child {
-      //  font-weight: $font-weight-bold;
-      //}
     }
   }
 
@@ -150,7 +153,6 @@
   }
 
   .menu__links {
-    //padding: $padding 0;
     .menu__link {
       font-size: $font-size-small;
       letter-spacing: 1px;
@@ -170,16 +172,11 @@
   .menu__notifications {
 
     flex-wrap: nowrap;
-    //padding: $padding - 5px $padding;
-    //border-bottom: 1px solid black;
-    //justify-content: flex-start;
     cursor: pointer;
     width: unset;
 
     .menu__notifications_icon {
       position: relative;
-      //margin-right: $margin;
-
 
       svg {
         width: 30px;
@@ -201,7 +198,6 @@
         color: #FFFFFF;
         font-weight: $font-weight-bold;
         background-color: $color-accent;
-
       }
 
     }
@@ -254,41 +250,6 @@
       display: flex;
       flex-direction: row;
       justify-content: center;
-
-      form {
-        width: 100%;
-        max-width: 600px;
-
-        .login_element {
-          margin: 0 0 $margin 0;
-        }
-
-        input:-webkit-autofill {
-          -webkit-box-shadow: 0 0 0 1000px $color inset;
-          -webkit-text-fill-color: #FFFFFF !important;
-          outline: none;
-        }
-
-
-        input {
-          letter-spacing: 1px;
-          border: none;
-          padding-bottom: 5px;
-          margin-bottom: 5px;
-          outline: none;
-
-          background-color: transparent;
-          color: #FFFFFF;
-          width: 100%;
-          font-size: $font_size6;
-          font-weight: 300;
-          border-bottom: 1px solid $color6_1;
-        }
-      }
-
-      form.error input {
-        border-color: $color-accent;
-      }
 
       .hint {
         display: flex;
@@ -615,33 +576,6 @@
       .menu__login {
         padding: 0 $padding/2;
         background-color: #282828;
-        form {
-          display: flex;
-          flex-direction: row;
-
-          .login_element {
-            padding: 0 $padding / 2;
-            margin: 0;
-
-            input {
-              font-size: 12px;
-              margin-bottom: 8px;
-
-            }
-
-            .hint {
-              font-size: 7px;
-              letter-spacing: 1px;
-              margin-bottom: 8px;
-            }
-
-            input:-webkit-autofill {
-              -webkit-box-shadow: 0 0 0 1000px #282828 inset;
-              -webkit-text-fill-color: #FFFFFF !important;
-              outline: none;
-            }
-          }
-        }
 
         .menu__authorization_close {
           height: 100%;
