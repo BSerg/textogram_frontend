@@ -63,11 +63,17 @@
       }
 
       .nickname_confirm {
-        min-width: 30px;
-        width: 30px;
-        height: 30px;
+        
+        min-width: 95px;
+        width: 95px;
+        box-sizing: border-box;
+
         &.active {
           cursor: pointer;
+          font-size: 14px;
+          background: $color;
+          color: white;
+          padding: 10px;
         }
         svg {
           width: 30px;
@@ -202,7 +208,7 @@
 @media (min-width: 1024px) {
   .profile_management_links {
     flex-direction: row;
-    padding: $padding $padding * 2;
+    padding: $padding $padding;
     margin-bottom: $margin * 2;
 
     &:first-child {

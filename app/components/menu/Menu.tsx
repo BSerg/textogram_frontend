@@ -88,6 +88,7 @@ class UserMenu extends React.Component<IUserMenuProps|any, any> {
         e.stopPropagation();
         this.props.history.push(url);
         if (!this.props.isDesktop) {
+            this.props.closeMenu();
             // MenuAction.do(TOGGLE, false);
         }
 
@@ -233,7 +234,6 @@ const mapStateToProps = (state: any, ownProps: any) => {
 
 const mapDispatchToProps = (dispatch: any) => {
     return {
-        // openMenu: () => {dispatch(openMenu)},
         closeMenu: () => {dispatch(closeMenu())},
 
     }

@@ -11,11 +11,9 @@ const initialUserState: any = {
 const initialEditState: any = {
     avatarUploading: false,
     avatarUrl: null,
-    nameEdit: false,
-    descriptionEdit: false,
-    newName: '',
-    newDescription: '',
-    saveTimeout: null,
+    nicknameData: {
+        saving: false,
+    }
 };
 
 const initialState: any = { ...initialUserState, ...initialEditState};
@@ -49,6 +47,8 @@ export default function userData(state: any=initialState, action: any) {
             return {...state, user, avatarUploading: false};
         case (ACTIONS.USER_SET_AVATAR_LOADING):
             return {...state, avatarUploading: true};
+        case (ACTIONS.USER_SET_NICKNAME_DATA):
+            return {...state, nicknameData: {...action.nicknameData}}
         case (ACTIONS.USER_SET_AVATAR_URL):
             
             return {...state, avatarUrl: action.avatarUrl};
