@@ -5,9 +5,10 @@ import ItemList from './ItemList/ItemList';
 import ProfileAuthor from './ProfileAuthor';
 import {Helmet} from 'react-helmet';
 import {Captions} from '../../constants';
-import {getAuthor} from './actions/authorActions';
+import {getAuthor, setAuthorNull} from './actions/authorActions';
 import ArticlePreview from '../shared/ArticlePreview';
 import {ProfileMenu} from './ProfileShared';
+
 
 export class Profile extends React.Component<any, any> {
 
@@ -39,6 +40,10 @@ export class Profile extends React.Component<any, any> {
 
     componentDidMount() {
         this.props.getAuthor(this.props.match.params.slug);
+    }
+
+    componentWillUnmount() {
+        this.props.setAuthorNull();
     }
 
     render() {
@@ -77,7 +82,8 @@ const mapStateToProps = (state: any, ownProps: any) => {
 
 const mapDispatchToProps = (dispatch: any) => {
     return {
-        getAuthor: (slug: any) => { dispatch(getAuthor(slug)) }
+        getAuthor: (slug: any) => { dispatch(getAuthor(slug)) },
+        setAuthorNull: () => {dispatch(setAuthorNull())},
     }
 }
 

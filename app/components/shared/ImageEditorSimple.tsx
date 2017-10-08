@@ -52,13 +52,11 @@ export default class ImageEditorSimple extends React.Component<IProps, any> {
         let height = this.imageHeight * this.state.zoomValue;
         let x = this.positionX - (width - this.imageWidth) / 2;
         let y = this.positionY - (height - this.imageHeight) / 2;
-        console.log(x, y, width, height);
         return {x: x, y: y, width: width, height: height};
     }
 
     handleZoom() {
         let zoom = (parseInt(this.refs.zoomInput.value) * (this.props.maxZoom - 1)/10 + 1);
-        console.log(zoom);
         let dZoom = (zoom - this.state.zoomValue) / this.state.zoomValue;
         let dWidth = this.imageWidth * dZoom;
         this.imageWidth += dWidth;

@@ -8,6 +8,6 @@ import {Provider} from 'react-redux';
 import {store} from '../../store/store';
 
 export const RenderComponent = (props: any) => <Provider store={store}>
-    <StaticRouter><Base>{props.children}</Base></StaticRouter>
+    <StaticRouter context={{}}><Base>{props.children}</Base></StaticRouter>
 </Provider>
 

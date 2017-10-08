@@ -3,6 +3,9 @@ import {connect} from 'react-redux';
 import {ProfileMenu} from './ProfileShared';
 import {Captions, Constants} from '../../constants';
 import ProfileAuthor from './ProfileAuthor';
+import AvatarEditor from './AvatarEditor/AvatarEditor';
+
+
 
 export class ProfileManagement extends React.Component<any, any> {
 
@@ -23,6 +26,7 @@ export class ProfileManagement extends React.Component<any, any> {
         }
         return <div id="profile">
             <div id="profile_content">
+                <AvatarEditor />
                 <ProfileAuthor editable={true}/>
                 <div className="profile_content_filler"></div>
                 <div className="profile_content_data">

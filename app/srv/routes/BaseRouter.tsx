@@ -57,7 +57,7 @@ class BaseRouter {
             catch(error) {
                 next();
             }
-        }).catch(() => {
+        }).catch((error) => {
             next();
         });
     }

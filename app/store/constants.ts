@@ -3,6 +3,10 @@ export namespace ACTIONS {
     export const USER_ERROR: string = 'USER_ERROR';
     export const USER_SET: string = 'USER_SET';
 
+    export const USER_SET_AVATAR: string = 'USER_SET_AVATAR';
+    export const USER_SET_AVATAR_URL: string = 'USER_SET_AVATAR_URL';
+    export const USER_SET_AVATAR_LOADING: string = 'USER_SET_AVATAR_LOADING';
+
     export const USER_SET_SAVE_TIMEOUT: string = 'USER_SET_SAVE_TIMEOUT';
     export const USER_SET_SAVE_DATA: string = 'USER_SET_SAVE_DATA';
     export const USER_SET_EDIT: string = 'USER_SET_EDIT';

@@ -25,7 +25,7 @@ class DataClient {
                     resolve(data);
                 }
                 else {
-                    reject();
+                    reject(err);
                 }
             });
 

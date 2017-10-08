@@ -10,6 +10,7 @@ const initialUserState: any = {
 
 const initialEditState: any = {
     avatarUploading: false,
+    avatarUrl: null,
     nameEdit: false,
     descriptionEdit: false,
     newName: '',
@@ -35,34 +36,6 @@ export const getUser = () => {
     }
 }
 
-export const editData = (type: string, value: any) => {
-    return (dispatch: any, getState: any) => {
-        
-    }
-}
-
-
-export const toggleEdit = (type: string, edit: boolean) => {
-    return (dispatch: any, getState: any) => {
-        let user = getState().userData.user;
-        // console.log(getState);
-        console.log(type);
-        if (type == 'name') {
-            dispatch({type: ACTIONS.USER_SET_EDIT, data: {
-                newName: `${user.first_name} ${user.last_name}`,
-                nameEdit: !!edit
-            }});
-        }
-        else if (type == 'description') {
-            dispatch({ type: ACTIONS.USER_SET_EDIT, data: {descriptionEdit: edit, newDescription: user.description || ''}  });
-        }
-    }
-}
-
-
-// export const patchUser
-
-
 export default function userData(state: any=initialState, action: any) {
     switch(action.type) {
         case (ACTIONS.USER_LOADING):
@@ -71,8 +44,14 @@ export default function userData(state: any=initialState, action: any) {
             return {...state, loading: false, user: null, error: true};
         case (ACTIONS.USER_SET):
             return {...state, loading: false, user: action.user, error: false};
-        case (ACTIONS.USER_SET_EDIT):
-            return {...state, ...initialEditState, ...action.data};
+        case (ACTIONS.USER_SET_AVATAR):
+            let user = {...state.user, avatar: action.avatar};
+            return {...state, user, avatarUploading: false};
+        case (ACTIONS.USER_SET_AVATAR_LOADING):
+            return {...state, avatarUploading: true};
+        case (ACTIONS.USER_SET_AVATAR_URL):
+            
+            return {...state, avatarUrl: action.avatarUrl};
         default:
             return state;
     }

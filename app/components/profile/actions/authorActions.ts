@@ -43,6 +43,10 @@ export function getAuthor(slug: any) {
     }
 }
 
+export function setAuthorNull() {
+    return {type: ACTIONS.AUTHOR_SET};
+}
+
 export function changeSubscription() {
     return (dispatch: any, getState: any) => {
         console.log('eeee');

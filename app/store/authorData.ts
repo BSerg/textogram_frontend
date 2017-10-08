@@ -10,7 +10,7 @@ const initialState: any = {
 export default function authorData(state=initialState, action: any) {
     switch(action.type) {
         case (ACTIONS.AUTHOR_SET):
-            return {...state, author: action.author, notFound: false};
+            return {...state, author: action.author || null, notFound: false};
         case (ACTIONS.AUTHOR_SET_CANCEL_SOURCE):
             return {...state, cancelSource: action.cancelSource};
         case (ACTIONS.AUTHOR_SET_LOADING):

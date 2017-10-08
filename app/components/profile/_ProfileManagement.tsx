@@ -15,7 +15,7 @@ import {ModalAction, OPEN_MODAL} from '../../actions/shared/ModalAction';
 
 import {connect} from 'react-redux';
 
-import {toggleEdit} from '../../store/user/user';
+// import {toggleEdit} from '../../store/user/user';
 
 // import 
 
@@ -258,7 +258,7 @@ const mapStateToProps = (state: any, ownProps: any) => {
 
 export const mapDispatchToProps = (dispatch: any) => {
     return {
-        toggleEdit: (type: string, edit: boolean) => {dispatch(toggleEdit(type, edit))}
+        // toggleEdit: (type: string, edit: boolean) => {dispatch(toggleEdit(type, edit))}
     }
 }
 

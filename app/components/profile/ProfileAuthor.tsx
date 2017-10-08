@@ -42,7 +42,6 @@ const mapStateToPropsSubscribe = (state: any) => {
     try {
         canSubscribe = state.userData.user && (state.authorData.author.nickname !== state.userData.user.nickname)
     } catch(err) {
-        console.log(err);
         canSubscribe = false;
     }
 
