@@ -1,5 +1,6 @@
 import * as React from 'react';
 const NotificationIcon = require('-!babel-loader!svg-react-loader!../../assets/images/notification_icon.svg?name=NotificationIcon');
+import {closeMenu} from '../../store/menu';
 
 
 interface NotificationBlockPropsInterface {
@@ -15,6 +16,7 @@ import {Captions} from '../../constants';
 export class NotificationBlock extends React.Component<NotificationBlockPropsInterface|any, any> {
     openNotifications() {
         this.props.history.push('/manage/notifications');
+        !this.props.isDesktop && this.props.closeMenu();
     }
 
     render() {
@@ -34,7 +36,14 @@ const mapStateToProps = (state: any, ownProps: any) => {
     
     return {
         count: state.userNotifications.count || 0,
+        isDesktop: state.screen.isDesktop,
     }
 }
 
-export default withRouter(connect(mapStateToProps, null)(NotificationBlock));
+const mapDispatchToProps = (dispatch: any) => {
+    return {
+        closeMenu: () => {dispatch(closeMenu())},
+    }
+}
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(NotificationBlock));

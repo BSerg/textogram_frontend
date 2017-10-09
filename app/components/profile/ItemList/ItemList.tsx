@@ -3,7 +3,6 @@ import {connect} from 'react-redux';
 import {withRouter} from 'react-router';
 import ArticlePreview from './ArticlePreview';
 import {AuthorPreview} from './AuthorPreview';
-import ProfileNotification from '../ProfileNotifications/ProfileNotification';
 import Loading from '../../shared/Loading';
 import './styles/ItemList.scss';
 
@@ -68,6 +67,11 @@ export class ItemList extends React.Component<any, any> {
         else if (params.section === 'notifications') {
             apiUrl = `/notifications/`;
         }
+
+        else if (params.section === 'statistics') {
+            apiUrl = `/statistics/articles/${this.state.searchString ? 'search/' : ''}`;
+            requestParams['q'] = this.state.searchString;
+        }
         
         if (apiUrl) {
             this.props.setApiSettings(apiUrl, requestParams);
@@ -91,6 +95,7 @@ export class ItemList extends React.Component<any, any> {
     componentWillReceiveProps(nextProps: any) {
         if (nextProps.match.params.slug !== this.props.match.params.slug ||
             nextProps.match.params.subsection !== this.props.match.params.subsection ||
+            nextProps.match.params.section !== this.props.match.params.section ||
             (!!nextProps.author !== !!this.props.author) ||
             (nextProps.author && this.props.author && nextProps.author.id !== this.props.author.id)
         ) {
@@ -100,6 +105,10 @@ export class ItemList extends React.Component<any, any> {
     }
 
     getItemComponent() {
+        if (this.props.ItemComponent) {
+            return this.props.ItemComponent;
+        }
+
         if (this.props.ItemListComponent) {
             return this.props.ItemListComponent;
         }
@@ -109,9 +118,7 @@ export class ItemList extends React.Component<any, any> {
         else if (this.props.match.params.slug && !this.props.match.params.subsection) {
             return ArticlePreview;
         }
-        else if (this.props.match.params.section === 'notifications') {
-            return ProfileNotification;
-        }
+        
         return null;
         
     }

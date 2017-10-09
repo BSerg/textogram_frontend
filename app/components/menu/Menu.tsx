@@ -17,6 +17,7 @@ const NotificationIcon = require('-!babel-loader!svg-react-loader!../../assets/i
 
 import {connect} from 'react-redux';
 
+
 import {openMenu, closeMenu} from '../../store/menu';
 
 

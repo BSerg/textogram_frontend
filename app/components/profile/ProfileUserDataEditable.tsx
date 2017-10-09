@@ -32,7 +32,7 @@ export class AvatarEditSimple extends React.Component<any, any> {
                 { avatar ? <img  src={avatar}/> : <div className="profile_avatar_dummy"></div> }
 
             { avatarUploading && <div className="avatar_upload"><Loading/></div>}
-            <input accept="image/jpeg,image/png" style={{visibility: 'hidden'}} 
+            <input accept="image/jpeg,image/png" style={{visibility: 'hidden', display: 'none'}} 
                     type="file" ref={(input) => { this.input = input }} 
                     onChange={this.uploadAvatar.bind(this)} />
         

@@ -8,7 +8,6 @@ export const getNotifications = () => {
 
     return (dispatch: (f: any) => any) => {
         api.get('/notifications/check_new/').then((response: any) => {
-            console.log(response.data);
             let data = {...response.data};
             dispatch({type: ACTIONS.USER_NOTIFICATIONS_SET, data});
         }).catch((err) =>{});
