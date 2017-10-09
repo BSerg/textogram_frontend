@@ -34,7 +34,7 @@ class BaseRouter {
         let html = ReactDOMServer.renderToString(
             
             <RenderComponent>
-                    <Route path="/" component={Index} />
+                <Route path="/" component={Index} />
             </RenderComponent>
         );
         let helmet = Helmet.renderStatic();
@@ -69,6 +69,14 @@ class BaseRouter {
     }
 
     getDefault(req: Request, res: Response, next: NextFunction) {
+        
+        if (req.url.indexOf('manage') !== -1 || req.url.indexOf('feed') !== -1) {
+            let user: string = getUserFromRequest(req);
+            if (!user) {
+                return res.redirect('/');
+            }
+        }
+
         let html = ReactDOMServer.renderToString(
             <RenderComponent />
         );
