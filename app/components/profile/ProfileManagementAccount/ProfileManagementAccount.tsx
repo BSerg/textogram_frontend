@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {connect} from 'react-redux';
 import Nickname from './ProfilemanagementAccountNickname';
+import SocialLink from './ProfileManagementSocialLink';
 
 export function AuthAccount(props: {socialLink: any}) {
     return <div className="profile_management_links">
@@ -8,17 +9,32 @@ export function AuthAccount(props: {socialLink: any}) {
             Аккаунт авторизации:
         </div>
         <div className="main">
-            
+            <SocialLink social={props.socialLink.social} isAuth={true} />
         </div>
     </div>;
 }
 
+export function SocialLinks()  {
+    return <div className="profile_management_links">
+        <div className="title">
+            Дополнительные связи:
+        </div>
+        <div className="main">
+        { 
+            [ 'fb', 'vk', 'instagram', 'twitter', 'google', 'telegram', 'web' ].map((social: string) => {
+                return <SocialLink key={social} social={social} />
+            })
+        }
+        </div>
+    </div>
+}
+
 export function ProfileAccount(props: any) {
     let {socialLink} = props;
-    console.log(socialLink);
     return <div>
         <Nickname />
         {socialLink && <AuthAccount socialLink={socialLink}/>}
+        <SocialLinks />
     </div>;
 }
 

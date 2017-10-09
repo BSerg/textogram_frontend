@@ -13,6 +13,9 @@ const initialEditState: any = {
     avatarUrl: null,
     nicknameData: {
         saving: false,
+    },
+    socialLinksLoading: {
+
     }
 };
 
@@ -50,8 +53,11 @@ export default function userData(state: any=initialState, action: any) {
         case (ACTIONS.USER_SET_NICKNAME_DATA):
             return {...state, nicknameData: {...action.nicknameData}}
         case (ACTIONS.USER_SET_AVATAR_URL):
-            
             return {...state, avatarUrl: action.avatarUrl};
+        case (ACTIONS.USER_SET_SOCIAL_LOADING):
+            let socialLinksLoading = {...state.socialLinksLoading};
+            socialLinksLoading[action.social] = !!action.loading;
+            return {...state, socialLinksLoading};
         default:
             return state;
     }

@@ -11,6 +11,8 @@ export namespace ACTIONS {
     export const USER_SET_SAVE_DATA: string = 'USER_SET_SAVE_DATA';
     export const USER_SET_EDIT: string = 'USER_SET_EDIT';
     export const USER_SET_NICKNAME_DATA: string = 'USER_SET_NICKNAME_DATA';
+    export const USER_SET_SOCIAL_LOADING: string = 'USER_SET_SOCIAL_LOADING';
+
 
     export const USER_PATCH: string = 'USER_UPDATE';
 

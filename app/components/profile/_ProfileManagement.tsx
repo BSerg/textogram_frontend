@@ -4,7 +4,7 @@ import {withRouter} from 'react-router';
 import {Link} from 'react-router-dom';
 
 import ProfileManagementNotifications from './ProfileManagementNotifications';
-import ProfileManagementAccount from './ProfileManagementAccount';
+import ProfileManagementAccount from './_ProfileManagementAccount';
 import ProfileManagementStatistics from './ProfileManagementStatistics';
 import EditableImageModal from '../shared/EditableImageModal';
 import ContentEditable from '../shared/ContentEditable';
