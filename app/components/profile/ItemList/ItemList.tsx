@@ -3,6 +3,7 @@ import {connect} from 'react-redux';
 import {withRouter} from 'react-router';
 import ArticlePreview from './ArticlePreview';
 import {AuthorPreview} from './AuthorPreview';
+import ProfileNotification from '../ProfileNotifications/ProfileNotification';
 import Loading from '../../shared/Loading';
 import './styles/ItemList.scss';
 
@@ -19,6 +20,8 @@ export class ItemList extends React.Component<any, any> {
         this.state = {searchString: ''};
         this.handleScroll = this.handleScroll.bind(this);
     }
+
+    static defaultProps: any = { search: true };
 
     setApiSettings(props: any) {
         let apiUrl;
@@ -62,6 +65,10 @@ export class ItemList extends React.Component<any, any> {
                 requestParams['q'] = this.state.searchString;
             }
         }
+        else if (params.section === 'notifications') {
+            apiUrl = `/notifications/`;
+        }
+        
         if (apiUrl) {
             this.props.setApiSettings(apiUrl, requestParams);
         }
@@ -102,6 +109,9 @@ export class ItemList extends React.Component<any, any> {
         else if (this.props.match.params.slug && !this.props.match.params.subsection) {
             return ArticlePreview;
         }
+        else if (this.props.match.params.section === 'notifications') {
+            return ProfileNotification;
+        }
         return null;
         
     }
@@ -123,7 +133,7 @@ export class ItemList extends React.Component<any, any> {
     }
 
     render() {
-        let {items, loading} = this.props;
+        let {items, loading, search} = this.props;
 
         let ItemComponent = this.getItemComponent();
         if (!ItemComponent) {
@@ -131,9 +141,9 @@ export class ItemList extends React.Component<any, any> {
         }
         let {searchString} = this.state;
         return <div className="item_list" ref={(div) => {this.div = div}}>
-            <div className="item_list_search" >
+            {search && <div className="item_list_search" >
                 <input type="text" placeholder="Поиск" value={searchString} onChange={this.inputHandler.bind(this)}  />
-            </div>
+            </div>}
 
             {
                 items.map((item: any) => {

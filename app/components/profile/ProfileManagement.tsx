@@ -5,6 +5,7 @@ import {Captions, Constants} from '../../constants';
 import ProfileAuthor from './ProfileAuthor';
 import AvatarEditor from './AvatarEditor/AvatarEditor';
 import ProfileManagementAccount from './ProfileManagementAccount/ProfileManagementAccount';
+import ProfileNotifications from './ProfileNotifications/ProfileNotifications';
 
 import '../../styles/profile/profile_management_account.scss';
 
@@ -17,7 +18,7 @@ export class ProfileManagement extends React.Component<any, any> {
 
     SECTIONS: {name: string, caption: string, to: string, component?: any}[] = [
         {name: this.SECTION_ACCOUNT, caption: Captions.management.sectionAccount, to: `/manage/${this.SECTION_ACCOUNT}`, component: <ProfileManagementAccount />},
-        {name: this.SECTION_NOTIFICATIONS, caption: Captions.management.sectionNotifications, to: `/manage/${this.SECTION_NOTIFICATIONS}`},
+        {name: this.SECTION_NOTIFICATIONS, caption: Captions.management.sectionNotifications, to: `/manage/${this.SECTION_NOTIFICATIONS}`, component: <ProfileNotifications />},
         {name: this.SECTION_STATISTICS, caption: Captions.management.sectionStatistics, to: `/manage/${this.SECTION_STATISTICS}`},
     ];
 

@@ -31,6 +31,7 @@ export class NotificationBlock extends React.Component<NotificationBlockPropsInt
 }
 
 const mapStateToProps = (state: any, ownProps: any) => {
+    
     return {
         count: state.userNotifications.count || 0,
     }
