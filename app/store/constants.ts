@@ -34,4 +34,6 @@ export namespace ACTIONS {
     export const ITEM_LIST_SET_SECTION: string = 'ITEM_LIST_SET_SECTION';
     export const ITEM_LIST_SET_CANCEL_SOURCE: string = 'ITEM_LIST_SET_CANCEL_SOURCE';
     export const ITEM_LIST_SET_API_URL: string = 'ITEM_LIST_SET_API_URL';
+
+    export const PAYMENT_LOGS_SET: string = 'PAYMENT_LOGS_SET';
 }

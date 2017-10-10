@@ -23,10 +23,10 @@ export function getAuthor(slug: any) {
         let currentNickname = (authorState.author && authorState.author.nickname) || null;
         let nickname = _getNickname(slug, userData);
 
-        if (!nickname) {
-            dispatch({type: ACTIONS.AUTHOR_SET_NOT_FOUND, notFound: true});
-            return;
-        }
+        // if (!nickname) {
+            // dispatch({type: ACTIONS.AUTHOR_SET_NOT_FOUND});
+            // return;
+        // }
         if (nickname === currentNickname) {
             return;
         }

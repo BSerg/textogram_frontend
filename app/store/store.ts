@@ -6,10 +6,12 @@ import menu from './menu';
 import screen from './screen';
 import itemList from './itemList';
 import authorData from './authorData';
+import paymentLogs from './paymentLogs';
 
 import {ACTIONS} from './constants';
 
 const middleware = applyMiddleware(thunk);
-const reducers = combineReducers({userData, userNotifications, menu, screen, itemList, authorData});
+const reducers = combineReducers({userData, userNotifications, menu, screen, itemList, authorData, 
+    paymentLogs});
 
 export const store = createStore(reducers, middleware);

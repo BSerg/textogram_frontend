@@ -173,10 +173,18 @@ export namespace Captions {
 
         drafts: "Черновики",
         draftDelete: "удалить",
-
         avatarSave: "Сохранить",
 
+        balanceTitle: 'Текущий баланс',
+        balanceWithdraw: 'Вывести средства',
+        balanceWalletText: 'Текущий кошелек',
+        balanceWalletNotSet: 'Не задан',
+        balanceWithdrawPending: 'Запрошен вывод средств',
 
+        paymentsProfitHistory: 'История начислений',
+        paymentsWithdrawalHistory: 'История выплат',
+        paymentsLoadLogMore: 'Загрузить еще',
+        paymentsLogEmpty: 'Нет данных',
 
         audience: "Аудитория",
 
