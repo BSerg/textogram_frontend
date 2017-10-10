@@ -8,7 +8,7 @@ import {Captions} from '../../constants';
 import {getAuthor, setAuthorNull} from './actions/authorActions';
 import ArticlePreview from '../shared/ArticlePreview';
 import {ProfileMenu} from './ProfileShared';
-
+import {Error404} from '../Error';
 
 export class Profile extends React.Component<any, any> {
 
@@ -38,6 +38,13 @@ export class Profile extends React.Component<any, any> {
         }
     }
 
+    checkError(): boolean {
+        if (this.props.match.params.subsection && ['following', 'followers'].indexOf(this.props.match.params.subsection) === -1) {
+            return true;
+        }
+        return false
+    }
+
     componentDidMount() {
         this.props.getAuthor(this.props.match.params.slug);
     }
@@ -47,7 +54,10 @@ export class Profile extends React.Component<any, any> {
     }
 
     render() {
-        let {author, isSelf} = this.props;
+        let {author, isSelf, notFound} = this.props;
+        if (notFound || this.checkError()) {
+            return <Error404 />
+        }
         if (!author) {
             return null;
         }
@@ -76,6 +86,7 @@ const mapStateToProps = (state: any, ownProps: any) => {
     return {
         user: state.userData.user,
         author: state.authorData.author,
+        notFound: state.authorData.notFound,
         isSelf: state.authorData.author && state.userData.user && state.userData.user.nickname && (state.authorData.author.nickname === state.userData.user.nickname),
     }
 }

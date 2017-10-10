@@ -24,7 +24,7 @@ export function getAuthor(slug: any) {
         let nickname = _getNickname(slug, userData);
 
         if (!nickname) {
-            dispatch({type: ACTIONS.AUTHOR_SET_NOT_FOUND});
+            dispatch({type: ACTIONS.AUTHOR_SET_NOT_FOUND, notFound: true});
             return;
         }
         if (nickname === currentNickname) {
@@ -37,7 +37,7 @@ export function getAuthor(slug: any) {
         api.get(`users/${nickname}`).then((response) => {
             dispatch({type: ACTIONS.AUTHOR_SET, author: response.data});
         }).catch((err) => {
-            dispatch({type: ACTIONS.AUTHOR_SET_NOT_FOUND});
+            dispatch({type: ACTIONS.AUTHOR_SET_NOT_FOUND, notFound: true});
         })
 
     }
