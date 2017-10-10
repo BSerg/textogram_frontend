@@ -1,40 +1,18 @@
 import * as React from 'react';
 import MenuButton from './shared/MenuButton';
-import Modal from './shared/Modal';
-import PopupPanel from './shared/PopupPanel';
-import Notification from './shared/Notification';
 import Menu from './menu/Menu';
 import {connect} from 'react-redux';
 import {withRouter} from 'react-router';
-// import {UserAction, GET_ME, LOGIN, LOGOUT} from '../actions/user/UserAction';
-// import {UserNotificationAction, CHECK_NOTIFICATIONS} from '../actions/user/UserNotificationAction';
-// import {MenuAction, TOGGLE} from '../actions/MenuAction';
-import {Constants} from '../constants';
-import '../styles/base.scss';
-// import {MediaQuerySerice} from "../services/MediaQueryService";
-
 import {Helmet} from 'react-helmet';
-
-import {getUser} from '../store/user/user';
 import {setScreenSize} from '../store/screen';
 
-import {getNotifications} from '../store/user/userNotifications';
+
 
 export class Base extends React.Component<any, any> {
     private intervalId: number;
 
     constructor(props: any) {
         super(props);
-        this.state = {
-            userNotificationsInterval: null,
-        };
-
-    }
-
-    componentWillReceiveProps(nextProps: any) {
-        if (!this.props.user && nextProps.user) {
-            this.props.getNotifications();
-        }
     }
 
     setScreenSize() {
@@ -52,10 +30,6 @@ export class Base extends React.Component<any, any> {
             window.addEventListener('resize', this.setScreenSize.bind(this));
         }
         
-    }
-
-    componentDidMount() {
-        this.props.getUser();
     }
 
     render() {
@@ -76,12 +50,7 @@ export class Base extends React.Component<any, any> {
                     {this.props.children}
                 </div>
                 
-                {
-                    (!user && process.env.IS_LENTACH) ? null : (<MenuButton/>)
-                }
-                {!isDesktop ? <PopupPanel/> : null}
-                <Notification/>
-                <Modal/>
+                { !process.env.IS_LENTACH && <MenuButton/> }
             </div>
         )
     }
@@ -90,15 +59,12 @@ export class Base extends React.Component<any, any> {
 const mapStateToProps = (state: any, ownProps: any) => {
     // console.log(state);
     return {
-        user: state.userData.user,
         isDesktop: state.screen.isDesktop,
     }
 };
 
 const mapDispatchToProps = (dispatch: any) => {
     return {
-        getUser: () => {dispatch(getUser())},
-        getNotifications: () => {dispatch(getNotifications())},
         setScreenSize: (width: number, height: number) => {dispatch(setScreenSize(width, height))}
     }
 }

@@ -13,7 +13,7 @@ import {Error404} from "./components/Error";
 import ProfileManagement from "./components/profile/ProfileManagement";
 import TwitterAuth from "./components/TwitterAuth";
 import UrlShortener from "./components/UrlShortener";
-import {UserAction, GET_ME, LOGIN, USER_REJECT} from "./actions/user/UserAction";
+// import {UserAction, GET_ME, LOGIN, USER_REJECT} from "./actions/user/UserAction";
 import "core-js/shim";
 import LoginPage from "./components/LoginPage";
 import {Provider} from 'react-redux';
