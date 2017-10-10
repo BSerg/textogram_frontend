@@ -1,0 +1,33 @@
+.item_list {
+    &>div, &>a {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .item_list_search {
+        width: 100%;
+        background: #fff;
+        margin: 15px 0;
+        padding: 5px 15px;
+        box-sizing: border-box;
+
+        @media (min-width: 1024px) {
+            padding: 5px 40px;
+        }
+    }
+
+    .item_list_search input {
+        width: 100%;
+        border: none;
+        height: 30px;
+        font-size: 11px;
+        font-family: Open Sans;
+        color: #333;
+        outline: none;
+
+        @media (min-width: 1024px) {
+            font-size: 13px;
+        }
+    }
+
+}

@@ -1,14 +1,17 @@
 import * as React from 'react';
-import {MenuAction, TOGGLE} from '../../actions/MenuAction';
+// import {MenuAction, TOGGLE} from '../../actions/MenuAction';
 import LeftSideButton from "./LeftSideButton";
 import '../../styles/shared/menu_button.scss';
+
+import {connect} from 'react-redux';
+import {openMenu} from '../../store/menu';
 
 interface MenuButtonStateInterface {
     hidden?: boolean,
     menuDisplayed?: boolean,
 }
 
-export default class MenuButton extends React.Component<any, MenuButtonStateInterface> {
+export class MenuButton1 extends React.Component<any, MenuButtonStateInterface> {
 
     constructor(props: any) {
         super(props);
@@ -17,25 +20,45 @@ export default class MenuButton extends React.Component<any, MenuButtonStateInte
     }
 
     handleClick() {
-        MenuAction.do(TOGGLE, true);
+        // MenuAction.do(TOGGLE, true);
     }
 
     setMenuDisplayed() {
-        this.setState({menuDisplayed: MenuAction.getStore().open});
+        // this.setState({menuDisplayed: MenuAction.getStore().open});
     }
 
     componentDidMount() {
         this.setMenuDisplayed();
-        MenuAction.onChange(TOGGLE, this.setMenuDisplayed);
+        // MenuAction.onChange(TOGGLE, this.setMenuDisplayed);
     }
 
     componentWillUnmount() {
-        MenuAction.unbind(TOGGLE, this.setMenuDisplayed)
+        // MenuAction.unbind(TOGGLE, this.setMenuDisplayed)
     }
 
     render() {
+
         return (
             <LeftSideButton hidden={this.state.hidden || this.state.menuDisplayed} className="menu_button" onClick={this.handleClick}/>
         )
     }
 }
+
+export const MenuButton = (props: {menuDisplayed: boolean, openMenu: () => any}) => <LeftSideButton 
+    hidden={props.menuDisplayed} 
+    className="menu_button" 
+    onClick={props.openMenu}/>;
+
+const mapStateToProps = (state: any, ownProps: any) => {
+    return {
+        menuDisplayed: state.menu.open
+    }
+}
+
+const mapDispatchToProps = (dispatch: any) => {
+    return {
+        openMenu: () => { dispatch(openMenu()) }
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(MenuButton);

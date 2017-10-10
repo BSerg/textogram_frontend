@@ -106,6 +106,10 @@ export namespace Captions {
         subscribersOwnProfile: "Вас читают",
         newArticle: "Новый текст",
 
+                
+        followers: "Читатели",
+        following: "Читаемые",
+
         articlePreviewEdit: "Редактировать",
         articlePreviewSettings: "Настройки",
         articlePreviewCopy: "Копировать",
@@ -151,7 +155,7 @@ export namespace Captions {
         sectionNotifications: 'Уведомления',
         sectionSubscriptions: 'Подписки',
         sectionStatistics: 'Статистика',
-
+        sectionPayments: 'Платежи',
         authAccount: "Аккаунт авторизации",
         additionalLinks: "Дополнительные связи",
         addLinks: "Чтобы добавить ссылки на свои аккаунты в соцсетях, нажмите «плюс»",
@@ -171,6 +175,7 @@ export namespace Captions {
         draftDelete: "удалить",
 
         avatarSave: "Сохранить",
+
 
 
         audience: "Аудитория",

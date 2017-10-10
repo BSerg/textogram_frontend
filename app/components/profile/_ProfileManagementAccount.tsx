@@ -322,9 +322,16 @@ export default class ProfileManagementAccount extends React.Component<any, IAcco
 
     render() {
 
-        let nicknameChanged = UserAction.getStore().user.nickname != this.state.nickname;
-        let hint: any = this.state.nickname ? ((nicknameChanged && !this.state.nicknameChecking) ? (this.state.nicknameCorrect ? 'Никнейм доступен' : 'Никнейм не доступен') : null)
-            : 'Никнейм не должен быть пустым';
+        // let nicknameChanged = UserAction.getStore().user.nickname != this.state.nickname;
+        // let hint: any = this.state.nickname ? ((nicknameChanged && !this.state.nicknameChecking) ? (this.state.nicknameCorrect ? 'Никнейм доступен' : 'Никнейм не доступен') : null)
+            // : 'Никнейм не должен быть пустым';
+        
+        if (!this.props.aaa) {
+            return (<div>profel</div>)
+        }
+
+        let nicknameChanged = false;
+        let hint = false;
 
         return (<div>
 

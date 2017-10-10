@@ -3,84 +3,42 @@ import MenuButton from './shared/MenuButton';
 import Modal from './shared/Modal';
 import PopupPanel from './shared/PopupPanel';
 import Notification from './shared/Notification';
-import Menu from './Menu';
-
+import Menu from './menu/Menu';
+import {connect} from 'react-redux';
+import {withRouter} from 'react-router';
 import {UserAction, GET_ME, LOGIN, LOGOUT} from '../actions/user/UserAction';
-import {UserNotificationAction, CHECK_NOTIFICATIONS} from '../actions/user/UserNotificationAction';
-
+// import {UserNotificationAction, CHECK_NOTIFICATIONS} from '../actions/user/UserNotificationAction';
 import {MenuAction, TOGGLE} from '../actions/MenuAction';
-
 import {Constants} from '../constants';
-
 import '../styles/base.scss';
 import {MediaQuerySerice} from "../services/MediaQueryService";
 
 import {Helmet} from 'react-helmet';
 
-export default class Base extends React.Component<any, any> {
+import {getUser} from '../store/user/user';
+import {setScreenSize} from '../store/screen';
+
+import {getNotifications} from '../store/user/userNotifications';
+
+export class Base extends React.Component<any, any> {
     private intervalId: number;
 
     constructor(props: any) {
         super(props);
         this.state = {
             userNotificationsInterval: null,
-            isDesktop: MediaQuerySerice.getIsDesktop(),
-            authenticated: !!UserAction.getStore().user,
-            menuOpen: false,
         };
-        this.handleMediaQuery = this.handleMediaQuery.bind(this);
-        this.handleUser = this.handleUser.bind(this);
-        this.setMenuOpen = this.setMenuOpen.bind(this);
 
     }
 
-    handleNotifications() {
-        if (process.env.IS_LENTACH) return;
-
-        if (UserAction.getStore().user && !this.state.userNotificationsInterval) {
-            UserNotificationAction.do(CHECK_NOTIFICATIONS, null);
-            this.state.userNotificationsInterval = window.setInterval(() => {
-                UserNotificationAction.do(CHECK_NOTIFICATIONS, null);
-            }, Constants.notificationIntervalTime);
-        }
-        else if (!UserAction.getStore().user && this.state.userNotificationsInterval) {
-            window.clearInterval(this.state.userNotificationsInterval);
-            this.state.userNotificationsInterval = null;
+    componentWillReceiveProps(nextProps: any) {
+        if (!this.props.user && nextProps.user) {
+            this.props.getNotifications();
         }
     }
 
-    checkCreated() {
-        if (UserAction.getStore().user && UserAction.getStore().user.created) {
-            console.log('welcome');
-        }
-    }
-
-    handleUser() {
-        this.setState({authenticated: !!UserAction.getStore().user});
-        this.checkCreated();
-        this.handleNotifications();
-    }
-
-    setMenuOpen() {
-        this.setState({ menuOpen: MenuAction.getStore().open });
-    }
-
-    handleMediaQuery(isDesktop: boolean) {
-        if (isDesktop != this.state.isDesktop) {
-            this.setState({isDesktop: isDesktop});
-        }
-    }
-
-    componentDidMount() {
-        UserAction.onChange([GET_ME, LOGIN, LOGOUT], this.handleUser);
-        MenuAction.onChange(TOGGLE, this.setMenuOpen);
-        MediaQuerySerice.listen(this.handleMediaQuery);
-    }
-
-    componentWillUnmount() {
-        UserAction.unbind([GET_ME, LOGIN, LOGOUT], this.handleUser);
-        MenuAction.unbind(TOGGLE, this.setMenuOpen);
-        MediaQuerySerice.unbind(this.handleMediaQuery);
+    setScreenSize() {
+        this.props.setScreenSize(window.innerWidth, window.innerHeight);
     }
 
     componentWillMount() {
@@ -90,10 +48,19 @@ export default class Base extends React.Component<any, any> {
             if (appServer) {
                 appServer.parentNode.removeChild(appServer);
             }
+            this.setScreenSize();
+            window.addEventListener('resize', this.setScreenSize.bind(this));
         }
+        
+    }
+
+    componentDidMount() {
+        this.props.getUser();
     }
 
     render() {
+
+        let {user, menuOpen, isDesktop} = this.props;
         return (
             <div className="container">
                 <Helmet>
@@ -105,16 +72,36 @@ export default class Base extends React.Component<any, any> {
                     <meta property="og:url" content={process.env.SITE_URL} />
                 </Helmet>
                 <Menu />
-                <div className={"content" + (this.state.menuOpen ? " content_menu_open" : "")}>
+                <div className={"content" + (menuOpen ? " content_menu_open" : "")}>
                     {this.props.children}
                 </div>
+                
                 {
-                    (!this.state.authenticated && process.env.IS_LENTACH) ? null : (<MenuButton/>)
+                    (!user && process.env.IS_LENTACH) ? null : (<MenuButton/>)
                 }
-                {!this.state.isDesktop ? <PopupPanel/> : null}
+                {!isDesktop ? <PopupPanel/> : null}
                 <Notification/>
                 <Modal/>
             </div>
         )
     }
 }
+
+const mapStateToProps = (state: any, ownProps: any) => {
+    // console.log(state);
+    return {
+        user: state.userData.user,
+        isDesktop: state.screen.isDesktop,
+    }
+};
+
+const mapDispatchToProps = (dispatch: any) => {
+    return {
+        getUser: () => {dispatch(getUser())},
+        getNotifications: () => {dispatch(getNotifications())},
+        setScreenSize: (width: number, height: number) => {dispatch(setScreenSize(width, height))}
+    }
+}
+
+// export default process.env.IS_BROWSER ? withRouter(connect(mapStateToProps, mapDispatchToProps)(Base)) : Base;
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(Base));

@@ -2,12 +2,10 @@ import * as React from 'react';
 import {withRouter} from 'react-router';
 import {Link} from 'react-router-dom';
 import {api} from '../../api';
+import {connect} from 'react-redux';
 
 import * as moment from 'moment';
 import * as marked from 'marked';
-import {MediaQuerySerice} from '../../services/MediaQueryService';
-
-import {UserAction, UPDATE_USER_DRAFTS} from '../../actions/user/UserAction';
 
 import {Captions} from '../../constants';
 
@@ -93,32 +91,14 @@ const AText  = (props: {item: any}) => <div className="article_preview__text">
 
     </div>;
 
-interface IArticlePreviewPropsInterface {
-    item: any;
-    index?: number;
-    onClickDelete?: (id: number, index?: number) => {};
-    onClick?: (id: number|null) => {};
-    isFeed?: boolean;
-    isOwner?: boolean;
-}
 
-interface IArticlePreviewStateInterface {
-    menuOpen?: boolean;
-    deleted?: boolean;
-    isDesktop?: boolean;
-    isNew?: boolean;
-    timeout?: number;
-    removed?: boolean;
-}
+class ArticlePreview extends React.Component<any, any> {
 
-
-
-class ArticlePreviewClass extends React.Component<IArticlePreviewPropsInterface|any, IArticlePreviewStateInterface|any> {
+    timeout: any;
 
     constructor() {
         super();
-        this.state = {menuOpen: true, isDesktop: MediaQuerySerice.getIsDesktop(), isNew: false, removed: false};
-        this.checkDesktop = this.checkDesktop.bind(this);
+        this.state = {isNew: false, removed: false};
         this.setNotNew = this.setNotNew.bind(this);
     }
 
@@ -126,7 +106,7 @@ class ArticlePreviewClass extends React.Component<IArticlePreviewPropsInterface|
         api.delete('/articles/editor/' + this.props.item.id + '/').then((response) => {
 
             if (this.props.item.is_draft) {
-                UserAction.do(UPDATE_USER_DRAFTS, -1);
+                
             }
 
             this.setState({deleted: true});
@@ -142,7 +122,7 @@ class ArticlePreviewClass extends React.Component<IArticlePreviewPropsInterface|
         api.post('/articles/editor/' + this.props.item.id + ( this.props.item.is_draft ? '/restore_draft/' : '/restore_published/')).then(
             (response) => {
                 if (this.props.item.is_draft) {
-                    UserAction.do(UPDATE_USER_DRAFTS, 1);
+            
                 }
                 this.setState({deleted: false});
 
@@ -152,12 +132,6 @@ class ArticlePreviewClass extends React.Component<IArticlePreviewPropsInterface|
     remove() {
         if (this.state.deleted) {
             this.setState({removed: true});
-        }
-    }
-
-    checkDesktop(isDesktop: boolean) {
-        if (isDesktop != this.state.isDesktop) {
-            this.setState({isDesktop: isDesktop});
         }
     }
 
@@ -189,14 +163,12 @@ class ArticlePreviewClass extends React.Component<IArticlePreviewPropsInterface|
     }
 
     componentDidMount() {
-        MediaQuerySerice.listen(this.checkDesktop);
         this.setState({isNew: Boolean(this.props.item.isNew)});
-        this.state.timeout = window.setTimeout(this.setNotNew, 0);
+        this.timeout = window.setTimeout(this.setNotNew, 0);
     }
 
     componentWillUnmount() {
-        MediaQuerySerice.unbind(this.checkDesktop);
-        window.clearTimeout(this.state.timeout);
+        window.clearTimeout(this.timeout);
     }
 
     render() {
@@ -204,12 +176,17 @@ class ArticlePreviewClass extends React.Component<IArticlePreviewPropsInterface|
             return null;
         }
 
+        let {item, isOwner, isDesktop} = this.props;
+        if (!item) {
+            return null;
+        }
+
         let dv: HTMLDivElement = document.createElement('div');
-        dv.innerHTML = marked(this.props.item.lead || '');
+        dv.innerHTML = marked(item.lead || '');
         let lead = dv.innerText.trim();
 
-        let date = this.getDateString(this.props.item.is_draft ? this.props.item.last_modified : this.props.item.published_at);
-        let coverStyle: any = this.props.item.cover ? { backgroundImage: `url('${this.props.item.cover}')`}
+        let date = this.getDateString(item.is_draft ? item.last_modified : item.published_at);
+        let coverStyle: any = item.cover ? { backgroundImage: `url('${item.cover}')`}
             :  {height: '0'};
 
         if (this.state.deleted) {
@@ -218,38 +195,38 @@ class ArticlePreviewClass extends React.Component<IArticlePreviewPropsInterface|
                 <div className="close" onClick={this.remove.bind(this)}><CloseIcon /></div></div>);
         }
         
-        let dataArr: any[] = this.state.isDesktop ? [
-            !this.props.isOwner ? <Avatar item={this.props.item} key="avatar" /> : null,
+        let dataArr: any[] = isDesktop ? [
+            !isOwner ? <Avatar item={item} key="avatar" /> : null,
 
-            <div className={"article_preview__data" + (this.props.isOwner || this.props.item.is_draft ? " owned": "")} key="info">
-                <Title item={this.props.item} date={date} />
-                <Lead item={this.props.item}/>
+            <div className={"article_preview__data" + (isOwner || item.is_draft ? " owned": "")} key="info">
+                <Title item={item} date={date} />
+                <Lead item={item}/>
                 <div className="article_preview__info">
                     {
                         [
-                            (!this.props.isOwner && !this.props.item.is_draft) ?<AText item={this.props.item} key="name"/> : null,
-                            <ADate item={this.props.item} date={date} key="date"/>
+                            (!isOwner && !item.is_draft) ?<AText item={item} key="name"/> : null,
+                            <ADate item={item} date={date} key="date"/>
                         ]
                     }
                 </div>
             </div>,
-            <Cover item={this.props.item} key="cover"/>,
-            this.props.isOwner ? <ControlMenu item={this.props.item } deleteCallback={this.deleteArticle.bind(this)} key="control" /> : null
+            <Cover item={item} key="cover"/>,
+            isOwner ? <ControlMenu item={item } deleteCallback={this.deleteArticle.bind(this)} key="control" /> : null
         ] : [
                 <div className="article_preview__info" key="info">
                     {
                         [
-                            !this.props.isOwner ? <Avatar item={this.props.item} key="avatar"/> : null,
-                            !this.props.item.is_draft ? <AText item={this.props.item} key="name"/> : null,
-                            <ADate item={this.props.item} date={date} key="date"/>,
+                            !isOwner ? <Avatar item={item} key="avatar"/> : null,
+                            !item.is_draft ? <AText item={item} key="name"/> : null,
+                            <ADate item={item} date={date} key="date"/>,
                             <div className="filler" key="filler"></div>,
-                            this.props.isOwner ? <ControlMenu item={this.props.item} deleteCallback={this.deleteArticle.bind(this)} key="control" /> : null,
+                            isOwner ? <ControlMenu item={item} deleteCallback={this.deleteArticle.bind(this)} key="control" /> : null,
                         ]
                     }
                 </div>,
-                <Title item={this.props.item} date={date} key="title" />,
-                <Lead item={this.props.item} key="lead"/>,
-                <Cover item={this.props.item} key="cover" />
+                <Title item={item} date={date} key="title" />,
+                <Lead item={item} key="lead"/>,
+                <Cover item={item} key="cover" />
         ];
 
         return (<div className={"article_preview" + (this.state.isNew ? " new" : "")}>
@@ -258,6 +235,28 @@ class ArticlePreviewClass extends React.Component<IArticlePreviewPropsInterface|
     }
 }
 
-let ArticlePreview = withRouter(ArticlePreviewClass);
 
-export default ArticlePreview;
+
+const mapStateToProps = (state: any, ownProps: any) => {
+    let isOwner: boolean; 
+    try {
+        isOwner = ownProps.item.owner.id === state.userData.user.id;
+    }   catch(err) {
+        isOwner = false;
+    }
+
+    return {
+        isDesktop: state.screen.isDesktop,
+        isOwner: isOwner,
+        
+    }
+}
+
+const mapDispatchToProps = (dispatch: any) => {
+    return {
+        
+    }
+}
+
+
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(ArticlePreview));

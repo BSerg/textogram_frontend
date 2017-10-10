@@ -27,8 +27,8 @@ export default class ImageEditorSimple extends React.Component<IProps, any> {
 
     constructor(props: any) {
         super(props);
+        this.state = {zoomValue: 1};
         this.dragProcess = false;
-        this.zoomValue = 1;
         this.handleMouseMove = this.handleMouseMove.bind(this);
         this.handleMouseDown = this.handleMouseDown.bind(this);
         this.handleMouseUp = this.handleMouseUp.bind(this);
@@ -48,17 +48,16 @@ export default class ImageEditorSimple extends React.Component<IProps, any> {
     };
 
     translateParams() {
-        let width = this.imageWidth * this.zoomValue;
-        let height = this.imageHeight * this.zoomValue;
+        let width = this.imageWidth * this.state.zoomValue;
+        let height = this.imageHeight * this.state.zoomValue;
         let x = this.positionX - (width - this.imageWidth) / 2;
         let y = this.positionY - (height - this.imageHeight) / 2;
-        console.log(x, y, width, height);
         return {x: x, y: y, width: width, height: height};
     }
 
     handleZoom() {
         let zoom = (parseInt(this.refs.zoomInput.value) * (this.props.maxZoom - 1)/10 + 1);
-        let dZoom = (zoom - this.zoomValue) / this.zoomValue;
+        let dZoom = (zoom - this.state.zoomValue) / this.state.zoomValue;
         let dWidth = this.imageWidth * dZoom;
         this.imageWidth += dWidth;
         let dHeight = this.imageHeight * dZoom;
@@ -77,8 +76,10 @@ export default class ImageEditorSimple extends React.Component<IProps, any> {
         if (this.positionY + this.imageHeight < this.props.height) {
             this.positionY = this.props.height - this.imageHeight;
         }
-        this.zoomValue = zoom;
-        this.drawImage();
+        this.setState({zoomValue: zoom}, () => {
+            this.drawImage();
+        });
+
     }
 
     handleMouseDown(e: Event) {
@@ -242,7 +243,7 @@ export default class ImageEditorSimple extends React.Component<IProps, any> {
                     <div className="image_editor_simple__control">
                         <input type="range" min="0" max="10" step="1"
                                ref="zoomInput"
-                               value={(this.zoomValue - 1) * 10}
+                               value={(this.state.zoomValue - 1) * 10}
                                onChange={this.handleZoom.bind(this)}/>
                     </div> : null
                 }

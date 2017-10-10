@@ -48,14 +48,14 @@ export default class Index extends React.Component<any, any> {
     }
 
     componentDidMount() {
-        this.redirectToProfile();
-        UserAction.onChange(GET_ME, this.redirectToProfile);
-        UserAction.onChange(LOGIN, this.redirectToProfile);
+        // this.redirectToProfile();
+        // UserAction.onChange(GET_ME, this.redirectToProfile);
+        // UserAction.onChange(LOGIN, this.redirectToProfile);
     }
 
     componentWillUnmount() {
-        UserAction.unbind(GET_ME, this.redirectToProfile);
-        UserAction.unbind(LOGIN, this.redirectToProfile);
+        // UserAction.unbind(GET_ME, this.redirectToProfile);
+        // UserAction.unbind(LOGIN, this.redirectToProfile);
     }
 
     render() {

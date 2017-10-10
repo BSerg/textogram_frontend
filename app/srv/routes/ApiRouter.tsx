@@ -37,10 +37,9 @@ class ApiRouter {
         db.getArticles(req).then((data) => {
             res.end(data);
         }).catch(() => {
-            res.status(404).send({msg: 'not found'});
-        })
-
-        // res.end(JSON.stringify({'results': []}));
+            // res.status(404).send({msg: 'not found'});
+            res.send({results: []});
+        });
     }
 
     getBanners(req: Request, res: Response, next: NextFunction) {

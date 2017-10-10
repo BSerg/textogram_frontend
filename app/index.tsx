@@ -1,7 +1,7 @@
 import * as cookie from 'js-cookie';
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import {Router} from "react-router";
+import {Router, withRouter} from "react-router";
 import {Route, BrowserRouter, Switch} from 'react-router-dom';
 import Base from "./components/Base";
 import IndexPage from "./components/Index";
@@ -16,25 +16,31 @@ import UrlShortener from "./components/UrlShortener";
 import {UserAction, GET_ME, LOGIN, USER_REJECT} from "./actions/user/UserAction";
 import "core-js/shim";
 import LoginPage from "./components/LoginPage";
+import {Provider} from 'react-redux';
+import {store} from './store/store';
+
+
 
 class App  extends React.Component<any, any> {
     constructor(props: any) {
         super(props);
     }
 
+
     componentDidMount() {
 
-        let token = cookie.get('jwt') || window.localStorage.getItem('authToken')
+        /*let token = cookie.get('jwt') || window.localStorage.getItem('authToken')
         if (token) {
             UserAction.doAsync(LOGIN, {token: token});
         }
         else {
             UserAction.do(USER_REJECT, null);
-        }
+        }*/
     }
 
     render() {
         return (
+            <Provider store={store}>
             <BrowserRouter>
                 <Base>
                     <Switch>
@@ -57,6 +63,7 @@ class App  extends React.Component<any, any> {
                 </Base>
 
             </BrowserRouter>
+            </Provider>
         )
     }
 }

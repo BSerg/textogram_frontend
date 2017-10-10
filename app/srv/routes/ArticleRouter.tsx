@@ -3,7 +3,7 @@ import {StaticRouter, Switch, Route} from 'react-router-dom';
 import * as React from 'react';
 import * as ReactDOMServer from 'react-dom/server';
 import db from '../db';
-import Base from '../../components/Base';
+// import Base from '../../components/Base';
 import Article from '../../components/Article';
 import ArticleAmp from '../../components/shared/ArticleAmp';
 import {Error404} from '../../components/Error';
@@ -11,6 +11,7 @@ import {Helmet} from 'react-helmet';
 // import * as moment from 'moment';
 import {Amp, BlockContentTypes} from "../../constants";
 import * as fs from 'fs';
+import {RenderComponent} from './RenderComponent';
 
 let manifest: any = null;
 
@@ -98,7 +99,7 @@ class ArticleRouter {
 
                     return (<Article renderedArticle={article} match={{params: {galleryBlockId: req.params.galleryUid || null}}} {...props}/>);
                 };
-                let html = ReactDOMServer.renderToString(<StaticRouter context={{}}><Base><RenderedArticle /></Base></StaticRouter>);
+                let html = ReactDOMServer.renderToString(<RenderComponent><RenderedArticle /></RenderComponent>);
                 const helmet = Helmet.renderStatic();
                 res.render('index.ejs', {reactData: html, helmet: helmet, rev: process.env.REVISION || false, manifest: manifest});
             }
@@ -106,7 +107,7 @@ class ArticleRouter {
                 next();
             }
         }).catch(() => {
-            let html = ReactDOMServer.renderToString(<StaticRouter context={{}}><Base><Error404/></Base></StaticRouter>);
+            let html = ReactDOMServer.renderToString(<RenderComponent><Error404/></RenderComponent>);
             res.status(404).render('index.ejs', {reactData: html, helmet: null, rev: process.env.REVISION || false, manifest: manifest});
         });
     }
