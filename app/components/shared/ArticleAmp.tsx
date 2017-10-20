@@ -377,7 +377,7 @@ export default class ArticleAmp extends React.Component<any, any> {
 
     render() {
         let {article} = this.props;
-        if (!article || !article.content || !article.content.blocks || !article.content.blocks.length) {
+        if (!article || !article.content || !article.content.blocks) {
             return null;
         }
         let blocks: any = this.processBlocks();
