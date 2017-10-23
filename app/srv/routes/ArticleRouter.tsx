@@ -50,6 +50,14 @@ class ArticleRouter {
         this.init();
     }
 
+    getArticleAmpNew(req: Request, res: Response, next: NextFunction) {
+        db.get(`${process.env.CACHE_KEY_PREFIX}:article:${req.params.articleSlug || ''}:amp`).then((data: any) => {
+            res.end(data);
+        }).catch((err) => { 
+            console.log(err);
+            res.redirect(`/articles/${req.params.articleSlug}`); 
+        });
+    }
 
     getArticleAmp(req: Request, res: Response, next: NextFunction) {       
         db.getArticle(req).then((data: any) => {
@@ -112,7 +120,7 @@ class ArticleRouter {
         });
     }
     init() {
-        this.router.get('/:articleSlug/amp', this.getArticleAmp);
+        this.router.get('/:articleSlug/amp', this.getArticleAmpNew);
         this.router.get('/:articleSlug', this.getArticle);
         this.router.get('/:articleSlug/gallery/:galleryUid', this.getArticle);
     }
