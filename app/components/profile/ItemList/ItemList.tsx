@@ -23,59 +23,7 @@ export class ItemList extends React.Component<any, any> {
     static defaultProps: any = { search: true };
 
     setApiSettings(props: any) {
-        let apiUrl;
-        let requestParams: any = {};
-        let params = props.match.params;
-
-        if (params.subsection) {
-            apiUrl = '/users/';
-            let id = (props.author && props.author.id) || '';
-            switch(params.subsection) {
-                case('following'):
-                    requestParams['subscribed_by'] = id;
-                    break;
-                case('followers'):
-                    requestParams['subscribed_to'] = id;
-                    break;
-                default:
-                    break;
-            }
-            if (this.state.searchString) {
-                requestParams['q'] = this.state.searchString;
-            }
-
-        }
-        else if (params.slug && !params.subsection) {
-            switch(params.slug) {
-                case ('drafts'):
-                    requestParams['drafts'] = true;
-                    apiUrl = '/articles/';
-                    break;
-                case ('feed'):
-                    requestParams['feed'] = true;
-                    apiUrl = '/_/articles/';
-                    break;
-                default:
-                    requestParams['user'] = (props.author && props.author.id) || '';
-                    apiUrl = '/_/articles/';
-            }
-            if (this.state.searchString) {
-                apiUrl = `${apiUrl}search/`;
-                requestParams['q'] = this.state.searchString;
-            }
-        }
-        else if (params.section === 'notifications') {
-            apiUrl = `/notifications/`;
-        }
-
-        else if (params.section === 'statistics') {
-            apiUrl = `/statistics/articles/${this.state.searchString ? 'search/' : ''}`;
-            requestParams['q'] = this.state.searchString;
-        }
-        
-        if (apiUrl) {
-            this.props.setApiSettings(apiUrl, requestParams);
-        }
+        this.props.setApiSettings(props, this.state.searchString);
     }
 
 
@@ -100,6 +48,7 @@ export class ItemList extends React.Component<any, any> {
             (nextProps.author && this.props.author && nextProps.author.id !== this.props.author.id)
         ) {
             this.setApiSettings(nextProps);
+            this.setState({searchString: ''});
         }
 
     }
@@ -140,14 +89,18 @@ export class ItemList extends React.Component<any, any> {
     }
 
     render() {
-        let {items, loading, search} = this.props;
-
+        let {items, pinnedItems, loading, search, isUserPage} = this.props;
         let ItemComponent = this.getItemComponent();
         if (!ItemComponent) {
             return null;
         }
         let {searchString} = this.state;
         return <div className="item_list" ref={(div) => {this.div = div}}>
+            {
+                pinnedItems.map((item: any) => {
+                    return <ItemComponent key={item.id} item={item}/>
+                })
+            }
             {search && <div className="item_list_search" >
                 <input type="text" placeholder="Поиск" value={searchString} onChange={this.inputHandler.bind(this)}  />
             </div>}
@@ -166,12 +119,17 @@ export class ItemList extends React.Component<any, any> {
 
 
 const mapStateToProps = (state: any, ownProps: any) => {
+    let isUserPage = ownProps.match.params.slug && !ownProps.match.params.subsection && ['drafts', 'feed'].indexOf(ownProps.match.params.slug) === -1;
+    let author = state.authorData.author;
+    let pinnedItems = (author && author.nickname && state.authorData.pinnedItems[author.nickname]) || [];
     return {
-        author: state.authorData.author,
+        author,
+        pinnedItems: isUserPage ? pinnedItems : [],
         items: state.itemList.items,
         loading: state.itemList.loading,
         searchString: state.itemList.searchString,
         canGetNext: !state.itemList.loading && !!state.itemList.nextUrl,
+        isUserPage
     }
 }
 

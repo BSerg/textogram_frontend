@@ -32,8 +32,8 @@ export function getAuthor(slug: any) {
         }
         authorState.cancelSource && authorState.cancelSource.cancel();
         let cancelSource = axios.CancelToken.source();
-        dispatch({type: ACTIONS.AUTHOR_SET_LOADING, loading: true});
-        dispatch({type: ACTIONS.AUTHOR_SET_CANCEL_SOURCE, cancelSource: cancelSource});
+        dispatch({type: ACTIONS.AUTHOR_SET_LOADING, loading: true, cancelSource: cancelSource});
+        // dispatch({type: ACTIONS.AUTHOR_SET_CANCEL_SOURCE, });
         api.get(`users/${nickname}`).then((response) => {
             dispatch({type: ACTIONS.AUTHOR_SET, author: response.data});
         }).catch((err) => {

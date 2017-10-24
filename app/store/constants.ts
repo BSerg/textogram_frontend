@@ -13,7 +13,6 @@ export namespace ACTIONS {
     export const USER_SET_NICKNAME_DATA: string = 'USER_SET_NICKNAME_DATA';
     export const USER_SET_SOCIAL_LOADING: string = 'USER_SET_SOCIAL_LOADING';
 
-
     export const USER_PATCH: string = 'USER_UPDATE';
 
     export const USER_NOTIFICATIONS_SET: string = 'USER_NOTIFICATIONS_SET';
@@ -26,6 +25,7 @@ export namespace ACTIONS {
     export const AUTHOR_SET_LOADING: string = 'AUTHOR_SET_LOADING';
     export const AUTHOR_SET_CANCEL_SOURCE: string = 'AUTHOR_SET_CANCEL_TOKEN';
     export const AUTHOR_SET_NOT_FOUND: string = 'AUTHOR_SET_NOT_FOUND';
+    export const AUTHOR_SET_PINNED_ITEMS: string = 'USER_SET_PINNED_ITEMS';
 
     export const ITEM_LIST_SET_ITEMS: string = 'ITEM_LIST_SET_ITEMS';
     export const ITEM_LIST_SET_API_SETTINGS: string = 'ITEM_LIST_SET_API_SETTINGS';

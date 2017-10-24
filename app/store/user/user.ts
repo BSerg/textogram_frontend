@@ -14,6 +14,7 @@ const initialEditState: any = {
     nicknameData: {
         saving: false,
     },
+    pinnedItems: [],
     socialLinksLoading: {
 
     }
