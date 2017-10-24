@@ -2,13 +2,11 @@ import * as React from 'react';
 import {connect} from 'react-redux';
 import {ProfileMenu} from './ProfileShared';
 import {Captions, Constants} from '../../constants';
-import ProfileAuthor from './ProfileAuthor';
-import AvatarEditor from './AvatarEditor/AvatarEditor';
+import {ProfileWrapper} from './ProfileShared';
 import ProfileManagementAccount from './ProfileManagementAccount/ProfileManagementAccount';
 import ProfileNotifications from './ProfileNotifications/ProfileNotifications';
 import ProfileStatistics from './ProfileStatistics/ProfileStatistics';
 import ProfilePayments from './ProfilePayments/ProfilePayments';
-
 import '../../styles/profile/profile_management_account.scss';
 
 
@@ -36,19 +34,10 @@ export class ProfileManagement extends React.Component<any, any> {
             return val.name === match.params.section;
         });
         let SectionComponent = (section && section.component);
-
-        return <div id="profile">
-            <div id="profile_content">
-                <AvatarEditor />
-                <ProfileAuthor editable={true}/>
-                <div className="profile_content_filler"></div>
-                <div className="profile_content_data">
-                    { isDesktop && <ProfileMenu items={this.SECTIONS}/>}
-                    {SectionComponent && <SectionComponent />}
-                </div>
-
-            </div>
-        </div>;
+        return <ProfileWrapper editable={true}>
+            { isDesktop && <ProfileMenu items={this.SECTIONS}/>}
+            {SectionComponent && <SectionComponent />}
+        </ProfileWrapper>
     }
 }
 

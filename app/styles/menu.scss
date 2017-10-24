@@ -115,7 +115,11 @@
     padding: $padding 0 $padding/2 0;
 
     $avatar-size: 60px;
-
+    .menu__user_avatar {
+      @media (max-height: 568px) {
+        display: none;
+      }
+    }
     .menu__user_avatar img, .menu__user_avatar_dummy {
       width: $avatar-size;
       height: $avatar-size;
@@ -132,7 +136,9 @@
     .menu__user_username {
       padding: $padding 0 $padding/2 0;
       font-size: $font-size;
-
+      @media (max-height: 568px) {
+        padding: 10px 0;
+      }
       span {
         padding: 0 5px;
         font-weight: $font-weight-bold;
@@ -159,11 +165,17 @@
       padding: $padding 0;
       border-bottom: 1px solid black;
 
+
       span {
         margin-left: 5px;
         font-weight: $font-weight-bold;
       }
+
+      @media (max-height: 568px) {
+        padding: 20px 0;
+      }
     }
+
     .menu__link:last-child {
       border: none;
     }
@@ -235,9 +247,9 @@
 
   .main__menu_default {
 
-    .menu__controls {
+    // .menu__controls {
       //padding: 23px $padding;
-    }
+    // }
     .menu__login_title {
       padding: $padding;
       font-weight: 800;

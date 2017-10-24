@@ -28,13 +28,13 @@ const DefaultMenu = (props: {isDesktop: boolean, closeMenu: () => any}) => <div>
             props.isDesktop ? (<Link to="/" className="menu__user">
                 <div className="menu__user_avatar_dummy"></div>
                 <div className="menu__user_username">
-                    <span>{Captions.main_menu.title}</span>
+                    <span>{Captions.mainMenu.title}</span>
                 </div>
             </Link>) : (
 
                 <div className="menu__user">
                     <div className="menu__user_username">
-                        <span>{Captions.main_menu.title}</span>
+                        <span>{Captions.mainMenu.title}</span>
                     </div>
                 </div>
             )
@@ -103,25 +103,25 @@ class UserMenu extends React.Component<IUserMenuProps|any, any> {
 
                 <div className="menu__links">
                     <div className="menu__link">
-                        <Link to="/feed">{ "Подписки" }</Link>
+                        <Link to="/feed">{ Captions.mainMenu.feed }</Link>
                     </div>
                 </div>
 
                 <div className="menu__links">
                     <div className="menu__link">
-                        <Link to="/articles/new/">{ Captions.main_menu.create_article }</Link>
+                        <Link to="/articles/new/">{ Captions.mainMenu.createArticle }</Link>
                     </div>
                 </div>
 
                 <div className="menu__links">
                     <div className="menu__link">
-                        <Link to={"/" + this.props.user.nickname}>{ "Мои тексты" }</Link>
+                        <Link to={"/" + this.props.user.nickname}>{ Captions.mainMenu.myTexts }</Link>
                     </div>
                 </div>
                 <div className="menu__links">
                     <div className="menu__link">
                         <Link to={"/drafts"}>
-                            { Captions.main_menu.drafts }
+                            { Captions.mainMenu.drafts }
                             {
                                 this.props.user.drafts ? <span>({this.props.user.drafts})</span> : ""
                             }
@@ -163,13 +163,16 @@ class UserMenu extends React.Component<IUserMenuProps|any, any> {
 
                     <div className="menu__links">
                         <div className="menu__link" onClick={this.handleUrlClick.bind(this, '/feed')}>
-                            { "Подписки" }
+                            { Captions.mainMenu.feed }
                         </div>
                         <div className="menu__link" onClick={this.handleUrlClick.bind(this, '/articles/new/')}>
-                            { Captions.main_menu.create_article }
+                            { Captions.mainMenu.createArticle }
+                        </div>
+                        <div className="menu__link" onClick={this.handleUrlClick.bind(this, '/' + this.props.user.nickname)}>
+                            { Captions.mainMenu.myTexts }
                         </div>
                         <div className="menu__link" onClick={this.handleUrlClick.bind(this, '/drafts')}>
-                            { Captions.main_menu.drafts }
+                            { Captions.mainMenu.drafts }
                             {
                                 this.props.user.drafts ? <span>({this.props.user.drafts})</span> : ""
                             }
@@ -202,6 +205,14 @@ export class Menu extends React.Component<any, IMenuStateInterface|any> {
         document.body.style.height = (open && isDesktop) ? 'calc(100% - 55px)' : '100%';
     }
 
+    close() {
+
+    }
+
+    cancel(e: any) {
+        e.stopPropagation();
+    }
+
     render() {
 
         let {user, isDesktop, open, closeMenu} = this.props;
@@ -211,8 +222,8 @@ export class Menu extends React.Component<any, IMenuStateInterface|any> {
         }
 
         return (
-            <div id="main_menu" className={open ? "" : "hidden"}>
-                <div  className="main_menu_container">
+            <div id="main_menu" className={open ? "" : "hidden"} onClick={closeMenu}>
+                <div  className="main_menu_container" onClick={this.cancel}>
                 { user ?
                     <UserMenuWithRouter user={user} open={open} isDesktop={isDesktop} closeMenu={closeMenu} /> : 
                     <DefaultMenu isDesktop={isDesktop} closeMenu={closeMenu} /> }

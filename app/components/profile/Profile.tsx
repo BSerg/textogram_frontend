@@ -2,12 +2,12 @@ import * as React from 'react';
 import {connect} from 'react-redux';
 import {NavLink} from 'react-router-dom';
 import ItemList from './ItemList/ItemList';
-import ProfileAuthor from './ProfileAuthor';
+// import ProfileAuthor from './ProfileAuthor';
 import {Helmet} from 'react-helmet';
 import {Captions} from '../../constants';
 import {getAuthor, setAuthorNull} from './actions/authorActions';
 import ArticlePreview from '../shared/ArticlePreview';
-import {ProfileMenu} from './ProfileShared';
+import {ProfileMenu, ProfileWrapper} from './ProfileShared';
 import {Error404} from '../Error';
 
 export class Profile extends React.Component<any, any> {
@@ -22,9 +22,9 @@ export class Profile extends React.Component<any, any> {
         else if (this.props.isSelf) {
 
             return [
-                {caption: Captions.profile.menuSubscriptions, to: '/feed' },
+                /*{caption: Captions.profile.menuSubscriptions, to: '/feed' },
                 {caption: Captions.profile.menuArticles, to: '/' + this.props.author.nickname},
-                {caption: Captions.profile.menuDrafts, to: '/drafts'}
+                {caption: Captions.profile.menuDrafts, to: '/drafts'}*/
             ];
         }
         return [];
@@ -54,7 +54,7 @@ export class Profile extends React.Component<any, any> {
     }
 
     render() {
-        let {author, isSelf, notFound} = this.props;
+        let {author, isSelf, notFound, user} = this.props;
         if (notFound || this.checkError()) {
             return <Error404 />
         }
@@ -62,23 +62,15 @@ export class Profile extends React.Component<any, any> {
             return null;
         }
         let menuItems =  this.getMenuItems();
-        return <div id="profile">
-    
+        let editable = user && author && user.id === author.id;
+        return <ProfileWrapper editable={editable}>
             <Helmet>
                 <title>{`${author.first_name} ${author.last_name} | ${process.env.SITE_NAME}`}</title>
                 <meta name="title" content={`${author.first_name} ${author.last_name} | ${process.env.SITE_NAME}`} />
             </Helmet>
-            
-            <div id="profile_content">
-                <ProfileAuthor />
-                <div className="profile_content_filler"></div>
-                <div className="profile_content_data">
-                    <ProfileMenu items={menuItems}/>
-                    <ItemList />
-                </div>
-            </div>
-            
-        </div>
+            <ProfileMenu items={menuItems}/>
+            <ItemList />
+        </ProfileWrapper>
     }
 }
 

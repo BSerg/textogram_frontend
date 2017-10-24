@@ -126,11 +126,13 @@ export namespace Captions {
         switchButtonCloseAuthors: "Авторы",
     };
 
-    export const main_menu = {
-        manage_profile: 'управление профилем',
+    export const mainMenu = {
+        manageProfile: 'управление профилем',
         myProfile: 'мой профиль',
-        create_article: 'новый текст',
+        createArticle: 'новый текст',
         drafts: 'черновики',
+        feed: 'подписки',
+        myTexts: 'мои тексты',
         notificationDefaultText: 'Новые уведомления',
         notificationZeroText: 'Нет непрочитанных  уведомлений',
         title: 'TEXTIUS',

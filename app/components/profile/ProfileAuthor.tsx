@@ -8,6 +8,7 @@ const ConfirmIcon = require('-!babel-loader!svg-react-loader!../../assets/images
 const CloseIcon = require('-!babel-loader!svg-react-loader!../../assets/images/close.svg?name=CloseIcon');
 import SocialIcon from '../shared/SocialIcon';
 import ProfileUserDataEditable from './ProfileUserDataEditable';
+import AvatarEditor from './AvatarEditor/AvatarEditor';
 
 import '../../styles/common.scss';
 import '../../styles/profile/profile.scss';
@@ -124,11 +125,11 @@ export const ProfileAuthor = (props: any) => {
 
     
     let {author, loading, isDesktop, editable} = props;
-
     if (!author) {
         return null
     }
     return <div className="profile_content_main">
+        
         { editable ? <ProfileUserDataEditable /> : <ProfileUserData author={author} isDesktop={isDesktop}/>}
         <ProfileSocialLinkList items={author.social_links}/>
         <div className="divider"></div>
@@ -150,7 +151,6 @@ const mapStateToProps = (state: any, ownProps: any) => {
         author: ownProps.editable ? state.userData.user : state.authorData.author,
         loading: state.authorData.loading,
         isDesktop: state.screen.isDesktop,
-
     }
 }
 
