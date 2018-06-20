@@ -7,6 +7,7 @@ export function verifyJWT(token: any): any|null {
         return  Jwt.verify(token, fs.readFileSync(process.env.PUBLIC_KEY_PATH || ''), {ignoreExpiration: true});
     }
     catch (error) {
+        console.log(error)
         return null;
     }
 }
@@ -17,6 +18,7 @@ export function getUserFromRequest(req: Request): any|null {
         return payload.sub
     }
     catch (error) {
+        console.log(error);
         return null
     }
 }

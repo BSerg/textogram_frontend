@@ -28,8 +28,13 @@ class BaseRouter {
 
     getIndex(req: Request, res: Response, next: NextFunction) {
         let user: string = getUserFromRequest(req);
+        console.log('USER', user);
         if (user) {
-            return res.redirect((process.env.IS_LENTACH && process.env.LENTACH_NICKNAME) ? `/${process.env.LENTACH_NICKNAME}` : '/feed');
+            if (process.env.IS_LENTACH && process.env.LENTACH_NICKNAME) {
+                return res.redirect(`/${process.env.LENTACH_NICKNAME}`);
+            } else {
+                return res.redirect('/articles/new/');
+            }
         }
         let html = ReactDOMServer.renderToString(
             
